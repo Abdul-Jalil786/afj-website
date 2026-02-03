@@ -86,14 +86,14 @@ export default function BookNowPage() {
                     Our booking team is available to help with your enquiry.
                   </p>
                   <a
-                    href="tel:+441211234567"
+                    href="tel:+441216891000"
                     className="flex items-center text-green hover:text-green-light transition-colors"
                   >
                     <Phone className="h-5 w-5 mr-2" />
-                    <span className="font-semibold">0121 123 4567</span>
+                    <span className="font-semibold">0121 689 1000</span>
                   </a>
                   <div className="mt-4 pt-4 border-t border-white/20 text-sm text-white/60">
-                    <p>Mon - Fri: 8:00 AM - 6:00 PM</p>
+                    <p>Mon - Fri: 6:00 AM - 7:00 PM</p>
                     <p>Sat: 9:00 AM - 1:00 PM</p>
                   </div>
                 </CardContent>

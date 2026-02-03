@@ -14,8 +14,8 @@ const contactInfo = [
   {
     icon: Phone,
     title: "Phone",
-    details: ["0121 123 4567", "0800 123 4567 (Freephone)"],
-    action: { label: "Call Now", href: "tel:+441211234567" },
+    details: ["0121 689 1000"],
+    action: { label: "Call Now", href: "tel:+441216891000" },
   },
   {
     icon: Mail,
@@ -26,17 +26,17 @@ const contactInfo = [
   {
     icon: MapPin,
     title: "Address",
-    details: ["123 Transport Way", "Birmingham, B1 1AB", "United Kingdom"],
+    details: ["AFJ Business Centre", "2-18 Forster Street, Nechells", "Birmingham B7 4JD"],
     action: {
       label: "Get Directions",
-      href: "https://maps.google.com/?q=Birmingham+B1+1AB",
+      href: "https://maps.google.com/?q=2-18+Forster+Street+Nechells+Birmingham+B7+4JD",
     },
   },
   {
     icon: Clock,
     title: "Office Hours",
     details: [
-      "Monday - Friday: 8:00 AM - 6:00 PM",
+      "Monday - Friday: 6:00 AM - 7:00 PM",
       "Saturday: 9:00 AM - 1:00 PM",
       "Sunday: Closed",
     ],

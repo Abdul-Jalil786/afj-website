@@ -288,7 +288,7 @@ export default function VehicleDetailPage() {
               {/* CTA Buttons */}
               <div className="space-y-3">
                 <Button asChild size="lg" className="w-full">
-                  <a href="tel:+441211234567">
+                  <a href="tel:+441216891000">
                     <Phone className="h-4 w-4 mr-2" />
                     Call to Enquire
                   </a>
@@ -363,9 +363,9 @@ export default function VehicleDetailPage() {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button asChild size="lg">
-                    <a href="tel:+441211234567">
+                    <a href="tel:+441216891000">
                       <Phone className="h-4 w-4 mr-2" />
-                      0121 123 4567
+                      0121 689 1000
                     </a>
                   </Button>
                   <Button variant="outline" size="lg" asChild>

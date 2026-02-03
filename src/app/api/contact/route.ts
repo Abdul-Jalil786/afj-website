@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       html: `
         <h2>Thank you for contacting us, ${safeName}!</h2>
         <p>We have received your message and will get back to you within 24 hours.</p>
-        <p>If your enquiry is urgent, please call us on <strong>0121 123 4567</strong>.</p>
+        <p>If your enquiry is urgent, please call us on <strong>0121 689 1000</strong>.</p>
         <br>
         <p>Best regards,</p>
         <p>The AFJ Limited Team</p>

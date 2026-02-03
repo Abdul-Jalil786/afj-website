@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
         <p><strong>Time:</strong> ${safeTime}</p>
         <p><strong>Passengers:</strong> ${safePassengers}</p>
 
-        <p>If you need to make any changes or have urgent queries, please call us on <strong>0121 123 4567</strong>.</p>
+        <p>If you need to make any changes or have urgent queries, please call us on <strong>0121 689 1000</strong>.</p>
 
         <br>
         <p>Best regards,</p>
