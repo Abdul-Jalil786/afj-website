@@ -137,11 +137,11 @@ export function MobileMenu({ isOpen, onClose, items }: MobileMenuProps) {
 
                 <div className="space-y-2 text-white/80 text-sm">
                   <a
-                    href="tel:+441211234567"
+                    href="tel:+441216891000"
                     className="flex items-center hover:text-green transition-colors"
                   >
                     <Phone className="h-4 w-4 mr-3" />
-                    0121 123 4567
+                    0121 689 1000
                   </a>
                   <a
                     href="mailto:info@afjltd.co.uk"

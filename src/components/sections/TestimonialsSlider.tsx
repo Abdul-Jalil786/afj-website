@@ -7,14 +7,22 @@ import Autoplay from "embla-carousel-autoplay";
 import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/utils";
+import { client, testimonialsQuery, urlFor } from "@/lib/sanity";
+
+interface SanityImage {
+  asset: {
+    _ref: string;
+  };
+}
 
 interface Testimonial {
+  _id?: string;
   name: string;
   role?: string;
   company?: string;
   content: string;
   rating?: number;
-  image?: string;
+  image?: SanityImage | string;
 }
 
 interface TestimonialsSliderProps {
@@ -77,14 +85,35 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export function TestimonialsSlider({
-  testimonials = defaultTestimonials,
+  testimonials: propTestimonials,
   title = "What Our Clients Say",
   subtitle = "Trusted by organizations across the UK",
 }: TestimonialsSliderProps) {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(
+    propTestimonials || defaultTestimonials
+  );
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" }, [
     Autoplay({ delay: 5000, stopOnInteraction: false }),
   ]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Fetch testimonials from Sanity if not provided via props
+  useEffect(() => {
+    if (propTestimonials) return; // Skip if testimonials provided via props
+
+    async function fetchTestimonials() {
+      try {
+        const fetchedTestimonials = await client.fetch(testimonialsQuery);
+        if (fetchedTestimonials && fetchedTestimonials.length > 0) {
+          setTestimonials(fetchedTestimonials);
+        }
+      } catch (error) {
+        console.error("Error fetching testimonials:", error);
+        // Keep default testimonials
+      }
+    }
+    fetchTestimonials();
+  }, [propTestimonials]);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -109,6 +138,13 @@ export function TestimonialsSlider({
     };
   }, [emblaApi]);
 
+  const getImageUrl = (image?: SanityImage | string) => {
+    if (!image) return null;
+    if (typeof image === "string") return image;
+    if (image.asset) return urlFor(image).width(96).height(96).url();
+    return null;
+  };
+
   return (
     <section className="py-20 bg-white">
       <Container>
@@ -126,7 +162,7 @@ export function TestimonialsSlider({
             <div className="flex -ml-4">
               {testimonials.map((testimonial, index) => (
                 <div
-                  key={index}
+                  key={testimonial._id || index}
                   className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-4"
                 >
                   <div className="bg-gray-50 rounded-2xl p-8 h-full flex flex-col">
@@ -147,10 +183,10 @@ export function TestimonialsSlider({
 
                     {/* Author */}
                     <div className="flex items-center">
-                      {testimonial.image ? (
+                      {getImageUrl(testimonial.image) ? (
                         <Image
-                          src={testimonial.image}
-                          alt={testimonial.name}
+                          src={getImageUrl(testimonial.image)!}
+                          alt={`${testimonial.name}, ${testimonial.role || "Client"}`}
                           width={48}
                           height={48}
                           className="rounded-full mr-4"

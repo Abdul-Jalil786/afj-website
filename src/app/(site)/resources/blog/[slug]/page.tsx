@@ -7,89 +7,107 @@ import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
+import { client, blogPostBySlugQuery, blogPostsQuery, urlFor } from "@/lib/sanity";
+import { PortableTextRenderer } from "@/components/shared/PortableTextRenderer";
+import type { PortableTextBlock } from "@portabletext/types";
+
+interface SanityImage {
+  asset: {
+    _ref: string;
+  };
+  alt?: string;
+}
+
+interface Category {
+  _id: string;
+  title: string;
+  slug: { current: string };
+}
+
+interface Author {
+  name: string;
+  bio?: string;
+  image?: SanityImage;
+}
+
+interface RelatedPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  mainImage?: SanityImage;
+  publishedAt: string;
+}
 
 interface BlogPost {
-  id: string;
+  _id: string;
   title: string;
-  slug: string;
+  slug: { current: string };
   excerpt: string;
-  content: string;
-  image: string;
+  content?: PortableTextBlock[];
+  mainImage?: SanityImage;
   publishedAt: string;
-  category: string;
-  author: {
-    name: string;
-    bio?: string;
-    image?: string;
+  category?: Category;
+  author?: Author;
+  relatedPosts?: RelatedPost[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
   };
 }
 
-const blogPosts: Record<string, BlogPost> = {
-  "importance-of-midas-training": {
-    id: "1",
-    title: "The Importance of MiDAS Training for Minibus Drivers",
-    slug: "importance-of-midas-training",
-    excerpt:
-      "Discover why MiDAS certification is essential for minibus drivers and how it ensures passenger safety across the UK.",
-    content: `
-      <p>MiDAS (Minibus Driver Awareness Scheme) is the nationally recognized standard for minibus driver assessment and training in the UK. At AFJ Limited, we believe that proper training is essential for ensuring the safety of all passengers.</p>
-
-      <h2>What is MiDAS?</h2>
-      <p>MiDAS is a scheme designed to enhance minibus driving standards and promote the safe operation of minibuses. It was developed by the Community Transport Association (CTA) and is widely recognized across the UK as the benchmark for minibus driver competence.</p>
-
-      <h2>Why is MiDAS Training Important?</h2>
-      <p>The training covers essential aspects of minibus driving, including:</p>
-      <ul>
-        <li>Vehicle safety checks and maintenance awareness</li>
-        <li>Passenger assistance and care</li>
-        <li>Emergency procedures</li>
-        <li>Legal responsibilities</li>
-        <li>Safe driving techniques specific to minibuses</li>
-      </ul>
-
-      <h2>Benefits for Organizations</h2>
-      <p>Organizations that invest in MiDAS training for their drivers demonstrate a commitment to safety and professionalism. This can lead to:</p>
-      <ul>
-        <li>Reduced insurance premiums</li>
-        <li>Enhanced reputation</li>
-        <li>Compliance with regulations</li>
-        <li>Improved passenger confidence</li>
-      </ul>
-
-      <h2>Our Training Services</h2>
-      <p>AFJ Limited is an accredited MiDAS training center. We offer comprehensive courses for both new and experienced drivers, ensuring they have the knowledge and skills to operate minibuses safely.</p>
-
-      <p>Contact us today to learn more about our MiDAS training programs and how we can help your organization meet its driver training needs.</p>
-    `,
-    image: "/images/blog/midas-training.jpg",
-    publishedAt: "2024-01-15",
-    category: "Training",
-    author: {
-      name: "John Smith",
-      bio: "Training Manager at AFJ Limited with over 15 years of experience in driver training and assessment.",
-    },
+// Fallback blog post for when Sanity isn't configured
+const fallbackPost: BlogPost = {
+  _id: "1",
+  title: "The Importance of MiDAS Training for Minibus Drivers",
+  slug: { current: "importance-of-midas-training" },
+  excerpt:
+    "Discover why MiDAS certification is essential for minibus drivers and how it ensures passenger safety across the UK.",
+  publishedAt: "2024-01-15",
+  category: { _id: "1", title: "Training", slug: { current: "training" } },
+  author: {
+    name: "John Smith",
+    bio: "Training Manager at AFJ Limited with over 15 years of experience in driver training and assessment.",
   },
 };
 
-const relatedPosts = [
+const fallbackRelatedPosts: RelatedPost[] = [
   {
-    id: "2",
+    _id: "2",
     title: "New Wheelchair Accessible Vehicle Regulations 2024",
-    slug: "wheelchair-accessible-vehicle-regulations-2024",
-    image: "/images/blog/wav-regulations.jpg",
+    slug: { current: "wheelchair-accessible-vehicle-regulations-2024" },
     publishedAt: "2024-01-10",
   },
   {
-    id: "3",
+    _id: "3",
     title: "How We're Reducing Our Carbon Footprint",
-    slug: "reducing-carbon-footprint",
-    image: "/images/blog/sustainability.jpg",
+    slug: { current: "reducing-carbon-footprint" },
     publishedAt: "2024-01-05",
   },
 ];
 
-export function generateStaticParams() {
-  return Object.keys(blogPosts).map((slug) => ({ slug }));
+async function getBlogPost(slug: string): Promise<BlogPost | null> {
+  try {
+    const post = await client.fetch(blogPostBySlugQuery, { slug });
+    return post || null;
+  } catch (error) {
+    console.error("Error fetching blog post:", error);
+    // Return fallback for known slugs
+    if (slug === "importance-of-midas-training") {
+      return { ...fallbackPost, relatedPosts: fallbackRelatedPosts };
+    }
+    return null;
+  }
+}
+
+export async function generateStaticParams() {
+  try {
+    const posts = await client.fetch(blogPostsQuery);
+    return posts?.map((post: { slug: { current: string } }) => ({
+      slug: post.slug.current,
+    })) || [{ slug: "importance-of-midas-training" }];
+  } catch {
+    return [{ slug: "importance-of-midas-training" }];
+  }
 }
 
 export async function generateMetadata({
@@ -98,15 +116,24 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogPosts[slug];
+  const post = await getBlogPost(slug);
 
   if (!post) {
     return { title: "Post Not Found" };
   }
 
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: post.seo?.metaTitle || post.title,
+    description: post.seo?.metaDescription || post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: "article",
+      publishedTime: post.publishedAt,
+      images: post.mainImage?.asset
+        ? [urlFor(post.mainImage).width(1200).height(630).url()]
+        : undefined,
+    },
   };
 }
 
@@ -116,11 +143,30 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = blogPosts[slug];
+  const post = await getBlogPost(slug);
 
   if (!post) {
     notFound();
   }
+
+  const getImageUrl = (image?: SanityImage, width = 800, height = 600) => {
+    if (!image?.asset) return "/images/blog/placeholder.jpg";
+    return urlFor(image).width(width).height(height).auto("format").url();
+  };
+
+  // Build share URLs
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://afjltd.co.uk";
+  const postUrl = `${baseUrl}/resources/blog/${post.slug.current}`;
+  const encodedUrl = encodeURIComponent(postUrl);
+  const encodedTitle = encodeURIComponent(post.title);
+
+  const shareUrls = {
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+    twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+    linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`,
+  };
+
+  const relatedPosts = post.relatedPosts || fallbackRelatedPosts;
 
   return (
     <>
@@ -128,8 +174,8 @@ export default async function BlogPostPage({
       <section className="relative py-20 bg-navy">
         <div className="absolute inset-0 opacity-30">
           <Image
-            src={post.image}
-            alt={post.title}
+            src={getImageUrl(post.mainImage, 1920, 1080)}
+            alt={post.mainImage?.alt || post.title}
             fill
             className="object-cover"
           />
@@ -144,19 +190,23 @@ export default async function BlogPostPage({
             Back to Blog
           </Link>
 
-          <Badge variant="secondary" className="mb-4">
-            {post.category}
-          </Badge>
+          {post.category && (
+            <Badge variant="secondary" className="mb-4">
+              {post.category.title}
+            </Badge>
+          )}
 
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 max-w-4xl">
             {post.title}
           </h1>
 
           <div className="flex flex-wrap items-center gap-6 text-white/80">
-            <div className="flex items-center">
-              <User className="h-5 w-5 mr-2" />
-              <span>{post.author.name}</span>
-            </div>
+            {post.author && (
+              <div className="flex items-center">
+                <User className="h-5 w-5 mr-2" />
+                <span>{post.author.name}</span>
+              </div>
+            )}
             <div className="flex items-center">
               <Calendar className="h-5 w-5 mr-2" />
               <span>{formatDate(post.publishedAt)}</span>
@@ -171,10 +221,19 @@ export default async function BlogPostPage({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <article
-                className="prose prose-lg max-w-none prose-headings:text-navy prose-a:text-green"
-                dangerouslySetInnerHTML={{ __html: post.content }}
-              />
+              {post.content ? (
+                <PortableTextRenderer
+                  value={post.content}
+                  className="prose prose-lg max-w-none prose-headings:text-navy prose-a:text-green"
+                />
+              ) : (
+                <div className="prose prose-lg max-w-none prose-headings:text-navy prose-a:text-green">
+                  <p>{post.excerpt}</p>
+                  <p className="text-muted-foreground italic">
+                    Full article content coming soon. Check back later for the complete post.
+                  </p>
+                </div>
+              )}
 
               {/* Share */}
               <div className="mt-12 pt-8 border-t">
@@ -183,21 +242,27 @@ export default async function BlogPostPage({
                 </h3>
                 <div className="flex space-x-4">
                   <a
-                    href="#"
+                    href={shareUrls.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-green hover:text-white transition-colors"
                     aria-label="Share on Facebook"
                   >
                     <Facebook className="h-5 w-5" />
                   </a>
                   <a
-                    href="#"
+                    href={shareUrls.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-green hover:text-white transition-colors"
                     aria-label="Share on Twitter"
                   >
                     <Twitter className="h-5 w-5" />
                   </a>
                   <a
-                    href="#"
+                    href={shareUrls.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-green hover:text-white transition-colors"
                     aria-label="Share on LinkedIn"
                   >
@@ -210,63 +275,77 @@ export default async function BlogPostPage({
             {/* Sidebar */}
             <aside>
               {/* Author */}
-              <div className="bg-gray-50 rounded-2xl p-6 mb-8">
-                <h3 className="text-lg font-semibold text-navy mb-4">
-                  About the Author
-                </h3>
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-full bg-navy text-white flex items-center justify-center font-semibold mr-4">
-                    {post.author.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+              {post.author && (
+                <div className="bg-gray-50 rounded-2xl p-6 mb-8">
+                  <h3 className="text-lg font-semibold text-navy mb-4">
+                    About the Author
+                  </h3>
+                  <div className="flex items-center mb-4">
+                    {post.author.image?.asset ? (
+                      <Image
+                        src={urlFor(post.author.image).width(96).height(96).url()}
+                        alt={`${post.author.name}, author`}
+                        width={48}
+                        height={48}
+                        className="rounded-full mr-4"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-navy text-white flex items-center justify-center font-semibold mr-4">
+                        {post.author.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-medium text-navy">{post.author.name}</div>
+                      <div className="text-sm text-muted-foreground">Author</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium text-navy">{post.author.name}</div>
-                    <div className="text-sm text-muted-foreground">Author</div>
-                  </div>
+                  {post.author.bio && (
+                    <p className="text-sm text-muted-foreground">{post.author.bio}</p>
+                  )}
                 </div>
-                {post.author.bio && (
-                  <p className="text-sm text-muted-foreground">{post.author.bio}</p>
-                )}
-              </div>
+              )}
 
               {/* Related Posts */}
-              <div>
-                <h3 className="text-lg font-semibold text-navy mb-4">
-                  Related Articles
-                </h3>
-                <div className="space-y-4">
-                  {relatedPosts.map((relatedPost) => (
-                    <Link
-                      key={relatedPost.id}
-                      href={`/resources/blog/${relatedPost.slug}`}
-                      className="group block"
-                    >
-                      <Card className="border-0 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="flex">
-                          <div className="relative w-24 h-24 flex-shrink-0">
-                            <Image
-                              src={relatedPost.image}
-                              alt={relatedPost.title}
-                              fill
-                              className="object-cover"
-                            />
+              {relatedPosts.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold text-navy mb-4">
+                    Related Articles
+                  </h3>
+                  <div className="space-y-4">
+                    {relatedPosts.map((relatedPost) => (
+                      <Link
+                        key={relatedPost._id}
+                        href={`/resources/blog/${relatedPost.slug.current}`}
+                        className="group block"
+                      >
+                        <Card className="border-0 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                          <div className="flex">
+                            <div className="relative w-24 h-24 flex-shrink-0">
+                              <Image
+                                src={getImageUrl(relatedPost.mainImage, 200, 200)}
+                                alt={relatedPost.mainImage?.alt || relatedPost.title}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <CardContent className="p-3">
+                              <h4 className="text-sm font-medium text-navy group-hover:text-green transition-colors line-clamp-2">
+                                {relatedPost.title}
+                              </h4>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {formatDate(relatedPost.publishedAt)}
+                              </p>
+                            </CardContent>
                           </div>
-                          <CardContent className="p-3">
-                            <h4 className="text-sm font-medium text-navy group-hover:text-green transition-colors line-clamp-2">
-                              {relatedPost.title}
-                            </h4>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {formatDate(relatedPost.publishedAt)}
-                            </p>
-                          </CardContent>
-                        </div>
-                      </Card>
-                    </Link>
-                  ))}
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </aside>
           </div>
         </Container>

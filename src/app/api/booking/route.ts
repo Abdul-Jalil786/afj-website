@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { escapeHtml } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,11 +30,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If Resend API key is not configured, just log and return success
+    // If Resend API key is not configured, log without PII and return success
     if (!process.env.RESEND_API_KEY) {
-      console.log("Booking form submission:", body);
+      console.log("Booking form submission received (Resend not configured)");
       return NextResponse.json({ success: true });
     }
+
+    // Escape all user inputs for HTML email
+    const safeServiceType = escapeHtml(serviceType || "");
+    const safePickupAddress = escapeHtml(pickupAddress);
+    const safeDropoffAddress = escapeHtml(dropoffAddress);
+    const safeDate = escapeHtml(date || "");
+    const safeTime = escapeHtml(time || "");
+    const safeReturnDate = returnDate ? escapeHtml(returnDate) : "Not specified";
+    const safeReturnTime = returnTime ? escapeHtml(returnTime) : "Not specified";
+    const safePassengers = escapeHtml(String(passengers || ""));
+    const safeWheelchairUsers = escapeHtml(String(wheelchairUsers || "0"));
+    const safeSpecialRequirements = specialRequirements ? escapeHtml(specialRequirements) : "";
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safePhone = escapeHtml(phone);
+    const safeAdditionalNotes = additionalNotes ? escapeHtml(additionalNotes) : "";
 
     // Dynamically import Resend only when API key is available
     const { Resend } = await import("resend");
@@ -44,44 +61,44 @@ export async function POST(request: NextRequest) {
       from: "AFJ Website <noreply@afjltd.co.uk>",
       to: ["bookings@afjltd.co.uk"],
       replyTo: email,
-      subject: `New Booking Request - ${serviceType} - ${name}`,
+      subject: `New Booking Request - ${safeServiceType} - ${safeName}`,
       html: `
         <h2>New Booking Request</h2>
 
         <h3>Service Details</h3>
-        <p><strong>Service Type:</strong> ${serviceType}</p>
+        <p><strong>Service Type:</strong> ${safeServiceType}</p>
 
         <h3>Journey Details</h3>
-        <p><strong>Pickup:</strong> ${pickupAddress}</p>
-        <p><strong>Drop-off:</strong> ${dropoffAddress}</p>
-        <p><strong>Date:</strong> ${date}</p>
-        <p><strong>Time:</strong> ${time}</p>
+        <p><strong>Pickup:</strong> ${safePickupAddress}</p>
+        <p><strong>Drop-off:</strong> ${safeDropoffAddress}</p>
+        <p><strong>Date:</strong> ${safeDate}</p>
+        <p><strong>Time:</strong> ${safeTime}</p>
         ${
           returnRequired === "yes"
             ? `
         <p><strong>Return Required:</strong> Yes</p>
-        <p><strong>Return Date:</strong> ${returnDate || "Not specified"}</p>
-        <p><strong>Return Time:</strong> ${returnTime || "Not specified"}</p>
+        <p><strong>Return Date:</strong> ${safeReturnDate}</p>
+        <p><strong>Return Time:</strong> ${safeReturnTime}</p>
         `
             : ""
         }
 
         <h3>Passenger Details</h3>
-        <p><strong>Passengers:</strong> ${passengers}</p>
-        <p><strong>Wheelchair Users:</strong> ${wheelchairUsers || "0"}</p>
+        <p><strong>Passengers:</strong> ${safePassengers}</p>
+        <p><strong>Wheelchair Users:</strong> ${safeWheelchairUsers}</p>
         ${
-          specialRequirements
-            ? `<p><strong>Special Requirements:</strong> ${specialRequirements}</p>`
+          safeSpecialRequirements
+            ? `<p><strong>Special Requirements:</strong> ${safeSpecialRequirements}</p>`
             : ""
         }
 
         <h3>Contact Details</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Name:</strong> ${safeName}</p>
+        <p><strong>Email:</strong> ${safeEmail}</p>
+        <p><strong>Phone:</strong> ${safePhone}</p>
         ${
-          additionalNotes
-            ? `<p><strong>Additional Notes:</strong> ${additionalNotes}</p>`
+          safeAdditionalNotes
+            ? `<p><strong>Additional Notes:</strong> ${safeAdditionalNotes}</p>`
             : ""
         }
       `,
@@ -93,19 +110,19 @@ export async function POST(request: NextRequest) {
       to: [email],
       subject: "Booking Request Received - AFJ Limited",
       html: `
-        <h2>Thank you for your booking request, ${name}!</h2>
+        <h2>Thank you for your booking request, ${safeName}!</h2>
 
         <p>We have received your booking request and will be in touch within 2 hours during business hours to confirm availability and provide you with a quote.</p>
 
         <h3>Your Booking Summary</h3>
-        <p><strong>Service:</strong> ${serviceType}</p>
-        <p><strong>From:</strong> ${pickupAddress}</p>
-        <p><strong>To:</strong> ${dropoffAddress}</p>
-        <p><strong>Date:</strong> ${date}</p>
-        <p><strong>Time:</strong> ${time}</p>
-        <p><strong>Passengers:</strong> ${passengers}</p>
+        <p><strong>Service:</strong> ${safeServiceType}</p>
+        <p><strong>From:</strong> ${safePickupAddress}</p>
+        <p><strong>To:</strong> ${safeDropoffAddress}</p>
+        <p><strong>Date:</strong> ${safeDate}</p>
+        <p><strong>Time:</strong> ${safeTime}</p>
+        <p><strong>Passengers:</strong> ${safePassengers}</p>
 
-        <p>If you need to make any changes or have urgent queries, please call us on <strong>0121 123 4567</strong>.</p>
+        <p>If you need to make any changes or have urgent queries, please call us on <strong>0121 689 1000</strong>.</p>
 
         <br>
         <p>Best regards,</p>

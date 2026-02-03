@@ -120,20 +120,20 @@ export function Footer() {
                 <li className="flex items-start">
                   <MapPin className="h-5 w-5 text-green mt-0.5 mr-3 flex-shrink-0" />
                   <span className="text-white/70">
-                    123 Transport Way
+                    AFJ Business Centre
                     <br />
-                    Birmingham, B1 1AB
+                    2-18 Forster Street, Nechells
                     <br />
-                    United Kingdom
+                    Birmingham B7 4JD
                   </span>
                 </li>
                 <li>
                   <a
-                    href="tel:+441211234567"
+                    href="tel:+441216891000"
                     className="flex items-center text-white/70 hover:text-green transition-colors"
                   >
                     <Phone className="h-5 w-5 text-green mr-3 flex-shrink-0" />
-                    0121 123 4567
+                    0121 689 1000
                   </a>
                 </li>
                 <li>
@@ -146,6 +146,11 @@ export function Footer() {
                   </a>
                 </li>
               </ul>
+              <div className="mt-4 text-sm text-white/60">
+                <p className="font-medium text-white/80">Office Hours:</p>
+                <p>Mon - Fri: 6:00am - 7:00pm</p>
+                <p>Saturday: 9:00am - 1:00pm</p>
+              </div>
             </div>
           </div>
         </Container>

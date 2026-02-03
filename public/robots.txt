@@ -1,0 +1,10 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://afjltd.co.uk/sitemap.xml
+
+# Disallow admin/studio
+Disallow: /studio/
+Disallow: /api/

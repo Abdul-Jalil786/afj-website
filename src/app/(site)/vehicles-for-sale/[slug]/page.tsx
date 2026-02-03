@@ -1,7 +1,10 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import {
   Car,
   Fuel,
@@ -17,30 +20,42 @@ import { Container } from "@/components/ui/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { client, vehicleBySlugQuery, urlFor } from "@/lib/sanity";
+import { PortableTextRenderer } from "@/components/shared/PortableTextRenderer";
+import type { PortableTextBlock } from "@portabletext/types";
+
+interface SanityImage {
+  asset: {
+    _ref: string;
+  };
+  alt?: string;
+}
 
 interface Vehicle {
-  id: string;
+  _id: string;
   title: string;
-  slug: string;
+  slug: { current: string };
   price: number;
   year: number;
   mileage: number;
   fuelType: string;
   transmission: string;
   seats: number;
-  color: string;
-  registration: string;
-  description: string;
-  features: string[];
-  images: string[];
+  color?: string;
+  registration?: string;
+  description?: PortableTextBlock[] | string;
+  features?: string[];
+  mainImage?: SanityImage;
+  gallery?: SanityImage[];
   status: "available" | "reserved" | "sold";
 }
 
-const vehicles: Record<string, Vehicle> = {
+// Fallback data
+const fallbackVehicles: Record<string, Vehicle> = {
   "2022-ford-transit-custom-minibus": {
-    id: "1",
+    _id: "1",
     title: "2022 Ford Transit Custom Minibus",
-    slug: "2022-ford-transit-custom-minibus",
+    slug: { current: "2022-ford-transit-custom-minibus" },
     price: 35000,
     year: 2022,
     mileage: 28000,
@@ -63,18 +78,12 @@ const vehicles: Record<string, Vehicle> = {
       "Rear Privacy Glass",
       "Tow Bar Fitted",
     ],
-    images: [
-      "/images/vehicles/transit-custom-1.jpg",
-      "/images/vehicles/transit-custom-2.jpg",
-      "/images/vehicles/transit-custom-3.jpg",
-      "/images/vehicles/transit-custom-4.jpg",
-    ],
     status: "available",
   },
   "2021-mercedes-sprinter-516-wav": {
-    id: "2",
+    _id: "2",
     title: "2021 Mercedes Sprinter 516 WAV",
-    slug: "2021-mercedes-sprinter-516-wav",
+    slug: { current: "2021-mercedes-sprinter-516-wav" },
     price: 48000,
     year: 2021,
     mileage: 42000,
@@ -97,49 +106,75 @@ const vehicles: Record<string, Vehicle> = {
       "Full Service History",
       "M1 Certification",
     ],
-    images: [
-      "/images/vehicles/sprinter-wav-1.jpg",
-      "/images/vehicles/sprinter-wav-2.jpg",
-      "/images/vehicles/sprinter-wav-3.jpg",
-      "/images/vehicles/sprinter-wav-4.jpg",
-    ],
     status: "available",
   },
 };
 
-export function generateStaticParams() {
-  return Object.keys(vehicles).map((slug) => ({ slug }));
-}
+export default function VehicleDetailPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFoundState, setNotFoundState] = useState(false);
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const vehicle = vehicles[slug];
+  useEffect(() => {
+    async function fetchVehicle() {
+      try {
+        const fetchedVehicle = await client.fetch(vehicleBySlugQuery, { slug });
+        if (fetchedVehicle) {
+          setVehicle(fetchedVehicle);
+        } else if (fallbackVehicles[slug]) {
+          setVehicle(fallbackVehicles[slug]);
+        } else {
+          setNotFoundState(true);
+        }
+      } catch (error) {
+        console.error("Error fetching vehicle:", error);
+        if (fallbackVehicles[slug]) {
+          setVehicle(fallbackVehicles[slug]);
+        } else {
+          setNotFoundState(true);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchVehicle();
+  }, [slug]);
 
-  if (!vehicle) {
-    return { title: "Vehicle Not Found" };
-  }
-
-  return {
-    title: vehicle.title,
-    description: vehicle.description.slice(0, 160),
-  };
-}
-
-export default async function VehicleDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const vehicle = vehicles[slug];
-
-  if (!vehicle) {
+  if (notFoundState) {
     notFound();
   }
+
+  if (isLoading || !vehicle) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  const getImageUrl = (image?: SanityImage, width = 800, height = 600) => {
+    if (!image?.asset) return "/images/vehicles/placeholder.jpg";
+    return urlFor(image).width(width).height(height).auto("format").url();
+  };
+
+  // Combine main image with gallery
+  const allImages = vehicle.gallery && vehicle.gallery.length > 0
+    ? [vehicle.mainImage, ...vehicle.gallery].filter(Boolean) as SanityImage[]
+    : vehicle.mainImage
+    ? [vehicle.mainImage]
+    : [];
+
+  const selectedImage = allImages[selectedImageIndex] || allImages[0];
+
+  // Build email enquiry URL
+  const emailSubject = encodeURIComponent(`Enquiry about: ${vehicle.title}`);
+  const emailBody = encodeURIComponent(
+    `Hi,\n\nI'm interested in the ${vehicle.title} (${vehicle.registration || "No reg"}) listed at £${vehicle.price.toLocaleString()}.\n\nPlease could you provide more information?\n\nThank you.`
+  );
+  const emailHref = `mailto:sales@afjltd.co.uk?subject=${emailSubject}&body=${emailBody}`;
 
   return (
     <>
@@ -164,8 +199,8 @@ export default async function VehicleDetailPage({
             <div>
               <div className="relative h-[400px] rounded-2xl overflow-hidden mb-4">
                 <Image
-                  src={vehicle.images[0]}
-                  alt={vehicle.title}
+                  src={getImageUrl(selectedImage, 1200, 800)}
+                  alt={selectedImage?.alt || vehicle.title}
                   fill
                   className="object-cover"
                   priority
@@ -176,21 +211,28 @@ export default async function VehicleDetailPage({
                   </Badge>
                 )}
               </div>
-              <div className="grid grid-cols-4 gap-2">
-                {vehicle.images.slice(1).map((image, index) => (
-                  <div
-                    key={index}
-                    className="relative h-24 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
-                  >
-                    <Image
-                      src={image}
-                      alt={`${vehicle.title} - Image ${index + 2}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
+              {allImages.length > 1 && (
+                <div className="grid grid-cols-4 gap-2">
+                  {allImages.slice(0, 4).map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImageIndex(index)}
+                      className={`relative h-24 rounded-lg overflow-hidden transition-opacity ${
+                        selectedImageIndex === index
+                          ? "ring-2 ring-green"
+                          : "hover:opacity-80"
+                      }`}
+                    >
+                      <Image
+                        src={getImageUrl(image, 200, 150)}
+                        alt={image?.alt || `${vehicle.title} - Image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Details */}
@@ -235,21 +277,27 @@ export default async function VehicleDetailPage({
                   <span className="text-muted-foreground">Transmission</span>
                   <span className="font-medium">{vehicle.transmission}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-muted-foreground">Color</span>
-                  <span className="font-medium">{vehicle.color}</span>
-                </div>
+                {vehicle.color && (
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="text-muted-foreground">Color</span>
+                    <span className="font-medium">{vehicle.color}</span>
+                  </div>
+                )}
               </div>
 
               {/* CTA Buttons */}
               <div className="space-y-3">
-                <Button size="lg" className="w-full">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call to Enquire
+                <Button asChild size="lg" className="w-full">
+                  <a href="tel:+441216891000">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Call to Enquire
+                  </a>
                 </Button>
-                <Button variant="outline" size="lg" className="w-full">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Email Enquiry
+                <Button variant="outline" size="lg" className="w-full" asChild>
+                  <a href={emailHref}>
+                    <Mail className="h-4 w-4 mr-2" />
+                    Email Enquiry
+                  </a>
                 </Button>
               </div>
             </div>
@@ -264,23 +312,36 @@ export default async function VehicleDetailPage({
             {/* Description */}
             <div>
               <h2 className="text-2xl font-bold text-navy mb-4">Description</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                {vehicle.description}
-              </p>
+              {typeof vehicle.description === "string" ? (
+                <p className="text-muted-foreground leading-relaxed">
+                  {vehicle.description}
+                </p>
+              ) : vehicle.description ? (
+                <PortableTextRenderer
+                  value={vehicle.description}
+                  className="text-muted-foreground"
+                />
+              ) : (
+                <p className="text-muted-foreground">
+                  Contact us for more details about this vehicle.
+                </p>
+              )}
             </div>
 
             {/* Features */}
-            <div>
-              <h2 className="text-2xl font-bold text-navy mb-4">Features</h2>
-              <div className="grid grid-cols-2 gap-3">
-                {vehicle.features.map((feature, index) => (
-                  <div key={index} className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green mr-2 flex-shrink-0" />
-                    <span className="text-sm">{feature}</span>
-                  </div>
-                ))}
+            {vehicle.features && vehicle.features.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold text-navy mb-4">Features</h2>
+                <div className="grid grid-cols-2 gap-3">
+                  {vehicle.features.map((feature, index) => (
+                    <div key={index} className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green mr-2 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </Container>
       </section>
@@ -302,9 +363,9 @@ export default async function VehicleDetailPage({
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button asChild size="lg">
-                    <a href="tel:+441211234567">
+                    <a href="tel:+441216891000">
                       <Phone className="h-4 w-4 mr-2" />
-                      0121 123 4567
+                      0121 689 1000
                     </a>
                   </Button>
                   <Button variant="outline" size="lg" asChild>
