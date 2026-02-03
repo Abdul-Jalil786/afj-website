@@ -1,5 +1,4 @@
 import { MetadataRoute } from "next";
-import { client } from "@/lib/sanity/client";
 import { groq } from "next-sanity";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://afjltd.co.uk";
@@ -93,19 +92,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Fetch dynamic content from Sanity
+  // Fetch dynamic content from Sanity only if configured
   let blogPosts: Array<{ slug: string; publishedAt: string }> = [];
   let vehicles: Array<{ slug: string; _updatedAt: string }> = [];
   let jobPostings: Array<{ slug: string; publishedAt: string }> = [];
 
-  try {
-    [blogPosts, vehicles, jobPostings] = await Promise.all([
-      client.fetch(groq`*[_type == "blogPost"]{ "slug": slug.current, publishedAt }`),
-      client.fetch(groq`*[_type == "vehicle" && status != "sold"]{ "slug": slug.current, _updatedAt }`),
-      client.fetch(groq`*[_type == "jobPosting" && isActive == true]{ "slug": slug.current, publishedAt }`),
-    ]);
-  } catch (error) {
-    console.error("Error fetching Sanity content for sitemap:", error);
+  const sanityProjectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+
+  if (sanityProjectId && sanityProjectId !== "your-project-id") {
+    try {
+      // Dynamically import client only when Sanity is configured
+      const { client } = await import("@/lib/sanity/client");
+      [blogPosts, vehicles, jobPostings] = await Promise.all([
+        client.fetch(groq`*[_type == "blogPost"]{ "slug": slug.current, publishedAt }`),
+        client.fetch(groq`*[_type == "vehicle" && status != "sold"]{ "slug": slug.current, _updatedAt }`),
+        client.fetch(groq`*[_type == "jobPosting" && isActive == true]{ "slug": slug.current, publishedAt }`),
+      ]);
+    } catch (error) {
+      console.error("Error fetching Sanity content for sitemap:", error);
+    }
   }
 
   // Blog post pages
