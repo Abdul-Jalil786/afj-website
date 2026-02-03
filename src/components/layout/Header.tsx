@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -56,11 +57,14 @@ export function Header() {
         <Container>
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="text-white font-bold text-2xl">
-                AFJ<span className="text-green">.</span>
-              </div>
-              <span className="text-white text-sm hidden sm:block">Limited</span>
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/images/logo.png"
+                alt="AFJ Limited"
+                width={120}
+                height={40}
+                priority
+              />
             </Link>
 
             {/* Desktop Navigation */}
