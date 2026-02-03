@@ -1,4 +1,6 @@
-import { Metadata } from "next";
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Car, Fuel, Gauge, Users, Calendar, ArrowRight } from "lucide-react";
@@ -15,118 +17,206 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CTASection } from "@/components/sections";
+import { client, vehiclesQuery, urlFor } from "@/lib/sanity";
 
-export const metadata: Metadata = {
-  title: "Vehicles for Sale",
-  description:
-    "Browse our selection of quality used vehicles including minibuses, wheelchair accessible vehicles, and commercial transport vehicles.",
-};
+interface SanityImage {
+  asset: {
+    _ref: string;
+  };
+  alt?: string;
+}
 
 interface Vehicle {
-  id: string;
+  _id: string;
   title: string;
-  slug: string;
+  slug: { current: string };
   price: number;
   year: number;
   mileage: number;
   fuelType: string;
   transmission: string;
   seats: number;
-  image: string;
+  mainImage?: SanityImage;
   status: "available" | "reserved" | "sold";
   featured: boolean;
 }
 
-const vehicles: Vehicle[] = [
+// Fallback data when Sanity is not configured
+const fallbackVehicles: Vehicle[] = [
   {
-    id: "1",
+    _id: "1",
     title: "2022 Ford Transit Custom Minibus",
-    slug: "2022-ford-transit-custom-minibus",
+    slug: { current: "2022-ford-transit-custom-minibus" },
     price: 35000,
     year: 2022,
     mileage: 28000,
     fuelType: "Diesel",
     transmission: "Manual",
     seats: 9,
-    image: "/images/vehicles/transit-custom.jpg",
     status: "available",
     featured: true,
   },
   {
-    id: "2",
+    _id: "2",
     title: "2021 Mercedes Sprinter 516 WAV",
-    slug: "2021-mercedes-sprinter-516-wav",
+    slug: { current: "2021-mercedes-sprinter-516-wav" },
     price: 48000,
     year: 2021,
     mileage: 42000,
     fuelType: "Diesel",
     transmission: "Automatic",
     seats: 16,
-    image: "/images/vehicles/sprinter-wav.jpg",
     status: "available",
     featured: true,
   },
   {
-    id: "3",
+    _id: "3",
     title: "2020 Peugeot Boxer WAV",
-    slug: "2020-peugeot-boxer-wav",
+    slug: { current: "2020-peugeot-boxer-wav" },
     price: 28000,
     year: 2020,
     mileage: 55000,
     fuelType: "Diesel",
     transmission: "Manual",
     seats: 6,
-    image: "/images/vehicles/boxer-wav.jpg",
     status: "available",
     featured: false,
   },
   {
-    id: "4",
+    _id: "4",
     title: "2022 Vauxhall Vivaro Combi",
-    slug: "2022-vauxhall-vivaro-combi",
+    slug: { current: "2022-vauxhall-vivaro-combi" },
     price: 32000,
     year: 2022,
     mileage: 35000,
     fuelType: "Diesel",
     transmission: "Manual",
     seats: 9,
-    image: "/images/vehicles/vivaro-combi.jpg",
     status: "reserved",
     featured: false,
   },
   {
-    id: "5",
+    _id: "5",
     title: "2019 Renault Master Minibus",
-    slug: "2019-renault-master-minibus",
+    slug: { current: "2019-renault-master-minibus" },
     price: 24000,
     year: 2019,
     mileage: 68000,
     fuelType: "Diesel",
     transmission: "Manual",
     seats: 17,
-    image: "/images/vehicles/master-minibus.jpg",
     status: "available",
     featured: false,
   },
   {
-    id: "6",
+    _id: "6",
     title: "2021 VW Transporter Shuttle",
-    slug: "2021-vw-transporter-shuttle",
+    slug: { current: "2021-vw-transporter-shuttle" },
     price: 38000,
     year: 2021,
     mileage: 31000,
     fuelType: "Diesel",
     transmission: "Automatic",
     seats: 9,
-    image: "/images/vehicles/transporter-shuttle.jpg",
     status: "available",
     featured: false,
   },
 ];
 
 export default function VehiclesPage() {
-  const featuredVehicles = vehicles.filter((v) => v.featured);
-  const availableVehicles = vehicles.filter((v) => v.status !== "sold");
+  const [vehicles, setVehicles] = useState<Vehicle[]>(fallbackVehicles);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [vehicleType, setVehicleType] = useState("all");
+  const [priceRange, setPriceRange] = useState("all");
+  const [seatRange, setSeatRange] = useState("all");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchVehicles() {
+      try {
+        const fetchedVehicles = await client.fetch(vehiclesQuery);
+        if (fetchedVehicles && fetchedVehicles.length > 0) {
+          setVehicles(fetchedVehicles);
+        }
+      } catch (error) {
+        console.error("Error fetching vehicles:", error);
+        // Keep fallback data
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchVehicles();
+  }, []);
+
+  const getImageUrl = (image?: SanityImage) => {
+    if (!image?.asset) return "/images/vehicles/placeholder.jpg";
+    return urlFor(image).width(800).height(600).auto("format").url();
+  };
+
+  // Filter vehicles
+  const filteredVehicles = useMemo(() => {
+    return vehicles.filter((vehicle) => {
+      // Search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        if (!vehicle.title.toLowerCase().includes(query)) {
+          return false;
+        }
+      }
+
+      // Vehicle type filter
+      if (vehicleType !== "all") {
+        const title = vehicle.title.toLowerCase();
+        if (vehicleType === "minibus" && !title.includes("minibus") && !title.includes("shuttle") && !title.includes("combi")) {
+          return false;
+        }
+        if (vehicleType === "wav" && !title.includes("wav") && !title.includes("wheelchair")) {
+          return false;
+        }
+      }
+
+      // Price filter
+      if (priceRange !== "all") {
+        switch (priceRange) {
+          case "under-25k":
+            if (vehicle.price >= 25000) return false;
+            break;
+          case "25k-35k":
+            if (vehicle.price < 25000 || vehicle.price > 35000) return false;
+            break;
+          case "35k-50k":
+            if (vehicle.price < 35000 || vehicle.price > 50000) return false;
+            break;
+          case "over-50k":
+            if (vehicle.price <= 50000) return false;
+            break;
+        }
+      }
+
+      // Seat filter
+      if (seatRange !== "all") {
+        switch (seatRange) {
+          case "1-8":
+            if (vehicle.seats > 8) return false;
+            break;
+          case "9-12":
+            if (vehicle.seats < 9 || vehicle.seats > 12) return false;
+            break;
+          case "13-17":
+            if (vehicle.seats < 13 || vehicle.seats > 17) return false;
+            break;
+          case "17+":
+            if (vehicle.seats <= 17) return false;
+            break;
+        }
+      }
+
+      return true;
+    });
+  }, [vehicles, searchQuery, vehicleType, priceRange, seatRange]);
+
+  const featuredVehicles = filteredVehicles.filter((v) => v.featured);
+  const availableVehicles = filteredVehicles.filter((v) => v.status !== "sold");
 
   return (
     <>
@@ -150,8 +240,12 @@ export default function VehiclesPage() {
       <section className="py-8 border-b">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Input placeholder="Search vehicles..." />
-            <Select>
+            <Input
+              placeholder="Search vehicles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Select value={vehicleType} onValueChange={setVehicleType}>
               <SelectTrigger>
                 <SelectValue placeholder="Vehicle Type" />
               </SelectTrigger>
@@ -162,7 +256,7 @@ export default function VehiclesPage() {
                 <SelectItem value="commercial">Commercial</SelectItem>
               </SelectContent>
             </Select>
-            <Select>
+            <Select value={priceRange} onValueChange={setPriceRange}>
               <SelectTrigger>
                 <SelectValue placeholder="Price Range" />
               </SelectTrigger>
@@ -174,7 +268,7 @@ export default function VehiclesPage() {
                 <SelectItem value="over-50k">Over £50,000</SelectItem>
               </SelectContent>
             </Select>
-            <Select>
+            <Select value={seatRange} onValueChange={setSeatRange}>
               <SelectTrigger>
                 <SelectValue placeholder="Seats" />
               </SelectTrigger>
@@ -200,15 +294,15 @@ export default function VehiclesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {featuredVehicles.map((vehicle) => (
                 <Link
-                  key={vehicle.id}
-                  href={`/vehicles-for-sale/${vehicle.slug}`}
+                  key={vehicle._id}
+                  href={`/vehicles-for-sale/${vehicle.slug.current}`}
                   className="group"
                 >
                   <Card className="border-0 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
                     <div className="relative h-64">
                       <Image
-                        src={vehicle.image}
-                        alt={vehicle.title}
+                        src={getImageUrl(vehicle.mainImage)}
+                        alt={vehicle.mainImage?.alt || vehicle.title}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
@@ -263,57 +357,63 @@ export default function VehiclesPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {availableVehicles.map((vehicle) => (
-              <Link
-                key={vehicle.id}
-                href={`/vehicles-for-sale/${vehicle.slug}`}
-                className="group"
-              >
-                <Card className="border-0 shadow-md overflow-hidden hover:shadow-lg transition-shadow h-full">
-                  <div className="relative h-48">
-                    <Image
-                      src={vehicle.image}
-                      alt={vehicle.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                    {vehicle.status === "reserved" && (
-                      <Badge variant="warning" className="absolute top-3 right-3">
-                        Reserved
-                      </Badge>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-navy mb-2 group-hover:text-green transition-colors line-clamp-1">
-                      {vehicle.title}
-                    </h3>
-                    <p className="text-xl font-bold text-green mb-3">
-                      £{vehicle.price.toLocaleString()}
-                    </p>
-                    <div className="grid grid-cols-4 gap-2 text-xs text-muted-foreground">
-                      <div className="text-center">
-                        <Calendar className="h-3 w-3 mx-auto mb-0.5" />
-                        {vehicle.year}
-                      </div>
-                      <div className="text-center">
-                        <Gauge className="h-3 w-3 mx-auto mb-0.5" />
-                        {(vehicle.mileage / 1000).toFixed(0)}k
-                      </div>
-                      <div className="text-center">
-                        <Fuel className="h-3 w-3 mx-auto mb-0.5" />
-                        {vehicle.fuelType}
-                      </div>
-                      <div className="text-center">
-                        <Users className="h-3 w-3 mx-auto mb-0.5" />
-                        {vehicle.seats}
-                      </div>
+          {availableVehicles.length === 0 ? (
+            <p className="text-muted-foreground text-center py-12">
+              No vehicles match your search criteria. Try adjusting the filters.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {availableVehicles.map((vehicle) => (
+                <Link
+                  key={vehicle._id}
+                  href={`/vehicles-for-sale/${vehicle.slug.current}`}
+                  className="group"
+                >
+                  <Card className="border-0 shadow-md overflow-hidden hover:shadow-lg transition-shadow h-full">
+                    <div className="relative h-48">
+                      <Image
+                        src={getImageUrl(vehicle.mainImage)}
+                        alt={vehicle.mainImage?.alt || vehicle.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      {vehicle.status === "reserved" && (
+                        <Badge variant="warning" className="absolute top-3 right-3">
+                          Reserved
+                        </Badge>
+                      )}
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold text-navy mb-2 group-hover:text-green transition-colors line-clamp-1">
+                        {vehicle.title}
+                      </h3>
+                      <p className="text-xl font-bold text-green mb-3">
+                        £{vehicle.price.toLocaleString()}
+                      </p>
+                      <div className="grid grid-cols-4 gap-2 text-xs text-muted-foreground">
+                        <div className="text-center">
+                          <Calendar className="h-3 w-3 mx-auto mb-0.5" />
+                          {vehicle.year}
+                        </div>
+                        <div className="text-center">
+                          <Gauge className="h-3 w-3 mx-auto mb-0.5" />
+                          {(vehicle.mileage / 1000).toFixed(0)}k
+                        </div>
+                        <div className="text-center">
+                          <Fuel className="h-3 w-3 mx-auto mb-0.5" />
+                          {vehicle.fuelType}
+                        </div>
+                        <div className="text-center">
+                          <Users className="h-3 w-3 mx-auto mb-0.5" />
+                          {vehicle.seats}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
         </Container>
       </section>
 

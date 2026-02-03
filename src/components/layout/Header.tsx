@@ -74,7 +74,7 @@ export function Header() {
             <div className="flex items-center space-x-4">
               {/* Phone Number */}
               <a
-                href="tel:+441onal"
+                href="tel:+441211234567"
                 className="hidden md:flex items-center text-white hover:text-green transition-colors"
               >
                 <Phone className="h-4 w-4 mr-2" />

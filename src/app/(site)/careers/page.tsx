@@ -1,4 +1,6 @@
-import { Metadata } from "next";
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { MapPin, Briefcase, Clock, ArrowRight, Search } from "lucide-react";
 import { Container } from "@/components/ui/container";
@@ -7,17 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CTASection } from "@/components/sections";
-
-export const metadata: Metadata = {
-  title: "Careers",
-  description:
-    "Join the AFJ Limited team. Explore current job openings and discover exciting career opportunities in transportation.",
-};
+import { client, jobPostingsQuery } from "@/lib/sanity";
 
 interface JobPosting {
-  id: string;
+  _id: string;
   title: string;
-  slug: string;
+  slug: { current: string };
   department: string;
   location: string;
   type: string;
@@ -26,11 +23,12 @@ interface JobPosting {
   publishedAt: string;
 }
 
-const jobPostings: JobPosting[] = [
+// Fallback data
+const fallbackJobs: JobPosting[] = [
   {
-    id: "1",
+    _id: "1",
     title: "SEND Transport Driver",
-    slug: "send-transport-driver",
+    slug: { current: "send-transport-driver" },
     department: "Driving",
     location: "Birmingham",
     type: "Full-time",
@@ -40,9 +38,9 @@ const jobPostings: JobPosting[] = [
     publishedAt: "2024-01-15",
   },
   {
-    id: "2",
+    _id: "2",
     title: "Patient Transport Driver",
-    slug: "patient-transport-driver",
+    slug: { current: "patient-transport-driver" },
     department: "Driving",
     location: "Birmingham",
     type: "Full-time",
@@ -52,9 +50,9 @@ const jobPostings: JobPosting[] = [
     publishedAt: "2024-01-12",
   },
   {
-    id: "3",
+    _id: "3",
     title: "Vehicle Technician",
-    slug: "vehicle-technician",
+    slug: { current: "vehicle-technician" },
     department: "Maintenance",
     location: "Birmingham",
     type: "Full-time",
@@ -64,9 +62,9 @@ const jobPostings: JobPosting[] = [
     publishedAt: "2024-01-10",
   },
   {
-    id: "4",
+    _id: "4",
     title: "Transport Coordinator",
-    slug: "transport-coordinator",
+    slug: { current: "transport-coordinator" },
     department: "Operations",
     location: "Birmingham",
     type: "Full-time",
@@ -76,9 +74,9 @@ const jobPostings: JobPosting[] = [
     publishedAt: "2024-01-08",
   },
   {
-    id: "5",
+    _id: "5",
     title: "Passenger Assistant",
-    slug: "passenger-assistant",
+    slug: { current: "passenger-assistant" },
     department: "Operations",
     location: "Birmingham",
     type: "Part-time",
@@ -88,9 +86,9 @@ const jobPostings: JobPosting[] = [
     publishedAt: "2024-01-05",
   },
   {
-    id: "6",
+    _id: "6",
     title: "Training Instructor",
-    slug: "training-instructor",
+    slug: { current: "training-instructor" },
     department: "Training",
     location: "Birmingham",
     type: "Full-time",
@@ -122,6 +120,53 @@ const benefits = [
 ];
 
 export default function CareersPage() {
+  const [jobs, setJobs] = useState<JobPosting[]>(fallbackJobs);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("All Departments");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchJobs() {
+      try {
+        const fetchedJobs = await client.fetch(jobPostingsQuery);
+        if (fetchedJobs && fetchedJobs.length > 0) {
+          setJobs(fetchedJobs);
+        }
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+        // Keep fallback data
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchJobs();
+  }, []);
+
+  // Filter jobs by search and department
+  const filteredJobs = useMemo(() => {
+    return jobs.filter((job) => {
+      // Search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        if (
+          !job.title.toLowerCase().includes(query) &&
+          !job.shortDescription.toLowerCase().includes(query)
+        ) {
+          return false;
+        }
+      }
+
+      // Department filter
+      if (selectedDepartment !== "All Departments") {
+        if (job.department !== selectedDepartment) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [jobs, searchQuery, selectedDepartment]);
+
   return (
     <>
       {/* Hero Section */}
@@ -149,14 +194,17 @@ export default function CareersPage() {
               <Input
                 placeholder="Search jobs..."
                 className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <div className="flex flex-wrap gap-2">
               {departments.map((dept) => (
                 <button
                   key={dept}
+                  onClick={() => setSelectedDepartment(dept)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    dept === "All Departments"
+                    dept === selectedDepartment
                       ? "bg-green text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
@@ -176,42 +224,48 @@ export default function CareersPage() {
             {/* Jobs List */}
             <div className="lg:col-span-2 space-y-4">
               <p className="text-muted-foreground mb-4">
-                {jobPostings.length} positions available
+                {filteredJobs.length} position{filteredJobs.length !== 1 ? "s" : ""} available
               </p>
 
-              {jobPostings.map((job) => (
-                <Link key={job.id} href={`/careers/${job.slug}`} className="group block">
-                  <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
-                        <h3 className="text-xl font-semibold text-navy group-hover:text-green transition-colors">
-                          {job.title}
-                        </h3>
-                        <Badge variant="outline">{job.department}</Badge>
-                      </div>
+              {filteredJobs.length === 0 ? (
+                <p className="text-muted-foreground text-center py-12">
+                  No jobs match your search criteria. Try adjusting the filters or search terms.
+                </p>
+              ) : (
+                filteredJobs.map((job) => (
+                  <Link key={job._id} href={`/careers/${job.slug.current}`} className="group block">
+                    <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
+                          <h3 className="text-xl font-semibold text-navy group-hover:text-green transition-colors">
+                            {job.title}
+                          </h3>
+                          <Badge variant="outline">{job.department}</Badge>
+                        </div>
 
-                      <p className="text-muted-foreground mb-4">
-                        {job.shortDescription}
-                      </p>
+                        <p className="text-muted-foreground mb-4">
+                          {job.shortDescription}
+                        </p>
 
-                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {job.location}
+                        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center">
+                            <MapPin className="h-4 w-4 mr-1" />
+                            {job.location}
+                          </div>
+                          <div className="flex items-center">
+                            <Briefcase className="h-4 w-4 mr-1" />
+                            {job.type}
+                          </div>
+                          <div className="flex items-center">
+                            <Clock className="h-4 w-4 mr-1" />
+                            {job.salary}
+                          </div>
                         </div>
-                        <div className="flex items-center">
-                          <Briefcase className="h-4 w-4 mr-1" />
-                          {job.type}
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {job.salary}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))
+              )}
             </div>
 
             {/* Sidebar */}
