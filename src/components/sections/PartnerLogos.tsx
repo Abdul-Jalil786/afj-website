@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Container } from "@/components/ui/container";
+import { cn } from "@/lib/utils";
 import { client, partnersQuery, urlFor } from "@/lib/sanity";
 
 interface SanityImage {
@@ -39,6 +40,16 @@ export function PartnerLogos({
   const [partners, setPartners] = useState<Partner[]>(propPartners || defaultPartners);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // Detect prefers-reduced-motion
+  useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
 
   // Fetch partners from Sanity if not provided via props
   useEffect(() => {
@@ -77,10 +88,10 @@ export function PartnerLogos({
     };
   }, []);
 
-  // Auto-scroll animation - only runs when visible
+  // Auto-scroll animation - only runs when visible and reduced motion is not preferred
   useEffect(() => {
     const scrollContainer = scrollRef.current;
-    if (!scrollContainer || !isVisible) return;
+    if (!scrollContainer || !isVisible || prefersReducedMotion) return;
 
     let animationId: number;
     let scrollPosition = 0;
@@ -112,7 +123,7 @@ export function PartnerLogos({
       scrollContainer.removeEventListener("mouseenter", handleMouseEnter);
       scrollContainer.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [isVisible]);
+  }, [isVisible, prefersReducedMotion]);
 
   const getLogoUrl = (logo: SanityImage | string) => {
     if (typeof logo === "string") return logo;
@@ -120,8 +131,10 @@ export function PartnerLogos({
     return "/images/partners/placeholder.png";
   };
 
-  // Duplicate partners for seamless scrolling
-  const duplicatedPartners = [...partners, ...partners];
+  // Duplicate partners for seamless scrolling (only if animation is active)
+  const displayPartners = prefersReducedMotion
+    ? partners
+    : [...partners, ...partners];
 
   return (
     <section className="py-16 bg-gray-50">
@@ -133,11 +146,23 @@ export function PartnerLogos({
 
       <div
         ref={scrollRef}
-        className="flex overflow-hidden"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className={cn(
+          "flex",
+          prefersReducedMotion
+            ? "flex-wrap justify-center gap-8 px-8"
+            : "overflow-hidden"
+        )}
+        style={
+          prefersReducedMotion
+            ? undefined
+            : { scrollbarWidth: "none", msOverflowStyle: "none" }
+        }
       >
-        <div className="flex items-center gap-16 px-8">
-          {duplicatedPartners.map((partner, index) => (
+        <div className={cn(
+          "flex items-center gap-16 px-8",
+          prefersReducedMotion && "flex-wrap justify-center"
+        )}>
+          {displayPartners.map((partner, index) => (
             <div
               key={`${partner._id || partner.name}-${index}`}
               className="flex-shrink-0 grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300"

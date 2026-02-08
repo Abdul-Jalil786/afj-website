@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, Mail, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import { Container } from "@/components/ui/container";
 
@@ -18,6 +19,7 @@ const quickLinks = [
   { label: "Vehicles for Sale", href: "/vehicles-for-sale" },
   { label: "Contact", href: "/contact" },
   { label: "Book Now", href: "/book-now" },
+  { label: "Accessibility", href: "/accessibility" },
 ];
 
 const legalLinks = [
@@ -38,9 +40,13 @@ export function Footer() {
             {/* Company Info */}
             <div>
               <Link href="/" className="inline-block mb-6">
-                <span className="text-2xl font-bold">
-                  AFJ<span className="text-green">.</span> Limited
-                </span>
+                <Image
+                  src="/images/logo.png"
+                  alt="AFJ Limited"
+                  width={140}
+                  height={56}
+                  className="h-10 w-auto object-contain brightness-0 invert"
+                />
               </Link>
               <p className="text-white/70 mb-6">
                 Providing quality transportation services across the UK since
@@ -48,10 +54,13 @@ export function Footer() {
                 customer service.
               </p>
               <div className="flex space-x-4">
+                {/* TODO: Update hrefs with actual social media profile URLs when available */}
                 <a
                   href="#"
                   className="text-white/70 hover:text-green transition-colors"
                   aria-label="Facebook"
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   <Facebook className="h-5 w-5" />
                 </a>
@@ -59,6 +68,8 @@ export function Footer() {
                   href="#"
                   className="text-white/70 hover:text-green transition-colors"
                   aria-label="Twitter"
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   <Twitter className="h-5 w-5" />
                 </a>
@@ -66,6 +77,8 @@ export function Footer() {
                   href="#"
                   className="text-white/70 hover:text-green transition-colors"
                   aria-label="LinkedIn"
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   <Linkedin className="h-5 w-5" />
                 </a>
@@ -73,6 +86,8 @@ export function Footer() {
                   href="#"
                   className="text-white/70 hover:text-green transition-colors"
                   aria-label="Instagram"
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   <Instagram className="h-5 w-5" />
                 </a>

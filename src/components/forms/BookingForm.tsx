@@ -137,7 +137,7 @@ export function BookingForm() {
 
   if (isSuccess) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12" role="status" aria-live="polite">
         <div className="w-20 h-20 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-6">
           <CheckCircle className="h-10 w-10 text-green" />
         </div>
@@ -426,11 +426,13 @@ export function BookingForm() {
           </div>
         )}
 
-        {error && (
-          <div className="mt-6 p-4 bg-destructive/10 text-destructive rounded-lg text-sm">
-            {error}
-          </div>
-        )}
+        <div role="alert" aria-live="polite">
+          {error && (
+            <div className="mt-6 p-4 bg-destructive/10 text-destructive rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+        </div>
 
         {/* Navigation Buttons */}
         <div className="mt-8 flex justify-between">

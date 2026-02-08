@@ -80,7 +80,7 @@ export function ContactForm() {
 
   if (isSuccess) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12" role="status" aria-live="polite">
         <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
           <CheckCircle className="h-8 w-8 text-green" />
         </div>
@@ -176,11 +176,13 @@ export function ContactForm() {
         )}
       </div>
 
-      {error && (
-        <div className="p-4 bg-destructive/10 text-destructive rounded-lg text-sm">
-          {error}
-        </div>
-      )}
+      <div role="alert" aria-live="polite">
+        {error && (
+          <div className="p-4 bg-destructive/10 text-destructive rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+      </div>
 
       <Button type="submit" size="lg" disabled={isSubmitting} className="w-full md:w-auto">
         {isSubmitting ? (
