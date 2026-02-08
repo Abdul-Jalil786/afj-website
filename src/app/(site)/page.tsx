@@ -1,5 +1,6 @@
 import {
   HeroCarousel,
+  TrustBadges,
   ServiceCards,
   AboutSection,
   StatsSection,
@@ -12,6 +13,7 @@ export default function HomePage() {
   return (
     <>
       <HeroCarousel />
+      <TrustBadges />
       <ServiceCards />
       <AboutSection />
       <StatsSection />

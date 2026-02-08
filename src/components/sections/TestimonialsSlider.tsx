@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, Quote, Pause, Play } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/utils";
 import { client, testimonialsQuery, urlFor } from "@/lib/sanity";
@@ -66,9 +66,23 @@ const defaultTestimonials: Testimonial[] = [
   },
 ];
 
+function useReducedMotion() {
+  const [prefersReduced, setPrefersReduced] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReduced(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  return prefersReduced;
+}
+
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex space-x-1">
+    <div className="flex space-x-1" role="img" aria-label={`${rating} out of 5 stars`}>
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
@@ -78,6 +92,7 @@ function StarRating({ rating }: { rating: number }) {
               ? "text-yellow-400 fill-yellow-400"
               : "text-gray-300"
           )}
+          aria-hidden="true"
         />
       ))}
     </div>
@@ -89,13 +104,39 @@ export function TestimonialsSlider({
   title = "What Our Clients Say",
   subtitle = "Trusted by organizations across the UK",
 }: TestimonialsSliderProps) {
+  const prefersReducedMotion = useReducedMotion();
   const [testimonials, setTestimonials] = useState<Testimonial[]>(
     propTestimonials || defaultTestimonials
   );
+  const autoplayPlugin = useMemo(
+    () => Autoplay({ delay: 5000, stopOnInteraction: false }),
+    []
+  );
+  const autoplayRef = useRef(autoplayPlugin);
+
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" }, [
-    Autoplay({ delay: 5000, stopOnInteraction: false }),
+    autoplayRef.current,
   ]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(!prefersReducedMotion);
+
+  // Respect prefers-reduced-motion
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      autoplayRef.current.stop();
+      setIsPlaying(false);
+    }
+  }, [prefersReducedMotion]);
+
+  const toggleAutoplay = useCallback(() => {
+    if (isPlaying) {
+      autoplayRef.current.stop();
+      setIsPlaying(false);
+    } else {
+      autoplayRef.current.play();
+      setIsPlaying(true);
+    }
+  }, [isPlaying]);
 
   // Fetch testimonials from Sanity if not provided via props
   useEffect(() => {
@@ -146,7 +187,7 @@ export function TestimonialsSlider({
   };
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-white" aria-roledescription="carousel" aria-label="Client testimonials">
       <Container>
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -164,10 +205,13 @@ export function TestimonialsSlider({
                 <div
                   key={testimonial._id || index}
                   className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-4"
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`Testimonial ${index + 1} of ${testimonials.length}`}
                 >
                   <div className="bg-gray-50 rounded-2xl p-8 h-full flex flex-col">
                     {/* Quote Icon */}
-                    <Quote className="h-10 w-10 text-green/20 mb-4" />
+                    <Quote className="h-10 w-10 text-green/20 mb-4" aria-hidden="true" />
 
                     {/* Rating */}
                     {testimonial.rating && (
@@ -178,7 +222,7 @@ export function TestimonialsSlider({
 
                     {/* Content */}
                     <p className="text-gray-700 mb-6 flex-1 leading-relaxed">
-                      "{testimonial.content}"
+                      &ldquo;{testimonial.content}&rdquo;
                     </p>
 
                     {/* Author */}
@@ -235,8 +279,8 @@ export function TestimonialsSlider({
           </button>
         </div>
 
-        {/* Dots */}
-        <div className="flex justify-center space-x-2 mt-8">
+        {/* Dots and Pause/Play */}
+        <div className="flex justify-center items-center space-x-2 mt-8">
           {testimonials.map((_, index) => (
             <button
               key={index}
@@ -248,6 +292,17 @@ export function TestimonialsSlider({
               aria-label={`Go to testimonial ${index + 1}`}
             />
           ))}
+          <button
+            onClick={toggleAutoplay}
+            className="ml-2 bg-gray-200 hover:bg-gray-300 text-navy p-2 rounded-full transition-colors"
+            aria-label={isPlaying ? "Pause testimonials" : "Play testimonials"}
+          >
+            {isPlaying ? (
+              <Pause className="h-3 w-3" />
+            ) : (
+              <Play className="h-3 w-3" />
+            )}
+          </button>
         </div>
       </Container>
     </section>

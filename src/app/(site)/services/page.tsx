@@ -15,11 +15,12 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CTASection } from "@/components/sections";
+import { generateBreadcrumbJsonLd } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Our Services",
   description:
-    "Explore our comprehensive range of transportation services including Home-to-School transport, Non-Emergency Patient Transport, Private Hire, Fleet Maintenance, Vehicle Conversions, and Driver Training.",
+    "Comprehensive transport services in Birmingham & West Midlands: SEND home-to-school, NHS patient transport, private hire, fleet maintenance, vehicle conversions & driver training.",
 };
 
 interface Service {
@@ -118,9 +119,19 @@ const services: Service[] = [
   },
 ];
 
+const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+  { name: "Home", url: "/" },
+  { name: "Our Services", url: "/services" },
+]);
+
 export default function ServicesPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
       {/* Hero Section */}
       <section className="py-20 bg-navy">
         <Container>

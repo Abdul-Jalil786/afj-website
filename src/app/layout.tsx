@@ -12,22 +12,24 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://afjltd.co.uk";
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "AFJ Limited - Quality Transportation Services",
+    default: "SEND Transport Birmingham | Patient Transport Services | AFJ Limited",
     template: "%s | AFJ Limited",
   },
   description:
-    "AFJ Limited provides quality transportation services across the UK including Home-to-School transport, Non-Emergency Patient Transport, Private Hire, Fleet Maintenance, Vehicle Conversions, and Training since 2006.",
+    "AFJ Limited provides SEND home-to-school transport and patient transport services in Birmingham & West Midlands. ISO 9001 certified, CQC registered. Fleet maintenance, vehicle conversions & driver training since 2006.",
   keywords: [
-    "transportation",
+    "SEND transport Birmingham",
+    "patient transport West Midlands",
+    "school transport provider Birmingham",
+    "fleet maintenance Birmingham",
+    "vehicle conversions West Midlands",
+    "driver training Birmingham",
+    "NHS transport services",
+    "council transport provider",
     "home to school transport",
     "NEPTS",
-    "patient transport",
-    "private hire",
-    "fleet maintenance",
-    "vehicle conversions",
-    "driver training",
-    "UK transport",
-    "Birmingham transport",
+    "private hire Birmingham",
+    "wheelchair accessible transport",
   ],
   authors: [{ name: "AFJ Limited" }],
   creator: "AFJ Limited",
@@ -35,9 +37,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_GB",
     siteName: "AFJ Limited",
-    title: "AFJ Limited - Quality Transportation Services",
+    title: "SEND Transport Birmingham | Patient Transport Services | AFJ Limited",
     description:
-      "Quality transportation services across the UK since 2006. Home-to-School transport, Patient Transport, Private Hire, and more.",
+      "SEND home-to-school transport and patient transport services in Birmingham & West Midlands since 2006. ISO 9001 certified, CQC registered.",
     url: baseUrl,
     images: [
       {
@@ -50,9 +52,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AFJ Limited - Quality Transportation Services",
+    site: "@AFJLimited",
+    title: "SEND Transport Birmingham | Patient Transport Services | AFJ Limited",
     description:
-      "Quality transportation services across the UK since 2006.",
+      "SEND home-to-school transport and patient transport services in Birmingham & West Midlands since 2006.",
     images: ["/images/og-image.jpg"],
   },
   robots: {
@@ -165,6 +168,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <head>
+        <link rel="preconnect" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

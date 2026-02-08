@@ -5,3 +5,4 @@ export { StatsSection } from "./StatsSection";
 export { PartnerLogos } from "./PartnerLogos";
 export { TestimonialsSlider } from "./TestimonialsSlider";
 export { CTASection } from "./CTASection";
+export { TrustBadges } from "./TrustBadges";

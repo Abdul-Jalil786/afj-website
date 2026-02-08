@@ -3,11 +3,13 @@ import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { ContactForm } from "@/components/forms";
+import { ContactFAQ } from "@/components/sections/ContactFAQ";
+import { generateBreadcrumbJsonLd } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with AFJ Limited. Contact us for transportation enquiries, quotes, or any questions about our services.",
+    "Contact AFJ Limited in Birmingham for SEND transport, patient transport, and fleet services. Call 0121 689 1000 or visit our Nechells office.",
 };
 
 const contactInfo = [
@@ -43,9 +45,62 @@ const contactInfo = [
   },
 ];
 
+const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+  { name: "Home", url: "/" },
+  { name: "Contact Us", url: "/contact" },
+]);
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What areas do you cover?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We provide services across the UK, with primary operations in the Midlands region. Contact us to discuss your specific requirements.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I request a quote?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You can request a quote by filling out the contact form above, calling us directly, or emailing our team. We aim to respond within 24 hours.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are your drivers DBS checked?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, all our drivers undergo enhanced DBS checks and receive regular safeguarding training to ensure the safety of all passengers.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do you provide wheelchair accessible vehicles?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, our fleet includes a range of wheelchair accessible vehicles equipped with ramps, tail lifts, and secure restraint systems.",
+      },
+    },
+  ],
+};
+
 export default function ContactPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       {/* Hero Section */}
       <section className="py-20 bg-navy">
         <Container>
@@ -151,34 +206,8 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto space-y-6">
-            {[
-              {
-                question: "What areas do you cover?",
-                answer:
-                  "We provide services across the UK, with primary operations in the Midlands region. Contact us to discuss your specific requirements.",
-              },
-              {
-                question: "How do I request a quote?",
-                answer:
-                  "You can request a quote by filling out the contact form above, calling us directly, or emailing our team. We aim to respond within 24 hours.",
-              },
-              {
-                question: "Are your drivers DBS checked?",
-                answer:
-                  "Yes, all our drivers undergo enhanced DBS checks and receive regular safeguarding training to ensure the safety of all passengers.",
-              },
-              {
-                question: "Do you provide wheelchair accessible vehicles?",
-                answer:
-                  "Yes, our fleet includes a range of wheelchair accessible vehicles equipped with ramps, tail lifts, and secure restraint systems.",
-              },
-            ].map((faq, index) => (
-              <div key={index} className="bg-white rounded-lg p-6 shadow-sm">
-                <h3 className="font-semibold text-navy mb-2">{faq.question}</h3>
-                <p className="text-muted-foreground text-sm">{faq.answer}</p>
-              </div>
-            ))}
+          <div className="max-w-3xl mx-auto">
+            <ContactFAQ />
           </div>
         </Container>
       </section>

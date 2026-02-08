@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/utils";
@@ -55,11 +55,51 @@ const defaultSlides: HeroSlide[] = [
   },
 ];
 
+function useReducedMotion() {
+  const [prefersReduced, setPrefersReduced] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReduced(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  return prefersReduced;
+}
+
 export function HeroCarousel({ slides = defaultSlides }: HeroCarouselProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const autoplayPlugin = useMemo(
+    () => Autoplay({ delay: 6000, stopOnInteraction: false }),
+    []
+  );
+  const autoplayRef = useRef(autoplayPlugin);
+
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 6000, stopOnInteraction: false }),
+    autoplayRef.current,
   ]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(!prefersReducedMotion);
+
+  // Respect prefers-reduced-motion
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      autoplayRef.current.stop();
+      setIsPlaying(false);
+    }
+  }, [prefersReducedMotion]);
+
+  const toggleAutoplay = useCallback(() => {
+    if (isPlaying) {
+      autoplayRef.current.stop();
+      setIsPlaying(false);
+    } else {
+      autoplayRef.current.play();
+      setIsPlaying(true);
+    }
+  }, [isPlaying]);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -92,11 +132,17 @@ export function HeroCarousel({ slides = defaultSlides }: HeroCarouselProps) {
   }, [emblaApi]);
 
   return (
-    <section className="relative -mt-20">
+    <section className="relative -mt-20" aria-roledescription="carousel" aria-label="Hero slides">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {slides.map((slide, index) => (
-            <div key={index} className="flex-[0_0_100%] min-w-0 relative">
+            <div
+              key={index}
+              className="flex-[0_0_100%] min-w-0 relative"
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`Slide ${index + 1} of ${slides.length}`}
+            >
               {/* Background Image */}
               <div className="relative h-[600px] md:h-[700px] lg:h-[800px]">
                 <div className="absolute inset-0 bg-navy">
@@ -165,8 +211,8 @@ export function HeroCarousel({ slides = defaultSlides }: HeroCarouselProps) {
         <ChevronRight className="h-6 w-6" />
       </button>
 
-      {/* Dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2">
+      {/* Dots and Pause/Play */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center space-x-2">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -178,6 +224,17 @@ export function HeroCarousel({ slides = defaultSlides }: HeroCarouselProps) {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
+        <button
+          onClick={toggleAutoplay}
+          className="ml-2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
+          aria-label={isPlaying ? "Pause carousel" : "Play carousel"}
+        >
+          {isPlaying ? (
+            <Pause className="h-4 w-4" />
+          ) : (
+            <Play className="h-4 w-4" />
+          )}
+        </button>
       </div>
     </section>
   );

@@ -17,6 +17,7 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CTASection } from "@/components/sections";
+import { generateBreadcrumbJsonLd } from "@/lib/utils";
 
 interface ServiceData {
   title: string;
@@ -392,8 +393,39 @@ export default async function ServiceDetailPage({
 
   const IconComponent = service.icon;
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://afjltd.co.uk";
+
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Home", url: "/" },
+    { name: "Services", url: "/services" },
+    { name: service.title, url: `/services/${slug}` },
+  ]);
+
+  const serviceJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: service.title,
+    provider: {
+      "@id": `${baseUrl}/#organization`,
+    },
+    areaServed: {
+      "@type": "Place",
+      name: "Birmingham, West Midlands",
+    },
+    description: service.description,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
+
       {/* Hero Section */}
       <section className="relative py-20 bg-navy">
         <div className="absolute inset-0 opacity-30">

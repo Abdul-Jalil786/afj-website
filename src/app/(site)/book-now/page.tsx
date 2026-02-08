@@ -3,11 +3,12 @@ import { Phone, Clock, Shield, CheckCircle } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookingForm } from "@/components/forms";
+import { generateBreadcrumbJsonLd } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Book Now",
   description:
-    "Book your transport with AFJ Limited. Request a quote for private hire, airport transfers, corporate transport, and more.",
+    "Book transport with AFJ Limited Birmingham. Private hire, airport transfers, corporate transport. Quick response within 2 hours.",
 };
 
 const benefits = [
@@ -28,9 +29,19 @@ const benefits = [
   },
 ];
 
+const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+  { name: "Home", url: "/" },
+  { name: "Book Now", url: "/book-now" },
+]);
+
 export default function BookNowPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
       {/* Hero Section */}
       <section className="py-16 bg-navy">
         <Container>

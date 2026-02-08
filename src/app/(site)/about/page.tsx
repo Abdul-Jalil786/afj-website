@@ -14,11 +14,12 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CTASection } from "@/components/sections";
+import { generateBreadcrumbJsonLd } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Learn about AFJ Limited - providing quality transportation services across the UK since 2006. Discover our mission, values, and commitment to excellence.",
+    "Learn about AFJ Limited, Birmingham's trusted SEND and patient transport provider since 2006. ISO 9001 certified, CQC registered, ROSPA Gold award winner.",
 };
 
 const values = [
@@ -68,9 +69,19 @@ const accreditations = [
   "Enhanced DBS Checked Staff",
 ];
 
+const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+  { name: "Home", url: "/" },
+  { name: "About Us", url: "/about" },
+]);
+
 export default function AboutPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
       {/* Hero Section */}
       <section className="relative py-20 bg-navy">
         <div className="absolute inset-0 opacity-20">
