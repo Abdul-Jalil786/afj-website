@@ -3,7 +3,7 @@ title: "BUSINESSES CHANGING LIVES THROUGH CSR"
 description: "Corporate Social Responsibility CSR is the moral compass guiding modern businesses. CSR is more than a trend; it’s a commitment to making a positive imp..."
 pubDate: 2024-03-12
 author: "AFJ Limited"
-image: "../assets/images/blog/businesses-csr.webp"
+image: "/images/blog/businesses-csr.webp"
 imageAlt: "BUSINESSES CHANGING LIVES THROUGH CSR"
 tags: ["Blog"]
 draft: false

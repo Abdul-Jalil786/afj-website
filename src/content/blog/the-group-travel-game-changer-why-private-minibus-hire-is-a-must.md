@@ -3,7 +3,7 @@ title: "The Group Travel Game-Changer: Why Private Minibus Hire is a Must"
 description: "Group travel, whether for a family vacation, a corporate retreat, a school trip, or a fun day out with friends, can be an exciting adventure. However, c..."
 pubDate: 2024-09-04
 author: "AFJ Limited"
-image: "../assets/images/blog/private-minibus-hire.webp"
+image: "/images/blog/private-minibus-hire.webp"
 imageAlt: "The Group Travel Game-Changer: Why Private Minibus Hire is a Must"
 tags: ["private hire vehicle", "private hire vehicle uk", "private minibus hire", "private minibus hire services", "private minibus hire uk", "Blog"]
 draft: false

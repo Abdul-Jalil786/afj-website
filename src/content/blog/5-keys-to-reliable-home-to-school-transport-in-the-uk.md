@@ -3,7 +3,7 @@ title: "5 Keys to Reliable Home-to-School Transport in the UK"
 description: "Ensuring safe and reliable home to school transport for students is a vital responsibility for local authorities, city councils and schools across the U..."
 pubDate: 2024-08-05
 author: "AFJ Limited"
-image: "../assets/images/blog/home-to-school-transport-keys.webp"
+image: "/images/blog/home-to-school-transport-keys.webp"
 imageAlt: "5 Keys to Reliable Home-to-School Transport in the UK"
 tags: ["home to school transport", "home to school transport in birmingham", "home to school transport in the uk", "Blog"]
 draft: false

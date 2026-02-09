@@ -3,7 +3,7 @@ title: "Swift Mobilisation: A Critical Factor in Ensuring Reliable Transport for
 description: "For local authorities and educational institutions responsible for providing transportation services to Special Educational Needs and Disabilities SEND ..."
 pubDate: 2024-10-31
 author: "AFJ Limited"
-image: "../assets/images/blog/swift-mobilisation.webp"
+image: "/images/blog/swift-mobilisation.webp"
 imageAlt: "Swift Mobilisation: A Critical Factor in Ensuring Reliable Transport for Students"
 tags: ["Blog"]
 draft: false

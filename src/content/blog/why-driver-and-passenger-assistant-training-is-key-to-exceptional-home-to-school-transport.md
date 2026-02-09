@@ -3,7 +3,7 @@ title: "Why Driver and Passenger Assistant Training is Key to Exceptional Home t
 description: "Home to School Transport HTST is more than just moving students from one place to another—it’s about ensuring a safe, reliable, and comfortable journey ..."
 pubDate: 2025-03-24
 author: "AFJ Limited"
-image: "../assets/images/blog/driver-pa-training.webp"
+image: "/images/blog/driver-pa-training.webp"
 imageAlt: "Why Driver and Passenger Assistant Training is Key to Exceptional Home to School Transport"
 tags: ["Blog"]
 draft: false

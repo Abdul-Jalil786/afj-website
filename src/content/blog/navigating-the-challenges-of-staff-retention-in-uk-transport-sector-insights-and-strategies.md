@@ -3,7 +3,7 @@ title: "Navigating the challenges of staff Retention in UK Transport Sector : In
 description: "Attracting and retaining skilled workers in the UK's transport sector is vital for ensuring consistent, high-quality service delivery, especially as the..."
 pubDate: 2024-11-14
 author: "AFJ Limited"
-image: "../assets/images/blog/staff-retention-transport.webp"
+image: "/images/blog/staff-retention-transport.webp"
 imageAlt: "Navigating the challenges of staff Retention in UK Transport Sector : Insights and Strategies"
 tags: ["Blog"]
 draft: false

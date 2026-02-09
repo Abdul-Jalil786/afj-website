@@ -3,7 +3,7 @@ title: "The Role of Technology in Making Transport Safer for Vulnerable People"
 description: "Transport safety is crucial, especially for people who are more at risk—like children, the elderly, people with disabilities, and those with fewer resou..."
 pubDate: 2024-11-27
 author: "AFJ Limited"
-image: "../assets/images/blog/technology-transport-safety.webp"
+image: "/images/blog/technology-transport-safety.webp"
 imageAlt: "The Role of Technology in Making Transport Safer for Vulnerable People"
 tags: ["Blog"]
 draft: false

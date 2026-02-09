@@ -10,12 +10,12 @@ interface Props {
 }
 
 const defaultBadges: Badge[] = [
-  { alt: 'CQC Good Rating', name: 'CQC Good' },
-  { alt: 'Birmingham City Council Accredited', name: 'Birmingham City Council' },
-  { alt: 'Manchester City Council Accredited', name: 'Manchester City Council' },
-  { alt: 'NHS Approved', name: 'NHS' },
-  { alt: 'DBS Checked', name: 'DBS Checked' },
-  { alt: 'QualSafe Approved', name: 'QualSafe' },
+  { src: '/images/accreditations/CQCGood.png', alt: 'CQC Good Rating', name: 'CQC Good' },
+  { src: '/images/accreditations/BCC.png', alt: 'Birmingham City Council Accredited', name: 'Birmingham City Council' },
+  { src: '/images/accreditations/MCC.png', alt: 'Manchester City Council Accredited', name: 'Manchester City Council' },
+  { src: '/images/accreditations/NWAS.jpg', alt: 'NHS Approved', name: 'NHS' },
+  { src: '/images/accreditations/SCC.png', alt: 'Sandwell Council Accredited', name: 'Sandwell Council' },
+  { src: '/images/accreditations/WCC-logo.webp', alt: 'Wolverhampton City Council Accredited', name: 'Wolverhampton Council' },
 ];
 
 const badges = Astro.props.badges || defaultBadges;

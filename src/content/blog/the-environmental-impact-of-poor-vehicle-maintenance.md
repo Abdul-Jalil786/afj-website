@@ -3,7 +3,7 @@ title: "The Environmental Impact of Poor Vehicle Maintenance"
 description: "As the UK intensifies efforts to achieve its ambitious net-zero emissions targets, every industry and individual has a role to play in reducing environm..."
 pubDate: 2025-01-13
 author: "AFJ Limited"
-image: "../assets/images/blog/environmental-vehicle-maintenance.webp"
+image: "/images/blog/environmental-vehicle-maintenance.webp"
 imageAlt: "The Environmental Impact of Poor Vehicle Maintenance"
 tags: ["Blog"]
 draft: false

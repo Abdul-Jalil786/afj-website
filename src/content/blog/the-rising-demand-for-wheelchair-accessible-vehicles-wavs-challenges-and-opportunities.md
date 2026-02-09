@@ -3,7 +3,7 @@ title: "The Rising Demand for Wheelchair Accessible Vehicles (WAVs): Challenges 
 description: "Wheelchair Accessible Vehicles WAVs play a critical role in enabling independence and mobility for individuals with disabilities. The global demand for ..."
 pubDate: 2024-12-05
 author: "AFJ Limited"
-image: "../assets/images/blog/wheelchair-accessible-vehicles.webp"
+image: "/images/blog/wheelchair-accessible-vehicles.webp"
 imageAlt: "The Rising Demand for Wheelchair Accessible Vehicles (WAVs): Challenges and Opportunities"
 tags: ["Blog"]
 draft: false

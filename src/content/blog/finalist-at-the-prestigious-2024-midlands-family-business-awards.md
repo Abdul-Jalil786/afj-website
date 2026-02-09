@@ -3,7 +3,7 @@ title: "Finalist at the Prestigious 2024 Midlands Family Business Awards"
 description: "Celebrating Our Success at the 2024 Midlands Family Business Awards"
 pubDate: 2024-10-09
 author: "AFJ Limited"
-image: "../assets/images/blog/midlands-business-awards.webp"
+image: "/images/blog/midlands-business-awards.webp"
 imageAlt: "Finalist at the Prestigious 2024 Midlands Family Business Awards"
 tags: ["News"]
 draft: false
