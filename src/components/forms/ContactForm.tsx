@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { trackFormSubmission } from "@/lib/analytics";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -70,9 +71,11 @@ export function ContactForm() {
       }
 
       setIsSuccess(true);
+      trackFormSubmission("contact_form", true);
       reset();
     } catch {
       setError("Something went wrong. Please try again or call us directly.");
+      trackFormSubmission("contact_form", false);
     } finally {
       setIsSubmitting(false);
     }

@@ -9,6 +9,7 @@ import { Container } from "@/components/ui/container";
 import { Navigation } from "./Navigation";
 import { MobileMenu } from "./MobileMenu";
 import { cn } from "@/lib/utils";
+import { trackPhoneClick, trackBookNowClick } from "@/lib/analytics";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -77,13 +78,14 @@ export function Header() {
               <a
                 href="tel:+441216891000"
                 className="hidden md:flex items-center text-white hover:text-green transition-colors"
+                onClick={trackPhoneClick}
               >
                 <Phone className="h-4 w-4 mr-2" />
                 <span className="text-sm">0121 689 1000</span>
               </a>
 
               {/* Book Now CTA */}
-              <Button asChild size="sm" className="hidden sm:inline-flex">
+              <Button asChild size="sm" className="hidden sm:inline-flex" onClick={trackBookNowClick}>
                 <Link href="/book-now">Book Now</Link>
               </Button>
 

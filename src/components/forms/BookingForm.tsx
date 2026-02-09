@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { trackFormSubmission } from "@/lib/analytics";
 
 const bookingSchema = z.object({
   // Step 1: Service Selection
@@ -106,6 +107,7 @@ export function BookingForm() {
   const handleNext = async () => {
     const isValid = await validateStep(currentStep);
     if (isValid) {
+      trackFormSubmission("booking_form", true, currentStep);
       setCurrentStep((prev) => Math.min(prev + 1, 4));
     }
   };
@@ -128,8 +130,10 @@ export function BookingForm() {
       if (!response.ok) throw new Error("Failed to submit booking");
 
       setIsSuccess(true);
+      trackFormSubmission("booking_form", true, 4);
     } catch {
       setError("Something went wrong. Please try again or call us directly.");
+      trackFormSubmission("booking_form", false, 4);
     } finally {
       setIsSubmitting(false);
     }
