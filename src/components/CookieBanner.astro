@@ -1,0 +1,108 @@
+---
+
+---
+
+<div
+  id="cookie-banner"
+  class="fixed bottom-0 left-0 right-0 z-50 hidden bg-white border-t border-gray-200 shadow-2xl"
+  role="dialog"
+  aria-label="Cookie consent"
+>
+  <div class="container-wide py-4">
+    <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
+      <div class="flex-1">
+        <p class="text-sm text-afj-text">
+          We use cookies to improve your experience on our website. Some are essential for the site to
+          function, while others help us understand how you use the site.
+          <a href="/privacy-policy" class="text-afj-sky-blue hover:text-afj-accent underline">
+            Learn more
+          </a>
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button
+          id="cookie-reject"
+          class="px-4 py-2 text-sm font-medium text-afj-secondary border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          Reject
+        </button>
+        <button
+          id="cookie-manage"
+          class="px-4 py-2 text-sm font-medium text-afj-secondary border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          Manage Preferences
+        </button>
+        <button
+          id="cookie-accept"
+          class="px-4 py-2 text-sm font-medium text-white bg-afj-accent rounded-lg hover:bg-afj-green transition-colors"
+        >
+          Accept All
+        </button>
+      </div>
+    </div>
+
+    <!-- Preferences Panel -->
+    <div id="cookie-preferences" class="hidden mt-4 pt-4 border-t border-gray-200">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked disabled class="rounded" />
+          <span class="text-afj-text">Essential (required)</span>
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" id="cookie-analytics" class="rounded" />
+          <span class="text-afj-text">Analytics</span>
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" id="cookie-marketing" class="rounded" />
+          <span class="text-afj-text">Marketing</span>
+        </label>
+      </div>
+      <button
+        id="cookie-save"
+        class="mt-3 px-4 py-2 text-sm font-medium text-white bg-afj-accent rounded-lg hover:bg-afj-green transition-colors"
+      >
+        Save Preferences
+      </button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var banner = document.getElementById('cookie-banner');
+    var prefsPanel = document.getElementById('cookie-preferences');
+    if (!banner) return;
+
+    var consent = localStorage.getItem('afj-cookie-consent');
+    if (!consent) {
+      banner.classList.remove('hidden');
+    }
+
+    function hideBanner() {
+      banner.classList.add('hidden');
+    }
+
+    function setConsent(value) {
+      localStorage.setItem('afj-cookie-consent', JSON.stringify(value));
+      hideBanner();
+    }
+
+    document.getElementById('cookie-accept').addEventListener('click', function () {
+      setConsent({ essential: true, analytics: true, marketing: true });
+    });
+
+    document.getElementById('cookie-reject').addEventListener('click', function () {
+      setConsent({ essential: true, analytics: false, marketing: false });
+    });
+
+    document.getElementById('cookie-manage').addEventListener('click', function () {
+      prefsPanel.classList.toggle('hidden');
+    });
+
+    document.getElementById('cookie-save').addEventListener('click', function () {
+      var analytics = document.getElementById('cookie-analytics').checked;
+      var marketing = document.getElementById('cookie-marketing').checked;
+      setConsent({ essential: true, analytics: analytics, marketing: marketing });
+    });
+  })();
+</script>

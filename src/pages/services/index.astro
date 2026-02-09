@@ -1,0 +1,102 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const services = [
+  {
+    title: 'Home to School Transport',
+    description: 'Over 700 students transported daily across Birmingham and Manchester. DBS-checked drivers, passenger assistants, and wheelchair-accessible minibuses.',
+    href: '/services/send-transport',
+  },
+  {
+    title: 'Non-Emergency Patient Transport',
+    description: 'CQC rated "Good". NHS trust contracts with trained Ambulance Care Assistants. Renal, discharge, bariatric, and long-distance services.',
+    href: '/services/patient-transport',
+  },
+  {
+    title: 'Fleet Maintenance',
+    description: 'In-house vehicle maintenance workshop with skilled technicians and state-of-the-art facilities. Minimising downtime, maximising vehicle lifespan.',
+    href: '/services/fleet-maintenance',
+  },
+  {
+    title: 'Vehicle Conversions',
+    description: 'Wheelchair-accessible, ambulance, and luxury conversions. VOSA certified. The only UK PTS provider that builds its own ambulances.',
+    href: '/services/vehicle-conversions',
+  },
+  {
+    title: 'Driver, ACA & PA Training',
+    description: 'QualSafe-approved training programmes including Driver CPC, Ambulance Care Assistant, and Passenger Assistant certification.',
+    href: '/services/driver-training',
+  },
+  {
+    title: 'Private Minibus Hire',
+    description: 'Modern fleet of 16-seater wheelchair-accessible minibuses for corporate events, school trips, days out, and group travel.',
+    href: '/services/private-hire',
+  },
+  {
+    title: 'Executive Minibus Hire',
+    description: 'Luxury minibus hire with driver for corporate travel, events, race days, and airport transfers. Premium amenities throughout.',
+    href: '/services/executive-minibus',
+  },
+  {
+    title: 'Airport Transfers',
+    description: 'Reliable airport transfer services to and from Birmingham Airport and other major UK airports. Professional drivers and comfortable vehicles.',
+    href: '/services/airport-transfers',
+  },
+];
+
+const breadcrumbs = [{ label: 'Services' }];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'AFJ Limited Transport Services',
+  numberOfItems: services.length,
+  itemListElement: services.map((service, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: service.title,
+    url: `https://www.afjltd.co.uk${service.href}`,
+  })),
+};
+---
+
+<PageLayout
+  title="Our Services"
+  description="AFJ Limited provides SEND school transport, patient transport, fleet maintenance, vehicle conversions, training, private hire, and airport transfers in Birmingham."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Our Services" subtitle="Comprehensive transport solutions tailored to your needs. From school transport to patient care, fleet maintenance to driver training." />
+
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="text-center mb-10">
+        <h2 class="text-afj-green mb-3">What We Offer</h2>
+        <p class="text-afj-secondary max-w-2xl mx-auto">
+          With over 18 years of experience, AFJ Limited delivers reliable, safe, and professional transport solutions across Birmingham, Manchester, and the wider UK.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {services.map((service) => (
+          <ServiceCard
+            title={service.title}
+            description={service.description}
+            href={service.href}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Need a Transport Solution?"
+    description="Get in touch today for a free, no-obligation quote. We tailor every service to your specific requirements."
+    variant="green"
+  />
+</PageLayout>

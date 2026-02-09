@@ -1,0 +1,188 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import BookingForm from '../../components/BookingForm.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const breadcrumbs = [
+  { label: 'Services', href: '/services' },
+  { label: 'Driver, ACA & PA Training' },
+];
+
+const courses = [
+  {
+    title: 'Driver CPC Training',
+    description: 'Comprehensive Certificate of Professional Competence training for professional drivers. Covering all modules required to maintain your CPC qualification.',
+    duration: 'Various durations available',
+  },
+  {
+    title: 'Ambulance Care Assistant (ACA)',
+    description: 'Specialist training for Ambulance Care Assistants covering patient handling, basic life support, infection control, and safe manual handling techniques.',
+    duration: 'Full certification programme',
+  },
+  {
+    title: 'Passenger Assistant (PA)',
+    description: 'Certification for passenger assistants working in SEND school transport. Covering safeguarding, behaviour management, first aid, and communication skills.',
+    duration: 'Full certification programme',
+  },
+  {
+    title: 'First Aid Training',
+    description: 'Accredited first aid courses suitable for all transport staff. From emergency first aid at work to paediatric first aid for school transport teams.',
+    duration: '1-3 days depending on level',
+  },
+  {
+    title: 'Safeguarding & DBS',
+    description: 'Safeguarding awareness training for staff working with children and vulnerable adults. Complemented by DBS checking services.',
+    duration: 'Half-day course',
+  },
+  {
+    title: 'Manual Handling',
+    description: 'Safe manual handling techniques for patient transport staff, covering wheelchair users, stretcher patients, and mobility-impaired individuals.',
+    duration: '1-day course',
+  },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Driver, ACA & PA Training Services',
+  provider: {
+    '@type': 'LocalBusiness',
+    name: 'AFJ Limited',
+    telephone: '0121 689 1000',
+  },
+  description: 'QualSafe-approved training programmes including Driver CPC, Ambulance Care Assistant, and Passenger Assistant certification in Birmingham.',
+  areaServed: ['Birmingham', 'West Midlands'],
+  serviceType: 'Professional Driver Training',
+};
+---
+
+<PageLayout
+  title="Driver, ACA & PA Training"
+  description="QualSafe-approved driver training in Birmingham. Driver CPC, Ambulance Care Assistant, and Passenger Assistant certification. In-house training facilities."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Driver, ACA & PA Training" subtitle="QualSafe-approved training programmes for transport professionals." />
+
+  <!-- Introduction -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-afj-green mb-4">Professional Training Services</h2>
+          <p class="text-afj-secondary mb-4 leading-relaxed">
+            AFJ Limited is your ultimate destination for professional and reliable training services for individuals and organisations. Our QualSafe-approved training centre delivers industry-recognised qualifications for drivers, Ambulance Care Assistants, and Passenger Assistants.
+          </p>
+          <p class="text-afj-secondary mb-6 leading-relaxed">
+            With in-house training facilities at our Birmingham headquarters, we provide hands-on, practical training delivered by experienced professionals. Whether you are looking to upskill your existing team or train new recruits, our courses are tailored to meet your specific needs.
+          </p>
+
+          <!-- QualSafe Badge -->
+          <div class="inline-flex items-center gap-3 bg-afj-accent/10 rounded-lg px-4 py-3 mb-6">
+            <div class="w-10 h-10 bg-afj-accent rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <div>
+              <p class="font-bold text-afj-accent text-sm">QualSafe Approved</p>
+              <p class="text-xs text-afj-secondary">Accredited training centre</p>
+            </div>
+          </div>
+
+          <a href="/contact" class="btn-primary">Enquire About Training</a>
+        </div>
+        <div class="bg-afj-light-white rounded-lg aspect-video flex items-center justify-center">
+          <div class="text-gray-500 text-sm text-center p-8">
+            <svg class="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Training classroom
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Courses -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide">
+      <h2 class="text-afj-green text-center mb-8">Our Training Courses</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {courses.map((course) => (
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <h3 class="text-afj-green font-bold text-lg mb-2">{course.title}</h3>
+            <p class="text-afj-secondary text-sm leading-relaxed mb-3">{course.description}</p>
+            <p class="text-xs text-afj-accent font-medium">{course.duration}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Train With Us -->
+  <section class="section-padding">
+    <div class="container-wide max-w-4xl">
+      <h2 class="text-afj-green text-center mb-8">Why Train With AFJ?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">QualSafe Accredited</h4>
+            <p class="text-afj-secondary text-sm">Industry-recognised qualifications from an accredited centre.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Experienced Trainers</h4>
+            <p class="text-afj-secondary text-sm">Learn from professionals with real-world transport industry experience.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">In-House Facilities</h4>
+            <p class="text-afj-secondary text-sm">Dedicated training rooms at our Birmingham headquarters.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Flexible Scheduling</h4>
+            <p class="text-afj-secondary text-sm">Courses arranged to suit your team's availability and business needs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Form -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-2xl">
+      <h2 class="text-afj-green text-center mb-2">Enquire About Training</h2>
+      <p class="text-afj-secondary text-center mb-8">Interested in our training courses? Get in touch and we will tailor a programme to your needs.</p>
+      <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <BookingForm />
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Invest in Professional Training"
+    description="Equip your team with the skills and qualifications they need. QualSafe-approved courses available now."
+    variant="navy"
+  />
+</PageLayout>

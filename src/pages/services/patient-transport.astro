@@ -1,0 +1,214 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import FAQ from '../../components/FAQ.astro';
+import BookingForm from '../../components/BookingForm.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const breadcrumbs = [
+  { label: 'Services', href: '/services' },
+  { label: 'Non-Emergency Patient Transport' },
+];
+
+const highlights = [
+  'Non-Emergency Patient Transport Service',
+  '"Good" CQC Rating',
+  'Specialised Services: Renal, Discharge, Bariatric, Ad-hoc',
+  'Highly Trained Ambulance Care Assistants',
+  'Diverse Fleet',
+  'Regional Coverage across North West and West Midlands',
+];
+
+const features = [
+  'Compassionate Patient Transport',
+  '"Good" CQC Rated Service',
+  'Specialised Care: Renal, Bariatric & Scoop Transportation',
+  'Highly Trained Care Team',
+  'Diverse & Comfortable Fleet',
+  'Serving North West & West Midlands',
+  'Same pricing year-round including bank holidays',
+  'In-house ambulance conversions',
+];
+
+const faqItems = [
+  {
+    question: 'What areas does AFJ Limited cover for Patient Transport?',
+    answer: 'We primarily serve the North West and West Midlands regions, including Birmingham and Greater Manchester. However, we also offer long-distance transport solutions for patients needing to travel further for specialised care.',
+  },
+  {
+    question: 'What types of patients do you transport?',
+    answer: 'We transport a wide range of patients with diverse medical needs. Our services cater to individuals requiring renal transport, bariatric transport, scoop stretcher transport, and those needing assistance with discharge or long-distance travel.',
+  },
+  {
+    question: 'How quickly can you respond to ad-hoc requests?',
+    answer: 'We understand the urgency of certain situations. Our ad-hoc NEPT service is designed to provide rapid response, ensuring patients receive timely transportation even for unplanned or urgent needs. Contact us anytime, 24/7, and we will work to arrange transport as quickly as possible.',
+  },
+  {
+    question: 'Are your vehicles and staff equipped to handle patients with specific needs?',
+    answer: 'Absolutely. Our fleet includes specialised vehicles, such as bariatric ambulances and wheelchair-accessible minibuses. Our highly trained Ambulance Care Assistants are experienced in handling patients with diverse needs, including those requiring mobility assistance or specialised medical attention.',
+  },
+  {
+    question: 'How do you ensure patient safety and comfort during transport?',
+    answer: 'Patient safety and comfort are our top priorities. We adhere to strict safety protocols, conduct regular vehicle inspections, and employ experienced drivers and care assistants. Our vehicles are equipped with comfortable seating to ensure a pleasant journey.',
+  },
+  {
+    question: 'What sets AFJ apart from other NEPT providers?',
+    answer: 'We are proud to hold a "Good" rating from the Care Quality Commission (CQC), reflecting our commitment to providing safe, effective, and compassionate care. We are the only UK PTS provider that builds its own ambulances in-house. Our same pricing year-round policy means no bank holiday or seasonal surcharges.',
+  },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Non-Emergency Patient Transport Service (NEPTS)',
+  provider: {
+    '@type': 'LocalBusiness',
+    name: 'AFJ Limited',
+    telephone: '0121 689 1000',
+  },
+  description: 'CQC rated "Good" non-emergency patient transport services including renal, discharge, bariatric, and long-distance transport across Birmingham and Manchester.',
+  areaServed: ['Birmingham', 'Manchester', 'West Midlands', 'North West England'],
+  serviceType: 'Non-Emergency Patient Transport',
+};
+---
+
+<PageLayout
+  title="Non-Emergency Patient Transport"
+  description="CQC rated Good non-emergency patient transport in Birmingham. Renal, discharge, bariatric, and long-distance services. Trained ACAs. Same pricing year-round."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Non-Emergency Patient Transport" subtitle="CQC rated 'Good'. Compassionate, reliable patient transport services across the West Midlands and North West." />
+
+  <!-- Introduction -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-afj-green mb-4">Non-Emergency Patient Transport Services</h2>
+          <p class="text-afj-secondary mb-4 leading-relaxed">
+            We understand that navigating healthcare can be stressful for patients. AFJ is committed to alleviating that stress with our top-tier Non-Emergency Patient Transport Services. With a "Good" CQC rating, we prioritise your patients' comfort and safety above all else.
+          </p>
+          <p class="text-afj-secondary mb-6 leading-relaxed">
+            Partner with AFJ for reliable, compassionate, and patient-centric non-emergency patient transport services. We are dedicated to supporting your healthcare facility and ensuring your patients receive the highest standard of care, every step of the way.
+          </p>
+
+          <!-- CQC Badge -->
+          <div class="inline-flex items-center gap-3 bg-green-50 border border-afj-cqc-green/30 rounded-lg px-4 py-3 mb-6">
+            <div class="w-10 h-10 bg-afj-cqc-green rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div>
+              <p class="font-bold text-afj-cqc-green text-sm">CQC Rating: Good</p>
+              <p class="text-xs text-afj-secondary">Care Quality Commission Registered</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <a href="/contact" class="btn-primary">Get a Quote</a>
+            <a href="tel:01216891000" class="btn-outline">Call 0121 689 1000</a>
+          </div>
+        </div>
+        <div>
+          <ul class="space-y-3">
+            {highlights.map((item) => (
+              <li class="flex items-start gap-3 bg-afj-light-white rounded-lg p-3">
+                <svg class="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 576 512">
+                  <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                </svg>
+                <span class="text-afj-text text-sm font-medium">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features -->
+  <section class="section-padding bg-afj-dark-blue text-white">
+    <div class="container-wide">
+      <h2 class="text-center mb-8">What We Offer</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {features.map((feature) => (
+          <div class="flex items-start gap-3 bg-white/5 rounded-lg p-4">
+            <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-white/90 text-sm">{feature}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Details -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-afj-green font-bold text-lg mb-2">Client Base</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">Our services cater to a wide range of healthcare providers, including NHS trusts, hospitals, clinics, and other healthcare organisations. We also work closely with individual hospitals on an ad-hoc basis to help with discharge pressure and bed management.</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-afj-green font-bold text-lg mb-2">Service Areas</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">We proudly serve patients across Birmingham, the West Midlands, the North West, and several more regions, ensuring convenient and accessible ambulance transport for patients in these areas.</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-afj-green font-bold text-lg mb-2">Specialised Services</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">We offer tailored support for patients with diverse needs, including those requiring mobility aids or specialised medical attention. Our services include renal, bariatric, scoop, and long-distance transportation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-4xl">
+      <h2 class="text-afj-green text-center mb-8">Why Choose AFJ for Patient Transport?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-afj-green mb-3 text-lg">Rapid and Reliable Response</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">We pride ourselves on our ability to deliver swift and dependable responses to your non-emergency patient transport needs. Whether it is urgent discharge transport or scheduled appointments, count on us for timely and efficient service delivery.</p>
+        </div>
+        <div>
+          <h3 class="text-afj-green mb-3 text-lg">Diverse Transport Solutions</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">Our NEPTS offerings encompass a wide array of transport services tailored to non-emergency situations. From routine patient transfers to specialised bariatric and long-distance transport, we cater to diverse patient needs with precision and care.</p>
+        </div>
+        <div>
+          <h3 class="text-afj-green mb-3 text-lg">Highly Rated CQC Provider</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">As a CQC registered provider since 2009, AFJ Limited consistently upholds high standards of quality and safety in our NEPTS. Our ratings reflect our unwavering commitment to providing top-notch patient care.</p>
+        </div>
+        <div>
+          <h3 class="text-afj-green mb-3 text-lg">Seasoned NEPTS Professionals</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">With over 14 years of dedicated service in Non-Emergency Patient Transport, our experienced team brings invaluable expertise to every transport assignment. Trust us to handle your patients' needs with professionalism and proficiency.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <FAQ items={faqItems} heading="Non-Emergency Patient Transport - Frequently Asked Questions" />
+
+  <!-- Booking Form -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-2xl">
+      <h2 class="text-afj-green text-center mb-2">Book Patient Transport</h2>
+      <p class="text-afj-secondary text-center mb-8">Submit your booking request and our team will respond promptly.</p>
+      <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <BookingForm />
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Reliable Patient Transport You Can Trust"
+    description="CQC rated 'Good'. Contact us today to discuss your patient transport requirements."
+    variant="green"
+  />
+</PageLayout>

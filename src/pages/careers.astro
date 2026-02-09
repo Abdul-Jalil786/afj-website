@@ -1,0 +1,157 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/Hero.astro';
+import CTABanner from '../components/CTABanner.astro';
+import SocialSidebar from '../components/SocialSidebar.astro';
+
+const breadcrumbs = [{ label: 'Careers' }];
+
+const benefits = [
+  {
+    title: 'Competitive Pay',
+    description: 'Fair wages with regular reviews and performance-based progression opportunities.',
+  },
+  {
+    title: 'In-House Training',
+    description: 'QualSafe-approved training centre providing Driver CPC, ACA, PA, and first aid qualifications at no cost to you.',
+  },
+  {
+    title: 'Job Security',
+    description: 'Long-term council and NHS contracts providing stable, year-round employment.',
+  },
+  {
+    title: 'Supportive Team',
+    description: 'A friendly, diverse workforce where everyone is valued and supported.',
+  },
+  {
+    title: 'Career Progression',
+    description: 'Opportunities to develop from driver to trainer, coordinator, or management roles.',
+  },
+  {
+    title: 'Making a Difference',
+    description: 'Transport children with special needs and patients who depend on our services every day.',
+  },
+];
+
+const roles = [
+  {
+    title: 'Minibus Driver',
+    type: 'Full Time',
+    description: 'Transport students safely to and from school. Must hold a valid D1 driving licence and be willing to undergo an enhanced DBS check.',
+  },
+  {
+    title: 'Passenger Assistant',
+    type: 'Full Time / Part Time',
+    description: 'Support students during their journey to school. Training provided. Must be caring, patient, and willing to undergo an enhanced DBS check.',
+  },
+  {
+    title: 'Ambulance Care Assistant',
+    type: 'Full Time',
+    description: 'Provide compassionate care during patient transport. Full ACA training provided. Must be physically fit and hold a valid driving licence.',
+  },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Careers at AFJ Limited',
+  description: 'Join AFJ Limited in Birmingham. We are hiring drivers, passenger assistants, and ambulance care assistants. In-house training, competitive pay, and career progression.',
+};
+---
+
+<PageLayout
+  title="Careers"
+  description="Join AFJ Limited in Birmingham. Hiring drivers, passenger assistants, and ACAs. In-house training, competitive pay, DBS-checked roles. Apply today."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Careers at AFJ Limited" subtitle="Join our team and make a real difference to people's lives every day." />
+
+  <!-- Why Work Here -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="text-center mb-10">
+        <h2 class="text-afj-green mb-3">Why Work at AFJ?</h2>
+        <p class="text-afj-secondary max-w-2xl mx-auto">
+          At AFJ Limited, you are not just an employee — you are part of a team that helps children get to school safely and ensures patients reach their medical appointments with dignity and care.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {benefits.map((benefit) => (
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <h3 class="text-afj-green font-bold text-lg mb-2">{benefit.title}</h3>
+            <p class="text-afj-secondary text-sm leading-relaxed">{benefit.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Current Vacancies -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-4xl">
+      <h2 class="text-afj-green text-center mb-8">Current Vacancies</h2>
+      <div class="space-y-4">
+        {roles.map((role) => (
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+              <h3 class="text-afj-green font-bold text-lg">{role.title}</h3>
+              <span class="inline-block bg-afj-accent/10 text-afj-accent text-xs font-medium px-3 py-1 rounded-full mt-1 sm:mt-0">
+                {role.type}
+              </span>
+            </div>
+            <p class="text-afj-secondary text-sm leading-relaxed mb-4">{role.description}</p>
+            <a href="/contact" class="text-afj-accent font-semibold text-sm hover:text-afj-green transition-colors">
+              Apply Now &rarr;
+            </a>
+          </div>
+        ))}
+      </div>
+      <p class="text-afj-secondary text-sm text-center mt-6">
+        Do not see a role that suits you? We are always interested in hearing from talented individuals.
+        Send your CV to <a href="mailto:info@afjltd.co.uk" class="text-afj-sky-blue hover:text-afj-accent">info@afjltd.co.uk</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- What We Look For -->
+  <section class="section-padding">
+    <div class="container-wide max-w-4xl">
+      <h2 class="text-afj-green text-center mb-8">What We Look For</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">A caring and compassionate attitude towards children and vulnerable adults</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">Reliability and punctuality — our passengers depend on us</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">Willingness to undergo enhanced DBS checks</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">Good communication skills and a team-oriented approach</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Ready to Join Our Team?"
+    description="Apply today and start a rewarding career helping people in your community."
+    variant="green"
+  />
+</PageLayout>

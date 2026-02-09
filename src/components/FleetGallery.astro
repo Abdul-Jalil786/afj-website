@@ -1,0 +1,89 @@
+---
+interface GalleryImage {
+  src: string;
+  alt: string;
+}
+
+interface Props {
+  images: GalleryImage[];
+  heading?: string;
+}
+
+const { images, heading } = Astro.props;
+---
+
+<section class="section-padding">
+  <div class="container-wide">
+    {heading && (
+      <h2 class="text-afj-green text-center mb-8">{heading}</h2>
+    )}
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {images.map((image, index) => (
+        <button
+          class="gallery-item relative aspect-square overflow-hidden rounded-lg group cursor-pointer bg-afj-light-white"
+          data-index={index}
+          data-src={image.src}
+          data-alt={image.alt}
+        >
+          <img
+            src={image.src}
+            alt={image.alt}
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+            <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+            </svg>
+          </div>
+        </button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="gallery-lightbox" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center">
+  <button id="lightbox-close" class="absolute top-4 right-4 text-white w-10 h-10 flex items-center justify-center hover:text-afj-accent" aria-label="Close lightbox">
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+  <img id="lightbox-image" src="" alt="" class="max-w-[90vw] max-h-[90vh] object-contain" />
+</div>
+
+<script is:inline>
+  (function () {
+    var lightbox = document.getElementById('gallery-lightbox');
+    var lightboxImage = document.getElementById('lightbox-image');
+    var closeBtn = document.getElementById('lightbox-close');
+    if (!lightbox || !lightboxImage || !closeBtn) return;
+
+    document.querySelectorAll('.gallery-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var src = this.getAttribute('data-src');
+        var alt = this.getAttribute('data-alt');
+        lightboxImage.src = src;
+        lightboxImage.alt = alt;
+        lightbox.classList.remove('hidden');
+        lightbox.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    function closeLightbox() {
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    closeBtn.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  })();
+</script>

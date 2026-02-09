@@ -1,0 +1,214 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import FAQ from '../../components/FAQ.astro';
+import BookingForm from '../../components/BookingForm.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import StatsCounter from '../../components/StatsCounter.astro';
+import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const breadcrumbs = [
+  { label: 'Services', href: '/services' },
+  { label: 'Home to School Transport' },
+];
+
+const stats = [
+  { value: 700, suffix: '+', label: 'Students Daily' },
+  { value: 18, suffix: '+', label: 'Years Experience' },
+  { value: 100, suffix: '%', label: 'DBS Checked Staff' },
+  { value: 50, suffix: '+', label: 'Vehicles in Fleet' },
+];
+
+const features = [
+  'Wheelchair-accessible 16-seater minibuses',
+  'DBS-checked drivers and passenger assistants',
+  'Council accredited across West Midlands and North West',
+  'Eco-friendly fleet with low-carbon emission vehicles',
+  'Live tracking via in-house ERP system',
+  'Technology integration for efficient route management',
+  'Safe transportation with three-point seat belts',
+  'Trusted since 2006',
+];
+
+const faqItems = [
+  {
+    question: 'What areas does AFJ Limited cover for Home to School Transport?',
+    answer: 'We currently provide Home to School Transport services in the West Midlands and the North West region, including Birmingham, Manchester, Sandwell, and Coventry.',
+  },
+  {
+    question: 'Does AFJ cater to both council-contracted and independent schools?',
+    answer: 'Yes, we offer tailored transportation solutions for both council-contracted and independent schools.',
+  },
+  {
+    question: 'How does AFJ ensure the safety of students during transport?',
+    answer: 'Student safety is our top priority. We implement rigorous safety protocols, conduct regular vehicle inspections, and employ trained professionals, including drivers and passenger assistants. Our vehicles are equipped with safety features like three-point seat belts.',
+  },
+  {
+    question: 'Can AFJ accommodate students with special needs or disabilities?',
+    answer: 'Absolutely. Our fleet includes wheelchair-accessible vehicles, and our staff receives specialised training to support students with diverse learning needs, including those requiring mobility aids or with conditions like Autism, ADHD, or visual/speech impairments.',
+  },
+  {
+    question: 'How does AFJ ensure punctuality and reliability?',
+    answer: 'We understand the importance of timely arrivals and departures. Our commitment to punctuality and reliability ensures minimal disruption to the school day. We also utilise an Enterprise Resource Planning (ERP) system for efficient route tracking and real-time updates.',
+  },
+  {
+    question: 'What measures does AFJ take to be environmentally responsible?',
+    answer: 'We are committed to sustainability. Our fleet consists of low-carbon emission vehicles, and we continuously strive to implement eco-friendly practices in our operations.',
+  },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Home to School Transport (SEND)',
+  provider: {
+    '@type': 'LocalBusiness',
+    name: 'AFJ Limited',
+    telephone: '0121 689 1000',
+  },
+  description: 'Safe and reliable SEND school transport services in Birmingham and Manchester. Over 700 students transported daily with DBS-checked staff and wheelchair-accessible vehicles.',
+  areaServed: ['Birmingham', 'Manchester', 'West Midlands', 'North West England'],
+  serviceType: 'SEND School Transport',
+};
+---
+
+<PageLayout
+  title="Home to School Transport"
+  description="SEND school transport in Birmingham and Manchester. 700+ students daily, DBS-checked staff, wheelchair-accessible minibuses. Council accredited since 2006."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Home to School Transport" subtitle="Safe, reliable SEND transport for over 700 students daily across Birmingham and Manchester." />
+
+  <!-- Introduction -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-afj-green mb-4">Home to School Transport Services</h2>
+          <p class="text-afj-secondary mb-4 leading-relaxed">
+            At AFJ, we prioritise the safety and well-being of every student we transport. Our fleet of wheelchair-accessible 16-seater minibuses are meticulously maintained and equipped with the latest safety features. Our drivers and passenger assistants are not only highly trained and experienced but also accredited by major councils across the West Midlands and North West, ensuring they meet the highest standards of professionalism and care.
+          </p>
+          <p class="text-afj-secondary mb-6 leading-relaxed">
+            We understand that trust is paramount when it comes to transporting children. That is why we have built a reputation for reliability and excellence since 2006. Our commitment to safe transportation remains unwavering, giving you peace of mind knowing your students are in good hands.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href="/contact" class="btn-primary">Get a Quote</a>
+            <a href="/documents/afj-brochure.pdf" download class="btn-outline">
+              Download Brochure
+            </a>
+          </div>
+        </div>
+        <div class="bg-afj-light-white rounded-lg aspect-video flex items-center justify-center">
+          <div class="text-gray-500 text-sm text-center p-8">
+            <svg class="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            AFJ minibus for school transport
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <StatsCounter stats={stats} />
+
+  <!-- Key Features -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide">
+      <h2 class="text-afj-green text-center mb-8">Why Choose AFJ for SEND Transport?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        {features.map((feature) => (
+          <div class="flex items-start gap-3 bg-white rounded-lg p-4 shadow-sm">
+            <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-afj-text text-sm">{feature}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Details -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+          <div class="w-14 h-14 bg-afj-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <h3 class="text-afj-green font-bold text-lg mb-2">Client Base</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">Our services cater to both council-contracted schools and independent schools, offering tailored solutions to meet their specific requirements.</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+          <div class="w-14 h-14 bg-afj-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
+          </div>
+          <h3 class="text-afj-green font-bold text-lg mb-2">Transport Options</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">Choose from our 16-seater minibuses with or without wheelchair access to ensure students never face any accessibility issues.</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+          <div class="w-14 h-14 bg-afj-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+          <h3 class="text-afj-green font-bold text-lg mb-2">Specialised Support</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed">We offer tailored interaction techniques and targeted support for students with diverse learning needs, including those requiring mobility aids.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Additional Info Sections -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-4xl">
+      <div class="space-y-10">
+        <div>
+          <h3 class="text-afj-green mb-3">Empathetic and Qualified Staff</h3>
+          <p class="text-afj-secondary leading-relaxed">Our in-house training centre, QualSafe accredited, ensures our team of drivers and passenger assistants are not only qualified but also empathetic, specialising in serving students with special needs, providing a caring and supportive environment in Home to School Transport.</p>
+        </div>
+        <div>
+          <h3 class="text-afj-green mb-3">Transparent Communication for Peace of Mind</h3>
+          <p class="text-afj-secondary leading-relaxed">Communication is key to our service. Through open channels, our robust ERP system keeps councils, schools, and parents continually updated on routes, schedules, and any service changes, offering peace of mind to all stakeholders.</p>
+        </div>
+        <div>
+          <h3 class="text-afj-green mb-3">Commitment to Sustainability</h3>
+          <p class="text-afj-secondary leading-relaxed">Embracing eco-friendly practices, we contribute to environmental responsibility in our Home to School Transport. Our low-emission vehicles prioritise sustainability, aligning our operations with a commitment to a greener future.</p>
+        </div>
+        <div>
+          <h3 class="text-afj-green mb-3">Innovation for Efficiency</h3>
+          <p class="text-afj-secondary leading-relaxed">Our commitment to innovation includes leveraging modern technology in Home to School Transport. From efficient route tracking to vehicle management, our in-house ERP system aids us in providing a seamless and tech-driven transport experience.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <FAQ items={faqItems} heading="Home to School Transport - Frequently Asked Questions" />
+
+  <!-- Booking Form -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-2xl">
+      <h2 class="text-afj-green text-center mb-2">Book Home to School Transport</h2>
+      <p class="text-afj-secondary text-center mb-8">Fill in the form below and our team will get back to you within 24 hours.</p>
+      <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <BookingForm />
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Safe Transport for Every Student"
+    description="Contact us today to discuss your school transport requirements. We serve councils and independent schools across Birmingham and Manchester."
+    variant="navy"
+  />
+</PageLayout>

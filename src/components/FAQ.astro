@@ -1,0 +1,78 @@
+---
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  items: FAQItem[];
+  heading?: string;
+}
+
+const { items, heading } = Astro.props;
+---
+
+<section class="section-padding">
+  <div class="container-wide max-w-3xl">
+    {heading && (
+      <h2 class="text-afj-green text-center mb-8">{heading}</h2>
+    )}
+
+    <div class="space-y-3" role="list">
+      {items.map((item, index) => (
+        <div class="faq-item border border-gray-200 rounded-lg overflow-hidden" role="listitem">
+          <button
+            class="faq-toggle w-full flex items-center justify-between px-5 py-4 text-left font-semibold text-afj-text hover:bg-afj-light-white transition-colors"
+            aria-expanded="false"
+            aria-controls={`faq-answer-${index}`}
+          >
+            <span>{item.question}</span>
+            <svg class="faq-icon w-5 h-5 text-afj-accent flex-shrink-0 ml-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12M6 12h12" />
+            </svg>
+          </button>
+          <div
+            id={`faq-answer-${index}`}
+            class="faq-answer hidden px-5 pb-4"
+            role="region"
+          >
+            <p class="text-afj-secondary text-sm leading-relaxed">{item.answer}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var toggles = document.querySelectorAll('.faq-toggle');
+    toggles.forEach(function (toggle) {
+      toggle.addEventListener('click', function () {
+        var parent = this.closest('.faq-item');
+        var answer = parent.querySelector('.faq-answer');
+        var icon = parent.querySelector('.faq-icon');
+        var isOpen = this.getAttribute('aria-expanded') === 'true';
+
+        // Close all others
+        document.querySelectorAll('.faq-item').forEach(function (item) {
+          if (item !== parent) {
+            item.querySelector('.faq-answer').classList.add('hidden');
+            item.querySelector('.faq-toggle').setAttribute('aria-expanded', 'false');
+            item.querySelector('.faq-icon').style.transform = '';
+          }
+        });
+
+        if (isOpen) {
+          answer.classList.add('hidden');
+          this.setAttribute('aria-expanded', 'false');
+          icon.style.transform = '';
+        } else {
+          answer.classList.remove('hidden');
+          this.setAttribute('aria-expanded', 'true');
+          icon.style.transform = 'rotate(45deg)';
+        }
+      });
+    });
+  })();
+</script>

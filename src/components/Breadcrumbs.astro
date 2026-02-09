@@ -1,0 +1,50 @@
+---
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+const allItems = [{ label: 'Home', href: '/' }, ...items];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: allItems.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    ...(item.href ? { item: `https://www.afjltd.co.uk${item.href}` } : {}),
+  })),
+};
+---
+
+<nav aria-label="Breadcrumb" class="bg-afj-light-white py-3">
+  <div class="container-wide">
+    <ol class="flex flex-wrap items-center gap-2 text-sm text-afj-secondary">
+      {allItems.map((item, index) => (
+        <li class="flex items-center gap-2">
+          {index > 0 && (
+            <span class="text-afj-secondary/50" aria-hidden="true">&rsaquo;</span>
+          )}
+          {item.href && index < allItems.length - 1 ? (
+            <a href={item.href} class="hover:text-afj-accent transition-colors">
+              {item.label}
+            </a>
+          ) : (
+            <span class="text-afj-text font-medium" aria-current="page">
+              {item.label}
+            </span>
+          )}
+        </li>
+      ))}
+    </ol>
+  </div>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLD)} />

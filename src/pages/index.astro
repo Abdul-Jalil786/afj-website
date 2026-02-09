@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Hero from '../components/Hero.astro';
+import CoreValues from '../components/CoreValues.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import StatsCounter from '../components/StatsCounter.astro';
+import TestimonialSlider from '../components/TestimonialSlider.astro';
+import AccreditationBadges from '../components/AccreditationBadges.astro';
+import CTABanner from '../components/CTABanner.astro';
+import SocialSidebar from '../components/SocialSidebar.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+
+const services = [
+  {
+    title: 'Home to School Transport',
+    description: 'Over 700 students transported daily across Birmingham and Manchester. DBS-checked drivers and wheelchair-accessible minibuses.',
+    href: '/services/send-transport',
+  },
+  {
+    title: 'Non-Emergency Patient Transport',
+    description: 'CQC rated "Good". NHS trust contracts with trained Ambulance Care Assistants for all patient needs.',
+    href: '/services/patient-transport',
+  },
+  {
+    title: 'Fleet Maintenance',
+    description: 'In-house workshop with skilled technicians and state-of-the-art facilities. Minimising downtime, maximising vehicle lifespan.',
+    href: '/services/fleet-maintenance',
+  },
+  {
+    title: 'Vehicle Conversions',
+    description: 'Wheelchair-accessible and ambulance conversions. VOSA certified. The only UK PTS provider that builds its own ambulances.',
+    href: '/services/vehicle-conversions',
+  },
+  {
+    title: 'Driver, ACA & PA Training',
+    description: 'QualSafe-approved training programmes. Driver CPC, Ambulance Care Assistant, and Passenger Assistant certification.',
+    href: '/services/driver-training',
+  },
+  {
+    title: 'Private Minibus Hire',
+    description: 'Modern fleet of 16-seater wheelchair-accessible minibuses for corporate events, school trips, and group travel.',
+    href: '/services/private-hire',
+  },
+  {
+    title: 'Executive Minibus Hire',
+    description: 'Luxury minibus hire with driver for corporate travel, events, race days, and airport transfers.',
+    href: '/services/executive-minibus',
+  },
+  {
+    title: 'Airport Transfers',
+    description: 'Reliable airport transfer services to and from Birmingham Airport and other major UK airports.',
+    href: '/services/airport-transfers',
+  },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'AFJ Limited',
+  description: 'Your Partner in Safe, Reliable Transport Solutions. Specialist SEND school transport, non-emergency patient transport, fleet maintenance, vehicle conversions, and training services in Birmingham and Manchester.',
+  url: 'https://www.afjltd.co.uk',
+  telephone: '0121 689 1000',
+  email: 'info@afjltd.co.uk',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'AFJ Business Center, 2-18 Forster Street, Nechells',
+    addressLocality: 'Birmingham',
+    addressRegion: 'West Midlands',
+    postalCode: 'B7 4JD',
+    addressCountry: 'GB',
+  },
+  areaServed: ['Birmingham', 'Manchester', 'West Midlands', 'North West England', 'Sandwell', 'Coventry'],
+  foundingDate: '2006',
+  sameAs: [
+    'https://www.facebook.com/afjlimited',
+    'https://www.linkedin.com/company/afj-limited',
+  ],
+};
+---
+
+<BaseLayout
+  title="AFJ Limited | Safe, Reliable Transport Solutions in Birmingham"
+  description="AFJ Limited provides specialist SEND school transport, non-emergency patient transport, fleet maintenance, vehicle conversions, and training services across Birmingham and Manchester. Established 2006. CQC rated Good."
+>
+  <SEOHead
+    title="AFJ Limited | Safe, Reliable Transport Solutions in Birmingham"
+    description="AFJ Limited provides specialist SEND school transport, non-emergency patient transport, fleet maintenance, vehicle conversions, and training services across Birmingham and Manchester. Established 2006. CQC rated Good."
+    jsonLD={jsonLD}
+  />
+
+  <Header />
+  <SocialSidebar />
+
+  <main id="main-content">
+    <!-- Hero Slider -->
+    <Hero />
+
+    <!-- Core Values -->
+    <CoreValues />
+
+    <!-- Services Section -->
+    <section class="section-padding">
+      <div class="container-wide">
+        <div class="text-center mb-10">
+          <h2 class="text-afj-green mb-3">Our Services</h2>
+          <p class="text-afj-secondary max-w-2xl mx-auto">
+            From school transport to patient care, fleet maintenance to driver training — we provide
+            comprehensive transport solutions tailored to your needs.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((service) => (
+            <ServiceCard
+              title={service.title}
+              description={service.description}
+              href={service.href}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <StatsCounter />
+
+    <!-- Testimonials -->
+    <TestimonialSlider />
+
+    <!-- Accreditations -->
+    <AccreditationBadges />
+
+    <!-- CTA -->
+    <CTABanner
+      heading="Ready to Book Your Transport?"
+      description="Whether you need school transport, patient services, or private hire — get in touch today for a free quote."
+      variant="green"
+    />
+  </main>
+
+  <Footer />
+  <CookieBanner />
+</BaseLayout>

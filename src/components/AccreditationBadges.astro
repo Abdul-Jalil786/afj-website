@@ -1,0 +1,44 @@
+---
+interface Badge {
+  src?: string;
+  alt: string;
+  name: string;
+}
+
+interface Props {
+  badges?: Badge[];
+}
+
+const defaultBadges: Badge[] = [
+  { alt: 'CQC Good Rating', name: 'CQC Good' },
+  { alt: 'Birmingham City Council Accredited', name: 'Birmingham City Council' },
+  { alt: 'Manchester City Council Accredited', name: 'Manchester City Council' },
+  { alt: 'NHS Approved', name: 'NHS' },
+  { alt: 'DBS Checked', name: 'DBS Checked' },
+  { alt: 'QualSafe Approved', name: 'QualSafe' },
+];
+
+const badges = Astro.props.badges || defaultBadges;
+---
+
+<section class="section-padding bg-afj-light-white">
+  <div class="container-wide">
+    <h2 class="text-afj-green text-center mb-8">Our Accreditations</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      {badges.map((badge) => (
+        <div class="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+          {badge.src ? (
+            <img src={badge.src} alt={badge.alt} class="h-16 w-auto object-contain mb-2" loading="lazy" />
+          ) : (
+            <div class="w-16 h-16 bg-afj-accent/10 rounded-full flex items-center justify-center mb-2">
+              <svg class="w-8 h-8 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+          )}
+          <span class="text-xs font-medium text-afj-secondary">{badge.name}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

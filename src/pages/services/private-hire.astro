@@ -1,0 +1,156 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import BookingForm from '../../components/BookingForm.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import TestimonialSlider from '../../components/TestimonialSlider.astro';
+import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const breadcrumbs = [
+  { label: 'Services', href: '/services' },
+  { label: 'Private Minibus Hire' },
+];
+
+const uses = [
+  { title: 'Corporate Events', description: 'Team outings, conferences, and corporate functions with reliable group transport.' },
+  { title: 'School Trips', description: 'Safe and comfortable transport for school excursions and educational visits.' },
+  { title: 'Days Out', description: 'Group trips to theme parks, sporting events, festivals, and more.' },
+  { title: 'Group Travel', description: 'Family gatherings, weddings, celebrations, and any group occasion.' },
+  { title: 'Stag & Hen Parties', description: 'Reliable transport for your celebrations. Our drivers ensure a safe journey.' },
+  { title: 'Race Days', description: 'Travel in comfort to Cheltenham, Royal Ascot, Warwick, and other race meetings.' },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Private Minibus Hire',
+  provider: {
+    '@type': 'LocalBusiness',
+    name: 'AFJ Limited',
+    telephone: '0121 689 1000',
+  },
+  description: 'Private minibus hire with driver in Birmingham. Modern fleet of 16-seater wheelchair-accessible minibuses for corporate events, school trips, days out, and group travel.',
+  areaServed: ['Birmingham', 'West Midlands', 'United Kingdom'],
+  serviceType: 'Private Minibus Hire',
+};
+---
+
+<PageLayout
+  title="Private Minibus Hire"
+  description="Private minibus hire with driver in Birmingham. Modern 16-seater wheelchair-accessible minibuses for corporate events, school trips, days out, and group travel."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Private Minibus Hire" subtitle="Modern fleet of 16-seater minibuses with experienced drivers for any occasion." />
+
+  <!-- Introduction -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-afj-green mb-4">Private Minibus Hire Services</h2>
+          <p class="text-afj-secondary mb-4 leading-relaxed">
+            AFJ Limited is the leading provider of minibus hire with driver services in the UK. Our fleet of well-maintained, modern 16-seater minibuses are perfect for any occasion, from corporate events and school trips to days out and group travel.
+          </p>
+          <p class="text-afj-secondary mb-6 leading-relaxed">
+            Every journey comes with an experienced, professional driver who knows the roads and prioritises your comfort and safety. Our wheelchair-accessible vehicles ensure everyone in your group can travel together.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href="/contact" class="btn-primary">Get a Quote</a>
+            <a href="tel:01216891000" class="btn-outline">Call 0121 689 1000</a>
+          </div>
+        </div>
+        <div class="bg-afj-light-white rounded-lg aspect-video flex items-center justify-center">
+          <div class="text-gray-500 text-sm text-center p-8">
+            <svg class="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Mercedes minibus for private hire
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Uses -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide">
+      <h2 class="text-afj-green text-center mb-8">Perfect For Any Occasion</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {uses.map((use) => (
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <h3 class="text-afj-green font-bold text-lg mb-2">{use.title}</h3>
+            <p class="text-afj-secondary text-sm leading-relaxed">{use.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Fleet Features -->
+  <section class="section-padding">
+    <div class="container-wide max-w-4xl">
+      <h2 class="text-afj-green text-center mb-8">Our Fleet</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">Modern 16-seater minibuses</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">Wheelchair-accessible options available</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">Experienced, professional drivers</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">Regularly serviced and maintained in-house</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">Air conditioning and comfortable seating</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <p class="text-afj-secondary text-sm">Flexible booking and competitive pricing</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <TestimonialSlider />
+
+  <!-- Booking Form -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-2xl">
+      <h2 class="text-afj-green text-center mb-2">Book Your Minibus</h2>
+      <p class="text-afj-secondary text-center mb-8">Tell us about your trip and we will provide a competitive quote.</p>
+      <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <BookingForm />
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Ready to Book Your Minibus?"
+    description="Contact us today for competitive private minibus hire rates. No hidden costs, no surprises."
+    variant="green"
+  />
+</PageLayout>

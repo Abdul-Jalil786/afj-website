@@ -1,0 +1,82 @@
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Home to School Transport",
+    "name": "SEND Home to School Transport",
+    "description": "Over 700 students transported daily. DBS-checked drivers and passenger assistants provide safe, reliable SEND school transport across Birmingham and Manchester. Council-accredited with wheelchair-accessible 16-seater minibuses.",
+    "provider": { "@id": "https://www.afjltd.co.uk/#organization" },
+    "areaServed": ["Birmingham", "Manchester", "West Midlands", "North West"],
+    "url": "https://www.afjltd.co.uk/services/send-transport/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Non-Emergency Patient Transport",
+    "name": "Non-Emergency Patient Transport Service (NEPTS)",
+    "description": "CQC rated 'Good' patient transport for renal dialysis, discharge, bariatric, and long-distance patients. Trained Ambulance Care Assistants. Same pricing year-round including bank holidays.",
+    "provider": { "@id": "https://www.afjltd.co.uk/#organization" },
+    "areaServed": ["West Midlands", "North West"],
+    "url": "https://www.afjltd.co.uk/services/patient-transport/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Fleet Maintenance",
+    "name": "Fleet Maintenance & Vehicle Repair",
+    "description": "In-house vehicle maintenance workshop in Birmingham with skilled technicians and state-of-the-art facilities. Comprehensive fleet maintenance for businesses and individual car owners.",
+    "provider": { "@id": "https://www.afjltd.co.uk/#organization" },
+    "areaServed": ["Birmingham", "West Midlands"],
+    "url": "https://www.afjltd.co.uk/services/fleet-maintenance/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Vehicle Conversions",
+    "name": "Wheelchair & Ambulance Vehicle Conversions",
+    "description": "VOSA-certified vehicle conversions including wheelchair-accessible minibuses, ambulance conversions with infection control, and luxury minibus conversions. Mercedes, VW, Ford, Renault and more.",
+    "provider": { "@id": "https://www.afjltd.co.uk/#organization" },
+    "areaServed": ["Birmingham", "West Midlands"],
+    "url": "https://www.afjltd.co.uk/services/vehicle-conversions/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Driver Training",
+    "name": "Driver, ACA & PA Training",
+    "description": "QualSafe-approved training programmes including Driver CPC courses, Ambulance Care Assistant (ACA) training, and Passenger Assistant (PA) certification. In-house training facilities.",
+    "provider": { "@id": "https://www.afjltd.co.uk/#organization" },
+    "areaServed": ["Birmingham", "West Midlands"],
+    "url": "https://www.afjltd.co.uk/services/driver-training/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Private Minibus Hire",
+    "name": "Private Minibus Hire",
+    "description": "Modern fleet of 16-seater wheelchair-accessible minibuses available for corporate events, school trips, days out, and group travel with experienced drivers.",
+    "provider": { "@id": "https://www.afjltd.co.uk/#organization" },
+    "areaServed": ["Birmingham", "West Midlands"],
+    "url": "https://www.afjltd.co.uk/services/private-hire/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Executive Minibus Hire",
+    "name": "Executive Minibus Hire",
+    "description": "Luxury minibus hire with driver for corporate travel, events, race days (Cheltenham, Royal Ascot), and airport transfers from Birmingham.",
+    "provider": { "@id": "https://www.afjltd.co.uk/#organization" },
+    "areaServed": ["Birmingham", "West Midlands"],
+    "url": "https://www.afjltd.co.uk/services/executive-minibus/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Airport Transfers",
+    "name": "Airport Transfer Service",
+    "description": "Reliable airport transfer service to and from Birmingham Airport and other UK airports. Executive vehicles with professional drivers.",
+    "provider": { "@id": "https://www.afjltd.co.uk/#organization" },
+    "areaServed": ["Birmingham", "West Midlands"],
+    "url": "https://www.afjltd.co.uk/services/airport-transfers/"
+  }
+]

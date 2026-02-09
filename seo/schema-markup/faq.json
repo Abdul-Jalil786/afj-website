@@ -1,0 +1,70 @@
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What areas does AFJ Limited serve?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AFJ Limited operates across Birmingham, Greater Manchester, West Midlands, North West England, Sandwell, and Coventry. Our head office is in Nechells, Birmingham, and we hold contracts with councils and NHS trusts across these regions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is AFJ Limited CQC registered?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, AFJ Limited is CQC registered and rated 'Good' for our Non-Emergency Patient Transport Service (NEPTS). We undergo regular inspections to maintain our high standards of patient care."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are your drivers DBS checked?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, every driver and passenger assistant at AFJ Limited undergoes enhanced DBS (Disclosure and Barring Service) checks. This is a non-negotiable requirement for all staff who work with vulnerable passengers, including children with special educational needs and patients."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many students does AFJ transport daily?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AFJ Limited transports over 700 students daily as part of our Home to School Transport service. We work with Birmingham and Manchester council contracts to provide safe, reliable SEND transport with wheelchair-accessible 16-seater minibuses."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you offer vehicle conversions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, AFJ Limited offers VOSA-certified vehicle conversions including wheelchair-accessible minibus conversions, ambulance conversions with wipe-clean surfaces and infection control, and luxury minibus conversions with leather seats and premium amenities. We are the only UK Patient Transport Service provider that builds its own ambulances in-house."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What training courses do you offer?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AFJ Limited is a QualSafe-approved training provider offering Driver CPC courses, Ambulance Care Assistant (ACA) training, and Passenger Assistant (PA) certification. All training is delivered at our in-house facilities by experienced instructors."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I book a private minibus?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can book a private minibus by calling us on 0121 689 1000, emailing sales@afjltd.co.uk, or using the booking form on our website. We offer both standard 16-seater wheelchair-accessible minibuses and executive luxury minibuses for corporate events, school trips, and group travel."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you charge extra on bank holidays?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, AFJ Limited maintains the same pricing year-round, including bank holidays. Unlike many transport providers, we do not apply seasonal surcharges or bank holiday premiums to our patient transport or minibus hire services."
+      }
+    }
+  ]
+}

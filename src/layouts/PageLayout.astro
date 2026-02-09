@@ -1,0 +1,38 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  breadcrumbs?: BreadcrumbItem[];
+  ogImage?: string;
+  jsonLD?: Record<string, unknown>;
+}
+
+const { title, description, breadcrumbs, ogImage, jsonLD } = Astro.props;
+---
+
+<BaseLayout title={`${title} | AFJ Limited`} description={description}>
+  <SEOHead
+    slot="head"
+    title={`${title} | AFJ Limited`}
+    description={description}
+    ogImage={ogImage}
+    jsonLD={jsonLD}
+  />
+  <Header />
+  {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+  <main id="main-content">
+    <slot />
+  </main>
+  <Footer />
+</BaseLayout>

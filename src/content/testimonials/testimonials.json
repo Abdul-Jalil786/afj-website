@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Cheltenham Race Day Customer",
+    "quote": "AFJ Travel helped me out of a hole, having forgotten to book the minibus for Cheltenham I contacted AFJ and they managed to arrange travel at a very competitive price. I needed to change some of the arrangements just before our travel date and nothing was too much trouble. On the day the driver was extremely accommodating and again nothing was too much trouble. We will be using them again next year.",
+    "rating": 5,
+    "service": "Executive Minibus Hire"
+  },
+  {
+    "id": 2,
+    "name": "Stag Weekend Customer",
+    "quote": "Booked AFJ Travel for my stag weekend, the booking and the reasonable price with AFJ were perfect for us. From Birmingham to Bournemouth, second stop Bournemouth to Torquay. Our driver Khan for the weekend was an ultimate legend! Added humour to our journey from start to finish and fully embraced our madness, much appreciated. Would rebook with AFJ Travel anytime.",
+    "rating": 5,
+    "service": "Private Minibus Hire"
+  },
+  {
+    "id": 3,
+    "name": "Stag Do Customer",
+    "quote": "I used AFJ for a stag do to Wales and back and they were awesome. Our driver Steve was so good I would have paid a lot more to have kept him around for the whole weekend.",
+    "rating": 5,
+    "service": "Private Minibus Hire"
+  }
+]

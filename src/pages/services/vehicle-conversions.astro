@@ -1,0 +1,182 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import BookingForm from '../../components/BookingForm.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const breadcrumbs = [
+  { label: 'Services', href: '/services' },
+  { label: 'Vehicle Conversions' },
+];
+
+const conversionTypes = [
+  {
+    title: 'Wheelchair-Accessible Conversions',
+    description: 'Convert standard minibuses into fully wheelchair-accessible vehicles with ramps, wheelchair lifts (inboard and under-floor options), and secure wheelchair restraints. Our 16-seater conversions meet all accessibility requirements.',
+  },
+  {
+    title: 'Ambulance Conversions',
+    description: 'We are the only UK PTS provider that builds its own ambulances. Our ambulance conversions feature wipe-clean surfaces, infection control measures, stretcher and carry-chair access, and full compliance with CQC standards.',
+  },
+  {
+    title: 'Luxury Minibus Conversions',
+    description: 'Transform your minibus into a premium travel experience. Leather seats, coffee machines, surround sound systems, ambient lighting, and custom interiors tailored to your specifications.',
+  },
+];
+
+const compatibleVehicles = [
+  'Mercedes-Benz Sprinter',
+  'Volkswagen Crafter',
+  'Ford Transit',
+  'Renault Master',
+  'LDV Maxus',
+  'Toyota Hi Ace',
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Vehicle Conversion Services',
+  provider: {
+    '@type': 'LocalBusiness',
+    name: 'AFJ Limited',
+    telephone: '0121 689 1000',
+  },
+  description: 'VOSA certified wheelchair-accessible, ambulance, and luxury vehicle conversions in Birmingham. The only UK PTS provider that builds its own ambulances.',
+  areaServed: ['Birmingham', 'West Midlands', 'United Kingdom'],
+  serviceType: 'Vehicle Conversions',
+};
+---
+
+<PageLayout
+  title="Vehicle Conversions"
+  description="VOSA certified vehicle conversions in Birmingham. Wheelchair-accessible, ambulance, and luxury minibus conversions. The only UK PTS provider building its own ambulances."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Vehicle Conversions" subtitle="VOSA certified wheelchair-accessible, ambulance, and luxury conversions. Over 200 compliant builds delivered." />
+
+  <!-- Introduction -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-afj-green mb-4">Vehicle Conversion Services</h2>
+          <p class="text-afj-secondary mb-4 leading-relaxed">
+            AFJ Limited leads in wheelchair-equipped van conversions, delivering over 200 compliant builds in-house. We are the only UK Patient Transport Service provider that builds its own ambulances, giving us complete control over quality and compliance.
+          </p>
+          <p class="text-afj-secondary mb-6 leading-relaxed">
+            All conversions are VOSA certified and meet the highest standards for safety and accessibility. Whether you need a wheelchair-accessible minibus, a fully equipped ambulance, or a luxury conversion with premium amenities, our skilled team delivers to your exact specifications.
+          </p>
+          <a href="/contact" class="btn-primary">Discuss Your Conversion</a>
+        </div>
+        <div class="bg-afj-light-white rounded-lg aspect-video flex items-center justify-center">
+          <div class="text-gray-500 text-sm text-center p-8">
+            <svg class="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Vehicle conversion workshop
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Conversion Types -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide">
+      <h2 class="text-afj-green text-center mb-8">Our Conversion Services</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {conversionTypes.map((type) => (
+          <div class="bg-white rounded-lg shadow-md p-6 lg:p-8 hover:shadow-lg transition-shadow">
+            <h3 class="text-afj-green font-bold text-lg mb-3">{type.title}</h3>
+            <p class="text-afj-secondary text-sm leading-relaxed">{type.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Compatible Vehicles -->
+  <section class="section-padding">
+    <div class="container-wide max-w-4xl">
+      <h2 class="text-afj-green text-center mb-8">Compatible Vehicles</h2>
+      <p class="text-afj-secondary text-center mb-6">We convert a wide range of vehicle makes and models:</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {compatibleVehicles.map((vehicle) => (
+          <div class="bg-afj-light-white rounded-lg p-4 text-center">
+            <p class="text-afj-text font-medium text-sm">{vehicle}</p>
+          </div>
+        ))}
+      </div>
+      <p class="text-afj-secondary text-sm text-center mt-4">
+        Do not see your vehicle listed? Contact us to discuss your specific conversion requirements.
+      </p>
+    </div>
+  </section>
+
+  <!-- Key Features -->
+  <section class="section-padding bg-afj-dark-blue text-white">
+    <div class="container-wide">
+      <h2 class="text-center mb-8">Why Choose AFJ Conversions?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="text-center">
+          <div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-7 h-7 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <h3 class="font-bold mb-1">VOSA Certified</h3>
+          <p class="text-white/70 text-sm">All conversions meet full VOSA compliance standards.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-7 h-7 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h3 class="font-bold mb-1">In-House Workshop</h3>
+          <p class="text-white/70 text-sm">Complete control over quality from start to finish.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-7 h-7 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h3 class="font-bold mb-1">200+ Builds</h3>
+          <p class="text-white/70 text-sm">Proven track record with over 200 compliant conversions.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg class="w-7 h-7 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="font-bold mb-1">Competitive Pricing</h3>
+          <p class="text-white/70 text-sm">Cost-effective conversions without compromising quality.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Form -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-2xl">
+      <h2 class="text-afj-green text-center mb-2">Request a Conversion Quote</h2>
+      <p class="text-afj-secondary text-center mb-8">Tell us about your vehicle and conversion requirements.</p>
+      <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <BookingForm />
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Transform Your Vehicle Today"
+    description="From wheelchair access to luxury interiors, our conversion team delivers to your exact specifications."
+    variant="green"
+  />
+</PageLayout>

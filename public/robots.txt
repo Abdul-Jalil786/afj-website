@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.afjltd.co.uk/sitemap-index.xml

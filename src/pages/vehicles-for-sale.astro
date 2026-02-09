@@ -1,0 +1,105 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/Hero.astro';
+import FleetGallery from '../components/FleetGallery.astro';
+import CTABanner from '../components/CTABanner.astro';
+import SocialSidebar from '../components/SocialSidebar.astro';
+
+const breadcrumbs = [{ label: 'Vehicles for Sale' }];
+
+const vehicleTypes = [
+  {
+    title: '16-Seater Minibuses',
+    description: 'Well-maintained 16-seater minibuses, ideal for school transport, private hire, or community groups. Various makes and models available.',
+  },
+  {
+    title: 'Wheelchair-Accessible Vehicles',
+    description: 'Converted wheelchair-accessible minibuses with ramps and wheelchair restraints. Perfect for SEND transport or accessible community services.',
+  },
+  {
+    title: 'Ambulances',
+    description: 'Purpose-built ambulances from our in-house conversion workshop. Fully equipped for non-emergency patient transport.',
+  },
+  {
+    title: 'Panel Vans & Chassis',
+    description: 'Base vehicles suitable for conversion. Mercedes Sprinter, VW Crafter, Ford Transit, and more available for your own conversion projects.',
+  },
+];
+
+const galleryImages = [
+  { src: '/images/fleet/placeholder-1.jpg', alt: 'AFJ 16-seater minibus' },
+  { src: '/images/fleet/placeholder-2.jpg', alt: 'Wheelchair-accessible minibus' },
+  { src: '/images/fleet/placeholder-3.jpg', alt: 'AFJ ambulance conversion' },
+  { src: '/images/fleet/placeholder-4.jpg', alt: 'Mercedes Sprinter minibus' },
+  { src: '/images/fleet/placeholder-5.jpg', alt: 'Ford Transit converted vehicle' },
+  { src: '/images/fleet/placeholder-6.jpg', alt: 'AFJ fleet vehicle' },
+  { src: '/images/fleet/placeholder-7.jpg', alt: 'Converted wheelchair vehicle' },
+  { src: '/images/fleet/placeholder-8.jpg', alt: 'Patient transport vehicle' },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Vehicles for Sale - AFJ Limited',
+  description: 'Minibuses, wheelchair-accessible vehicles, and ambulances for sale from AFJ Limited in Birmingham. Well-maintained fleet vehicles and new conversions.',
+};
+---
+
+<PageLayout
+  title="Vehicles for Sale"
+  description="Minibuses, wheelchair-accessible vehicles, and ambulances for sale in Birmingham. Well-maintained fleet vehicles from AFJ Limited. Contact us for availability."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Vehicles for Sale" subtitle="Quality fleet vehicles and conversions available for purchase." />
+
+  <!-- Introduction -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <h2 class="text-afj-green mb-4">Our Vehicles</h2>
+        <p class="text-afj-secondary leading-relaxed">
+          AFJ Limited regularly has vehicles available for sale from our fleet, as well as new conversions from our in-house workshop. Whether you are looking for a ready-to-use minibus, a wheelchair-accessible vehicle, or a base vehicle for your own conversion, we can help.
+        </p>
+      </div>
+
+      <!-- Vehicle Types -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+        {vehicleTypes.map((type) => (
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <h3 class="text-afj-green font-bold text-lg mb-2">{type.title}</h3>
+            <p class="text-afj-secondary text-sm leading-relaxed">{type.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <FleetGallery images={galleryImages} heading="Vehicle Gallery" />
+
+  <!-- Enquiry CTA -->
+  <section class="section-padding">
+    <div class="container-wide max-w-2xl text-center">
+      <h2 class="text-afj-green mb-4">Interested in a Vehicle?</h2>
+      <p class="text-afj-secondary mb-6">
+        Availability changes regularly. Contact our sales team for the latest stock, pricing, and to arrange a viewing at our Birmingham workshop.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/contact" class="btn-primary">Contact Sales Team</a>
+        <a href="tel:01216891000" class="btn-outline">Call 0121 689 1000</a>
+      </div>
+      <p class="text-afj-secondary text-sm mt-4">
+        Or email <a href="mailto:sales@afjltd.co.uk" class="text-afj-sky-blue hover:text-afj-accent">sales@afjltd.co.uk</a> for enquiries.
+      </p>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Need a Custom Conversion?"
+    description="Our in-house workshop can build wheelchair-accessible, ambulance, or luxury conversions to your specifications."
+    variant="navy"
+  />
+</PageLayout>

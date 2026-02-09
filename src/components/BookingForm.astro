@@ -1,0 +1,114 @@
+---
+interface Props {
+  formAction?: string;
+}
+
+const { formAction } = Astro.props;
+const action = formAction || import.meta.env.FORMSPREE_ENDPOINT || '#';
+
+const services = [
+  'Home to School Transport',
+  'Non-Emergency Patient Transport',
+  'Fleet Maintenance',
+  'Private Minibus Hire',
+  'Vehicle Conversions',
+  'Driver, ACA & PA Training',
+  'Executive Minibus Hire',
+  'Airport Transfers',
+];
+---
+
+<form id="booking-form" action={action} method="POST" class="space-y-5" novalidate>
+  <!-- Service -->
+  <div>
+    <label for="service" class="block text-sm font-medium text-afj-text mb-1">Service</label>
+    <select
+      id="service"
+      name="service"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent bg-white"
+    >
+      <option value="">Select a service</option>
+      {services.map((service) => (
+        <option value={service}>{service}</option>
+      ))}
+    </select>
+  </div>
+
+  <!-- Full Name -->
+  <div>
+    <label for="booking-name" class="block text-sm font-medium text-afj-text mb-1">Full Name</label>
+    <input
+      type="text"
+      id="booking-name"
+      name="name"
+      placeholder="Your full name"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
+    />
+  </div>
+
+  <!-- Email -->
+  <div>
+    <label for="booking-email" class="block text-sm font-medium text-afj-text mb-1">
+      Email Address <span class="text-afj-red">*</span>
+    </label>
+    <input
+      type="email"
+      id="booking-email"
+      name="email"
+      placeholder="your.email@example.com"
+      required
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
+    />
+  </div>
+
+  <!-- Date Range -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label for="start-date" class="block text-sm font-medium text-afj-text mb-1">Start Date</label>
+      <input
+        type="date"
+        id="start-date"
+        name="start_date"
+        class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
+      />
+    </div>
+    <div>
+      <label for="end-date" class="block text-sm font-medium text-afj-text mb-1">End Date</label>
+      <input
+        type="date"
+        id="end-date"
+        name="end_date"
+        class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
+      />
+    </div>
+  </div>
+
+  <!-- Phone -->
+  <div>
+    <label for="booking-phone" class="block text-sm font-medium text-afj-text mb-1">Phone</label>
+    <input
+      type="tel"
+      id="booking-phone"
+      name="phone"
+      placeholder="07400 123456"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
+    />
+  </div>
+
+  <!-- Additional Details -->
+  <div>
+    <label for="details" class="block text-sm font-medium text-afj-text mb-1">Additional Details</label>
+    <textarea
+      id="details"
+      name="details"
+      rows="4"
+      placeholder="Any additional information about your booking requirements"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent resize-y"
+    ></textarea>
+  </div>
+
+  <!-- Submit -->
+  <button type="submit" class="btn-primary w-full sm:w-auto">
+    Submit Booking Request
+  </button>
+</form>

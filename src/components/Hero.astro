@@ -1,0 +1,221 @@
+---
+interface Slide {
+  heading: string;
+  description: string;
+  href: string;
+  image?: string;
+  imageAlt?: string;
+}
+
+interface Props {
+  /** Homepage slider mode */
+  slides?: Slide[];
+  /** Inner page mode */
+  title?: string;
+  subtitle?: string;
+  bgImage?: string;
+}
+
+const { slides, title, subtitle, bgImage } = Astro.props;
+
+const isSlider = slides && slides.length > 0;
+
+const defaultSlides: Slide[] = [
+  {
+    heading: 'Home To School Transport',
+    description: 'Over 700 students transported daily across Birmingham and Manchester. DBS-checked drivers and passenger assistants with wheelchair-accessible minibuses.',
+    href: '/services/send-transport',
+    imageAlt: 'AFJ minibus for school transport',
+  },
+  {
+    heading: 'Non-Emergency Patient Transport Services',
+    description: 'CQC rated "Good". NHS trust contracts across West Midlands and North West. Trained Ambulance Care Assistants for all patient needs.',
+    href: '/services/patient-transport',
+    imageAlt: 'AFJ ambulance team',
+  },
+  {
+    heading: 'Minibus & Ambulance Conversion Services',
+    description: 'The only UK PTS provider that builds its own ambulances. VOSA certified wheelchair-accessible and luxury conversions.',
+    href: '/services/vehicle-conversions',
+    imageAlt: 'Vehicle conversion workshop',
+  },
+  {
+    heading: 'Private Minibus Hire Services',
+    description: 'Modern fleet of 16-seater wheelchair-accessible minibuses for corporate events, school trips, days out, and group travel.',
+    href: '/services/private-hire',
+    imageAlt: 'Mercedes minibus for private hire',
+  },
+  {
+    heading: 'Fleet Maintenance',
+    description: 'In-house vehicle maintenance workshop with skilled technicians and state-of-the-art facilities. Minimising downtime, maximising vehicle lifespan.',
+    href: '/services/fleet-maintenance',
+    imageAlt: 'Fleet maintenance workshop',
+  },
+  {
+    heading: 'Driver, ACA and PA Training Services',
+    description: 'QualSafe-approved training programmes including Driver CPC, Ambulance Care Assistant, and Passenger Assistant certification.',
+    href: '/services/driver-training',
+    imageAlt: 'Training classroom',
+  },
+];
+
+const heroSlides = slides || defaultSlides;
+---
+
+{isSlider || !title ? (
+  <!-- Homepage Hero Slider -->
+  <section class="relative bg-afj-primary overflow-hidden" aria-label="Featured services">
+    <div id="hero-slider" class="relative">
+      {heroSlides.map((slide, index) => (
+        <div
+          class:list={[
+            'hero-slide',
+            index === 0 ? 'block' : 'hidden',
+          ]}
+          data-slide={index}
+        >
+          <div class="container-wide py-12 md:py-20 lg:py-24">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div>
+                <h2 class="text-afj-accent text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+                  {slide.heading}
+                </h2>
+                <p class="text-gray-300 text-base md:text-lg mb-6 leading-relaxed max-w-xl">
+                  {slide.description}
+                </p>
+                <a
+                  href={slide.href}
+                  class="inline-flex items-center gap-2 bg-afj-dark-blue text-white font-semibold px-6 py-3 rounded-lg hover:bg-afj-accent transition-colors group"
+                >
+                  Read More
+                  <svg class="w-4 h-4 text-afj-accent group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+              </div>
+              <div class="hidden lg:block">
+                <div class="bg-afj-secondary/30 rounded-lg aspect-video flex items-center justify-center">
+                  {slide.image ? (
+                    <img src={slide.image} alt={slide.imageAlt || slide.heading} class="rounded-lg object-cover w-full h-full" loading={index === 0 ? 'eager' : 'lazy'} />
+                  ) : (
+                    <div class="text-gray-500 text-sm text-center p-8">
+                      <svg class="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {slide.imageAlt || 'Image placeholder'}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      <!-- Navigation Arrows -->
+      <div class="absolute bottom-4 right-4 md:bottom-8 md:right-8 flex gap-2 z-10">
+        <button
+          id="hero-prev"
+          class="w-10 h-10 bg-white/10 hover:bg-afj-accent text-white rounded-full flex items-center justify-center transition-colors"
+          aria-label="Previous slide"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          id="hero-next"
+          class="w-10 h-10 bg-white/10 hover:bg-afj-accent text-white rounded-full flex items-center justify-center transition-colors"
+          aria-label="Next slide"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Dots -->
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {heroSlides.map((_, index) => (
+          <button
+            class:list={[
+              'hero-dot w-2.5 h-2.5 rounded-full transition-colors',
+              index === 0 ? 'bg-afj-accent' : 'bg-white/30',
+            ]}
+            data-dot={index}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      const slides = document.querySelectorAll('.hero-slide');
+      const dots = document.querySelectorAll('.hero-dot');
+      const prevBtn = document.getElementById('hero-prev');
+      const nextBtn = document.getElementById('hero-next');
+      if (!slides.length) return;
+
+      let current = 0;
+      let interval;
+      const total = slides.length;
+
+      function showSlide(index) {
+        slides.forEach((s) => s.classList.add('hidden'));
+        dots.forEach((d) => d.classList.replace('bg-afj-accent', 'bg-white/30'));
+        slides[index].classList.remove('hidden');
+        if (dots[index]) {
+          dots[index].classList.replace('bg-white/30', 'bg-afj-accent');
+        }
+        current = index;
+      }
+
+      function nextSlide() {
+        showSlide((current + 1) % total);
+      }
+
+      function prevSlide() {
+        showSlide((current - 1 + total) % total);
+      }
+
+      function startAutoPlay() {
+        interval = setInterval(nextSlide, 5000);
+      }
+
+      function stopAutoPlay() {
+        clearInterval(interval);
+      }
+
+      if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoPlay(); nextSlide(); startAutoPlay(); });
+      if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoPlay(); prevSlide(); startAutoPlay(); });
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => { stopAutoPlay(); showSlide(i); startAutoPlay(); });
+      });
+
+      const slider = document.getElementById('hero-slider');
+      if (slider) {
+        slider.addEventListener('mouseenter', stopAutoPlay);
+        slider.addEventListener('mouseleave', startAutoPlay);
+      }
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        startAutoPlay();
+      }
+    })();
+  </script>
+) : (
+  <!-- Inner Page Hero -->
+  <section
+    class="relative bg-afj-primary py-12 md:py-16 lg:py-20"
+    style={bgImage ? `background-image: url('${bgImage}'); background-size: cover; background-position: center;` : ''}
+  >
+    {bgImage && <div class="absolute inset-0 bg-afj-primary/80" />}
+    <div class="container-wide relative z-10 text-center">
+      <h1 class="text-white mb-3">{title}</h1>
+      {subtitle && <p class="text-gray-300 text-lg max-w-2xl mx-auto">{subtitle}</p>}
+    </div>
+  </section>
+)}

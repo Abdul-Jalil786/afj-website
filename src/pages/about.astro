@@ -1,0 +1,167 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/Hero.astro';
+import CoreValues from '../components/CoreValues.astro';
+import TeamSection from '../components/TeamSection.astro';
+import AccreditationBadges from '../components/AccreditationBadges.astro';
+import StatsCounter from '../components/StatsCounter.astro';
+import CTABanner from '../components/CTABanner.astro';
+import SocialSidebar from '../components/SocialSidebar.astro';
+
+const breadcrumbs = [{ label: 'About Us' }];
+
+const stats = [
+  { value: 700, suffix: '+', label: 'Students Daily' },
+  { value: 18, suffix: '+', label: 'Years Experience' },
+  { value: 50, suffix: '+', label: 'Vehicles in Fleet' },
+  { value: 200, suffix: '+', label: 'Vehicle Conversions' },
+];
+
+const teamMembers = [
+  { name: 'Management Team', role: 'Operations & Strategy', bio: 'Driving AFJ\'s vision of safe, reliable transport solutions across Birmingham and Manchester.' },
+  { name: 'Transport Coordinators', role: 'Scheduling & Logistics', bio: 'Ensuring every route is planned for efficiency, safety, and punctuality.' },
+  { name: 'Drivers & Passenger Assistants', role: 'Front-Line Service', bio: 'DBS-checked professionals delivering compassionate, safe transport every day.' },
+  { name: 'Workshop Team', role: 'Fleet Maintenance & Conversions', bio: 'Skilled technicians keeping our fleet in peak condition and building bespoke conversions.' },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  mainEntity: {
+    '@type': 'LocalBusiness',
+    name: 'AFJ Limited',
+    description: 'Established in 2006, AFJ Limited provides specialist transport solutions including SEND school transport, non-emergency patient transport, fleet maintenance, vehicle conversions, and professional training.',
+    foundingDate: '2006',
+    telephone: '0121 689 1000',
+    email: 'info@afjltd.co.uk',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'AFJ Business Center, 2-18 Forster Street, Nechells',
+      addressLocality: 'Birmingham',
+      addressRegion: 'West Midlands',
+      postalCode: 'B7 4JD',
+      addressCountry: 'GB',
+    },
+  },
+};
+---
+
+<PageLayout
+  title="About Us"
+  description="AFJ Limited, established 2006. 18+ years providing SEND transport, patient transport, fleet maintenance, and training across Birmingham and Manchester."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="About AFJ Limited" subtitle="Your partner in safe, reliable transport solutions since 2006." />
+
+  <!-- Company Story -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-afj-green mb-4">Our Story</h2>
+          <p class="text-afj-secondary mb-4 leading-relaxed">
+            Established in 2006, AFJ Limited has grown from a small Birmingham-based transport provider into one of the most trusted names in specialist transport across the West Midlands and North West. For over 18 years, we have been dedicated to delivering safe, reliable, and compassionate transport services.
+          </p>
+          <p class="text-afj-secondary mb-4 leading-relaxed">
+            Today, we transport over 700 students daily, hold a "Good" CQC rating for our patient transport services, and operate one of the most comprehensive in-house capabilities in the industry, from vehicle maintenance and ambulance conversions to QualSafe-approved training.
+          </p>
+          <p class="text-afj-secondary leading-relaxed">
+            We are proud to be council and NHS accredited, serving communities across Birmingham, Manchester, Sandwell, Coventry, and beyond. Our commitment to integrity, safety, and innovation drives everything we do.
+          </p>
+        </div>
+        <div class="bg-afj-light-white rounded-lg aspect-video flex items-center justify-center">
+          <div class="text-gray-500 text-sm text-center p-8">
+            <svg class="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            AFJ Limited headquarters
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <StatsCounter stats={stats} />
+
+  <!-- Vision, Mission, Core Values -->
+  <CoreValues />
+
+  <!-- Differentiators -->
+  <section class="section-padding">
+    <div class="container-wide max-w-4xl">
+      <h2 class="text-afj-green text-center mb-8">What Sets Us Apart</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Established 2006</h4>
+            <p class="text-afj-secondary text-sm">Over 18 years of trusted transport experience.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">CQC Rated "Good"</h4>
+            <p class="text-afj-secondary text-sm">Quality-assured patient transport services.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">In-House Everything</h4>
+            <p class="text-afj-secondary text-sm">Vehicle maintenance, ambulance conversions, and QualSafe-approved training all done on-site.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Council & NHS Accredited</h4>
+            <p class="text-afj-secondary text-sm">Trusted by Birmingham, Manchester, and other local authorities.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Only UK PTS Provider Building Own Ambulances</h4>
+            <p class="text-afj-secondary text-sm">Complete control over quality with in-house ambulance conversions.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Same Pricing Year-Round</h4>
+            <p class="text-afj-secondary text-sm">No bank holiday or seasonal surcharges. Fair, transparent pricing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <TeamSection members={teamMembers} heading="Our Team" />
+
+  <!-- Accreditations -->
+  <AccreditationBadges />
+
+  <CTABanner
+    heading="Partner With AFJ Limited"
+    description="Whether you need school transport, patient services, or private hire, we deliver reliable solutions tailored to your needs."
+    variant="green"
+  />
+</PageLayout>

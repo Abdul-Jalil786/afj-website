@@ -1,0 +1,86 @@
+---
+interface Stat {
+  value: number;
+  suffix?: string;
+  label: string;
+}
+
+interface Props {
+  stats?: Stat[];
+  variant?: 'navy' | 'green';
+}
+
+const { variant = 'navy' } = Astro.props;
+
+const defaultStats: Stat[] = [
+  { value: 700, suffix: '+', label: 'Students Daily' },
+  { value: 18, suffix: '+', label: 'Years Experience' },
+  { value: 50, suffix: '+', label: 'Vehicles in Fleet' },
+  { value: 100, suffix: '%', label: 'DBS Checked Staff' },
+];
+
+const stats = Astro.props.stats || defaultStats;
+const bgClass = variant === 'navy' ? 'bg-afj-dark-blue' : 'bg-afj-accent';
+---
+
+<section class={`${bgClass} text-white section-padding`}>
+  <div class="container-wide">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      {stats.map((stat) => (
+        <div class="stat-item" data-target={stat.value}>
+          <div class="text-3xl md:text-4xl lg:text-5xl font-bold mb-1">
+            <span class="stat-number">0</span>{stat.suffix || ''}
+          </div>
+          <p class="text-white/80 text-sm md:text-base">{stat.label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.stat-number').forEach(function (el) {
+        var item = el.closest('.stat-item');
+        if (item) el.textContent = item.getAttribute('data-target');
+      });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var items = entry.target.querySelectorAll('.stat-item');
+        items.forEach(function (item) {
+          var target = parseInt(item.getAttribute('data-target'), 10);
+          var numberEl = item.querySelector('.stat-number');
+          if (!numberEl || numberEl.dataset.animated) return;
+          numberEl.dataset.animated = 'true';
+
+          var duration = 2000;
+          var start = 0;
+          var startTime = null;
+
+          function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var progress = Math.min((timestamp - startTime) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            numberEl.textContent = Math.floor(eased * target);
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              numberEl.textContent = target;
+            }
+          }
+          requestAnimationFrame(animate);
+        });
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('section:has(.stat-item)').forEach(function (section) {
+      observer.observe(section);
+    });
+  })();
+</script>

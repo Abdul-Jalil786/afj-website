@@ -1,0 +1,86 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/Hero.astro';
+import SocialSidebar from '../components/SocialSidebar.astro';
+
+const breadcrumbs = [{ label: 'Carbon Reduction Plan' }];
+---
+
+<PageLayout
+  title="Carbon Reduction Plan"
+  description="AFJ Limited carbon reduction plan. Our commitment to environmental sustainability, eco-friendly fleet, and low-carbon emission vehicles in Birmingham."
+  breadcrumbs={breadcrumbs}
+>
+  <SocialSidebar />
+
+  <Hero title="Carbon Reduction Plan" subtitle="Our commitment to environmental sustainability and a greener future." />
+
+  <section class="section-padding">
+    <div class="container-wide max-w-3xl">
+      <h2 class="text-afj-green mb-4">Our Environmental Commitment</h2>
+      <p class="text-afj-secondary mb-6 leading-relaxed">
+        AFJ Limited is committed to achieving Net Zero emissions by 2050. We recognise the impact that transport services have on the environment and are taking proactive steps to reduce our carbon footprint across all operations.
+      </p>
+
+      <h3 class="text-afj-green mb-3">Current Initiatives</h3>
+      <div class="space-y-4 mb-8">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Eco-Friendly Fleet</h4>
+            <p class="text-afj-secondary text-sm">Our fleet includes low-carbon emission vehicles, and we are actively transitioning to cleaner alternatives as vehicles are replaced.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Efficient Route Planning</h4>
+            <p class="text-afj-secondary text-sm">Our in-house ERP system optimises routes to minimise unnecessary mileage and fuel consumption.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Preventive Maintenance</h4>
+            <p class="text-afj-secondary text-sm">Regular vehicle servicing in our in-house workshop ensures engines run efficiently, reducing emissions and extending vehicle lifespan.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Driver Training</h4>
+            <p class="text-afj-secondary text-sm">Our driver training programmes include eco-driving techniques to reduce fuel consumption and emissions.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Waste Reduction</h4>
+            <p class="text-afj-secondary text-sm">Our workshop recycles waste materials including oil, tyres, and vehicle parts wherever possible.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="text-afj-green mb-3">Download Our Full Plan</h3>
+      <p class="text-afj-secondary mb-4 leading-relaxed">
+        For full details of our carbon reduction targets, baseline emissions, and planned actions, download our complete Carbon Reduction Plan.
+      </p>
+      <a href="/documents/carbon-reduction-plan.pdf" download class="btn-primary inline-flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Download Carbon Reduction Plan (PDF)
+      </a>
+    </div>
+  </section>
+</PageLayout>

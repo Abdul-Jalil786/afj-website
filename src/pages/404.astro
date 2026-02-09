@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Page Not Found | AFJ Limited" description="The page you are looking for could not be found. Return to AFJ Limited homepage or browse our transport services.">
+  <Header />
+
+  <main id="main-content" class="section-padding">
+    <div class="container-wide text-center">
+      <div class="max-w-xl mx-auto">
+        <!-- 404 Number -->
+        <p class="text-8xl md:text-9xl font-bold text-afj-accent/20 mb-4">404</p>
+
+        <h1 class="text-afj-green mb-4">Page Not Found</h1>
+        <p class="text-afj-secondary text-lg mb-8">
+          Sorry, the page you are looking for does not exist or has been moved. Let us help you find what you need.
+        </p>
+
+        <!-- Quick Links -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+          <a href="/" class="btn-primary">Go to Homepage</a>
+          <a href="/contact" class="btn-outline">Contact Us</a>
+        </div>
+
+        <!-- Helpful Links -->
+        <div class="bg-afj-light-white rounded-lg p-6 text-left">
+          <h2 class="text-afj-green text-lg font-bold mb-4 text-center">Looking for one of these?</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <a href="/services/send-transport" class="text-afj-sky-blue hover:text-afj-accent text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              Home to School Transport
+            </a>
+            <a href="/services/patient-transport" class="text-afj-sky-blue hover:text-afj-accent text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              Patient Transport
+            </a>
+            <a href="/services/private-hire" class="text-afj-sky-blue hover:text-afj-accent text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              Private Minibus Hire
+            </a>
+            <a href="/services/vehicle-conversions" class="text-afj-sky-blue hover:text-afj-accent text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              Vehicle Conversions
+            </a>
+            <a href="/services" class="text-afj-sky-blue hover:text-afj-accent text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              All Services
+            </a>
+            <a href="/about" class="text-afj-sky-blue hover:text-afj-accent text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              About AFJ
+            </a>
+            <a href="/careers" class="text-afj-sky-blue hover:text-afj-accent text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              Careers
+            </a>
+            <a href="/faq" class="text-afj-sky-blue hover:text-afj-accent text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              FAQ
+            </a>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <p class="text-afj-secondary text-sm mt-8">
+          Need help? Call us on <a href="tel:01216891000" class="text-afj-sky-blue hover:text-afj-accent font-medium">0121 689 1000</a>
+          or email <a href="mailto:info@afjltd.co.uk" class="text-afj-sky-blue hover:text-afj-accent font-medium">info@afjltd.co.uk</a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

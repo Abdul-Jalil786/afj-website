@@ -1,0 +1,130 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/Hero.astro';
+import FAQ from '../components/FAQ.astro';
+import CTABanner from '../components/CTABanner.astro';
+import SocialSidebar from '../components/SocialSidebar.astro';
+
+const breadcrumbs = [{ label: 'FAQ' }];
+
+const generalFaq = [
+  {
+    question: 'What services does AFJ Limited provide?',
+    answer: 'We provide Home to School Transport (SEND), Non-Emergency Patient Transport (NEPTS), Fleet Maintenance, Vehicle Conversions, Driver/ACA/PA Training, Private Minibus Hire, Executive Minibus Hire, and Airport Transfers.',
+  },
+  {
+    question: 'What areas do you serve?',
+    answer: 'We primarily serve Birmingham, Manchester, the wider West Midlands, and the North West. For private hire and airport transfers, we cover the whole of the UK.',
+  },
+  {
+    question: 'How long has AFJ been operating?',
+    answer: 'AFJ Limited was established in 2006. We have over 18 years of experience providing transport services.',
+  },
+  {
+    question: 'Are your staff DBS checked?',
+    answer: 'Yes, every driver and passenger assistant undergoes an enhanced DBS check before they start working with us. This is a non-negotiable requirement for all staff.',
+  },
+];
+
+const transportFaq = [
+  {
+    question: 'What is your CQC rating?',
+    answer: 'AFJ Limited is rated "Good" by the Care Quality Commission (CQC) for our Non-Emergency Patient Transport Services. We have been CQC registered since 2009.',
+  },
+  {
+    question: 'Do you provide wheelchair-accessible transport?',
+    answer: 'Yes, our fleet includes 16-seater wheelchair-accessible minibuses with ramps and secure wheelchair restraints. We convert these vehicles in-house to the highest standards.',
+  },
+  {
+    question: 'How many students do you transport daily?',
+    answer: 'We transport over 700 students daily across Birmingham and Manchester for council-contracted and independent schools.',
+  },
+  {
+    question: 'Do you charge extra on bank holidays?',
+    answer: 'No. AFJ Limited offers the same pricing year-round, including bank holidays. There are no seasonal surcharges.',
+  },
+];
+
+const bookingFaq = [
+  {
+    question: 'How do I book a service?',
+    answer: 'You can book by calling us on 0121 689 1000, emailing info@afjltd.co.uk, or using the contact form on our website. We will respond within 24 hours during working days.',
+  },
+  {
+    question: 'Do you offer free quotes?',
+    answer: 'Yes, all quotes are completely free and without obligation. Contact us with your requirements and we will provide a competitive quote.',
+  },
+  {
+    question: 'How far in advance should I book?',
+    answer: 'We recommend booking as early as possible, especially for events and peak periods. However, we do accommodate last-minute and ad-hoc bookings where availability allows.',
+  },
+  {
+    question: 'Can I cancel or change my booking?',
+    answer: 'Yes, we understand plans can change. Please contact us as soon as possible to discuss any changes to your booking.',
+  },
+];
+
+const vehicleFaq = [
+  {
+    question: 'What types of vehicles are in your fleet?',
+    answer: 'Our fleet includes 16-seater minibuses, wheelchair-accessible vehicles, ambulances, and executive luxury minibuses. We maintain all vehicles in-house at our Birmingham workshop.',
+  },
+  {
+    question: 'Do you sell vehicles?',
+    answer: 'Yes, we regularly have fleet vehicles and new conversions available for sale. Contact our sales team at sales@afjltd.co.uk for current availability.',
+  },
+  {
+    question: 'Can you convert my vehicle?',
+    answer: 'Yes, we offer wheelchair-accessible, ambulance, and luxury conversions for a wide range of vehicles including Mercedes, VW, Ford, Renault, LDV, and Toyota. All conversions are VOSA certified.',
+  },
+];
+
+const trainingFaq = [
+  {
+    question: 'What training courses do you offer?',
+    answer: 'We offer Driver CPC, Ambulance Care Assistant (ACA), Passenger Assistant (PA), First Aid, Safeguarding, and Manual Handling courses. All courses are delivered at our QualSafe-approved training centre.',
+  },
+  {
+    question: 'Are your training courses accredited?',
+    answer: 'Yes, our training centre is QualSafe approved, providing industry-recognised qualifications.',
+  },
+];
+
+const allFaqItems = [...generalFaq, ...transportFaq, ...bookingFaq, ...vehicleFaq, ...trainingFaq];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: allFaqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+};
+---
+
+<PageLayout
+  title="Frequently Asked Questions"
+  description="FAQ about AFJ Limited transport services. SEND transport, patient transport, CQC rating, DBS checks, booking, pricing, vehicles, and training in Birmingham."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Frequently Asked Questions" subtitle="Find answers to common questions about our transport services." />
+
+  <FAQ items={generalFaq} heading="General Questions" />
+  <FAQ items={transportFaq} heading="Transport Services" />
+  <FAQ items={bookingFaq} heading="Booking & Pricing" />
+  <FAQ items={vehicleFaq} heading="Vehicles & Conversions" />
+  <FAQ items={trainingFaq} heading="Training" />
+
+  <CTABanner
+    heading="Still Have Questions?"
+    description="Our team is happy to help. Call us on 0121 689 1000 or send us a message."
+    variant="green"
+  />
+</PageLayout>

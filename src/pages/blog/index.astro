@@ -1,0 +1,105 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import SocialSidebar from '../../components/SocialSidebar.astro';
+import { getCollection } from 'astro:content';
+
+const breadcrumbs = [{ label: 'Blog' }];
+
+let posts: any[] = [];
+try {
+  const allPosts = await getCollection('blog');
+  posts = allPosts
+    .filter((post: any) => !post.data.draft)
+    .sort((a: any, b: any) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+} catch {
+  // Content collection not yet configured — use placeholder posts
+  posts = [];
+}
+
+const placeholderPosts = [
+  {
+    slug: '5-keys-to-reliable-home-to-school-transport',
+    data: {
+      title: '5 Keys to Reliable Home to School Transport in the UK',
+      description: 'Discover the essential factors that make SEND school transport safe, reliable, and stress-free for parents and schools.',
+      pubDate: '2024-08-05',
+      image: '',
+      imageAlt: 'School transport minibus',
+      tags: ['SEND Transport', 'Birmingham'],
+    },
+  },
+  {
+    slug: 'understanding-non-emergency-patient-transport',
+    data: {
+      title: 'Understanding Non-Emergency Patient Transport Services',
+      description: 'A comprehensive guide to NEPTS, how it works, who qualifies, and what to expect from a quality patient transport provider.',
+      pubDate: '2024-07-15',
+      image: '',
+      imageAlt: 'Patient transport ambulance',
+      tags: ['Patient Transport', 'NHS'],
+    },
+  },
+  {
+    slug: 'choosing-the-right-minibus-for-your-event',
+    data: {
+      title: 'Choosing the Right Minibus for Your Event',
+      description: 'From corporate events to stag weekends, here is how to choose the right minibus hire service for your group.',
+      pubDate: '2024-06-20',
+      image: '',
+      imageAlt: 'Private hire minibus',
+      tags: ['Private Hire', 'Events'],
+    },
+  },
+];
+
+const displayPosts = posts.length > 0 ? posts : placeholderPosts;
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'AFJ Limited Blog',
+  description: 'News, insights, and guides about SEND transport, patient transport, fleet management, and transport industry topics from AFJ Limited.',
+  url: 'https://www.afjltd.co.uk/blog',
+  publisher: {
+    '@type': 'Organization',
+    name: 'AFJ Limited',
+  },
+};
+---
+
+<PageLayout
+  title="Blog"
+  description="AFJ Limited blog. News, insights, and guides about SEND school transport, patient transport, fleet management, and transport services in Birmingham."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Our Blog" subtitle="News, insights, and expert guides from the AFJ Limited team." />
+
+  <section class="section-padding">
+    <div class="container-wide">
+      {displayPosts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayPosts.map((post: any) => (
+            <BlogCard
+              title={post.data.title}
+              slug={post.slug}
+              date={post.data.pubDate}
+              excerpt={post.data.description}
+              image={post.data.image}
+              imageAlt={post.data.imageAlt}
+              tags={post.data.tags}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-afj-secondary text-lg">No blog posts yet. Check back soon for news and insights from AFJ Limited.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</PageLayout>

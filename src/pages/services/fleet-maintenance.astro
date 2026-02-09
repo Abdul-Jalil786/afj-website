@@ -1,0 +1,167 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import BookingForm from '../../components/BookingForm.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const breadcrumbs = [
+  { label: 'Services', href: '/services' },
+  { label: 'Fleet Maintenance' },
+];
+
+const services = [
+  {
+    title: 'Preventive Maintenance',
+    description: 'Regular servicing and inspections to keep your fleet in peak condition, reducing unexpected breakdowns and extending vehicle lifespan.',
+  },
+  {
+    title: 'Diagnostic Services',
+    description: 'State-of-the-art diagnostic equipment to quickly identify and resolve mechanical, electrical, and electronic issues.',
+  },
+  {
+    title: 'MOT Preparation',
+    description: 'Comprehensive pre-MOT checks and repairs to ensure your vehicles pass first time, minimising downtime.',
+  },
+  {
+    title: 'Breakdown Repairs',
+    description: 'Fast and reliable breakdown repair services to get your vehicles back on the road as quickly as possible.',
+  },
+  {
+    title: 'Bodywork & Paint',
+    description: 'Professional bodywork repairs and respraying to maintain your fleet\'s appearance and protect against corrosion.',
+  },
+  {
+    title: 'Fleet Management',
+    description: 'Tailored fleet maintenance schedules and management programmes to optimise your fleet\'s performance and reduce costs.',
+  },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Fleet Maintenance Services',
+  provider: {
+    '@type': 'LocalBusiness',
+    name: 'AFJ Limited',
+    telephone: '0121 689 1000',
+  },
+  description: 'In-house fleet maintenance and car repair services in Birmingham. Skilled technicians and state-of-the-art facilities for businesses and individuals.',
+  areaServed: ['Birmingham', 'West Midlands'],
+  serviceType: 'Fleet Maintenance',
+};
+---
+
+<PageLayout
+  title="Fleet Maintenance"
+  description="In-house fleet maintenance in Birmingham. Skilled technicians, state-of-the-art facilities. Preventive maintenance, diagnostics, MOT prep, and breakdown repairs."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Fleet Maintenance" subtitle="In-house vehicle maintenance with skilled technicians and state-of-the-art facilities." />
+
+  <!-- Introduction -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-afj-green mb-4">Expert Fleet Maintenance Services</h2>
+          <p class="text-afj-secondary mb-4 leading-relaxed">
+            Your trusted partner for expert fleet maintenance services in Birmingham and the surrounding areas. Our in-house vehicle maintenance workshop is staffed by skilled technicians who use state-of-the-art facilities to keep your fleet running smoothly.
+          </p>
+          <p class="text-afj-secondary mb-6 leading-relaxed">
+            We understand that vehicle downtime costs money. That is why our comprehensive fleet maintenance and car repair services are designed to minimise downtime and maximise vehicle lifespan, whether you manage a fleet of commercial vehicles or need servicing for your personal car.
+          </p>
+          <a href="/contact" class="btn-primary">Request a Service</a>
+        </div>
+        <div class="bg-afj-light-white rounded-lg aspect-video flex items-center justify-center">
+          <div class="text-gray-500 text-sm text-center p-8">
+            <svg class="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Fleet maintenance workshop
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Grid -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide">
+      <h2 class="text-afj-green text-center mb-8">Our Maintenance Services</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {services.map((service) => (
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <h3 class="text-afj-green font-bold text-lg mb-2">{service.title}</h3>
+            <p class="text-afj-secondary text-sm leading-relaxed">{service.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="section-padding">
+    <div class="container-wide max-w-4xl">
+      <h2 class="text-afj-green text-center mb-8">Why Choose AFJ for Fleet Maintenance?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">In-House Workshop</h4>
+            <p class="text-afj-secondary text-sm">Fully equipped on-site workshop means faster turnaround and lower costs.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Skilled Technicians</h4>
+            <p class="text-afj-secondary text-sm">Experienced, qualified mechanics who know your vehicles inside and out.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Minimised Downtime</h4>
+            <p class="text-afj-secondary text-sm">Efficient processes designed to get your vehicles back on the road quickly.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Competitive Pricing</h4>
+            <p class="text-afj-secondary text-sm">Fair, transparent pricing with no hidden charges. Tailored maintenance plans available.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Form -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-2xl">
+      <h2 class="text-afj-green text-center mb-2">Book a Service</h2>
+      <p class="text-afj-secondary text-center mb-8">Tell us about your fleet maintenance needs and we will provide a tailored quote.</p>
+      <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+        <BookingForm />
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Keep Your Fleet Running Smoothly"
+    description="Contact our workshop today for expert fleet maintenance and repair services in Birmingham."
+    variant="navy"
+  />
+</PageLayout>

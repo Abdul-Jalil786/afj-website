@@ -1,0 +1,112 @@
+---
+interface Props {
+  formAction?: string;
+}
+
+const { formAction } = Astro.props;
+const action = formAction || import.meta.env.FORMSPREE_ENDPOINT || '#';
+---
+
+<form id="contact-form" action={action} method="POST" class="space-y-5" novalidate>
+  <!-- Full Name -->
+  <div>
+    <label for="full-name" class="block text-sm font-medium text-afj-text mb-1">Full Name</label>
+    <input
+      type="text"
+      id="full-name"
+      name="name"
+      placeholder="Your full name"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent transition-shadow"
+    />
+  </div>
+
+  <!-- Email -->
+  <div>
+    <label for="email" class="block text-sm font-medium text-afj-text mb-1">
+      Email Address <span class="text-afj-red">*</span>
+    </label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      placeholder="your.email@example.com"
+      required
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent transition-shadow"
+    />
+    <p class="form-error text-afj-red text-xs mt-1 hidden" data-for="email">Please enter a valid email address.</p>
+  </div>
+
+  <!-- Phone -->
+  <div>
+    <label for="phone" class="block text-sm font-medium text-afj-text mb-1">Phone</label>
+    <input
+      type="tel"
+      id="phone"
+      name="phone"
+      placeholder="07400 123456"
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent transition-shadow"
+    />
+  </div>
+
+  <!-- Message -->
+  <div>
+    <label for="message" class="block text-sm font-medium text-afj-text mb-1">
+      Message <span class="text-afj-red">*</span>
+    </label>
+    <textarea
+      id="message"
+      name="message"
+      rows="5"
+      placeholder="How can we help you?"
+      required
+      class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent transition-shadow resize-y"
+    ></textarea>
+    <p class="form-error text-afj-red text-xs mt-1 hidden" data-for="message">Please enter your message.</p>
+  </div>
+
+  <!-- Submit -->
+  <button
+    type="submit"
+    class="btn-primary w-full sm:w-auto"
+  >
+    Submit your message
+  </button>
+
+  <!-- Status Messages -->
+  <div id="form-success" class="hidden bg-green-50 text-green-700 rounded-lg p-4 text-sm" role="alert">
+    Thank you! Your message has been sent successfully. We will be in touch shortly.
+  </div>
+  <div id="form-error" class="hidden bg-red-50 text-red-700 rounded-lg p-4 text-sm" role="alert">
+    Sorry, there was an error sending your message. Please try again or call us on 0121 689 1000.
+  </div>
+</form>
+
+<script is:inline>
+  (function () {
+    var form = document.getElementById('contact-form');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+      var email = form.querySelector('#email');
+      var message = form.querySelector('#message');
+      var valid = true;
+
+      // Reset errors
+      form.querySelectorAll('.form-error').forEach(function (el) { el.classList.add('hidden'); });
+
+      if (!email.value || !email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        form.querySelector('[data-for="email"]').classList.remove('hidden');
+        valid = false;
+      }
+
+      if (!message.value.trim()) {
+        form.querySelector('[data-for="message"]').classList.remove('hidden');
+        valid = false;
+      }
+
+      if (!valid) {
+        e.preventDefault();
+      }
+    });
+  })();
+</script>

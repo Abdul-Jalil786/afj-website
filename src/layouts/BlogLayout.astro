@@ -1,0 +1,135 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate?: string;
+  author?: string;
+  image?: string;
+  imageAlt?: string;
+  tags?: string[];
+}
+
+const { title, description, pubDate, author = 'AFJ Limited', image, imageAlt, tags = [] } = Astro.props;
+
+const breadcrumbs = [
+  { label: 'Blog', href: '/blog' },
+  { label: title },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  author: { '@type': 'Organization', name: author },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AFJ Limited',
+    url: 'https://www.afjltd.co.uk',
+  },
+  ...(pubDate ? { datePublished: pubDate } : {}),
+  ...(image ? { image } : {}),
+};
+---
+
+<BaseLayout title={`${title} | AFJ Limited Blog`} description={description}>
+  <Header />
+  <Breadcrumbs items={breadcrumbs} />
+  <main id="main-content" class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        <!-- Blog Content -->
+        <article class="lg:col-span-2">
+          {image && (
+            <img
+              src={image}
+              alt={imageAlt || title}
+              class="w-full rounded-lg mb-6 aspect-video object-cover"
+              loading="lazy"
+            />
+          )}
+          <div class="mb-4">
+            {tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-3">
+                {tags.map((tag) => (
+                  <span class="text-xs bg-afj-accent/10 text-afj-accent px-2 py-1 rounded-full font-medium">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+            <h1 class="text-afj-green mb-2">{title}</h1>
+            <div class="flex items-center gap-4 text-sm text-afj-secondary">
+              {pubDate && (
+                <time datetime={pubDate}>
+                  {new Date(pubDate).toLocaleDateString('en-GB', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              )}
+              <span>By {author}</span>
+            </div>
+          </div>
+          <div class="prose prose-lg max-w-none">
+            <slot />
+          </div>
+        </article>
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-1">
+          <div class="sticky top-24 space-y-6">
+            <!-- CTA Box -->
+            <div class="bg-afj-accent rounded-lg p-6 text-white text-center">
+              <h3 class="text-xl font-bold mb-2">Need Transport?</h3>
+              <p class="text-sm mb-4 text-white/90">
+                Get a free quote for any of our transport services.
+              </p>
+              <a href="/contact" class="inline-block bg-white text-afj-accent font-bold px-6 py-2 rounded-lg hover:bg-afj-light-white transition-colors">
+                Get a Quote
+              </a>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="bg-afj-light-white rounded-lg p-6">
+              <h3 class="font-bold text-lg mb-3">Contact Us</h3>
+              <ul class="space-y-2 text-sm">
+                <li>
+                  <a href="tel:01216891000" class="text-afj-sky-blue hover:text-afj-accent">
+                    0121 689 1000
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:info@afjltd.co.uk" class="text-afj-sky-blue hover:text-afj-accent">
+                    info@afjltd.co.uk
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Categories -->
+            <div class="bg-afj-light-white rounded-lg p-6">
+              <h3 class="font-bold text-lg mb-3">Categories</h3>
+              <ul class="space-y-2 text-sm">
+                <li><a href="/blog" class="text-afj-sky-blue hover:text-afj-accent">All Posts</a></li>
+                <li><a href="/blog" class="text-afj-sky-blue hover:text-afj-accent">SEND Transport</a></li>
+                <li><a href="/blog" class="text-afj-sky-blue hover:text-afj-accent">Patient Transport</a></li>
+                <li><a href="/blog" class="text-afj-sky-blue hover:text-afj-accent">Fleet & Maintenance</a></li>
+                <li><a href="/blog" class="text-afj-sky-blue hover:text-afj-accent">Company News</a></li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+  <Footer />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLD)} />
+</BaseLayout>

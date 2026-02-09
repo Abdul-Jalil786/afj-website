@@ -1,0 +1,53 @@
+---
+interface TeamMember {
+  name: string;
+  role: string;
+  image?: string;
+  bio?: string;
+}
+
+interface Props {
+  members: TeamMember[];
+  heading?: string;
+}
+
+const { members, heading = 'Our Team' } = Astro.props;
+---
+
+<section class="section-padding bg-afj-light-white">
+  <div class="container-wide">
+    <h2 class="text-afj-green text-center mb-8">{heading}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {members.map((member) => (
+        <div class="bg-white rounded-lg shadow-md overflow-hidden text-center hover:shadow-lg transition-shadow">
+          <!-- Photo -->
+          <div class="aspect-square bg-afj-light-white overflow-hidden">
+            {member.image ? (
+              <img
+                src={member.image}
+                alt={`Photo of ${member.name}`}
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div class="w-full h-full flex items-center justify-center">
+                <svg class="w-20 h-20 text-afj-secondary/30" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+              </div>
+            )}
+          </div>
+
+          <!-- Info -->
+          <div class="p-4">
+            <h3 class="font-bold text-afj-text">{member.name}</h3>
+            <p class="text-afj-accent text-sm font-medium mb-2">{member.role}</p>
+            {member.bio && (
+              <p class="text-afj-secondary text-xs leading-relaxed">{member.bio}</p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
