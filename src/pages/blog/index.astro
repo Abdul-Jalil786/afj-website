@@ -5,7 +5,7 @@ import BlogCard from '../../components/BlogCard.astro';
 import SocialSidebar from '../../components/SocialSidebar.astro';
 import { getCollection } from 'astro:content';
 
-const breadcrumbs = [{ label: 'Blog' }];
+const breadcrumbs = [{ label: 'News' }];
 
 let posts: any[] = [];
 try {
@@ -59,7 +59,7 @@ const displayPosts = posts.length > 0 ? posts : placeholderPosts;
 const jsonLD = {
   '@context': 'https://schema.org',
   '@type': 'Blog',
-  name: 'AFJ Limited Blog',
+  name: 'AFJ Limited News',
   description: 'News, insights, and guides about SEND transport, patient transport, fleet management, and transport industry topics from AFJ Limited.',
   url: 'https://www.afjltd.co.uk/blog',
   publisher: {
@@ -70,14 +70,14 @@ const jsonLD = {
 ---
 
 <PageLayout
-  title="Blog"
+  title="News"
   description="AFJ Limited blog. News, insights, and guides about SEND school transport, patient transport, fleet management, and transport services in Birmingham."
   breadcrumbs={breadcrumbs}
   jsonLD={jsonLD}
 >
   <SocialSidebar />
 
-  <Hero title="Our Blog" subtitle="News, insights, and expert guides from the AFJ Limited team." />
+  <Hero title="Latest News" subtitle="News, insights, and expert guides from the AFJ Limited team." />
 
   <section class="section-padding">
     <div class="container-wide">

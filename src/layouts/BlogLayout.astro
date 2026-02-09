@@ -18,7 +18,7 @@ interface Props {
 const { title, description, pubDate, author = 'AFJ Limited', image, imageAlt, tags = [] } = Astro.props;
 
 const breadcrumbs = [
-  { label: 'Blog', href: '/blog' },
+  { label: 'News', href: '/blog' },
   { label: title },
 ];
 
@@ -38,7 +38,7 @@ const jsonLD = {
 };
 ---
 
-<BaseLayout title={`${title} | AFJ Limited Blog`} description={description}>
+<BaseLayout title={`${title} | AFJ Limited News`} description={description}>
   <Header />
   <Breadcrumbs items={breadcrumbs} />
   <main id="main-content" class="section-padding">
