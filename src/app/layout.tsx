@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { SOCIAL_SAME_AS } from "@/lib/constants";
+import { CookieConsent } from "@/components/shared/CookieConsent";
+import { Analytics } from "@/components/shared/Analytics";
+import { LinkTracker } from "@/components/shared/LinkTracker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -70,9 +74,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Add these when you have the verification codes
-    // google: "your-google-verification-code",
-    // yandex: "your-yandex-verification-code",
+    google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || "",
   },
 };
 
@@ -98,9 +100,7 @@ const jsonLd = {
         areaServed: "GB",
         availableLanguage: "English",
       },
-      sameAs: [
-        // Add social media URLs when available
-      ],
+      sameAs: [...SOCIAL_SAME_AS],
     },
     {
       "@type": "LocalBusiness",
@@ -175,7 +175,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <CookieConsent />
+        <Analytics />
+        <LinkTracker />
+      </body>
     </html>
   );
 }

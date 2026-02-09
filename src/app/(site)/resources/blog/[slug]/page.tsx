@@ -2,13 +2,14 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Calendar, User, ArrowLeft, Facebook, Twitter, Linkedin } from "lucide-react";
+import { Calendar, User, ArrowLeft } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
 import { client, blogPostBySlugQuery, blogPostsQuery, urlFor } from "@/lib/sanity";
 import { PortableTextRenderer } from "@/components/shared/PortableTextRenderer";
+import { SocialShare } from "@/components/shared/SocialShare";
 import type { PortableTextBlock } from "@portabletext/types";
 
 interface SanityImage {
@@ -154,17 +155,8 @@ export default async function BlogPostPage({
     return urlFor(image).width(width).height(height).auto("format").url();
   };
 
-  // Build share URLs
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://afjltd.co.uk";
   const postUrl = `${baseUrl}/resources/blog/${post.slug.current}`;
-  const encodedUrl = encodeURIComponent(postUrl);
-  const encodedTitle = encodeURIComponent(post.title);
-
-  const shareUrls = {
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-    twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-    linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`,
-  };
 
   const relatedPosts = post.relatedPosts || fallbackRelatedPosts;
 
@@ -236,40 +228,11 @@ export default async function BlogPostPage({
               )}
 
               {/* Share */}
-              <div className="mt-12 pt-8 border-t">
-                <h3 className="text-lg font-semibold text-navy mb-4">
-                  Share this article
-                </h3>
-                <div className="flex space-x-4">
-                  <a
-                    href={shareUrls.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-green hover:text-white transition-colors"
-                    aria-label="Share on Facebook"
-                  >
-                    <Facebook className="h-5 w-5" />
-                  </a>
-                  <a
-                    href={shareUrls.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-green hover:text-white transition-colors"
-                    aria-label="Share on Twitter"
-                  >
-                    <Twitter className="h-5 w-5" />
-                  </a>
-                  <a
-                    href={shareUrls.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-green hover:text-white transition-colors"
-                    aria-label="Share on LinkedIn"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                  </a>
-                </div>
-              </div>
+              <SocialShare
+                url={postUrl}
+                title={post.title}
+                description={post.excerpt}
+              />
             </div>
 
             {/* Sidebar */}

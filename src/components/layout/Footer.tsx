@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import { SOCIAL_LINKS } from "@/lib/constants";
 
 const services = [
   { label: "Home-to-School Transport", href: "/services/home-to-school" },
@@ -54,9 +55,8 @@ export function Footer() {
                 customer service.
               </p>
               <div className="flex space-x-4">
-                {/* TODO: Update hrefs with actual social media profile URLs when available */}
                 <a
-                  href="#"
+                  href={SOCIAL_LINKS.facebook}
                   className="text-white/70 hover:text-green transition-colors"
                   aria-label="Facebook"
                   rel="noopener noreferrer"
@@ -65,7 +65,7 @@ export function Footer() {
                   <Facebook className="h-5 w-5" />
                 </a>
                 <a
-                  href="#"
+                  href={SOCIAL_LINKS.twitter}
                   className="text-white/70 hover:text-green transition-colors"
                   aria-label="Twitter"
                   rel="noopener noreferrer"
@@ -74,7 +74,7 @@ export function Footer() {
                   <Twitter className="h-5 w-5" />
                 </a>
                 <a
-                  href="#"
+                  href={SOCIAL_LINKS.linkedin}
                   className="text-white/70 hover:text-green transition-colors"
                   aria-label="LinkedIn"
                   rel="noopener noreferrer"
@@ -83,7 +83,7 @@ export function Footer() {
                   <Linkedin className="h-5 w-5" />
                 </a>
                 <a
-                  href="#"
+                  href={SOCIAL_LINKS.instagram}
                   className="text-white/70 hover:text-green transition-colors"
                   aria-label="Instagram"
                   rel="noopener noreferrer"
