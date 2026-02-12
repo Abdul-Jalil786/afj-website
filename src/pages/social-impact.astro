@@ -1,0 +1,374 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import SocialSidebar from '../components/SocialSidebar.astro';
+import SocialImpactHero from '../components/social-impact/SocialImpactHero.astro';
+import ImpactDashboard from '../components/social-impact/ImpactDashboard.astro';
+import LeadershipMessages from '../components/social-impact/LeadershipMessages.astro';
+import CSRFramework from '../components/social-impact/CSRFramework.astro';
+import UKHealthMap from '../components/social-impact/UKHealthMap.astro';
+import PartnerCharities from '../components/social-impact/PartnerCharities.astro';
+import SDGAlignment from '../components/social-impact/SDGAlignment.astro';
+import CTABanner from '../components/CTABanner.astro';
+
+const breadcrumbs = [{ label: 'Social Impact Report' }];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Social Impact Report | AFJ Limited',
+  description: 'AFJ Limited Social Impact Report detailing our community initiatives across diversity, health equity, environmental stewardship, and community support.',
+  publisher: {
+    '@type': 'Organization',
+    name: 'AFJ Limited',
+    url: 'https://www.afjltd.co.uk',
+  },
+  about: {
+    '@type': 'Thing',
+    name: 'Corporate Social Responsibility',
+  },
+};
+---
+
+<PageLayout
+  title="Social Impact Report | AFJ Limited"
+  description="AFJ Limited Social Impact Report. Moving Communities Forward through diversity, health equity, environmental stewardship, and community support across Birmingham, Manchester, and beyond."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+  <SocialImpactHero />
+  <ImpactDashboard />
+  <LeadershipMessages />
+  <CSRFramework />
+
+  <!-- Journey to Belonging -->
+  <section id="belonging" class="section-padding">
+    <div class="py-12 md:py-16 text-white text-center mb-10 rounded-xl overflow-hidden" style="background: linear-gradient(135deg, #0d4f5c 0%, #1A7A8A 50%, #1B7A43 100%);">
+      <div class="container-wide">
+        <p class="text-white/80 font-semibold text-sm tracking-widest uppercase mb-2">Journey to Belonging</p>
+        <h2 class="text-white text-3xl md:text-4xl font-bold mb-3">Diversity, Equity &amp; Inclusion</h2>
+        <p class="text-white/90 max-w-2xl mx-auto">We support educational access and opportunity — particularly for girls — by funding science labs, ICT facilities, and other essential learning resources.</p>
+      </div>
+    </div>
+    <div class="container-wide">
+      <div class="animate-on-scroll">
+        <h3 class="text-xl font-bold text-afj-green mb-2">Empowering Education in Underserved Communities</h3>
+        <p class="text-afj-accent font-medium text-sm mb-6">Partnership with Hazrat Khadijatul Kubra Girls' School (HKKGS)</p>
+
+        <!-- Context -->
+        <div class="mb-8">
+          <h4 class="font-bold text-afj-text mb-3">Context &amp; Need</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-afj-light-white rounded-lg p-5">
+              <strong class="text-afj-text block mb-1">Severe Local Deprivation</strong>
+              <p class="text-afj-secondary text-sm">Birmingham is one of England's most deprived cities, and Small Heath, where HKKGS is located, ranks among the top 10% most deprived wards nationally.</p>
+            </div>
+            <div class="bg-afj-light-white rounded-lg p-5">
+              <strong class="text-afj-text block mb-1">Gender Gap in STEM</strong>
+              <p class="text-afj-secondary text-sm">Nearly a third of STEM roles are held by women, and many girls report low confidence in maths and science.</p>
+            </div>
+            <div class="bg-afj-light-white rounded-lg p-5">
+              <strong class="text-afj-text block mb-1">Facility Shortages</strong>
+              <p class="text-afj-secondary text-sm">Schools in high-deprivation areas often lack modern laboratories and digital learning resources, limiting students' practical exposure to STEM.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- AFJ's Support -->
+        <div class="mb-8">
+          <h4 class="font-bold text-afj-text mb-3">AFJ's Dedicated Support</h4>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="text-afj-text text-sm"><strong>Full-Time Fundraising Officer:</strong> AFJ assigned a dedicated fundraising officer — supported by our in-house charity office — to build HKKGS's financial resilience, cultivate donor relationships, and open new funding streams.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="text-afj-text text-sm"><strong>Science Laboratory Installation:</strong> We financed and installed a fully equipped, state-of-the-art science lab, enabling all 150 students to engage in hands-on experiments and practical learning.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="text-afj-text text-sm"><strong>Strategic Expertise Deployment:</strong> AFJ's strategic team provides ongoing hands-on support in governance, financial planning, curriculum development, and organising educational trips.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Impact -->
+        <div class="mb-8">
+          <h4 class="font-bold text-afj-text mb-3">Impact &amp; Outcomes</h4>
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="bg-afj-accent/10 rounded-lg p-4">
+              <span class="text-2xl md:text-3xl font-bold text-afj-green block">150</span>
+              <span class="text-afj-secondary text-xs">Girls now access enhanced STEM resources daily</span>
+            </div>
+            <div class="bg-afj-accent/10 rounded-lg p-4">
+              <span class="text-2xl md:text-3xl font-bold text-afj-green block">1</span>
+              <span class="text-afj-secondary text-xs">State-of-the-art science lab installed</span>
+            </div>
+            <div class="bg-afj-accent/10 rounded-lg p-4">
+              <span class="text-2xl md:text-3xl font-bold text-afj-green block">100%</span>
+              <span class="text-afj-secondary text-xs">Dedicated fundraising support secured</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="bg-afj-light-white rounded-xl p-6">
+          <h4 class="font-bold text-afj-text mb-3">Projected Impact &amp; Next Steps</h4>
+          <ul class="space-y-2 text-afj-text text-sm">
+            <li><strong>Funding Goals:</strong> With our fundraising officer's leadership, the school aims to secure significant academic resources.</li>
+            <li><strong>Engagement Metrics:</strong> We will track science class attendance, lab usage, and girls' confidence in STEM subjects through termly surveys.</li>
+            <li><strong>Long-Term Evaluation:</strong> AFJ will support a study to measure improvements in STEM grades and post-secondary STEM enrolment.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Journey to Balance -->
+  <section id="balance" class="section-padding bg-afj-light-white">
+    <div class="py-12 md:py-16 text-white text-center mb-10 rounded-xl overflow-hidden" style="background: linear-gradient(135deg, #145C33 0%, #1B7A43 50%, #148F77 100%);">
+      <div class="container-wide">
+        <p class="text-white/80 font-semibold text-sm tracking-widest uppercase mb-2">Journey to Balance</p>
+        <h2 class="text-white text-3xl md:text-4xl font-bold mb-3">Health Equity &amp; Wellbeing</h2>
+        <p class="text-white/90 max-w-2xl mx-auto">Grants and initiatives that promote better health and cleaner environments, through screenings and awareness campaigns in collaboration with health charities.</p>
+      </div>
+    </div>
+    <div class="container-wide">
+      <!-- Health Overview -->
+      <div class="animate-on-scroll mb-10">
+        <p class="text-afj-text leading-relaxed">AFJ champions community wellbeing by tackling health inequalities through local and global partnerships. In the UK, we collaborate with The Diabetes Centre to deliver free health screenings — targeting communities that often miss routine check-ups due to time constraints, cultural barriers, or lack of awareness. Through these initiatives, thousands of individuals have benefited from diabetes and blood pressure checks, alongside tailored health education and support.</p>
+      </div>
+
+      <UKHealthMap />
+
+      <!-- Kenya Medical Camp -->
+      <div class="bg-white rounded-xl shadow-md p-6 md:p-8 mb-8 animate-on-scroll">
+        <span class="inline-block bg-afj-sky-blue/10 text-afj-sky-blue text-xs font-bold px-3 py-1 rounded-full mb-3">International Impact</span>
+        <h3 class="text-xl font-bold text-afj-green mb-4">Free Medical Camp in Vikwatani, Kenya</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="md:col-span-2">
+            <p class="text-afj-text leading-relaxed mb-4">In a collaborative effort between AFJ and Mission Relief, AFJ sponsored a two-day free medical camp in Vikwatani, Kenya. This initiative aimed to provide essential healthcare services to underserved communities, reaching over 2,000 residents.</p>
+            <h4 class="font-bold text-afj-text mb-2">Key Achievements</h4>
+            <ul class="space-y-2 text-afj-text text-sm">
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Comprehensive Medical Services:</strong> Attendees received general health screenings, consultations, and free medication.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Community Outreach:</strong> The camp successfully addressed the healthcare needs of a significant portion of the Vikwatani population, many of whom lack regular access to medical facilities.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Collaborative Success:</strong> The partnership between AFJ and Mission Relief exemplifies the positive impact of collaborative efforts in addressing public health challenges.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="space-y-4">
+            <div class="bg-afj-accent/10 rounded-lg p-4 text-center">
+              <span class="text-2xl font-bold text-afj-green block">2,000+</span>
+              <span class="text-afj-secondary text-xs">Residents Reached</span>
+            </div>
+            <div class="bg-afj-accent/10 rounded-lg p-4 text-center">
+              <span class="text-2xl font-bold text-afj-green block">2</span>
+              <span class="text-afj-secondary text-xs">Day Medical Camp</span>
+            </div>
+            <div class="bg-afj-accent/10 rounded-lg p-4 text-center">
+              <span class="text-2xl font-bold text-afj-green block">1</span>
+              <span class="text-afj-secondary text-xs">Partner: Mission Relief</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Environmental Stewardship -->
+      <div class="animate-on-scroll">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-afj-green">Environmental Stewardship</h3>
+          <div class="bg-afj-green text-white text-xs font-bold px-3 py-1.5 rounded-full">
+            Net Zero Target
+          </div>
+        </div>
+        <p class="text-afj-text leading-relaxed mb-4">AFJ remains deeply committed to environmental sustainability and the health of our planet. As part of our Journey to Balance initiative, we actively support community-led efforts to protect and restore the environment. Our employees regularly participate in litter-picking campaigns and awareness sessions aimed at promoting cleaner neighbourhoods and responsible waste disposal.</p>
+        <p class="text-afj-text leading-relaxed mb-6">Beyond local action, AFJ is also focused on long-term impact — championing a zero carbon emission strategy. Through operational changes, greener partnerships, and staff engagement, we're working to build a cleaner, more sustainable future for generations to come.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white rounded-lg shadow-md p-5">
+            <h4 class="font-bold text-afj-text mb-2">Community Litter Picking</h4>
+            <p class="text-afj-secondary text-sm">Regular staff-led campaigns across Birmingham neighbourhoods, promoting cleaner streets and environmental awareness.</p>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-5">
+            <h4 class="font-bold text-afj-text mb-2">Carbon Reduction Plan</h4>
+            <p class="text-afj-secondary text-sm">Published plan guiding our journey to net-zero, with fleet optimisation, route efficiency, and investment in greener technologies.</p>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-5">
+            <h4 class="font-bold text-afj-text mb-2">Fleet Modernisation</h4>
+            <p class="text-afj-secondary text-sm">Ongoing transition toward low-emission and electric vehicles, with trials of alternative fuels across our transport fleet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Journey to Hope -->
+  <section id="hope" class="section-padding">
+    <div class="py-12 md:py-16 text-white text-center mb-10 rounded-xl overflow-hidden" style="background: linear-gradient(135deg, #2d1854 0%, #4A3580 50%, #1A5276 100%);">
+      <div class="container-wide">
+        <p class="text-white/80 font-semibold text-sm tracking-widest uppercase mb-2">Journey to Hope</p>
+        <h2 class="text-white text-3xl md:text-4xl font-bold mb-3">Community Impact</h2>
+        <p class="text-white/90 max-w-2xl mx-auto">Through weekly food banks, youth support, and partnerships with grassroots charities, AFJ brings comfort, optimism, and lasting impact.</p>
+      </div>
+    </div>
+    <div class="container-wide space-y-8">
+      <!-- Empowering Young Talent -->
+      <article class="bg-white rounded-xl shadow-md p-6 md:p-8 animate-on-scroll">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #1B7A43, #2AA05A);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-afj-text">Empowering Young Talent</h3>
+            <p class="text-afj-accent text-sm font-medium">Nechells Football Club</p>
+          </div>
+        </div>
+        <p class="text-afj-text leading-relaxed mb-3">At AFJ, we take pride in supporting the next generation of athletes. We're thrilled to see the young players at Nechells Football Club proudly sporting their AFJ jerseys. Our commitment goes beyond providing gear — we're dedicated to nurturing local talent and fostering character development within our community.</p>
+        <p class="text-afj-text leading-relaxed">Through our support, we aim to inspire these young individuals to chase their dreams with determination and passion. Let's continue to cheer them on as they grow, thrive, and make their mark.</p>
+      </article>
+
+      <!-- Weekly Food Distribution -->
+      <article class="bg-white rounded-xl shadow-md p-6 md:p-8 animate-on-scroll">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #e67e22, #f39c12);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" aria-hidden="true">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-afj-text">Weekly Food Pack Distribution</h3>
+            <p class="text-afj-accent text-sm font-medium">Partnership with Homeless One &bull; Birmingham</p>
+          </div>
+        </div>
+        <p class="text-afj-text leading-relaxed mb-4">As part of our ongoing commitment to social responsibility and community support, we collaborate with Homeless One to provide essential food packs to individuals and families in need in Birmingham. Every week, our team works hand-in-hand to distribute nutritious, non-perishable food items to vulnerable communities.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+          <div class="bg-afj-light-white rounded-lg p-3 text-sm">
+            <strong class="text-afj-text">Frequency:</strong>
+            <span class="text-afj-secondary"> Every week, without interruption</span>
+          </div>
+          <div class="bg-afj-light-white rounded-lg p-3 text-sm">
+            <strong class="text-afj-text">Location:</strong>
+            <span class="text-afj-secondary"> Community centres across Birmingham</span>
+          </div>
+          <div class="bg-afj-light-white rounded-lg p-3 text-sm">
+            <strong class="text-afj-text">Impact:</strong>
+            <span class="text-afj-secondary"> Hundreds of families fed</span>
+          </div>
+        </div>
+        <div class="inline-flex items-center gap-2 bg-afj-accent/10 rounded-full px-4 py-2">
+          <span class="text-xl font-bold text-afj-green">52</span>
+          <span class="text-afj-secondary text-sm">weeks per year, every week</span>
+        </div>
+      </article>
+
+      <!-- Empowering Young Minds -->
+      <article class="bg-white rounded-xl shadow-md p-6 md:p-8 animate-on-scroll">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #1A5276, #2E86C1);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" aria-hidden="true">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-afj-text">Empowering Young Minds</h3>
+            <p class="text-afj-accent text-sm font-medium">Free Minds Foundation</p>
+          </div>
+        </div>
+        <p class="text-afj-text leading-relaxed mb-4">At AFJ, we believe that sustainable change begins with empowered individuals — especially young people. That's why we proudly support the Free Minds Foundation, a grassroots initiative dedicated to transforming communities through education, wellness, and social development.</p>
+
+        <h4 class="font-bold text-afj-text mb-3">Key Impact Areas</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div class="bg-afj-light-white rounded-lg p-4">
+            <strong class="text-afj-text text-sm block mb-1">Educational Workshops &amp; Youth Training</strong>
+            <p class="text-afj-secondary text-sm">Regular sessions for children, teens, and young adults at AFJ's facilities, empowering hundreds of participants to build confidence and develop life skills.</p>
+          </div>
+          <div class="bg-afj-light-white rounded-lg p-4">
+            <strong class="text-afj-text text-sm block mb-1">Wellness &amp; Cycling for Youth</strong>
+            <p class="text-afj-secondary text-sm">Youth-focused wellness programmes including guided group rides, fitness sessions, and health talks utilising AFJ's space.</p>
+          </div>
+          <div class="bg-afj-light-white rounded-lg p-4">
+            <strong class="text-afj-text text-sm block mb-1">"Getting Ready to Work" Employability Series</strong>
+            <p class="text-afj-secondary text-sm">Increased youth training capacity by 50%, with access to AFJ's training centre, delivering CV-building, job-readiness coaching, and mock interviews.</p>
+          </div>
+          <div class="bg-afj-light-white rounded-lg p-4">
+            <strong class="text-afj-text text-sm block mb-1">Digital Inclusion: Free SIM Project</strong>
+            <p class="text-afj-secondary text-sm">By distributing complementary SIM cards from AFJ's reception area, Free Minds has empowered over 200 low-income youth and families with critical access to mobile data.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <div class="inline-flex items-center gap-2 bg-afj-accent/10 rounded-full px-4 py-2">
+            <span class="text-xl font-bold text-afj-green">50%</span>
+            <span class="text-afj-secondary text-sm">training capacity increase</span>
+          </div>
+          <div class="inline-flex items-center gap-2 bg-afj-accent/10 rounded-full px-4 py-2">
+            <span class="text-xl font-bold text-afj-green">200+</span>
+            <span class="text-afj-secondary text-sm">SIM cards distributed</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <PartnerCharities />
+  <SDGAlignment />
+
+  <CTABanner
+    heading="Partner With Us on Social Impact"
+    description="Interested in our CSR initiatives or partnership opportunities? Get in touch today."
+    variant="green"
+  />
+</PageLayout>
+
+<style>
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-on-scroll {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.animate-on-scroll').forEach(function (el) {
+        el.classList.add('animated');
+      });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animated');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(function (el) {
+      observer.observe(el);
+    });
+  })();
+</script>

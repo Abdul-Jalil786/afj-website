@@ -1,0 +1,73 @@
+---
+const leaders = [
+  {
+    initials: 'JS',
+    name: 'Jay Shakeel',
+    title: 'Chief Executive Officer, AFJ Limited',
+    gradient: 'linear-gradient(135deg, #1A5276, #1B7A43)',
+    quote: 'Integrity, safety, and passenger-centricity are at the heart of every journey we undertake, guided by our core values of continuous improvement, environmental stewardship, and collaborative innovation.',
+    summary: 'At AFJ Ltd, our mission is to provide high-quality, compliant transport services with a customer-centric approach, fostering community engagement and sustainability to create a positive impact on society. Since our founding, we have responsibly expanded into school services, non-emergency patient transport, fleet maintenance, private hire, and professional training.',
+    fullMessage: [
+      'We are committed to giving back to the communities we serve. Through strategic partnerships with key local authorities, including Birmingham City Council, Manchester City Council, and Tameside Metropolitan Borough Council, we support community wellbeing. Our fleet transports over 1500 students daily and facilitates seamless patient discharges to alleviate NHS pressures.',
+      'Our in-house training programmes, including those for Citizens, Ambulance Care Assistants, and Passenger Assistants, are accredited by Qualsafe. These programmes empower more than 200 professionals annually with the skills needed to deliver passengers with special educational needs and medical requirements.',
+      'Our environmental sustainability agenda is championed by our eco-friendly fleet, which prioritises low-emission vehicles. We are also conducting ongoing trials of alternative fuels and are driven to rigorously optimise our operations to minimise our carbon impact. Guided by our published Carbon Reduction Plan, we continuously optimise routes and invest in greener technologies, ensuring AFJ Ltd remains sustainability-focused.',
+      'Looking ahead, AFJ Ltd will deepen our commitment to sustainability by expanding our fleet with electric vehicles, investing in renewable energy solutions. We will also strengthen community engagement through regular community forums and feedback mechanisms, ensuring our services meet local needs. With integrity as our guiding principle and innovation as our driving force, we are poised to continue sustained growth, deliver social value, and enhance mobility for all.',
+    ],
+  },
+  {
+    initials: 'FK',
+    name: 'Farooq Khan',
+    title: 'Charity Officer (CSR Lead), AFJ Limited',
+    gradient: 'linear-gradient(135deg, #145C33, #1A5276)',
+    quote: 'Meaningful change happens when professional expertise meets genuine community need. By embedding CSR into our operations, we help them grow stronger, more resilient, and better equipped to serve their communities.',
+    summary: 'At AFJ, our dedication to social responsibility is driven by a belief that meaningful change happens when professional support meets genuine need. As a transport company, our mission has always been about more than mobility — it\'s about connection, care, and commitment to the people and places we serve.',
+    fullMessage: [
+      'In my role as Charity Officer, I work directly with a select group of grassroots charities chosen for their impact and alignment with our values. My purpose is to support these organisations in building strong internal structures, developing sustainable funding models, and enhancing their capacity through strategic planning, marketing, and outreach.',
+      'This approach has translated into tangible outcomes. We proudly funded and installed a modern science laboratory at Hazrat Khadijatul Kubra Girls\' School in Birmingham, enabling over 150 students to engage in hands-on STEM education. In partnership with The Diabetes Centre, we facilitated nationwide health awareness campaigns, offering free diabetes and blood pressure screenings and empowering thousands with preventative knowledge.',
+      'Internationally, we supported mobile medical units across South Asia and Africa, extending critical healthcare to remote communities. Locally, we remained steadfast in our commitment to essential needs. Our weekly food pack distributions in Birmingham, in collaboration with trusted community partners, continue to support hundreds of people facing food insecurity.',
+      'Environmental stewardship is another important part of our work. From staff-led clean-up campaigns to our long-term journey toward net-zero emissions, we are committed to contributing to a healthier planet through both local action and operational change.',
+    ],
+  },
+];
+---
+
+<section id="leadership" class="section-padding">
+  <div class="container-wide">
+    <div class="text-center mb-10">
+      <h2 class="text-afj-green mb-3">A Message from Our Leaders</h2>
+      <p class="text-afj-secondary text-lg max-w-2xl mx-auto">The vision and commitment driving our social impact</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {leaders.map((leader) => (
+        <article class="bg-white rounded-xl shadow-md p-6 md:p-8 animate-on-scroll">
+          <div class="flex items-start gap-5 mb-5">
+            <div class="w-20 h-20 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xl font-bold" style={`background: ${leader.gradient};`}>
+              {leader.initials}
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-afj-text">{leader.name}</h3>
+              <p class="text-afj-secondary text-sm">{leader.title}</p>
+            </div>
+          </div>
+          <blockquote class="border-l-4 border-afj-accent pl-4 italic text-afj-secondary mb-4">
+            "{leader.quote}"
+          </blockquote>
+          <p class="text-afj-text leading-relaxed mb-4">{leader.summary}</p>
+          <details class="group">
+            <summary class="cursor-pointer text-afj-sky-blue font-medium hover:text-afj-green transition-colors inline-flex items-center gap-1">
+              Read full message
+              <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="mt-4 space-y-3 text-afj-text leading-relaxed">
+              {leader.fullMessage.map((para) => (
+                <p>{para}</p>
+              ))}
+            </div>
+          </details>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

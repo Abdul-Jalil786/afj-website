@@ -1,0 +1,63 @@
+---
+const partners = [
+  {
+    name: 'The Diabetes Centre',
+    focus: 'Health Screening Partner',
+    description: 'Nationwide diabetes and blood pressure awareness campaigns, with free health screenings delivered across 5 UK cities reaching 1,370+ people.',
+    bgColour: 'bg-green-50',
+  },
+  {
+    name: 'Freeminds Foundation',
+    focus: 'Youth Empowerment Partner',
+    description: 'Youth workshops, employability training, cycling programmes, and digital inclusion through 200+ free SIM cards for low-income families.',
+    bgColour: 'bg-blue-50',
+  },
+  {
+    name: 'Mission Relief',
+    focus: 'International Humanitarian Partner',
+    description: 'Co-sponsored free medical camp in Vikwatani, Kenya, providing essential healthcare services to over 2,000 underserved residents.',
+    bgColour: 'bg-pink-50',
+  },
+  {
+    name: 'Homeless One',
+    focus: 'Food Security Partner',
+    description: 'Weekly food pack distribution across Birmingham, providing nutritious essentials to vulnerable individuals and families every week of the year.',
+    bgColour: 'bg-orange-50',
+  },
+  {
+    name: 'Nechells Football Club',
+    focus: 'Youth Sports Partner',
+    description: 'Supporting the next generation of athletes through kit sponsorship, character development, and nurturing local talent in the community.',
+    bgColour: 'bg-purple-50',
+  },
+  {
+    name: 'Hazrat Khadijatul Kubra Girls\' School',
+    focus: 'Education Partner',
+    description: 'Funded and installed a state-of-the-art science lab, dedicated fundraising officer, and strategic STEM education support for 150 girls.',
+    bgColour: 'bg-cyan-50',
+  },
+];
+---
+
+<section id="partners" class="section-padding bg-afj-light-white">
+  <div class="container-wide">
+    <div class="text-center mb-10">
+      <h2 class="text-afj-green mb-3">Our Partner Charities</h2>
+      <p class="text-afj-secondary text-lg max-w-2xl mx-auto">We are proud to collaborate with dedicated charitable organisations that share our commitment to building stronger, more compassionate communities.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {partners.map((partner) => (
+        <article class="bg-white rounded-xl shadow-md overflow-hidden animate-on-scroll">
+          <div class={`${partner.bgColour} p-6 flex items-center justify-center min-h-[80px]`}>
+            <span class="font-bold text-afj-text text-center">{partner.name}</span>
+          </div>
+          <div class="p-5">
+            <h3 class="font-bold text-afj-text mb-1">{partner.name}</h3>
+            <span class="inline-block bg-afj-accent/10 text-afj-green text-xs font-semibold px-2 py-1 rounded-full mb-3">{partner.focus}</span>
+            <p class="text-afj-secondary text-sm leading-relaxed">{partner.description}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

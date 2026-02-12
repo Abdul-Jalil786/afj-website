@@ -1,0 +1,32 @@
+---
+---
+
+<section class="relative min-h-[70vh] flex items-center justify-center text-white overflow-hidden" style="background: linear-gradient(135deg, #1A365D 0%, #2D3748 40%, #1B7A43 100%);">
+  <div class="absolute inset-0 bg-black/20"></div>
+  <div class="relative z-10 text-center px-4 sm:px-6 max-w-3xl mx-auto">
+    <p class="text-afj-accent font-semibold text-sm sm:text-base tracking-widest uppercase mb-4">AFJ Limited</p>
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">Social Impact Report</h1>
+    <p class="text-xl sm:text-2xl text-white/90 mb-8">Moving Communities Forward</p>
+    <a href="#impact" class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/30 text-white px-6 py-3 rounded-full font-medium hover:bg-white/20 transition-all duration-300">
+      <span>Explore Our Impact</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </a>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2" aria-hidden="true">
+    <div class="scroll-indicator w-6 h-10 border-2 border-white/40 rounded-full flex justify-center pt-2">
+      <div class="w-1.5 h-1.5 bg-white rounded-full animate-scroll-dot"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes scrollDot {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(16px); }
+  }
+  .animate-scroll-dot {
+    animation: scrollDot 1.5s ease-in-out infinite;
+  }
+</style>

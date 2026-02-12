@@ -1,0 +1,104 @@
+---
+const sdgs = [
+  {
+    number: 'SDG 3',
+    title: 'Good Health & Wellbeing',
+    description: 'Expanding nationwide health awareness campaigns and international outreach through mobile screening initiatives, focusing on early detection and prevention in underserved communities.',
+    colour: '#4C9F38',
+  },
+  {
+    number: 'SDG 4',
+    title: 'Quality Education',
+    description: 'Continuing to support access to STEM and digital education through partnerships that provide learning resources, facility upgrades, and strategic development in under-resourced areas.',
+    colour: '#C5192D',
+  },
+  {
+    number: 'SDG 10',
+    title: 'Reduced Inequalities',
+    description: 'Continuing to drive inclusion through grassroots organisations, from workforce readiness programmes to digital access initiatives and community mentoring.',
+    colour: '#DD1367',
+  },
+  {
+    number: 'SDG 11',
+    title: 'Sustainable Cities & Communities',
+    description: 'Investing in initiatives that promote safer, healthier neighbourhoods — through youth development, public space cleanups, food support, and active transport programmes.',
+    colour: '#FD9D24',
+  },
+  {
+    number: 'SDG 13',
+    title: 'Climate Action',
+    description: 'With a goal of net-zero emissions, we will expand our low-emission fleet, optimise logistics, and support environmental awareness and conservation campaigns.',
+    colour: '#3F7E44',
+  },
+];
+
+const commitments = [
+  {
+    title: 'Expand Health Screenings',
+    description: 'Reach more cities across the UK with free diabetes and blood pressure awareness events',
+    icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  },
+  {
+    title: 'Reach 5,000+ People',
+    description: 'Scale our community health programmes to reach over 5,000 individuals annually',
+    icon: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  },
+  {
+    title: 'Carbon Audit',
+    description: 'Complete a comprehensive fleet carbon audit to establish baseline emissions data',
+    icon: '<path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/>',
+  },
+  {
+    title: 'Strengthen Education Partnerships',
+    description: 'Deepen support for STEM education, digital inclusion, and youth employability programmes',
+    icon: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  },
+];
+---
+
+<section id="looking-ahead" class="section-padding">
+  <div class="container-wide">
+    <div class="text-center mb-10">
+      <h2 class="text-afj-green mb-3">Looking Ahead</h2>
+      <p class="text-afj-secondary text-lg max-w-2xl mx-auto">Advancing social impact through the UN Sustainable Development Goals</p>
+    </div>
+
+    <!-- SDG Cards -->
+    <div class="mb-12 animate-on-scroll">
+      <h3 class="text-xl font-bold text-afj-text mb-3">UN SDG Alignment</h3>
+      <p class="text-afj-text leading-relaxed mb-6">At AFJ, our forward strategy is focused on scaling social impact, strengthening community partnerships, and deepening our commitment to sustainability. Our goals align closely with the United Nations 17 Sustainable Development Goals (SDGs).</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {sdgs.map((sdg) => (
+          <div class="bg-white rounded-lg shadow-md p-5 border-l-4" style={`border-left-color: ${sdg.colour};`}>
+            <span class="inline-block text-xs font-bold text-white px-2 py-1 rounded mb-2" style={`background: ${sdg.colour};`}>{sdg.number}</span>
+            <h4 class="font-bold text-afj-text mb-2">{sdg.title}</h4>
+            <p class="text-afj-secondary text-sm leading-relaxed">{sdg.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Commitments -->
+    <div class="animate-on-scroll">
+      <h3 class="text-xl font-bold text-afj-text mb-3">Our Commitments</h3>
+      <p class="text-afj-text leading-relaxed mb-6">AFJ will continue to build impact through purposeful collaboration — with charities, CICs, health organisations, and local authorities. By combining operational excellence with a strong sense of social responsibility, we are helping shape a more equitable, sustainable, and resilient future.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {commitments.map((item) => (
+          <div class="bg-afj-light-white rounded-lg p-6 animate-on-scroll">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-full bg-afj-accent/10 flex items-center justify-center flex-shrink-0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B7A43" stroke-width="2" aria-hidden="true">
+                  <Fragment set:html={item.icon} />
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-afj-text mb-1">{item.title}</h4>
+                <p class="text-afj-secondary text-sm">{item.description}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

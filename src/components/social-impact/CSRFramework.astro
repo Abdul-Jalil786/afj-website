@@ -1,0 +1,58 @@
+---
+const pillars = [
+  {
+    name: 'Journey to Belonging',
+    tagline: 'Diversity, Equity & Inclusion',
+    description: 'Fostering inclusion, respect, and diversity in our workplace and the communities we engage with. We support educational access and opportunity, particularly for girls, through funding science labs, ICT facilities, and essential learning resources.',
+    icon: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    colour: '#1A7A8A',
+  },
+  {
+    name: 'Journey to Balance',
+    tagline: 'Health, Wellbeing & Environment',
+    description: 'Grants and initiatives that promote better health and cleaner environments, including health screenings, litter-picking drives, and awareness campaigns in collaboration with health charities. We champion a zero-carbon future.',
+    icon: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+    colour: '#1B7A43',
+  },
+  {
+    name: 'Journey to Hope',
+    tagline: 'Community Impact',
+    description: 'Through weekly food banks in Birmingham, youth support, and partnerships with grassroots charities, AFJ brings comfort, optimism, and lasting impact to the communities we serve. We invest in our people and nurture young talent.',
+    icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+    colour: '#4A3580',
+  },
+];
+---
+
+<section id="strategy" class="section-padding bg-afj-light-white">
+  <div class="container-wide">
+    <div class="text-center mb-10">
+      <h2 class="text-afj-green mb-3">Our CSR Framework</h2>
+      <p class="text-afj-secondary text-lg max-w-2xl mx-auto">We are committed to creating a better journey for the people we serve</p>
+    </div>
+
+    <p class="text-afj-text leading-relaxed max-w-4xl mx-auto text-center mb-10 animate-on-scroll">
+      At AFJ, we believe that responsible business goes beyond compliance. Our Corporate Social Responsibility efforts are designed to address the expectations of our employees, customers, communities, and stakeholders. We approach CSR with a strategic mindset, focusing on issues that are not only vital to our business but also to the social matters that affect the people we serve.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      {pillars.map((pillar) => (
+        <article class="bg-white rounded-xl shadow-md p-6 text-center animate-on-scroll">
+          <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={`background: ${pillar.colour}20;`}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={pillar.colour} stroke-width="1.5" aria-hidden="true">
+              <Fragment set:html={pillar.icon} />
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-afj-text mb-1">{pillar.name}</h3>
+          <p class="text-afj-accent text-sm font-medium mb-3">{pillar.tagline}</p>
+          <p class="text-afj-secondary text-sm leading-relaxed">{pillar.description}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-6 md:p-8 max-w-3xl mx-auto animate-on-scroll">
+      <h3 class="text-lg font-bold text-afj-green mb-3">Our Charitable Giving Strategy</h3>
+      <p class="text-afj-text leading-relaxed">Our giving focuses on these three strategic pillars, supporting organisations through financial support, in-kind contributions, and close collaborations with local charities. We work hands-on with our partner organisations, providing strategic expertise, operational support, and dedicated fundraising capacity.</p>
+    </div>
+  </div>
+</section>

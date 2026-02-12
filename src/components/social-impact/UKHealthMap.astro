@@ -1,0 +1,185 @@
+---
+const events = [
+  {
+    city: 'manchester',
+    name: 'Manchester',
+    attendees: '500 attendees',
+    highlight: '350 one-to-one counselling sessions delivered. Secured £23,000 for future community health initiatives.',
+    venue: 'The Sheridan Hall, Manchester',
+  },
+  {
+    city: 'leeds',
+    name: 'Leeds',
+    attendees: '200 attendees',
+    highlight: '50% increase in participants\' confidence in managing their health. Wellness packs distributed to all attendees.',
+    venue: 'Leeds Haem Community Hall',
+  },
+  {
+    city: 'london',
+    name: 'London',
+    attendees: '300 attendees',
+    highlight: 'Successfully raised £11,000 supporting AFJ and The Diabetes Centre\'s continued efforts across the UK.',
+    venue: 'Local Community Centre, London',
+  },
+  {
+    city: 'oldham',
+    name: 'Oldham',
+    attendees: '170 attendees',
+    highlight: 'Culturally tailored sessions on healthy eating, portion control, and lifestyle choices. Event raised £1,300.',
+    venue: 'Local Community Centre, Oldham',
+  },
+  {
+    city: 'birmingham',
+    name: 'Birmingham',
+    attendees: '200 attendees',
+    highlight: 'Culturally relevant dietary consultations and keynote nutrition lectures by qualified professionals.',
+    venue: 'Birmingham Community Centre',
+  },
+];
+
+const sharedFeatures = [
+  'Free diabetes and blood pressure screenings',
+  '"Know Your Numbers" workshops led by NHS-registered doctors',
+  'Culturally tailored healthy eating sessions',
+  'Custom wellness packs distributed to all attendees',
+  'Delivered in partnership with The Diabetes Centre',
+  'One-to-one health consultations available',
+];
+---
+
+<div class="mb-12">
+  <h3 class="text-xl font-bold text-afj-green mb-2">Health Screening Events Across the UK</h3>
+  <p class="text-afj-secondary mb-6">In partnership with The Diabetes Centre, we delivered free health screenings in 5 cities, reaching over 1,370 people.</p>
+
+  <!-- SVG Map -->
+  <div class="relative max-w-md mx-auto mb-8">
+    <svg id="ukMap" class="w-full h-auto" viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map of UK showing AFJ health event locations">
+      <!-- UK outline -->
+      <path d="M250,50 C280,55 310,70 320,100 C340,90 360,95 370,110 C380,130 375,150 365,170 C375,180 380,200 370,220 C365,240 355,250 350,270 C360,280 365,300 355,320 C345,340 335,350 340,370 C345,390 340,410 330,430 C320,450 305,460 290,470 C275,480 260,490 250,510 C240,525 230,540 225,555 C220,570 215,580 210,590 C200,600 190,610 180,605 C170,600 165,585 170,570 C175,555 180,540 175,525 C170,510 160,500 155,485 C150,470 145,455 150,440 C155,425 165,415 170,400 C175,385 170,370 165,355 C160,340 155,325 160,310 C165,295 175,285 180,270 C185,255 180,240 175,225 C170,210 165,195 170,180 C175,165 185,155 190,140 C195,125 190,110 185,95 C190,80 200,65 215,55 C230,48 245,48 250,50 Z" fill="#e8f0f2" stroke="#cbd5d8" stroke-width="2"/>
+      <!-- Scotland -->
+      <path d="M220,50 C230,30 260,20 280,25 C300,30 310,45 315,60 C320,75 315,90 305,100 C295,110 280,108 270,100 C260,92 250,85 245,75 C240,65 230,55 220,50 Z" fill="#e8f0f2" stroke="#cbd5d8" stroke-width="2"/>
+
+      <!-- City pins -->
+      <g class="map-pin cursor-pointer" data-city="manchester" tabindex="0" role="button" aria-label="Manchester: 500 people reached">
+        <circle cx="260" cy="300" r="12" fill="#1B7A43" fill-opacity="0.2" stroke="#1B7A43" stroke-width="2"/>
+        <circle cx="260" cy="300" r="5" fill="#1B7A43"/>
+        <text x="260" y="325" text-anchor="middle" fill="#2D3748" font-size="12" font-weight="600">Manchester</text>
+      </g>
+      <g class="map-pin cursor-pointer" data-city="leeds" tabindex="0" role="button" aria-label="Leeds: 200 people reached">
+        <circle cx="285" cy="280" r="12" fill="#1B7A43" fill-opacity="0.2" stroke="#1B7A43" stroke-width="2"/>
+        <circle cx="285" cy="280" r="5" fill="#1B7A43"/>
+        <text x="285" y="265" text-anchor="middle" fill="#2D3748" font-size="12" font-weight="600">Leeds</text>
+      </g>
+      <g class="map-pin cursor-pointer" data-city="london" tabindex="0" role="button" aria-label="London: 300 people reached">
+        <circle cx="310" cy="440" r="12" fill="#1B7A43" fill-opacity="0.2" stroke="#1B7A43" stroke-width="2"/>
+        <circle cx="310" cy="440" r="5" fill="#1B7A43"/>
+        <text x="310" y="465" text-anchor="middle" fill="#2D3748" font-size="12" font-weight="600">London</text>
+      </g>
+      <g class="map-pin cursor-pointer" data-city="oldham" tabindex="0" role="button" aria-label="Oldham: 170 people reached">
+        <circle cx="270" cy="290" r="12" fill="#1B7A43" fill-opacity="0.2" stroke="#1B7A43" stroke-width="2"/>
+        <circle cx="270" cy="290" r="5" fill="#1B7A43"/>
+        <text x="232" y="290" text-anchor="middle" fill="#2D3748" font-size="12" font-weight="600">Oldham</text>
+      </g>
+      <g class="map-pin cursor-pointer" data-city="birmingham" tabindex="0" role="button" aria-label="Birmingham: 200 people reached">
+        <circle cx="275" cy="370" r="12" fill="#1B7A43" fill-opacity="0.2" stroke="#1B7A43" stroke-width="2"/>
+        <circle cx="275" cy="370" r="5" fill="#1B7A43"/>
+        <text x="275" y="395" text-anchor="middle" fill="#2D3748" font-size="12" font-weight="600">Birmingham</text>
+      </g>
+
+      <!-- Total counter -->
+      <g>
+        <rect x="50" y="180" width="130" height="60" rx="8" fill="white" stroke="#1B7A43" stroke-width="2"/>
+        <text x="115" y="205" text-anchor="middle" fill="#1B7A43" font-size="20" font-weight="700">1,370+</text>
+        <text x="115" y="225" text-anchor="middle" fill="#4A5568" font-size="12">People Reached</text>
+      </g>
+    </svg>
+
+    <!-- Tooltip -->
+    <div id="mapTooltip" class="absolute hidden bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-10 max-w-xs pointer-events-none" role="tooltip" aria-hidden="true">
+      <h4 class="font-bold text-afj-text tooltip-city"></h4>
+      <p class="text-afj-green font-semibold text-sm tooltip-attendees"></p>
+      <p class="text-afj-secondary text-sm mt-1 tooltip-highlight"></p>
+    </div>
+  </div>
+
+  <!-- Event Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    {events.map((event) => (
+      <article class="bg-white rounded-lg shadow-md p-5 border-t-4 border-afj-accent animate-on-scroll">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-afj-text">{event.name}</span>
+        </div>
+        <div class="mb-2">
+          <span class="text-2xl font-bold text-afj-green">{event.attendees.split(' ')[0]}</span>
+          <span class="text-afj-secondary text-sm ml-1">attendees</span>
+        </div>
+        <p class="text-afj-secondary text-sm mb-2">{event.highlight}</p>
+        <p class="text-xs text-afj-secondary/70">{event.venue}</p>
+      </article>
+    ))}
+  </div>
+
+  <!-- Shared Features -->
+  <div class="bg-white rounded-xl shadow-md p-6 md:p-8 animate-on-scroll">
+    <h3 class="text-lg font-bold text-afj-green mb-4">What Every Event Delivered</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {sharedFeatures.map((feature) => (
+        <div class="flex items-start gap-2">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="text-afj-text text-sm">{feature}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var tooltip = document.getElementById('mapTooltip');
+    var pins = document.querySelectorAll('.map-pin');
+    var cityData = {
+      manchester: { name: 'Manchester', attendees: '500 attendees', highlight: '350 one-to-one counselling sessions delivered. Secured \u00a323,000 for future community health initiatives.' },
+      leeds: { name: 'Leeds', attendees: '200 attendees', highlight: '50% increase in participants\' confidence in managing their health.' },
+      london: { name: 'London', attendees: '300 attendees', highlight: 'Successfully raised \u00a311,000 supporting continued efforts across the UK.' },
+      oldham: { name: 'Oldham', attendees: '170 attendees', highlight: 'Culturally tailored sessions on healthy eating, portion control, and lifestyle choices.' },
+      birmingham: { name: 'Birmingham', attendees: '200 attendees', highlight: 'Culturally relevant dietary consultations and keynote nutrition lectures.' },
+    };
+
+    if (!tooltip || !pins.length) return;
+
+    function showTooltip(pin) {
+      var city = pin.getAttribute('data-city');
+      var data = cityData[city];
+      if (!data) return;
+
+      tooltip.querySelector('.tooltip-city').textContent = data.name;
+      tooltip.querySelector('.tooltip-attendees').textContent = data.attendees;
+      tooltip.querySelector('.tooltip-highlight').textContent = data.highlight;
+
+      var mapContainer = tooltip.parentElement;
+      var mapRect = mapContainer.getBoundingClientRect();
+      var pinRect = pin.getBoundingClientRect();
+
+      var left = pinRect.left - mapRect.left + pinRect.width / 2;
+      var top = pinRect.top - mapRect.top - 10;
+
+      tooltip.style.left = Math.min(left, mapRect.width - 260) + 'px';
+      tooltip.style.top = top + 'px';
+      tooltip.style.transform = 'translateY(-100%)';
+      tooltip.classList.remove('hidden');
+      tooltip.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideTooltip() {
+      tooltip.classList.add('hidden');
+      tooltip.setAttribute('aria-hidden', 'true');
+    }
+
+    pins.forEach(function (pin) {
+      pin.addEventListener('mouseenter', function () { showTooltip(pin); });
+      pin.addEventListener('mouseleave', hideTooltip);
+      pin.addEventListener('focus', function () { showTooltip(pin); });
+      pin.addEventListener('blur', hideTooltip);
+    });
+  })();
+</script>
