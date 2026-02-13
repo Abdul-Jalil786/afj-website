@@ -2,8 +2,20 @@
 import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/Hero.astro';
 import BookingForm from '../../components/BookingForm.astro';
+import FleetGallery from '../../components/FleetGallery.astro';
 import CTABanner from '../../components/CTABanner.astro';
 import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const workshopImages = [
+  { src: '/images/fleet/20231102_130320-scaled.jpg', alt: 'AFJ workshop floor with vehicles under maintenance' },
+  { src: '/images/fleet/20231114_094745-1-scaled.jpg', alt: 'Vehicle undergoing routine maintenance' },
+  { src: '/images/fleet/20231114_095129-scaled.jpg', alt: 'Engine repair in progress at AFJ workshop' },
+  { src: '/images/fleet/20231117_124625-scaled.jpg', alt: 'Workshop equipment and tools' },
+  { src: '/images/fleet/IMG_0033-scaled.jpg', alt: 'Skilled mechanic working on fleet vehicle' },
+  { src: '/images/fleet/IMG_0043-scaled.jpg', alt: 'Fleet vehicle inspection at AFJ' },
+  { src: '/images/fleet/IMG_0067-scaled.jpg', alt: 'Vehicle maintenance bay' },
+  { src: '/images/fleet/IMG_0076-scaled.jpg', alt: 'Vehicle servicing in progress' },
+];
 
 const breadcrumbs = [
   { label: 'Services', href: '/services' },
@@ -142,6 +154,9 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <!-- Workshop Gallery -->
+  <FleetGallery images={workshopImages} heading="Our Workshop & Facilities" />
 
   <!-- Booking Form -->
   <section class="section-padding bg-afj-light-white">

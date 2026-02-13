@@ -2,8 +2,20 @@
 import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/Hero.astro';
 import BookingForm from '../../components/BookingForm.astro';
+import FleetGallery from '../../components/FleetGallery.astro';
 import CTABanner from '../../components/CTABanner.astro';
 import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const conversionImages = [
+  { src: '/images/fleet/mbs1afjert.png', alt: 'AFJ ambulance conversion' },
+  { src: '/images/fleet/mbs1afjertx.png', alt: 'Wheelchair-accessible vehicle conversion' },
+  { src: '/images/fleet/mbs1afjerter.png', alt: 'Vehicle conversion in progress' },
+  { src: '/images/fleet/mbs1afjertx-1.webp', alt: 'Completed ambulance conversion' },
+  { src: '/images/fleet/IMG_4309.jpg', alt: 'Conversion detail work' },
+  { src: '/images/fleet/IMG_4420-1_11zon.webp', alt: 'Patient transport vehicle' },
+  { src: '/images/fleet/mbs1a111qm21.webp', alt: 'Mercedes Sprinter minibus conversion' },
+  { src: '/images/fleet/mbs1a111qmpo.webp', alt: 'Wheelchair lift installation' },
+];
 
 const breadcrumbs = [
   { label: 'Services', href: '/services' },
@@ -157,6 +169,9 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <!-- Conversion Gallery -->
+  <FleetGallery images={conversionImages} heading="Our Conversion Work" />
 
   <!-- Booking Form -->
   <section class="section-padding bg-afj-light-white">

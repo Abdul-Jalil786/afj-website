@@ -4,16 +4,19 @@ const values = [
     title: 'Our Vision',
     description: 'To excel in delivering reliable, innovative, and customer-centric transport solutions while prioritising safety, sustainability, and collaboration.',
     icon: 'vision',
+    image: '/images/about/Vision.webp',
   },
   {
     title: 'Our Mission',
     description: 'To provide high-quality, compliant transport services with a customer-centric approach, fostering community engagement and sustainability for a positive impact on society.',
     icon: 'mission',
+    image: '/images/about/Mission.webp',
   },
   {
     title: 'Core Values',
     description: 'Integrity, continuous improvement, passenger-centricity, operational excellence, environmental stewardship, collaborative innovation, safety first, and stakeholder engagement.',
     icon: 'values',
+    image: '/images/about/Core-value.webp',
   },
 ];
 ---
@@ -23,27 +26,33 @@ const values = [
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
       {values.map((item) => (
         <div class="bg-white rounded-lg shadow-md p-6 lg:p-8 text-center hover:shadow-lg transition-shadow">
-          <!-- Icon -->
-          <div class="w-16 h-16 bg-afj-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            {item.icon === 'vision' && (
-              <svg class="w-8 h-8 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            )}
-            {item.icon === 'mission' && (
-              <svg class="w-8 h-8 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" stroke-width="2" />
-                <circle cx="12" cy="12" r="6" stroke-width="2" />
-                <circle cx="12" cy="12" r="2" stroke-width="2" />
-              </svg>
-            )}
-            {item.icon === 'values' && (
-              <svg class="w-8 h-8 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            )}
-          </div>
+          <!-- Image -->
+          {item.image ? (
+            <div class="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 shadow-md">
+              <img src={item.image} alt={item.title} class="w-full h-full object-cover" loading="lazy" />
+            </div>
+          ) : (
+            <div class="w-16 h-16 bg-afj-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              {item.icon === 'vision' && (
+                <svg class="w-8 h-8 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              )}
+              {item.icon === 'mission' && (
+                <svg class="w-8 h-8 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke-width="2" />
+                  <circle cx="12" cy="12" r="6" stroke-width="2" />
+                  <circle cx="12" cy="12" r="2" stroke-width="2" />
+                </svg>
+              )}
+              {item.icon === 'values' && (
+                <svg class="w-8 h-8 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              )}
+            </div>
+          )}
 
           <h3 class="text-afj-green font-bold text-xl mb-3">{item.title}</h3>
           <p class="text-afj-secondary text-sm leading-relaxed">{item.description}</p>

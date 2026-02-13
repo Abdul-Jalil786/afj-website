@@ -18,41 +18,49 @@ const services = [
     title: 'Home to School Transport',
     description: 'Over 700 students transported daily across Birmingham and Manchester. DBS-checked drivers and wheelchair-accessible minibuses.',
     href: '/services/send-transport',
+    image: '/images/hero/homeToSchool.png',
   },
   {
     title: 'Non-Emergency Patient Transport',
     description: 'CQC rated "Good". NHS trust contracts with trained Ambulance Care Assistants for all patient needs.',
     href: '/services/patient-transport',
+    image: '/images/hero/nEmer.png',
   },
   {
     title: 'Fleet Maintenance',
     description: 'In-house workshop with skilled technicians and state-of-the-art facilities. Minimising downtime, maximising vehicle lifespan.',
     href: '/services/fleet-maintenance',
+    image: '/images/hero/FleetSM.png',
   },
   {
     title: 'Vehicle Conversions',
     description: 'Wheelchair-accessible and ambulance conversions. VOSA certified. The only UK PTS provider that builds its own ambulances.',
     href: '/services/vehicle-conversions',
+    image: '/images/hero/convertionAFJ.png',
   },
   {
     title: 'Driver, ACA & PA Training',
     description: 'QualSafe-approved training programmes. Driver CPC, Ambulance Care Assistant, and Passenger Assistant certification.',
     href: '/services/driver-training',
+    image: '/images/hero/Group123435455.png',
   },
   {
     title: 'Private Minibus Hire',
     description: 'Modern fleet of 16-seater wheelchair-accessible minibuses for corporate events, school trips, and group travel.',
     href: '/services/private-hire',
+    image: '/images/services/Private-Hire.png',
   },
   {
     title: 'Executive Minibus Hire',
     description: 'Luxury minibus hire with driver for corporate travel, events, race days, and airport transfers.',
     href: '/services/executive-minibus',
+    image: '/images/fleet/mbs1a111qmy.webp',
   },
   {
     title: 'Airport Transfers',
     description: 'Reliable airport transfer services to and from Birmingham Airport and other major UK airports.',
     href: '/services/airport-transfers',
+    image: '/images/fleet/mbs1a111q.webp',
   },
 ];
 
@@ -117,6 +125,7 @@ const jsonLD = {
               title={service.title}
               description={service.description}
               href={service.href}
+              image={service.image}
             />
           ))}
         </div>
