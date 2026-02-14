@@ -9,7 +9,9 @@ export default defineConfig({
   adapter: node({ mode: 'standalone' }),
   integrations: [
     tailwind(),
-    sitemap(),
+    sitemap({
+      filter: (page) => !page.includes('/image-library'),
+    }),
   ],
   image: {
     service: { entrypoint: 'astro/assets/services/sharp' },

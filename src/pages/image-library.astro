@@ -1,0 +1,369 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Scan public/images/ at build time
+const imagesDir = path.join(process.cwd(), 'public', 'images');
+const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.ico']);
+
+interface ImageInfo {
+  folder: string;
+  filename: string;
+  nameWithoutExt: string;
+  extension: string;
+  path: string;
+}
+
+const images: ImageInfo[] = [];
+
+function scanDir(dir: string, folder: string) {
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        scanDir(path.join(dir, entry.name), entry.name);
+      } else if (entry.isFile()) {
+        const ext = path.extname(entry.name).toLowerCase();
+        if (imageExtensions.has(ext)) {
+          images.push({
+            folder,
+            filename: entry.name,
+            nameWithoutExt: path.basename(entry.name, ext),
+            extension: ext,
+            path: `/images/${folder}/${entry.name}`,
+          });
+        }
+      }
+    }
+  } catch (e) {
+    // skip unreadable dirs
+  }
+}
+
+// Scan each subdirectory
+try {
+  const topLevel = fs.readdirSync(imagesDir, { withFileTypes: true });
+  for (const entry of topLevel) {
+    if (entry.isDirectory()) {
+      scanDir(path.join(imagesDir, entry.name), entry.name);
+    }
+  }
+} catch (e) {
+  // fallback
+}
+
+// Sort images by folder then filename
+images.sort((a, b) => a.folder.localeCompare(b.folder) || a.filename.localeCompare(b.filename));
+
+// Group by folder with counts
+const folders = [...new Set(images.map(img => img.folder))].sort();
+const folderCounts: Record<string, number> = {};
+for (const img of images) {
+  folderCounts[img.folder] = (folderCounts[img.folder] || 0) + 1;
+}
+---
+
+<BaseLayout title="Image Library — AFJ Limited (Internal)">
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+
+  <Header />
+
+  <main class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-afj-dark-blue text-white py-8">
+      <div class="container-wide">
+        <h1 class="text-3xl font-bold mb-2">Image Library</h1>
+        <p class="text-white/70">{images.length} images across {folders.length} folders. Review and rename images below.</p>
+        <p class="text-white/50 text-sm mt-1">Type a new name in the input field, then click "Copy Rename List" to export your changes.</p>
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="sticky top-0 z-30 bg-white border-b shadow-sm">
+      <div class="container-wide py-3">
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="filter-btn px-3 py-1.5 rounded-full text-sm font-medium bg-afj-accent text-white"
+            data-filter="all"
+          >
+            All ({images.length})
+          </button>
+          {folders.map((folder) => (
+            <button
+              class="filter-btn px-3 py-1.5 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
+              data-filter={folder}
+            >
+              {folder.charAt(0).toUpperCase() + folder.slice(1)} ({folderCounts[folder]})
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Grid -->
+    <div class="container-wide py-6">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4" id="image-grid">
+        {images.map((img, index) => (
+          <div
+            class="image-card bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
+            data-folder={img.folder}
+            data-index={index}
+          >
+            <!-- Thumbnail -->
+            <button
+              class="lightbox-trigger w-full aspect-square overflow-hidden bg-gray-100 cursor-pointer relative group"
+              data-src={img.path}
+              data-alt={img.filename}
+            >
+              <img
+                src={img.path}
+                alt={img.filename}
+                class="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-200"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                <svg class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Info -->
+            <div class="p-3">
+              <!-- Folder badge -->
+              <span class="inline-block px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded bg-afj-accent/10 text-afj-accent mb-2">
+                {img.folder}
+              </span>
+
+              <!-- Current filename -->
+              <p class="text-xs text-gray-400 truncate mb-1.5" title={img.filename}>
+                {img.filename}
+              </p>
+
+              <!-- Rename input -->
+              <div class="flex items-center gap-1">
+                <input
+                  type="text"
+                  class="rename-input w-full text-xs border border-gray-300 rounded px-2 py-1.5 focus:border-afj-accent focus:ring-1 focus:ring-afj-accent/30 outline-none"
+                  value={img.nameWithoutExt}
+                  data-original={img.nameWithoutExt}
+                  data-folder={img.folder}
+                  data-extension={img.extension}
+                  data-filename={img.filename}
+                />
+                <span class="text-xs text-gray-400 flex-shrink-0">{img.extension}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Sticky Bottom Bar -->
+    <div class="sticky bottom-0 z-30 bg-white border-t shadow-lg" id="bottom-bar">
+      <div class="container-wide py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-gray-600">
+            <strong id="rename-count" class="text-afj-accent">0</strong> images renamed
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            id="reset-btn"
+            class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            Reset All
+          </button>
+          <button
+            id="copy-btn"
+            class="px-4 py-2 text-sm font-medium text-white bg-afj-accent rounded-lg hover:bg-afj-green transition-colors"
+          >
+            Copy Rename List
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lib-lightbox" class="fixed inset-0 z-50 hidden bg-black/90 items-center justify-center">
+    <button id="lb-close" class="absolute top-4 right-4 text-white w-10 h-10 flex items-center justify-center hover:text-afj-accent" aria-label="Close lightbox">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="max-w-[90vw] max-h-[90vh] flex flex-col items-center">
+      <img id="lb-image" src="" alt="" class="max-w-full max-h-[80vh] object-contain" />
+      <p id="lb-caption" class="text-white/70 text-sm mt-3 text-center"></p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 hidden px-6 py-3 bg-afj-dark-blue text-white rounded-lg shadow-xl text-sm font-medium">
+    Copied to clipboard!
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+(function () {
+  // --- Filter Tabs ---
+  var filterBtns = document.querySelectorAll('.filter-btn');
+  var cards = document.querySelectorAll('.image-card');
+
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var filter = this.getAttribute('data-filter');
+
+      // Update active style
+      filterBtns.forEach(function (b) {
+        b.classList.remove('bg-afj-accent', 'text-white');
+        b.classList.add('bg-gray-200', 'text-gray-700');
+      });
+      this.classList.remove('bg-gray-200', 'text-gray-700');
+      this.classList.add('bg-afj-accent', 'text-white');
+
+      // Show/hide cards
+      cards.forEach(function (card) {
+        if (filter === 'all' || card.getAttribute('data-folder') === filter) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // --- Lightbox ---
+  var lightbox = document.getElementById('lib-lightbox');
+  var lbImage = document.getElementById('lb-image');
+  var lbCaption = document.getElementById('lb-caption');
+  var lbClose = document.getElementById('lb-close');
+
+  document.querySelectorAll('.lightbox-trigger').forEach(function (trigger) {
+    trigger.addEventListener('click', function () {
+      var src = this.getAttribute('data-src');
+      var alt = this.getAttribute('data-alt');
+      lbImage.src = src;
+      lbImage.alt = alt;
+      lbCaption.textContent = alt;
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  function closeLightbox() {
+    lightbox.classList.add('hidden');
+    lightbox.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  lbClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // --- Rename Counter ---
+  var inputs = document.querySelectorAll('.rename-input');
+  var countEl = document.getElementById('rename-count');
+
+  function updateCount() {
+    var count = 0;
+    inputs.forEach(function (input) {
+      if (input.value.trim() !== input.getAttribute('data-original')) {
+        count++;
+        input.classList.add('border-afj-accent', 'bg-afj-accent/5');
+        input.classList.remove('border-gray-300');
+      } else {
+        input.classList.remove('border-afj-accent', 'bg-afj-accent/5');
+        input.classList.add('border-gray-300');
+      }
+    });
+    countEl.textContent = count;
+  }
+
+  inputs.forEach(function (input) {
+    input.addEventListener('input', updateCount);
+  });
+
+  // --- Reset All ---
+  document.getElementById('reset-btn').addEventListener('click', function () {
+    inputs.forEach(function (input) {
+      input.value = input.getAttribute('data-original');
+    });
+    updateCount();
+  });
+
+  // --- Copy Rename List ---
+  document.getElementById('copy-btn').addEventListener('click', function () {
+    var renames = [];
+    inputs.forEach(function (input) {
+      var original = input.getAttribute('data-original');
+      var newName = input.value.trim();
+      if (newName && newName !== original) {
+        var folder = input.getAttribute('data-folder');
+        var ext = input.getAttribute('data-extension');
+        var oldFilename = input.getAttribute('data-filename');
+        renames.push({
+          folder: folder,
+          oldName: oldFilename,
+          newName: newName + ext,
+          oldPath: '/images/' + folder + '/' + oldFilename,
+          newPath: '/images/' + folder + '/' + newName + ext,
+        });
+      }
+    });
+
+    if (renames.length === 0) {
+      showToast('No renames to copy — edit some filenames first!');
+      return;
+    }
+
+    var text = 'IMAGE RENAMES (' + renames.length + ' changes)\n';
+    text += '================================\n\n';
+    renames.forEach(function (r) {
+      text += r.folder + '/\n';
+      text += '  Old: ' + r.oldName + '\n';
+      text += '  New: ' + r.newName + '\n';
+      text += '  Path: ' + r.oldPath + ' -> ' + r.newPath + '\n\n';
+    });
+
+    navigator.clipboard.writeText(text).then(function () {
+      showToast('Copied ' + renames.length + ' renames to clipboard!');
+    }).catch(function () {
+      // Fallback: select a temporary textarea
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Copied ' + renames.length + ' renames to clipboard!');
+    });
+  });
+
+  // --- Toast ---
+  function showToast(message) {
+    var toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.remove('hidden');
+    setTimeout(function () {
+      toast.classList.add('hidden');
+    }, 3000);
+  }
+})();
+</script>
+
+<style>
+  .bg-afj-accent\/5 {
+    background-color: rgba(56, 161, 105, 0.05);
+  }
+</style>
