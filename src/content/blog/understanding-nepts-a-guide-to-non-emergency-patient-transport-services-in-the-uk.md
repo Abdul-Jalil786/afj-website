@@ -3,7 +3,7 @@ title: "Understanding NEPTS: A Guide to Non-Emergency Patient Transport Services
 description: "Navigating the healthcare system can be complex, especially when it comes to patient transport in the UK.  For millions of patients, getting to and from..."
 pubDate: 2024-08-02
 author: "AFJ Limited"
-image: "/images/blog/nepts-guide.webp"
+image: "/images/blog/afj-ambulance.webp"
 imageAlt: "Understanding NEPTS: A Guide to Non-Emergency Patient Transport Services in the UK"
 tags: ["NEPTS", "non emergency medical transportation", "non emergency patient transport", "non emergency patient transport services", "non-emergency patient travel services", "patient transport uk", "Blog"]
 draft: false

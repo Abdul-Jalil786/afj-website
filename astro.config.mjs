@@ -5,6 +5,7 @@ import node from '@astrojs/node';
 
 export default defineConfig({
   site: 'https://www.afjltd.co.uk',
+  server: { port: 5001 },
   output: 'static',
   adapter: node({ mode: 'standalone' }),
   integrations: [

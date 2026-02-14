@@ -2,9 +2,17 @@
 import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/Hero.astro';
 import BookingForm from '../../components/BookingForm.astro';
+import FleetGallery from '../../components/FleetGallery.astro';
 import CTABanner from '../../components/CTABanner.astro';
 import TestimonialSlider from '../../components/TestimonialSlider.astro';
 import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const privateHireImages = [
+  { src: '/images/misc/private-hire-customers-in-front-of-minibuses.webp', alt: 'Customers in front of AFJ private hire minibuses' },
+  { src: '/images/misc/minibuses.webp', alt: 'AFJ fleet of private hire minibuses' },
+  { src: '/images/misc/minibuses-parked-in-depot.webp', alt: 'AFJ minibuses parked at the depot' },
+  { src: '/images/services/customer-in-front-of-minibus.webp', alt: 'Customer with an AFJ private hire minibus' },
+];
 
 const breadcrumbs = [
   { label: 'Services', href: '/services' },
@@ -128,6 +136,9 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <!-- Fleet Gallery -->
+  <FleetGallery images={privateHireImages} heading="Our Private Hire Fleet" />
 
   <!-- Testimonials -->
   <TestimonialSlider />

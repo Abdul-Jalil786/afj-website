@@ -3,10 +3,16 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/Hero.astro';
 import FAQ from '../../components/FAQ.astro';
 import BookingForm from '../../components/BookingForm.astro';
+import FleetGallery from '../../components/FleetGallery.astro';
 import AccreditationBadges from '../../components/AccreditationBadges.astro';
 import CTABanner from '../../components/CTABanner.astro';
 import StatsCounter from '../../components/StatsCounter.astro';
 import SocialSidebar from '../../components/SocialSidebar.astro';
+
+const sendImages = [
+  { src: '/images/misc/send-vehicle-with-wheelchair-ramp.webp', alt: 'AFJ SEND vehicle with wheelchair ramp' },
+  { src: '/images/misc/driver-and-pa-inside-minibus.webp', alt: 'Driver and passenger assistant inside a school transport minibus' },
+];
 
 const breadcrumbs = [
   { label: 'Services', href: '/services' },
@@ -187,6 +193,9 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <!-- Fleet Gallery -->
+  <FleetGallery images={sendImages} heading="Our SEND Fleet & Team" />
 
   <!-- FAQ -->
   <FAQ items={faqItems} heading="Home to School Transport - Frequently Asked Questions" />
