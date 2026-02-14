@@ -11,7 +11,7 @@ export default defineConfig({
   integrations: [
     tailwind(),
     sitemap({
-      filter: (page) => !page.includes('/image-library'),
+      filter: (page) => !page.includes('/image-library') && !page.includes('/content-calendar'),
     }),
   ],
   image: {
