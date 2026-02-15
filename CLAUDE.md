@@ -64,12 +64,23 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - Sitemap auto-includes all 25 area pages
 - Existing area URLs preserved with identical structure
 
-**NEXT SESSION: Tier 3 — Part 3: Compliance Dashboard & Testimonial Engine**
-- Build public compliance dashboard at `/compliance`
-- Create `src/data/compliance.json`
-- Build testimonial/case study engine in admin
+**Tier 3 Part 3 — COMPLETE (2026-02-15): Compliance Dashboard & Testimonial Engine**
+- `src/data/compliance.json` — 8 compliance items (CQC, DBS, MOT, Insurance, Certs, Accessibility, Safeguarding, Carbon)
+- `src/pages/compliance.astro` — Public compliance dashboard grouped by category with status indicators
+- `src/pages/api/compliance/status.ts` — Public GET endpoint returning compliance JSON (for future council portal)
+- `src/pages/admin/compliance.astro` — Admin compliance editor (operations + management only)
+- `src/pages/api/admin/compliance.ts` — Admin POST endpoint saving compliance via GitHub API
+- `src/pages/api/ai/testimonial.ts` — AI testimonial/case study generation endpoint using TESTIMONIAL_SYSTEM_PROMPT
+- `src/pages/admin/testimonials.astro` — Admin testimonial creator (paste feedback → AI generates → publish/blog)
+- AdminLayout nav updated with Compliance and Testimonials links
+- Admin dashboard index updated with Compliance Editor and Testimonials quick action cards
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable)
+**NEXT SESSION: Tier 4 — SEO & Automation**
+- JSON-LD schema markup for LocalBusiness, services, FAQ, breadcrumbs
+- Social media publishing scripts
+- Email auto-responses for form submissions
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable)
 
 ---
 
