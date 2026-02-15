@@ -10,6 +10,11 @@ export interface QuoteEstimate {
   waitingHours?: number;
   deadheadMiles?: number;
   dvsaBreakApplied?: boolean;
+  surchargePercent?: number;
+  surchargeLabels?: string[];
+  regularDiscountApplied?: boolean;
+  minimumApplied?: boolean;
+  numberOfStops?: number;
 }
 
 /**
@@ -124,6 +129,56 @@ function parseTimeToMinutes(time: string): number {
 }
 
 /**
+ * Calculate applicable surcharges based on date and time.
+ * Surcharges stack additively: time-of-day + day-of-week or bank holiday.
+ */
+function calculateSurcharges(date: string, time: string): { percent: number; labels: string[] } {
+  const surcharges = quoteRules.surcharges as Record<string, any>;
+  const bankHolidays = quoteRules.bankHolidays as string[];
+  let totalPercent = 0;
+  const labels: string[] = [];
+
+  // Time-based surcharges
+  if (time) {
+    const timeMin = parseTimeToMinutes(time);
+    if (surcharges.earlyMorning) {
+      const beforeMin = parseTimeToMinutes(surcharges.earlyMorning.before);
+      if (timeMin < beforeMin) {
+        totalPercent += surcharges.earlyMorning.percent;
+        labels.push(surcharges.earlyMorning.label + ' (+' + surcharges.earlyMorning.percent + '%)');
+      }
+    }
+    if (surcharges.lateNight) {
+      const afterMin = parseTimeToMinutes(surcharges.lateNight.after);
+      if (timeMin >= afterMin) {
+        totalPercent += surcharges.lateNight.percent;
+        labels.push(surcharges.lateNight.label + ' (+' + surcharges.lateNight.percent + '%)');
+      }
+    }
+  }
+
+  // Date-based surcharges (bank holiday replaces day-of-week)
+  if (date) {
+    if (bankHolidays.includes(date)) {
+      totalPercent += surcharges.bankHoliday.percent;
+      labels.push(surcharges.bankHoliday.label + ' (+' + surcharges.bankHoliday.percent + '%)');
+    } else {
+      const dayOfWeek = new Date(date + 'T12:00:00').getDay();
+      if (surcharges.saturday && dayOfWeek === surcharges.saturday.dayOfWeek) {
+        totalPercent += surcharges.saturday.percent;
+        labels.push(surcharges.saturday.label + ' (+' + surcharges.saturday.percent + '%)');
+      }
+      if (surcharges.sunday && dayOfWeek === surcharges.sunday.dayOfWeek) {
+        totalPercent += surcharges.sunday.percent;
+        labels.push(surcharges.sunday.label + ' (+' + surcharges.sunday.percent + '%)');
+      }
+    }
+  }
+
+  return { percent: totalPercent, labels };
+}
+
+/**
  * Calculate driving distance from the nearest company base to a pickup postcode.
  * Bases are defined in quote-rules.json.
  */
@@ -186,6 +241,7 @@ export async function estimateQuote(
 ): Promise<QuoteEstimate> {
   const pricing = (quoteRules.pricing as Record<string, any>)[service];
   const svcConfig = (quoteRules.services as Record<string, any>)[service];
+  const minimums = (quoteRules.minimumBooking as Record<string, number>) || {};
 
   if (!pricing || !svcConfig || svcConfig.type !== 'instant') {
     throw new Error(`No pricing available for service: ${service}`);
@@ -197,12 +253,34 @@ export async function estimateQuote(
   let waitingHours: number | undefined;
   let deadheadMiles: number | undefined;
   let dvsaBreakApplied = false;
+  let numberOfStops = 0;
 
   if (service === 'private-hire') {
-    const distanceResult = await getDistance(
-      answers.pickupPostcode || '',
-      answers.destinationPostcode || '',
-    );
+    // Collect intermediate stops
+    const stops: string[] = [];
+    if (answers.stop1) stops.push(answers.stop1);
+    if (answers.stop2) stops.push(answers.stop2);
+    numberOfStops = stops.length;
+
+    // Calculate total distance (chaining through stops)
+    let distanceResult: { miles: number; minutes: number };
+    if (stops.length > 0) {
+      const waypoints = [answers.pickupPostcode || '', ...stops, answers.destinationPostcode || ''];
+      const legs: Promise<{ miles: number; minutes: number }>[] = [];
+      for (let i = 0; i < waypoints.length - 1; i++) {
+        legs.push(getDistance(waypoints[i], waypoints[i + 1]));
+      }
+      const legResults = await Promise.all(legs);
+      distanceResult = {
+        miles: legResults.reduce((sum, r) => sum + r.miles, 0),
+        minutes: legResults.reduce((sum, r) => sum + r.minutes, 0),
+      };
+    } else {
+      distanceResult = await getDistance(
+        answers.pickupPostcode || '',
+        answers.destinationPostcode || '',
+      );
+    }
 
     distanceMiles = distanceResult.miles;
     durationMinutes = distanceResult.minutes;
@@ -218,6 +296,9 @@ export async function estimateQuote(
     const threshold = pricing.deadheadThresholdMiles ?? 30;
     const wage = pricing.driverWagePerHour ?? 13;
     let deadheadCost = 0;
+
+    // Stop waiting cost
+    const stopWaitCost = numberOfStops * ((pricing.stopWaitingMinutes ?? 10) / 60) * wage;
 
     if (answers.returnJourney === 'yes') {
       const isSameDay = answers.returnType !== 'no'; // default is yes (same day)
@@ -276,17 +357,23 @@ export async function estimateQuote(
       }
     }
 
-    rate += deadheadCost;
+    rate += deadheadCost + stopWaitCost;
+
   } else if (service === 'airport') {
     const pickupArea = extractArea(answers.pickupPostcode || '');
     const airportCode = (answers.airport || 'BHX').toUpperCase();
 
-    rate = lookupAirportRate(pickupArea, airportCode);
+    let baseRate = lookupAirportRate(pickupArea, airportCode);
+
+    // Executive upgrade on base rate before passenger multiplier
+    if (answers.vehicleClass === 'executive') {
+      baseRate *= 1 + (pricing.executivePercent ?? 30) / 100;
+    }
 
     // Passenger tier multiplier
     const passengerKey = answers.passengers || '1-8';
     const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;
-    rate *= passengerMult;
+    rate = baseRate * passengerMult;
 
     // Meet and greet surcharge
     if (answers.meetGreet === 'yes') {
@@ -297,8 +384,37 @@ export async function estimateQuote(
     if (answers.returnJourney === 'yes') {
       rate *= pricing.returnMultiplier;
     }
+
+    // Arrival waiting cost (driver waits at airport)
+    if (answers.direction === 'yes') {
+      const arrivalWait = pricing.arrivalWaitingMinutes ?? 45;
+      const wage = pricing.driverWagePerHour ?? 13;
+      rate += (arrivalWait / 60) * wage;
+    }
   } else {
     throw new Error(`Unknown instant service: ${service}`);
+  }
+
+  // Apply surcharges (both services)
+  const surchargeResult = calculateSurcharges(answers.date || '', answers.time || '');
+  if (surchargeResult.percent > 0) {
+    rate *= 1 + surchargeResult.percent / 100;
+  }
+
+  // Apply regular booking discount (private-hire only)
+  let regularDiscountApplied = false;
+  if (service === 'private-hire' && answers.regularBooking === 'yes') {
+    const discountPct = pricing.regularDiscountPercent ?? 10;
+    rate *= 1 - discountPct / 100;
+    regularDiscountApplied = true;
+  }
+
+  // Apply minimum booking floor
+  let minimumApplied = false;
+  const minimum = minimums[service];
+  if (minimum && rate < minimum) {
+    rate = minimum;
+    minimumApplied = true;
   }
 
   const spread = pricing.rangeSpread;
@@ -315,5 +431,10 @@ export async function estimateQuote(
     waitingHours,
     deadheadMiles,
     dvsaBreakApplied: dvsaBreakApplied || undefined,
+    surchargePercent: surchargeResult.percent || undefined,
+    surchargeLabels: surchargeResult.labels.length ? surchargeResult.labels : undefined,
+    regularDiscountApplied: regularDiscountApplied || undefined,
+    minimumApplied: minimumApplied || undefined,
+    numberOfStops: numberOfStops || undefined,
   };
 }

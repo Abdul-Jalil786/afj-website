@@ -399,6 +399,7 @@ const jsonLD = {
   var currentStep = 1;
   var currentAnswers = {};
   var currentEstimate = null;
+  var stopCount = 0;
 
   var step1 = document.getElementById('step1');
   var stepEnterprise = document.getElementById('stepEnterprise');
@@ -643,19 +644,20 @@ const jsonLD = {
       } else if (q.inputType === 'time') {
         inputHtml = '<input type="time" data-qid="' + q.id + '" data-type="time"' + (q.required ? ' data-required="true"' : '') + ' class="quiz-input ' + inputClass + '" />';
       } else if (q.inputType === 'toggle') {
-        // "Same day return?" defaults to Yes; all others default to No
         var yesFirst = q.id === 'returnType';
+        var noLabel = q.toggleLabels ? q.toggleLabels.no : 'No';
+        var yesLabel = q.toggleLabels ? q.toggleLabels.yes : 'Yes';
         if (yesFirst) {
           inputHtml =
             '<div class="flex gap-2" data-qid="' + q.id + '" data-type="toggle">' +
-            '<button type="button" class="toggle-btn active" data-value="yes">Yes</button>' +
-            '<button type="button" class="toggle-btn" data-value="no">No</button>' +
+            '<button type="button" class="toggle-btn active" data-value="yes">' + yesLabel + '</button>' +
+            '<button type="button" class="toggle-btn" data-value="no">' + noLabel + '</button>' +
             '</div>';
         } else {
           inputHtml =
             '<div class="flex gap-2" data-qid="' + q.id + '" data-type="toggle">' +
-            '<button type="button" class="toggle-btn active" data-value="no">No</button>' +
-            '<button type="button" class="toggle-btn" data-value="yes">Yes</button>' +
+            '<button type="button" class="toggle-btn active" data-value="no">' + noLabel + '</button>' +
+            '<button type="button" class="toggle-btn" data-value="yes">' + yesLabel + '</button>' +
             '</div>';
         }
       }
@@ -689,6 +691,73 @@ const jsonLD = {
         attachAutocomplete(input);
       }
     });
+
+    // Multi-stop UI for private-hire
+    stopCount = 0;
+    if (serviceKey === 'private-hire') {
+      var destEl = container.querySelector('[data-qid="destinationPostcode"]');
+      if (destEl) {
+        // Walk up to find the question wrapper (direct child of container)
+        var destDiv = destEl;
+        while (destDiv.parentNode !== container) {
+          destDiv = destDiv.parentNode;
+        }
+
+        var stopsSection = document.createElement('div');
+        stopsSection.id = 'stopsSection';
+        stopsSection.innerHTML =
+          '<div id="stopsContainer" class="space-y-2"></div>' +
+          '<button type="button" id="addStopBtn" class="text-sm text-afj-accent hover:text-afj-green font-medium mt-1">+ Add a stop</button>';
+
+        destDiv.after(stopsSection);
+
+        document.getElementById('addStopBtn').addEventListener('click', function () {
+          if (stopCount >= 2) return;
+          stopCount++;
+          var stopId = 'stop' + stopCount;
+
+          var stopWrap = document.createElement('div');
+          stopWrap.className = 'flex items-center gap-2';
+          stopWrap.dataset.stopId = stopId;
+
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.dataset.qid = stopId;
+          inp.dataset.type = 'text';
+          inp.placeholder = 'Stop ' + stopCount + ' postcode or city';
+          inp.autocomplete = 'off';
+          inp.className = 'quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
+
+          var rmBtn = document.createElement('button');
+          rmBtn.type = 'button';
+          rmBtn.className = 'text-gray-400 hover:text-red-500 transition-colors text-xl font-bold px-2 flex-shrink-0';
+          rmBtn.innerHTML = '&times;';
+          rmBtn.addEventListener('click', function () {
+            stopWrap.remove();
+            stopCount--;
+            if (stopCount < 2) document.getElementById('addStopBtn').classList.remove('hidden');
+            var remaining = document.getElementById('stopsContainer').querySelectorAll('[data-stop-id]');
+            remaining.forEach(function (el, i) {
+              var num = i + 1;
+              el.dataset.stopId = 'stop' + num;
+              var rinp = el.querySelector('input');
+              if (rinp) { rinp.dataset.qid = 'stop' + num; rinp.placeholder = 'Stop ' + num + ' postcode or city'; }
+            });
+          });
+
+          stopWrap.appendChild(inp);
+          stopWrap.appendChild(rmBtn);
+          document.getElementById('stopsContainer').appendChild(stopWrap);
+
+          attachAutocomplete(inp);
+          // Make autocomplete wrapper flex-friendly
+          var acWrap = inp.closest('.autocomplete-wrap');
+          if (acWrap) acWrap.classList.add('flex-1', 'min-w-0');
+
+          if (stopCount >= 2) document.getElementById('addStopBtn').classList.add('hidden');
+        });
+      }
+    }
   }
 
   // Check if an element is inside a hidden showWhen wrapper
@@ -791,14 +860,26 @@ const jsonLD = {
             waitingEl.classList.add('hidden');
           }
 
-          // Show notes (deadhead, DVSA)
+          // Show notes
           var notesEl = document.getElementById('estimateNotes');
           var notes = [];
+          if (data.estimate.numberOfStops) {
+            notes.push(data.estimate.numberOfStops + ' additional stop' + (data.estimate.numberOfStops > 1 ? 's' : ''));
+          }
           if (data.estimate.deadheadMiles) {
             notes.push('Includes driver travel from base (' + data.estimate.deadheadMiles + ' mi)');
           }
           if (data.estimate.dvsaBreakApplied) {
             notes.push('DVSA break allowance included');
+          }
+          if (data.estimate.surchargeLabels && data.estimate.surchargeLabels.length) {
+            notes.push(data.estimate.surchargeLabels.join(', '));
+          }
+          if (data.estimate.regularDiscountApplied) {
+            notes.push('Regular booking discount applied');
+          }
+          if (data.estimate.minimumApplied) {
+            notes.push('Minimum booking rate applied');
           }
           if (notes.length) {
             notesEl.textContent = notes.join(' \u00B7 ');
