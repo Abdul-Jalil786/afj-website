@@ -1,0 +1,86 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  userEmail?: string;
+}
+
+const { title, userEmail = '' } = Astro.props;
+
+const adminNav = [
+  { name: 'Dashboard', href: '/admin' },
+  { name: 'Create Blog Post', href: '/admin/content' },
+  { name: 'Update Page', href: '/admin/pages' },
+  { name: 'Approvals', href: '/admin/approvals' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<BaseLayout title={`${title} | AFJ Admin`}>
+  <!-- Admin Header -->
+  <header class="bg-afj-dark-blue text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-4">
+          <a href="/admin" class="flex items-center gap-3">
+            <img src="/images/logo/logo.webp" alt="AFJ Limited" class="h-10 w-auto" />
+            <div>
+              <span class="font-bold text-lg leading-none block">AFJ Limited</span>
+              <span class="text-afj-accent text-xs">Admin Dashboard</span>
+            </div>
+          </a>
+        </div>
+        <div class="flex items-center gap-6">
+          <nav class="hidden md:flex items-center gap-1">
+            {adminNav.map((item) => (
+              <a
+                href={item.href}
+                class:list={[
+                  'px-3 py-2 text-sm font-medium rounded-md transition-colors',
+                  currentPath === item.href
+                    ? 'bg-white/10 text-afj-accent'
+                    : 'text-gray-300 hover:text-white hover:bg-white/5',
+                ]}
+              >
+                {item.name}
+              </a>
+            ))}
+          </nav>
+          <div class="flex items-center gap-3 text-sm">
+            {userEmail && <span class="text-gray-400 hidden sm:inline">{userEmail}</span>}
+            <a href="/" class="text-gray-400 hover:text-white text-sm">Exit Admin</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile Admin Nav -->
+    <div class="md:hidden border-t border-white/10 px-4 py-2 flex gap-2 overflow-x-auto">
+      {adminNav.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap',
+            currentPath === item.href
+              ? 'bg-white/10 text-afj-accent'
+              : 'text-gray-300 hover:text-white',
+          ]}
+        >
+          {item.name}
+        </a>
+      ))}
+    </div>
+  </header>
+
+  <main class="min-h-screen bg-gray-50">
+    <slot />
+  </main>
+
+  <!-- Minimal Admin Footer -->
+  <footer class="bg-afj-dark-blue text-gray-400 text-sm py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      AFJ Limited Admin Dashboard &middot; <a href="/" class="hover:text-white">Back to website</a>
+    </div>
+  </footer>
+</BaseLayout>

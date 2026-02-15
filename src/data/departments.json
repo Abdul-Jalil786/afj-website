@@ -1,0 +1,32 @@
+{
+  "management": {
+    "name": "Management",
+    "emails": ["jay@afjltd.co.uk"],
+    "pages": ["all"],
+    "canApprove": true
+  },
+  "operations": {
+    "name": "Operations",
+    "emails": [],
+    "pages": ["/services/send-transport", "/services/patient-transport", "/areas/*"],
+    "canApprove": false
+  },
+  "training": {
+    "name": "Training",
+    "emails": [],
+    "pages": ["/services/driver-training"],
+    "canApprove": false
+  },
+  "fleet": {
+    "name": "Fleet",
+    "emails": [],
+    "pages": ["/services/fleet-maintenance", "/services/vehicle-conversions", "/vehicles-for-sale"],
+    "canApprove": false
+  },
+  "marketing": {
+    "name": "Marketing",
+    "emails": [],
+    "pages": ["/blog/*", "/areas/*", "/social-impact"],
+    "canApprove": false
+  }
+}
