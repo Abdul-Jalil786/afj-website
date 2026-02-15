@@ -132,6 +132,8 @@ Chronological record of every major feature, based on git history.
   - Subtotal, surcharges (amber), regular discount (green), estimated total, price range
   - Flags: heavy luggage, wheelchair accessible, executive vehicle badges
 - **Custom toggle labels** (`toggleLabels`) for "One-off"/"Regular", "Departure"/"Arrival" etc.
+- **Competitive protection** — school names removed from area pages; replaced with regional SEND capability statements (e.g. "specialist SEND transport across the West Midlands"). Company-wide stats only (700+ students, 18+ years). Hospital names kept (public knowledge).
+- **Contact form service pre-fill** — enterprise portal CTA links to `/contact?service=Service+Name`; ContactForm.astro reads the `service` URL parameter and pre-fills the message textarea with "I would like to request a consultation for [Service Name]."
 
 ### Phase 10 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
@@ -272,7 +274,7 @@ src/data/quote-rules.json       Quote rules: pricing (baseFare, perMile, driver 
                                   airport rates, city lookup, base postcodes, bank holidays 2026,
                                   service questions with showWhen, toggleLabels, luggage, wheelchair
 src/data/area-data/areas.json   25 areas with metadata (slug, council, population, distance, region, services)
-src/data/area-data/schools.json 3-5 SEND schools per area with postcodes
+src/data/area-data/schools.json 3-5 SEND schools per area with postcodes (not imported by area pages — competitive protection)
 src/data/area-data/hospitals.json 2-3 hospitals/clinics per area with NHS trust names
 seo/content-calendar.csv        24 planned blog posts (W1–W12, Feb–May 2026)
 seo/redirects.json              50+ WordPress old URL → new URL 301 redirects
@@ -313,7 +315,7 @@ OSRM                → Real driving distance and duration via router.project-os
 
 ### Live & Working ✅
 - 55+ public routes render and build successfully
-- 25 programmatic area pages with real school/hospital data
+- 25 programmatic area pages with hospital data and regional SEND capability statements (school names removed for competitive protection)
 - Blog with 16 published posts
 - Hero slider with 6 service slides
 - Contact form → `/api/contact/submit` → Web3Forms + Resend auto-response

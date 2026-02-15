@@ -16,10 +16,22 @@
           { "value": "17-24", "label": "17\u201324 passengers" },
           { "value": "25-33", "label": "25\u201333 passengers" }
         ]},
+        { "id": "luggage", "label": "Luggage", "inputType": "select", "required": false, "options": [
+          { "value": "none", "label": "No luggage" },
+          { "value": "light", "label": "Light (small bags / handbags)" },
+          { "value": "heavy", "label": "Heavy (multiple suitcases / large items)" }
+        ]},
+        { "id": "wheelchair", "label": "Wheelchair accessible vehicle needed?", "inputType": "toggle", "required": false },
         { "id": "returnJourney", "label": "Return journey?", "inputType": "toggle", "required": false },
         { "id": "returnType", "label": "Same day return?", "inputType": "toggle", "required": false, "showWhen": { "returnJourney": "yes" } },
         { "id": "returnPickupTime", "label": "Return pickup time", "inputType": "time", "required": false, "showWhen": { "returnJourney": "yes" } },
-        { "id": "returnDate", "label": "Return date", "inputType": "date", "required": false, "showWhen": { "returnType": "no" } }
+        { "id": "returnDate", "label": "Return date", "inputType": "date", "required": false, "showWhen": { "returnType": "no" } },
+        { "id": "regularBooking", "label": "One-off or regular booking?", "inputType": "toggle", "required": false, "toggleLabels": { "no": "One-off", "yes": "Regular" } },
+        { "id": "regularFrequency", "label": "How often?", "inputType": "select", "required": false, "showWhen": { "regularBooking": "yes" }, "options": [
+          { "value": "weekly", "label": "Weekly" },
+          { "value": "fortnightly", "label": "Fortnightly" },
+          { "value": "monthly", "label": "Monthly" }
+        ]}
       ]
     },
     "airport": {
@@ -48,6 +60,17 @@
           { "value": "17-24", "label": "17\u201324 passengers" },
           { "value": "25-33", "label": "25\u201333 passengers" }
         ]},
+        { "id": "direction", "label": "Pickup from airport or drop-off?", "inputType": "toggle", "required": false, "toggleLabels": { "no": "Departure", "yes": "Arrival" } },
+        { "id": "vehicleClass", "label": "Vehicle class", "inputType": "select", "required": false, "options": [
+          { "value": "standard", "label": "Standard" },
+          { "value": "executive", "label": "Executive (+30%)" }
+        ]},
+        { "id": "luggage", "label": "Luggage", "inputType": "select", "required": false, "options": [
+          { "value": "none", "label": "No luggage" },
+          { "value": "light", "label": "Light (small bags / handbags)" },
+          { "value": "heavy", "label": "Heavy (multiple suitcases / large items)" }
+        ]},
+        { "id": "wheelchair", "label": "Wheelchair accessible vehicle needed?", "inputType": "toggle", "required": false },
         { "id": "flightNumber", "label": "Flight number (optional)", "inputType": "text", "placeholder": "e.g. BA123", "required": false },
         { "id": "meetGreet", "label": "Meet and greet?", "inputType": "toggle", "required": false },
         { "id": "returnJourney", "label": "Return journey?", "inputType": "toggle", "required": false }
@@ -84,14 +107,35 @@
       "dvsaBreakMinutes": 45,
       "dvsaDrivingThresholdMinutes": 270,
       "averageSpeedMph": 40,
+      "stopWaitingMinutes": 10,
+      "regularDiscountPercent": 10,
       "rangeSpread": 0.2
     },
     "airport": {
       "passengerMultipliers": { "1-8": 1.0, "9-16": 1.5, "17-24": 2.0, "25-33": 2.5 },
       "meetGreetSurcharge": 25,
       "returnMultiplier": 1.75,
+      "arrivalWaitingMinutes": 45,
+      "executivePercent": 30,
+      "driverWagePerHour": 13,
       "rangeSpread": 0.15
     }
+  },
+  "surcharges": {
+    "earlyMorning": { "before": "07:00", "percent": 15, "label": "Early morning" },
+    "lateNight": { "after": "22:00", "percent": 15, "label": "Late night" },
+    "saturday": { "dayOfWeek": 6, "percent": 10, "label": "Saturday" },
+    "sunday": { "dayOfWeek": 0, "percent": 20, "label": "Sunday" },
+    "bankHoliday": { "percent": 50, "label": "Bank holiday" }
+  },
+  "bankHolidays": [
+    "2026-01-01", "2026-04-03", "2026-04-06",
+    "2026-05-04", "2026-05-25", "2026-08-31",
+    "2026-12-25", "2026-12-28"
+  ],
+  "minimumBooking": {
+    "private-hire": 35,
+    "airport": 45
   },
   "distanceMatrix": {
     "B":  { "B": 5, "M": 85, "CV": 20, "WS": 10, "WV": 15, "DY": 10, "ST": 45, "DE": 42, "NG": 52, "TF": 30, "SY": 48, "LE": 43 },
