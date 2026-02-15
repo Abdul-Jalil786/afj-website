@@ -1,7 +1,7 @@
 # SYSTEM-MAP.md — AFJ Limited Digital Platform
 
 > Living document. Updated every time a feature is built, modified, or planned.
-> Last updated: 2026-02-16
+> Last updated: 2026-02-15
 
 ---
 
@@ -174,7 +174,7 @@ POST /api/admin/approval        Approval workflow (GET list, POST submit, PUT ap
 POST /api/admin/compliance      Update compliance data via GitHub API
 ```
 
-### Components (27 current + planned)
+### Components (27)
 
 ```
 Layouts:
@@ -202,7 +202,7 @@ Content:
   CTABanner.astro               Call-to-action sections
   BookingButton.astro           "Book Now!" red CTA
   BookingForm.astro             Booking form
-  ContactForm.astro             Contact form → Web3Forms
+  ContactForm.astro             Contact form → /api/contact/submit
 
 Social Impact (7):
   SocialImpactHero.astro
@@ -213,17 +213,11 @@ Social Impact (7):
   PartnerCharities.astro
   SDGAlignment.astro
 
-Admin (PLANNED, 4):
-  ContentEditor.astro           Rich text editor with AI draft button
-  AIPreview.astro               Shows AI-generated content diff for approval
-  ApprovalCard.astro            Pending approval item display
-  DepartmentNav.astro           Department-filtered navigation
-
-Quote Wizard (PLANNED, 3):
-  QuoteWizard.astro             Multi-step form container
-  ServiceSelector.astro         Service type picker with icons
-  EstimateDisplay.astro         Price range display with CTA
 ```
+
+> **Note:** Admin and quote wizard functionality is built inline in page files
+> (`/admin/content.astro`, `/admin/pages.astro`, `/quote/index.astro`, etc.)
+> rather than as separate reusable components.
 
 ### Library Modules
 
@@ -315,10 +309,6 @@ Google Fonts        → Inter font family
 ### Not Yet Built 🔨
 | Feature | Priority | Phase | Dependencies |
 |---------|----------|-------|-------------|
-| CI/CD workflows (Lighthouse, link checks) | LOW | 9 | GitHub Actions config |
-| WebP image conversion audit | LOW | 9 | Build script |
-| WCAG 2.1 AA audit | LOW | 9 | Manual review |
-| Core Web Vitals monitoring | LOW | 9 | Analytics data |
 | Council self-service portal | FUTURE | 10 | Telemex fleet system |
 | Parent notification system | FUTURE | 10 | Telemex fleet system |
 | Fleet performance dashboard | FUTURE | 10 | Telemex fleet system |
@@ -336,7 +326,7 @@ Manager → Content Calendar UI → POST /api/blog/create
   → New blog post live on /blog/[slug]
 ```
 
-### Blog Post Creation (Planned — with AI)
+### Blog Post Creation (Current — with AI)
 ```
 Manager → /admin/content → enters title + key points
   → POST /api/ai/draft → LLM (Haiku) generates markdown draft
@@ -346,7 +336,7 @@ Manager → /admin/content → enters title + key points
   → POST /api/blog/create → GitHub API → Railway auto-deploy → live
 ```
 
-### Page Content Update (Planned)
+### Page Content Update (Current)
 ```
 Manager → /admin/pages → types "Add electric vehicle servicing to fleet maintenance page"
   → POST /api/ai/page-edit → LLM reads current page content + instruction
@@ -355,7 +345,7 @@ Manager → /admin/pages → types "Add electric vehicle servicing to fleet main
   → GitHub API commits change → Railway auto-deploy → live
 ```
 
-### Quote Request (Planned)
+### Quote Request (Current)
 ```
 Customer → /quote → selects service type
   → Answers 3-5 service-specific questions
@@ -364,10 +354,10 @@ Customer → /quote → selects service type
   → Customer can submit full quote request → Web3Forms → info@afjltd.co.uk
 ```
 
-### Contact Form (Planned)
+### Contact Form (Current)
 ```
 Customer → /contact → fills form (name, email, phone, message)
-  → Web3Forms API → info@afjltd.co.uk
+  → POST /api/contact/submit → Web3Forms + Resend notification
   → Auto-response email to customer via Resend
 ```
 
@@ -443,7 +433,7 @@ RAILWAY_TOKEN=
 
 | Category | Current | Planned |
 |----------|---------|---------|
-| Public pages | 55+ routes | +3 CI/CD workflows |
+| Public pages | 55+ routes | — |
 | Internal tools | 2 + admin dashboard (6 routes) | — |
 | API endpoints | 10 | — |
 | Components | 27 | — |
@@ -456,7 +446,8 @@ RAILWAY_TOKEN=
 | Local SEO area pages | 25 | — |
 | Service pages | 8 | — |
 | JSON-LD schemas | 4 types (LocalBusiness, Service, FAQPage, BreadcrumbList) | — |
-| CI/CD workflows | 0 | 3 |
+| CI/CD workflows | 3 (Lighthouse, broken links, deploy validation) | — |
+| Scripts | 3 (image-audit, download-media, migrate-wordpress) | — |
 
 ---
 
