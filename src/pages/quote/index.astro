@@ -170,7 +170,9 @@ const jsonLD = {
 
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
           <p class="text-sm text-gray-500 mb-2" id="estimateServiceLabel"></p>
-          <p class="text-sm text-gray-600 mb-3 hidden" id="estimateDistance"></p>
+          <p class="text-sm text-gray-600 mb-1 hidden" id="estimateDistance"></p>
+          <p class="text-sm text-gray-600 mb-1 hidden" id="estimateWaiting"></p>
+          <p class="text-xs text-gray-400 mb-3 hidden" id="estimateNotes"></p>
           <div class="flex items-center justify-center gap-3 mb-2">
             <span class="text-4xl md:text-5xl font-bold text-afj-green" id="estimateLow"></span>
             <span class="text-2xl text-gray-400">&ndash;</span>
@@ -574,6 +576,34 @@ const jsonLD = {
     });
   });
 
+  // Evaluate showWhen conditions and show/hide conditional fields
+  function reevaluateVisibility(container) {
+    var conditionals = container.querySelectorAll('[data-show-when]');
+    conditionals.forEach(function (div) {
+      var rule = div.dataset.showWhen; // e.g. "returnJourney:yes"
+      var parts = rule.split(':');
+      var fieldId = parts[0];
+      var expectedVal = parts[1];
+
+      // Get current value of the referenced field
+      var currentVal = '';
+      var toggleGroup = container.querySelector('[data-qid="' + fieldId + '"][data-type="toggle"]');
+      if (toggleGroup) {
+        var activeBtn = toggleGroup.querySelector('.toggle-btn.active');
+        currentVal = activeBtn ? activeBtn.dataset.value : '';
+      } else {
+        var input = container.querySelector('[data-qid="' + fieldId + '"]');
+        if (input) currentVal = input.value;
+      }
+
+      if (currentVal === expectedVal) {
+        div.classList.remove('hidden');
+      } else {
+        div.classList.add('hidden');
+      }
+    });
+  }
+
   function buildQuestions(serviceKey) {
     var svc = quoteRules.services[serviceKey];
     if (!svc || !svc.questions) return;
@@ -589,6 +619,13 @@ const jsonLD = {
       var labelHtml = '<label class="block text-sm font-medium text-afj-text mb-1">' + q.label + required + '</label>';
       var inputHtml = '';
       var inputClass = 'w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
+
+      // Mark conditional fields with data-show-when and hide initially
+      if (q.showWhen) {
+        var key = Object.keys(q.showWhen)[0];
+        div.setAttribute('data-show-when', key + ':' + q.showWhen[key]);
+        div.classList.add('hidden');
+      }
 
       if (q.inputType === 'select') {
         inputHtml =
@@ -606,24 +643,42 @@ const jsonLD = {
       } else if (q.inputType === 'time') {
         inputHtml = '<input type="time" data-qid="' + q.id + '" data-type="time"' + (q.required ? ' data-required="true"' : '') + ' class="quiz-input ' + inputClass + '" />';
       } else if (q.inputType === 'toggle') {
-        inputHtml =
-          '<div class="flex gap-2" data-qid="' + q.id + '" data-type="toggle">' +
-          '<button type="button" class="toggle-btn active" data-value="no">No</button>' +
-          '<button type="button" class="toggle-btn" data-value="yes">Yes</button>' +
-          '</div>';
+        // "Same day return?" defaults to Yes; all others default to No
+        var yesFirst = q.id === 'returnType';
+        if (yesFirst) {
+          inputHtml =
+            '<div class="flex gap-2" data-qid="' + q.id + '" data-type="toggle">' +
+            '<button type="button" class="toggle-btn active" data-value="yes">Yes</button>' +
+            '<button type="button" class="toggle-btn" data-value="no">No</button>' +
+            '</div>';
+        } else {
+          inputHtml =
+            '<div class="flex gap-2" data-qid="' + q.id + '" data-type="toggle">' +
+            '<button type="button" class="toggle-btn active" data-value="no">No</button>' +
+            '<button type="button" class="toggle-btn" data-value="yes">Yes</button>' +
+            '</div>';
+        }
       }
 
       div.innerHTML = labelHtml + inputHtml;
       container.appendChild(div);
     });
 
-    // Bind toggle click handlers
+    // Bind toggle click handlers and re-evaluate conditional visibility on change
     container.querySelectorAll('[data-type="toggle"]').forEach(function (group) {
       group.querySelectorAll('.toggle-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
           group.querySelectorAll('.toggle-btn').forEach(function (b) { b.classList.remove('active'); });
           btn.classList.add('active');
+          reevaluateVisibility(container);
         });
+      });
+    });
+
+    // Re-evaluate on select changes too
+    container.querySelectorAll('select.quiz-input').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        reevaluateVisibility(container);
       });
     });
 
@@ -636,12 +691,20 @@ const jsonLD = {
     });
   }
 
+  // Check if an element is inside a hidden showWhen wrapper
+  function isHiddenConditional(el) {
+    var parent = el.closest('[data-show-when]');
+    return parent && parent.classList.contains('hidden');
+  }
+
   function collectAnswers() {
     var answers = {};
     var valid = true;
 
-    // Collect from text, date, time, select inputs
+    // Collect from text, date, time, select inputs (skip hidden conditional fields)
     document.querySelectorAll('.quiz-input').forEach(function (input) {
+      if (isHiddenConditional(input)) return;
+
       var qid = input.dataset.qid;
       var required = input.dataset.required === 'true';
       var val = input.value.trim();
@@ -656,14 +719,25 @@ const jsonLD = {
       if (val) answers[qid] = val;
     });
 
-    // Collect from toggle groups
+    // Collect from toggle groups (skip hidden conditional fields)
     document.querySelectorAll('[data-type="toggle"]').forEach(function (group) {
+      if (isHiddenConditional(group)) return;
+
       var qid = group.dataset.qid;
       var activeBtn = group.querySelector('.toggle-btn.active');
       if (activeBtn) {
         answers[qid] = activeBtn.dataset.value;
       }
     });
+
+    // For same-day return, returnPickupTime is effectively required
+    if (answers.returnJourney === 'yes' && answers.returnType !== 'no' && !answers.returnPickupTime) {
+      var rptInput = document.querySelector('[data-qid="returnPickupTime"]');
+      if (rptInput && !isHiddenConditional(rptInput)) {
+        valid = false;
+        rptInput.style.borderColor = '#E53E3E';
+      }
+    }
 
     return valid ? answers : null;
   }
@@ -691,10 +765,10 @@ const jsonLD = {
           var svc = quoteRules.services[selectedService];
           document.getElementById('estimateServiceLabel').textContent = svc.label;
 
-          // Show distance and travel time for private hire
+          // Show distance and travel time
           var distanceEl = document.getElementById('estimateDistance');
           if (data.estimate.distanceMiles) {
-            var distText = 'Estimated distance: ' + data.estimate.distanceMiles + ' miles';
+            var distText = data.estimate.distanceMiles + ' miles';
             if (data.estimate.durationMinutes) {
               var totalMin = data.estimate.durationMinutes;
               var hrs = Math.floor(totalMin / 60);
@@ -706,6 +780,31 @@ const jsonLD = {
             distanceEl.classList.remove('hidden');
           } else {
             distanceEl.classList.add('hidden');
+          }
+
+          // Show waiting time (same-day return only)
+          var waitingEl = document.getElementById('estimateWaiting');
+          if (data.estimate.waitingHours) {
+            waitingEl.textContent = 'Waiting time: ' + data.estimate.waitingHours + ' hours';
+            waitingEl.classList.remove('hidden');
+          } else {
+            waitingEl.classList.add('hidden');
+          }
+
+          // Show notes (deadhead, DVSA)
+          var notesEl = document.getElementById('estimateNotes');
+          var notes = [];
+          if (data.estimate.deadheadMiles) {
+            notes.push('Includes driver travel from base (' + data.estimate.deadheadMiles + ' mi)');
+          }
+          if (data.estimate.dvsaBreakApplied) {
+            notes.push('DVSA break allowance included');
+          }
+          if (notes.length) {
+            notesEl.textContent = notes.join(' \u00B7 ');
+            notesEl.classList.remove('hidden');
+          } else {
+            notesEl.classList.add('hidden');
           }
 
           document.getElementById('estimateLow').textContent = '\u00A3' + data.estimate.low;
