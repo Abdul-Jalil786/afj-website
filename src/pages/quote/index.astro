@@ -77,7 +77,7 @@ const jsonLD = {
                     : 'bg-blue-100 text-blue-700',
                 ]}
               >
-                {(svc as any).type === 'instant' ? 'Instant Quote' : 'Enterprise'}
+                {(svc as any).type === 'instant' ? 'Instant Quote' : 'Enterprise / Contract'}
               </span>
               <div class="flex items-start gap-3 pr-20">
                 <div class="w-10 h-10 bg-afj-accent/10 rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-afj-accent/20 transition-colors">
@@ -113,9 +113,7 @@ const jsonLD = {
             </svg>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-3" id="enterpriseServiceName"></h3>
-          <p class="text-gray-600 max-w-md mx-auto mb-8" id="enterpriseDescription">
-            This service is tailored to your organisation's specific requirements. Our contracts team will work with you to build a bespoke solution and pricing structure.
-          </p>
+          <p class="text-gray-600 max-w-md mx-auto mb-8" id="enterpriseDescription"></p>
 
           <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <a
@@ -123,13 +121,13 @@ const jsonLD = {
               href="/contact"
               class="flex-1 bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors text-center"
             >
-              Request a Consultation
+              Request E-Portal Access
             </a>
             <a
               href="tel:01216891000"
               class="flex-1 border-2 border-afj-accent text-afj-accent font-semibold py-3 px-6 rounded-lg hover:bg-afj-accent hover:text-white transition-colors text-center"
             >
-              Call 0121 689 1000
+              Or call us on 0121 689 1000
             </a>
           </div>
         </div>
@@ -566,6 +564,8 @@ const jsonLD = {
         // Show enterprise CTA
         document.getElementById('enterpriseTitle').textContent = svc.label;
         document.getElementById('enterpriseServiceName').textContent = svc.label;
+        document.getElementById('enterpriseDescription').textContent =
+          'Our ' + svc.label + ' contracts are tailored to your organisation\u2019s specific requirements. If you are a local authority, NHS trust, or organisation, request access to our e-portal for detailed pricing and service specifications.';
         document.getElementById('enterpriseContactLink').href = '/contact?service=' + encodeURIComponent(svc.label);
         showStep('stepEnterprise');
       } else {
