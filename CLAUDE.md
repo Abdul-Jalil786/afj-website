@@ -53,12 +53,23 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - "Get a Quote" button added to Header.astro (desktop + mobile)
 - Progress indicator, back navigation, mobile-responsive
 
-**NEXT SESSION: Tier 3 — Part 2: Programmatic SEO Pages**
-- Populate `src/data/area-data/` with school and hospital data
-- Build AI-assisted area page generator
-- Generate 20-25 additional area pages
+**Tier 3 Part 2 — COMPLETE (2026-02-15): Programmatic SEO — 25 Local Area Pages**
+- `src/data/area-data/areas.json` — 25 areas with metadata (slug, council, population, distance, region, services)
+- `src/data/area-data/schools.json` — 3-5 real SEND schools per area with postcodes
+- `src/data/area-data/hospitals.json` — 2-3 real hospitals/clinics per area with NHS trust names
+- `src/pages/areas/[slug].astro` — Dynamic template with getStaticPaths generating all 25 pages
+- Each page: hero, intro, SEND schools section, NEPTS hospitals section, services grid, "Why Choose AFJ", fleet gallery, accreditations, FAQ (5 unique questions), quote CTA, adjacent area links, JSON-LD
+- Removed 5 static area pages (birmingham/manchester/sandwell/coventry/west-midlands) — all handled by dynamic template
+- `src/pages/areas/index.astro` — Updated to show all 25 areas grouped by 7 regions
+- Sitemap auto-includes all 25 area pages
+- Existing area URLs preserved with identical structure
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable)
+**NEXT SESSION: Tier 3 — Part 3: Compliance Dashboard & Testimonial Engine**
+- Build public compliance dashboard at `/compliance`
+- Create `src/data/compliance.json`
+- Build testimonial/case study engine in admin
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable)
 
 ---
 

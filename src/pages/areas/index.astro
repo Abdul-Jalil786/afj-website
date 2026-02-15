@@ -3,89 +3,103 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/Hero.astro';
 import CTABanner from '../../components/CTABanner.astro';
 import SocialSidebar from '../../components/SocialSidebar.astro';
+import areas from '../../data/area-data/areas.json';
 
 const breadcrumbs = [{ label: 'Areas We Serve' }];
 
-const areas = [
-  {
-    name: 'Birmingham',
-    href: '/areas/birmingham',
-    description: 'Our headquarters. Full range of transport services including SEND, patient transport, fleet maintenance, conversions, and training.',
-    services: ['SEND Transport', 'Patient Transport', 'Fleet Maintenance', 'Conversions', 'Training', 'Private Hire'],
-  },
-  {
-    name: 'Manchester',
-    href: '/areas/manchester',
-    description: 'Serving the North West with SEND school transport, patient transport, and private minibus hire across Greater Manchester.',
-    services: ['SEND Transport', 'Patient Transport', 'Private Hire'],
-  },
-  {
-    name: 'West Midlands',
-    href: '/areas/west-midlands',
-    description: 'Regional transport services across the entire West Midlands, from Wolverhampton to Solihull and everywhere in between.',
-    services: ['SEND Transport', 'Patient Transport', 'Private Hire', 'Fleet Maintenance', 'Conversions'],
-  },
-  {
-    name: 'Sandwell',
-    href: '/areas/sandwell',
-    description: 'Council-accredited transport services in Sandwell including SEND school transport and non-emergency patient transport.',
-    services: ['SEND Transport', 'Patient Transport', 'Private Hire'],
-  },
-  {
-    name: 'Coventry',
-    href: '/areas/coventry',
-    description: 'Reliable SEND school transport and patient transport services extending into Coventry and surrounding areas.',
-    services: ['SEND Transport', 'Patient Transport', 'Private Hire'],
-  },
-];
+// Group areas by region
+type AreaEntry = (typeof areas)[number];
+const regionOrder = ['West Midlands', 'Staffordshire', 'Warwickshire', 'Worcestershire', 'East Midlands', 'Shropshire', 'North West'];
+const grouped: Record<string, AreaEntry[]> = {};
+
+for (const area of areas) {
+  if (!grouped[area.region]) grouped[area.region] = [];
+  grouped[area.region].push(area);
+}
+
+// Sort groups by region order
+const sortedRegions = regionOrder.filter((r) => grouped[r]);
 
 const jsonLD = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: 'AFJ Limited',
-  description: 'AFJ Limited provides specialist transport services across Birmingham, Manchester, West Midlands, Sandwell, and Coventry.',
+  description: `AFJ Limited provides specialist transport services across ${areas.length} areas including Birmingham, Manchester, and the wider Midlands region.`,
   telephone: '0121 689 1000',
-  areaServed: [
-    { '@type': 'City', name: 'Birmingham' },
-    { '@type': 'City', name: 'Manchester' },
-    { '@type': 'AdministrativeArea', name: 'West Midlands' },
-    { '@type': 'City', name: 'Sandwell' },
-    { '@type': 'City', name: 'Coventry' },
-  ],
+  areaServed: areas.map((a) => ({
+    '@type': a.population > 500000 ? 'City' : 'AdministrativeArea',
+    name: a.name,
+  })),
 };
 ---
 
 <PageLayout
   title="Areas We Serve"
-  description="AFJ Limited serves Birmingham, Manchester, West Midlands, Sandwell, and Coventry with SEND transport, patient transport, fleet maintenance, and private hire."
+  description={`AFJ Limited serves ${areas.length} areas across the Midlands and North West with SEND transport, patient transport, fleet maintenance, private hire, and more.`}
   breadcrumbs={breadcrumbs}
   jsonLD={jsonLD}
 >
   <SocialSidebar />
 
-  <Hero title="Areas We Serve" subtitle="Trusted transport services across Birmingham, Manchester, and the wider West Midlands region." />
+  <Hero title="Areas We Serve" subtitle={`Trusted transport services across ${areas.length} areas in the Midlands and North West.`} />
 
+  <!-- Overview Stats -->
   <section class="section-padding">
     <div class="container-wide">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {areas.map((area) => (
-          <a href={area.href} class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow block group">
-            <h2 class="text-afj-green font-bold text-xl mb-2 group-hover:text-afj-accent transition-colors">{area.name}</h2>
-            <p class="text-afj-secondary text-sm leading-relaxed mb-4">{area.description}</p>
-            <div class="flex flex-wrap gap-2">
-              {area.services.map((service) => (
-                <span class="bg-afj-light-white text-afj-text text-xs px-2 py-1 rounded">{service}</span>
-              ))}
-            </div>
-          </a>
-        ))}
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mb-12">
+        <div class="text-center">
+          <p class="text-3xl font-bold text-afj-green">{areas.length}</p>
+          <p class="text-sm text-afj-secondary">Areas Served</p>
+        </div>
+        <div class="text-center">
+          <p class="text-3xl font-bold text-afj-green">{sortedRegions.length}</p>
+          <p class="text-sm text-afj-secondary">Regions</p>
+        </div>
+        <div class="text-center">
+          <p class="text-3xl font-bold text-afj-green">700+</p>
+          <p class="text-sm text-afj-secondary">Students Daily</p>
+        </div>
+        <div class="text-center">
+          <p class="text-3xl font-bold text-afj-green">18+</p>
+          <p class="text-sm text-afj-secondary">Years Experience</p>
+        </div>
       </div>
+
+      <!-- Areas by Region -->
+      {sortedRegions.map((region) => (
+        <div class="mb-10">
+          <h2 class="text-afj-green font-bold text-xl mb-4 border-b border-gray-200 pb-2">{region}</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {grouped[region].map((area) => (
+              <a href={`/areas/${area.slug}`} class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow block group">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h3 class="text-afj-text font-bold text-lg group-hover:text-afj-accent transition-colors">{area.name}</h3>
+                    <p class="text-gray-500 text-xs mt-1">{area.council}</p>
+                  </div>
+                  {area.distanceFromBirmingham > 0 && (
+                    <span class="text-xs text-gray-400 flex-shrink-0">{area.distanceFromBirmingham} mi</span>
+                  )}
+                </div>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                  {area.servicesAvailable.slice(0, 4).map((service) => (
+                    <span class="bg-afj-light-white text-afj-text text-xs px-2 py-0.5 rounded">{service}</span>
+                  ))}
+                  {area.servicesAvailable.length > 4 && (
+                    <span class="text-xs text-gray-400">+{area.servicesAvailable.length - 4} more</span>
+                  )}
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   </section>
 
   <CTABanner
     heading="Need Transport in Your Area?"
-    description="Contact AFJ Limited today. We serve communities across the West Midlands and North West."
+    description="Contact AFJ Limited today. We serve communities across the Midlands and North West."
     variant="navy"
   />
 </PageLayout>

@@ -1,0 +1,433 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Hero from '../../components/Hero.astro';
+import StatsCounter from '../../components/StatsCounter.astro';
+import AccreditationBadges from '../../components/AccreditationBadges.astro';
+import FAQ from '../../components/FAQ.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import SocialSidebar from '../../components/SocialSidebar.astro';
+import areas from '../../data/area-data/areas.json';
+import schoolsData from '../../data/area-data/schools.json';
+import hospitalsData from '../../data/area-data/hospitals.json';
+
+type AreaEntry = (typeof areas)[number];
+
+export function getStaticPaths() {
+  return areas.map((area: AreaEntry) => ({
+    params: { slug: area.slug },
+    props: { area },
+  }));
+}
+
+const { area } = Astro.props as { area: AreaEntry };
+
+const schools = (schoolsData as Record<string, { name: string; type: string; postcode: string }[]>)[area.slug] || [];
+const hospitals = (hospitalsData as Record<string, { name: string; type: string; nhsTrust: string }[]>)[area.slug] || [];
+
+const breadcrumbs = [
+  { label: 'Areas', href: '/areas' },
+  { label: area.name },
+];
+
+const stats = [
+  { value: 18, suffix: '+', label: 'Years Experience' },
+  { value: 700, suffix: '+', label: 'Students Daily' },
+  { value: 100, suffix: '%', label: 'DBS Checked Staff' },
+  { value: 50, suffix: '+', label: 'Vehicles in Fleet' },
+];
+
+// Build service cards with area-specific descriptions
+const serviceDescriptions: Record<string, { title: string; description: string; href: string }> = {
+  'SEND Transport': {
+    title: 'Home to School Transport',
+    description: `SEND school transport in ${area.name} with DBS-checked drivers, passenger assistants, and wheelchair-accessible minibuses.`,
+    href: '/services/send-transport',
+  },
+  'Patient Transport': {
+    title: 'Patient Transport',
+    description: `CQC-rated "Good" non-emergency patient transport serving hospitals and clinics across ${area.name}.`,
+    href: '/services/patient-transport',
+  },
+  'Fleet Maintenance': {
+    title: 'Fleet Maintenance',
+    description: `Comprehensive fleet maintenance and repair services for businesses in ${area.name} from our in-house workshop.`,
+    href: '/services/fleet-maintenance',
+  },
+  'Vehicle Conversions': {
+    title: 'Vehicle Conversions',
+    description: `VOSA certified wheelchair-accessible, ambulance, and luxury conversions. Over 200 compliant builds delivered.`,
+    href: '/services/vehicle-conversions',
+  },
+  'Driver Training': {
+    title: 'Driver, ACA & PA Training',
+    description: `QualSafe-approved training programmes including Driver CPC, Ambulance Care Assistant, and Passenger Assistant certification.`,
+    href: '/services/driver-training',
+  },
+  'Private Hire': {
+    title: 'Private Minibus Hire',
+    description: `Modern 16-seater wheelchair-accessible minibuses for events, school trips, and group travel in ${area.name}.`,
+    href: '/services/private-hire',
+  },
+  'Executive Minibus': {
+    title: 'Executive Minibus Hire',
+    description: `Luxury minibus hire with driver for corporate events, race days, and premium travel from ${area.name}.`,
+    href: '/services/executive-minibus',
+  },
+  'Airport Transfers': {
+    title: 'Airport Transfers',
+    description: `Reliable group airport transfers from ${area.name} to Birmingham Airport and other major UK airports.`,
+    href: '/services/airport-transfers',
+  },
+};
+
+const services = area.servicesAvailable
+  .map((s) => serviceDescriptions[s])
+  .filter(Boolean);
+
+// Determine grid columns for services based on count
+const serviceGridCols = services.length <= 3 ? 'md:grid-cols-3' : services.length <= 4 ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-4';
+
+// Gallery images — rotate through available images based on area index
+const allGalleryImages = [
+  { src: '/images/fleet/afj-vehicles-parked.jpg', alt: `AFJ fleet vehicles serving ${area.name}` },
+  { src: '/images/fleet/afj-garage-with-vehicles.jpg', alt: `AFJ garage and workshop facilities` },
+  { src: '/images/fleet/vehicle-in-depot-with-driver-and-guide.jpg', alt: `Driver and guide with AFJ vehicle` },
+  { src: '/images/fleet/patient-transport-crew.webp', alt: `Patient transport crew serving ${area.name}` },
+  { src: '/images/misc/minibuses-parked-in-depot.webp', alt: `AFJ minibuses at depot` },
+  { src: '/images/fleet/ambulance.jpg', alt: `AFJ ambulance serving ${area.name}` },
+  { src: '/images/fleet/patient-transport-crew-2.jpg', alt: `Patient transport team` },
+  { src: '/images/misc/send-vehicle-with-wheelchair-ramp.webp', alt: `Wheelchair-accessible vehicle for ${area.name}` },
+  { src: '/images/misc/driver-and-pa-inside-minibus.webp', alt: `Driver and passenger assistant in minibus` },
+  { src: '/images/fleet/patient-transport-team-hands-together.jpg', alt: `Patient transport team serving ${area.name}` },
+  { src: '/images/misc/minibuses.webp', alt: `AFJ minibuses available in ${area.name}` },
+];
+
+// Select 4 gallery images per area (rotating based on area index for variety)
+const areaIdx = areas.findIndex((a: AreaEntry) => a.slug === area.slug);
+const galleryImages = Array.from({ length: 4 }, (_, i) =>
+  allGalleryImages[(areaIdx * 3 + i) % allGalleryImages.length]
+);
+
+// Build "nearby areas" list — same region, excluding self, max 6
+const nearbyAreas = areas
+  .filter((a: AreaEntry) => a.slug !== area.slug && a.region === area.region)
+  .slice(0, 4);
+
+// Also add a few from other regions if not enough
+const otherRegionAreas = areas
+  .filter((a: AreaEntry) => a.slug !== area.slug && a.region !== area.region)
+  .slice(0, Math.max(0, 4 - nearbyAreas.length));
+
+const adjacentAreas = [...nearbyAreas, ...otherRegionAreas].slice(0, 6);
+
+// Distance text
+const distanceText = area.distanceFromBirmingham === 0
+  ? 'Our Birmingham headquarters'
+  : `${area.distanceFromBirmingham} miles from our Birmingham headquarters`;
+
+// Build FAQ items — unique per area
+const faqItems = [
+  {
+    question: `What transport services does AFJ provide in ${area.name}?`,
+    answer: `AFJ Limited provides ${area.servicesAvailable.join(', ').replace(/, ([^,]*)$/, ' and $1')} in ${area.name}. All our services are delivered by DBS-checked staff using modern, wheelchair-accessible vehicles from our fleet of 50+ vehicles.`,
+  },
+  {
+    question: `How far is AFJ from ${area.name}?`,
+    answer: area.distanceFromBirmingham === 0
+      ? `AFJ Limited is headquartered in Birmingham at our Nechells base (B7 4JD). We operate from our own workshop, training centre, and fleet depot.`
+      : `${area.name} is approximately ${area.distanceFromBirmingham} miles from our Birmingham headquarters. This proximity allows us to provide reliable, scheduled transport services across ${area.name} and the surrounding area.`,
+  },
+  {
+    question: `Does AFJ provide SEND school transport in ${area.name}?`,
+    answer: area.servicesAvailable.includes('SEND Transport')
+      ? `Yes, AFJ Limited provides SEND school transport in ${area.name}. We serve local schools including ${schools.slice(0, 3).map((s) => s.name).join(', ')}${schools.length > 3 ? ' and others' : ''}. Our drivers and passenger assistants are DBS-checked and trained to support students with additional needs.`
+      : `AFJ primarily focuses on other transport services in ${area.name}. Please contact us to discuss your specific requirements.`,
+  },
+  {
+    question: `Does AFJ provide patient transport in ${area.name}?`,
+    answer: area.servicesAvailable.includes('Patient Transport')
+      ? `Yes, our non-emergency patient transport service is CQC-rated "Good". We serve ${hospitals.slice(0, 2).map((h) => h.name).join(' and ')} in ${area.name}, providing transport for renal dialysis appointments, hospital discharges, outpatient visits, and long-distance transfers.`
+      : `Our patient transport service primarily covers other areas. Please contact us on 0121 689 1000 to check availability for ${area.name}.`,
+  },
+  {
+    question: `How do I book transport in ${area.name}?`,
+    answer: `You can contact AFJ Limited on 0121 689 1000, email info@afjltd.co.uk, or use our online quote wizard at afjltd.co.uk/quote. We will get back to you within 24 hours with a tailored quote for ${area.name}.`,
+  },
+];
+
+// JSON-LD structured data
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: `AFJ Limited — ${area.name}`,
+  description: `AFJ Limited provides specialist transport services in ${area.name} including ${area.servicesAvailable.slice(0, 3).join(', ')}. Established in 2006, CQC rated "Good".`,
+  telephone: '0121 689 1000',
+  email: 'info@afjltd.co.uk',
+  url: `https://www.afjltd.co.uk/areas/${area.slug}`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'AFJ Business Center, 2-18 Forster Street, Nechells',
+    addressLocality: 'Birmingham',
+    addressRegion: 'West Midlands',
+    postalCode: 'B7 4JD',
+    addressCountry: 'GB',
+  },
+  areaServed: {
+    '@type': area.population > 500000 ? 'City' : 'AdministrativeArea',
+    name: area.name,
+  },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Transport Services',
+    itemListElement: area.servicesAvailable.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s },
+    })),
+  },
+};
+
+const pageTitle = `Transport Services ${area.name}`;
+const pageDescription = `AFJ Limited — ${area.servicesAvailable.slice(0, 3).join(', ')} in ${area.name}. ${distanceText}. DBS-checked staff, wheelchair-accessible fleet, CQC rated "Good". Established 2006.`;
+---
+
+<PageLayout
+  title={pageTitle}
+  description={pageDescription}
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title={`Transport Services in ${area.name}`} subtitle={`${distanceText}. Safe, reliable transport solutions since 2006.`} />
+
+  <!-- Introduction -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-afj-green mb-4">Trusted Transport in {area.name}</h2>
+          <p class="text-afj-secondary mb-4 leading-relaxed">{area.intro}</p>
+          <p class="text-afj-secondary mb-6 leading-relaxed">{area.introSecond}</p>
+          <div class="flex flex-wrap gap-3">
+            <a href="/quote" class="btn-primary">Get a Quote</a>
+            <a href="/contact" class="btn-outline">Contact Us</a>
+          </div>
+        </div>
+        <div class="flex items-center justify-center">
+          <img src={area.heroImage} alt={area.heroImageAlt} class="rounded-lg w-full h-auto" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <StatsCounter stats={stats} />
+
+  <!-- SEND Schools Section -->
+  {area.servicesAvailable.includes('SEND Transport') && schools.length > 0 && (
+    <section class="section-padding bg-afj-light-white">
+      <div class="container-wide max-w-4xl">
+        <h2 class="text-afj-green text-center mb-3">SEND Schools We Serve in {area.name}</h2>
+        <p class="text-afj-secondary text-center mb-8 max-w-2xl mx-auto">
+          AFJ Limited provides safe, reliable transport for students with additional needs attending schools across {area.name}. Our DBS-checked drivers and passenger assistants are trained to support students with diverse learning needs.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {schools.map((school) => (
+            <div class="bg-white rounded-lg shadow-sm p-4 flex items-start gap-3">
+              <div class="w-8 h-8 bg-afj-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <div>
+                <p class="font-semibold text-afj-text text-sm">{school.name}</p>
+                <p class="text-xs text-gray-500">{school.type === 'special' ? 'Special School' : school.type === 'primary' ? 'Primary School' : 'Secondary School'} · {school.postcode}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="text-center mt-6">
+          <a href="/services/send-transport" class="text-afj-accent font-semibold hover:text-afj-green transition-colors text-sm">
+            Learn more about our SEND Transport service →
+          </a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <!-- NEPTS Hospitals Section -->
+  {area.servicesAvailable.includes('Patient Transport') && hospitals.length > 0 && (
+    <section class={`section-padding ${area.servicesAvailable.includes('SEND Transport') && schools.length > 0 ? '' : 'bg-afj-light-white'}`}>
+      <div class="container-wide max-w-4xl">
+        <h2 class="text-afj-green text-center mb-3">Patient Transport in {area.name}</h2>
+        <p class="text-afj-secondary text-center mb-8 max-w-2xl mx-auto">
+          Our CQC-rated "Good" non-emergency patient transport service covers hospitals and clinics across {area.name}. We provide transport for renal dialysis, hospital discharges, outpatient appointments, and long-distance transfers.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {hospitals.map((hospital) => (
+            <div class="bg-white rounded-lg shadow-sm p-4 flex items-start gap-3">
+              <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
+                </svg>
+              </div>
+              <div>
+                <p class="font-semibold text-afj-text text-sm">{hospital.name}</p>
+                <p class="text-xs text-gray-500">{hospital.type === 'hospital' ? 'Hospital' : hospital.type === 'clinic' ? 'Clinic' : 'Health Centre'} · {hospital.nhsTrust}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="text-center mt-6">
+          <a href="/services/patient-transport" class="text-afj-accent font-semibold hover:text-afj-green transition-colors text-sm">
+            Learn more about our Patient Transport service →
+          </a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <!-- Services Grid -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide">
+      <h2 class="text-afj-green text-center mb-8">Our Services in {area.name}</h2>
+      <div class={`grid grid-cols-1 ${serviceGridCols} gap-6`}>
+        {services.map((service) => (
+          <a href={service.href} class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow block group">
+            <h3 class="text-afj-green font-bold text-lg mb-2 group-hover:text-afj-accent transition-colors">{service.title}</h3>
+            <p class="text-afj-secondary text-sm leading-relaxed">{service.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose AFJ -->
+  <section class="section-padding">
+    <div class="container-wide max-w-4xl">
+      <h2 class="text-afj-green text-center mb-8">Why Choose AFJ in {area.name}?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Established Since 2006</h4>
+            <p class="text-afj-secondary text-sm">Over 18 years of trusted transport services across the Midlands and North West.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">CQC Rated "Good"</h4>
+            <p class="text-afj-secondary text-sm">Quality-assured patient transport across {area.name}'s hospitals and clinics.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">DBS-Checked Staff</h4>
+            <p class="text-afj-secondary text-sm">Every driver and passenger assistant is fully DBS checked and professionally trained.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">Wheelchair-Accessible Fleet</h4>
+            <p class="text-afj-secondary text-sm">Modern 16-seater minibuses with wheelchair access and safety equipment.</p>
+          </div>
+        </div>
+        {area.distanceFromBirmingham > 0 && (
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <div>
+              <h4 class="font-bold text-afj-text mb-1">{area.distanceFromBirmingham} Miles From Base</h4>
+              <p class="text-afj-secondary text-sm">{area.name} is within easy reach of our Birmingham headquarters for reliable service.</p>
+            </div>
+          </div>
+        )}
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-afj-text mb-1">700+ Students Daily</h4>
+            <p class="text-afj-secondary text-sm">Proven at scale — safely transporting hundreds of students every day across our service areas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fleet Gallery -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide">
+      <h2 class="text-afj-green text-center mb-8">Our Fleet Serving {area.name}</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {galleryImages.map((img) => (
+          <div class="rounded-lg overflow-hidden shadow-md">
+            <img src={img.src} alt={img.alt} class="w-full h-48 object-cover" loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Accreditations -->
+  <AccreditationBadges />
+
+  <!-- FAQ -->
+  <FAQ items={faqItems} heading={`${area.name} Transport — Frequently Asked Questions`} />
+
+  <!-- Quote CTA -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide max-w-2xl text-center">
+      <h2 class="text-afj-green mb-3">Get a Quote for {area.name}</h2>
+      <p class="text-afj-secondary mb-6">Answer a few quick questions and receive an instant estimated price range. No obligation.</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/quote" class="btn-primary">Get an Instant Quote</a>
+        <a href="tel:01216891000" class="inline-flex items-center gap-2 text-afj-accent font-semibold hover:text-afj-green transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          0121 689 1000
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nearby Areas -->
+  {adjacentAreas.length > 0 && (
+    <section class="section-padding">
+      <div class="container-wide max-w-4xl">
+        <h2 class="text-afj-green text-center mb-6">We Also Serve</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {adjacentAreas.map((nearby) => (
+            <a href={`/areas/${nearby.slug}`} class="bg-afj-light-white rounded-lg p-4 text-center hover:shadow-md transition-shadow block">
+              <p class="text-afj-text font-medium text-sm">{nearby.name}</p>
+            </a>
+          ))}
+        </div>
+        <p class="text-center mt-4">
+          <a href="/areas" class="text-afj-accent font-semibold hover:text-afj-green transition-colors text-sm">
+            View all areas we serve →
+          </a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <CTABanner
+    heading={`Transport Services in ${area.name}`}
+    description={`Contact AFJ Limited today for safe, reliable transport services across ${area.name} and the surrounding area.`}
+    variant={areaIdx % 2 === 0 ? 'green' : 'navy'}
+  />
+</PageLayout>

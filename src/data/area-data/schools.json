@@ -1,0 +1,142 @@
+{
+  "birmingham": [
+    { "name": "Wilson Stuart School", "type": "special", "postcode": "B23 7AT" },
+    { "name": "Braidwood School for the Deaf", "type": "special", "postcode": "B13 0EU" },
+    { "name": "Fox Hollies School", "type": "special", "postcode": "B27 7PS" },
+    { "name": "Queensbury School", "type": "special", "postcode": "B23 7DG" },
+    { "name": "Calthorpe Academy", "type": "special", "postcode": "B12 8NR" }
+  ],
+  "manchester": [
+    { "name": "Lancasterian School", "type": "special", "postcode": "M8 5DP" },
+    { "name": "Rodney House School", "type": "special", "postcode": "M14 6HW" },
+    { "name": "Grange School", "type": "special", "postcode": "M11 4PR" },
+    { "name": "North Ridge High School", "type": "special", "postcode": "M8 8NR" },
+    { "name": "Meade Hill School", "type": "special", "postcode": "M8 0DP" }
+  ],
+  "sandwell": [
+    { "name": "Westminster School", "type": "special", "postcode": "B70 0AL" },
+    { "name": "The Meadows School", "type": "special", "postcode": "B69 1AU" },
+    { "name": "Sandwell Community School", "type": "special", "postcode": "B65 9HT" },
+    { "name": "Shenstone Lodge School", "type": "special", "postcode": "B64 7JE" }
+  ],
+  "coventry": [
+    { "name": "Sherbourne Fields School", "type": "special", "postcode": "CV5 8JZ" },
+    { "name": "Corley Centre", "type": "special", "postcode": "CV7 8AZ" },
+    { "name": "Woodfield School", "type": "special", "postcode": "CV2 2QP" },
+    { "name": "Castle Wood School", "type": "special", "postcode": "CV5 9FP" }
+  ],
+  "west-midlands": [
+    { "name": "Wilson Stuart School", "type": "special", "postcode": "B23 7AT" },
+    { "name": "Westcroft School", "type": "special", "postcode": "WV11 1BW" },
+    { "name": "Mary Elliot School", "type": "special", "postcode": "WS1 2JT" },
+    { "name": "Sutton School", "type": "special", "postcode": "DY1 3QE" },
+    { "name": "Reynalds Cross School", "type": "special", "postcode": "B92 8EJ" }
+  ],
+  "solihull": [
+    { "name": "Reynalds Cross School", "type": "special", "postcode": "B92 8EJ" },
+    { "name": "Merstone School", "type": "special", "postcode": "B91 2HN" },
+    { "name": "Forest Oak School", "type": "special", "postcode": "B92 7RG" },
+    { "name": "Hazel Oak School", "type": "special", "postcode": "B92 7RG" }
+  ],
+  "walsall": [
+    { "name": "Mary Elliot School", "type": "special", "postcode": "WS1 2JT" },
+    { "name": "Castle School", "type": "special", "postcode": "WS9 0HN" },
+    { "name": "Elmwood School", "type": "special", "postcode": "WS3 3LD" },
+    { "name": "Jane Lane School", "type": "special", "postcode": "WS2 7PD" }
+  ],
+  "wolverhampton": [
+    { "name": "Westcroft School", "type": "special", "postcode": "WV11 1BW" },
+    { "name": "Penn Fields School", "type": "special", "postcode": "WV3 7EF" },
+    { "name": "Tettenhall Wood School", "type": "special", "postcode": "WV6 8QZ" },
+    { "name": "Green Park School", "type": "special", "postcode": "WV10 6EL" }
+  ],
+  "dudley": [
+    { "name": "Sutton School", "type": "special", "postcode": "DY1 3QE" },
+    { "name": "Halesbury School", "type": "special", "postcode": "DY9 8DG" },
+    { "name": "Old Park School", "type": "special", "postcode": "DY1 3NE" },
+    { "name": "Pens Meadow School", "type": "special", "postcode": "B64 5PL" }
+  ],
+  "stoke-on-trent": [
+    { "name": "Abbey Hill Academy", "type": "special", "postcode": "ST2 8LG" },
+    { "name": "Kemball School", "type": "special", "postcode": "ST1 6JR" },
+    { "name": "Portland School", "type": "special", "postcode": "ST6 5JL" },
+    { "name": "Cicely Haughton School", "type": "special", "postcode": "ST4 6LJ" }
+  ],
+  "derby": [
+    { "name": "St Andrew's School", "type": "special", "postcode": "DE21 4ET" },
+    { "name": "St Clare's School", "type": "special", "postcode": "DE21 4BQ" },
+    { "name": "St Martin's School", "type": "special", "postcode": "DE3 0SJ" },
+    { "name": "Alvaston Mead Community Special School", "type": "special", "postcode": "DE24 0HH" }
+  ],
+  "nottingham": [
+    { "name": "Westbury School", "type": "special", "postcode": "NG8 3GP" },
+    { "name": "Nethergate Academy", "type": "special", "postcode": "NG4 3JQ" },
+    { "name": "Rosehill School", "type": "special", "postcode": "NG3 6AZ" },
+    { "name": "Oak Field School", "type": "special", "postcode": "NG8 3AE" }
+  ],
+  "tamworth": [
+    { "name": "Two Rivers High School", "type": "special", "postcode": "B79 8AA" },
+    { "name": "Woodlands Academy", "type": "special", "postcode": "B77 4LF" },
+    { "name": "Amington Heath Primary (SEND Unit)", "type": "primary", "postcode": "B77 3QL" }
+  ],
+  "lichfield": [
+    { "name": "Saxon Hill Academy", "type": "special", "postcode": "WS13 6PJ" },
+    { "name": "Chasetown Academy (SEND Provision)", "type": "primary", "postcode": "WS7 4SH" },
+    { "name": "Erasmus Darwin Academy (SEND Unit)", "type": "secondary", "postcode": "WS13 7EG" }
+  ],
+  "sutton-coldfield": [
+    { "name": "Langley School", "type": "special", "postcode": "B75 7NL" },
+    { "name": "Lindsworth School", "type": "special", "postcode": "B36 0NW" },
+    { "name": "New Oscott Primary (SEND Provision)", "type": "primary", "postcode": "B73 5TP" }
+  ],
+  "bromsgrove": [
+    { "name": "Chadsgrove School", "type": "special", "postcode": "B61 0JL" },
+    { "name": "Rigby Hall School", "type": "special", "postcode": "B61 0NH" },
+    { "name": "Bromsgrove School (SEND Provision)", "type": "secondary", "postcode": "B61 7DU" }
+  ],
+  "redditch": [
+    { "name": "Pitcheroak School", "type": "special", "postcode": "B97 6PQ" },
+    { "name": "Kingfisher School", "type": "special", "postcode": "B97 4QR" },
+    { "name": "Walkwood CofE Middle (SEND Unit)", "type": "primary", "postcode": "B97 5PG" }
+  ],
+  "kidderminster": [
+    { "name": "Wyre Forest School", "type": "special", "postcode": "DY10 3AE" },
+    { "name": "Stone School", "type": "special", "postcode": "DY10 1XA" },
+    { "name": "Blakebrook School (SEND Provision)", "type": "primary", "postcode": "DY11 6AP" }
+  ],
+  "warwick": [
+    { "name": "Evergreen School", "type": "special", "postcode": "CV34 4JH" },
+    { "name": "Round Oak School", "type": "special", "postcode": "CV34 5AH" },
+    { "name": "Ridgeway School", "type": "special", "postcode": "CV34 6DY" }
+  ],
+  "leamington-spa": [
+    { "name": "Newlands School", "type": "special", "postcode": "CV32 6RD" },
+    { "name": "Myton School (SEND Provision)", "type": "secondary", "postcode": "CV31 3NY" },
+    { "name": "Telford Junior School (SEND Unit)", "type": "primary", "postcode": "CV32 7HP" }
+  ],
+  "nuneaton": [
+    { "name": "Oak Wood Primary & Secondary School", "type": "special", "postcode": "CV11 4SG" },
+    { "name": "Discovery Academy", "type": "special", "postcode": "CV11 5JS" },
+    { "name": "Exhall Grange Specialist School", "type": "special", "postcode": "CV7 9NB" }
+  ],
+  "stafford": [
+    { "name": "Marshlands School", "type": "special", "postcode": "ST16 1PA" },
+    { "name": "Walton Hall Academy", "type": "special", "postcode": "ST17 0LJ" },
+    { "name": "Rocklands School", "type": "special", "postcode": "ST16 3BN" }
+  ],
+  "cannock": [
+    { "name": "Hednesford Valley High School", "type": "special", "postcode": "WS12 1QQ" },
+    { "name": "West Hill Primary (SEND Provision)", "type": "primary", "postcode": "WS12 3HH" },
+    { "name": "Chase Terrace Academy (SEND Unit)", "type": "secondary", "postcode": "WS7 1AL" }
+  ],
+  "telford": [
+    { "name": "Haughton School", "type": "special", "postcode": "TF1 2DT" },
+    { "name": "Southall School", "type": "special", "postcode": "TF3 2LN" },
+    { "name": "Mount Gilbert School", "type": "special", "postcode": "TF4 3PY" }
+  ],
+  "shrewsbury": [
+    { "name": "Severndale Academy", "type": "special", "postcode": "SY1 4RQ" },
+    { "name": "The Priory School", "type": "special", "postcode": "SY1 1RH" },
+    { "name": "Condover College (SEND Provision)", "type": "special", "postcode": "SY5 7AH" }
+  ]
+}

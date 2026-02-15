@@ -1,0 +1,120 @@
+{
+  "birmingham": [
+    { "name": "Queen Elizabeth Hospital Birmingham", "type": "hospital", "nhsTrust": "University Hospitals Birmingham NHS Foundation Trust" },
+    { "name": "Birmingham Children's Hospital", "type": "hospital", "nhsTrust": "Birmingham Women's and Children's NHS Foundation Trust" },
+    { "name": "Heartlands Hospital", "type": "hospital", "nhsTrust": "University Hospitals Birmingham NHS Foundation Trust" }
+  ],
+  "manchester": [
+    { "name": "Manchester Royal Infirmary", "type": "hospital", "nhsTrust": "Manchester University NHS Foundation Trust" },
+    { "name": "Wythenshawe Hospital", "type": "hospital", "nhsTrust": "Manchester University NHS Foundation Trust" },
+    { "name": "North Manchester General Hospital", "type": "hospital", "nhsTrust": "Manchester University NHS Foundation Trust" }
+  ],
+  "sandwell": [
+    { "name": "Sandwell General Hospital", "type": "hospital", "nhsTrust": "Sandwell and West Birmingham Hospitals NHS Trust" },
+    { "name": "City Hospital Birmingham", "type": "hospital", "nhsTrust": "Sandwell and West Birmingham Hospitals NHS Trust" },
+    { "name": "Rowley Regis Hospital", "type": "hospital", "nhsTrust": "Sandwell and West Birmingham Hospitals NHS Trust" }
+  ],
+  "coventry": [
+    { "name": "University Hospital Coventry", "type": "hospital", "nhsTrust": "University Hospitals Coventry and Warwickshire NHS Trust" },
+    { "name": "Hospital of St Cross", "type": "hospital", "nhsTrust": "University Hospitals Coventry and Warwickshire NHS Trust" },
+    { "name": "Coventry and Warwickshire Partnership NHS Trust", "type": "health centre", "nhsTrust": "Coventry and Warwickshire Partnership NHS Trust" }
+  ],
+  "west-midlands": [
+    { "name": "Queen Elizabeth Hospital Birmingham", "type": "hospital", "nhsTrust": "University Hospitals Birmingham NHS Foundation Trust" },
+    { "name": "New Cross Hospital Wolverhampton", "type": "hospital", "nhsTrust": "Royal Wolverhampton NHS Trust" },
+    { "name": "Walsall Manor Hospital", "type": "hospital", "nhsTrust": "Walsall Healthcare NHS Trust" }
+  ],
+  "solihull": [
+    { "name": "Solihull Hospital", "type": "hospital", "nhsTrust": "University Hospitals Birmingham NHS Foundation Trust" },
+    { "name": "Birmingham Heartlands Hospital", "type": "hospital", "nhsTrust": "University Hospitals Birmingham NHS Foundation Trust" },
+    { "name": "Solihull Community Health Services", "type": "health centre", "nhsTrust": "Birmingham and Solihull Mental Health NHS Foundation Trust" }
+  ],
+  "walsall": [
+    { "name": "Walsall Manor Hospital", "type": "hospital", "nhsTrust": "Walsall Healthcare NHS Trust" },
+    { "name": "Dorothy Pattison Hospital", "type": "hospital", "nhsTrust": "Black Country Healthcare NHS Foundation Trust" },
+    { "name": "Bloxwich Hospital", "type": "health centre", "nhsTrust": "Walsall Healthcare NHS Trust" }
+  ],
+  "wolverhampton": [
+    { "name": "New Cross Hospital", "type": "hospital", "nhsTrust": "Royal Wolverhampton NHS Trust" },
+    { "name": "West Park Hospital", "type": "hospital", "nhsTrust": "Royal Wolverhampton NHS Trust" },
+    { "name": "Cannock Chase Hospital", "type": "hospital", "nhsTrust": "Royal Wolverhampton NHS Trust" }
+  ],
+  "dudley": [
+    { "name": "Russells Hall Hospital", "type": "hospital", "nhsTrust": "Dudley Group NHS Foundation Trust" },
+    { "name": "Corbett Outpatient Centre", "type": "clinic", "nhsTrust": "Dudley Group NHS Foundation Trust" },
+    { "name": "Guest Outpatient Centre", "type": "clinic", "nhsTrust": "Dudley Group NHS Foundation Trust" }
+  ],
+  "stoke-on-trent": [
+    { "name": "Royal Stoke University Hospital", "type": "hospital", "nhsTrust": "University Hospitals of North Midlands NHS Trust" },
+    { "name": "Haywood Hospital", "type": "hospital", "nhsTrust": "Midlands Partnership NHS Foundation Trust" },
+    { "name": "Bradwell Hospital", "type": "health centre", "nhsTrust": "Midlands Partnership NHS Foundation Trust" }
+  ],
+  "derby": [
+    { "name": "Royal Derby Hospital", "type": "hospital", "nhsTrust": "University Hospitals of Derby and Burton NHS Foundation Trust" },
+    { "name": "London Road Community Hospital", "type": "hospital", "nhsTrust": "University Hospitals of Derby and Burton NHS Foundation Trust" },
+    { "name": "Florence Nightingale Community Hospital", "type": "health centre", "nhsTrust": "University Hospitals of Derby and Burton NHS Foundation Trust" }
+  ],
+  "nottingham": [
+    { "name": "Queen's Medical Centre", "type": "hospital", "nhsTrust": "Nottingham University Hospitals NHS Trust" },
+    { "name": "Nottingham City Hospital", "type": "hospital", "nhsTrust": "Nottingham University Hospitals NHS Trust" },
+    { "name": "Lings Bar Hospital", "type": "health centre", "nhsTrust": "Nottinghamshire Healthcare NHS Foundation Trust" }
+  ],
+  "tamworth": [
+    { "name": "Sir Robert Peel Community Hospital", "type": "hospital", "nhsTrust": "University Hospitals of Derby and Burton NHS Foundation Trust" },
+    { "name": "Good Hope Hospital", "type": "hospital", "nhsTrust": "University Hospitals Birmingham NHS Foundation Trust" }
+  ],
+  "lichfield": [
+    { "name": "Samuel Johnson Community Hospital", "type": "hospital", "nhsTrust": "Midlands Partnership NHS Foundation Trust" },
+    { "name": "Good Hope Hospital", "type": "hospital", "nhsTrust": "University Hospitals Birmingham NHS Foundation Trust" }
+  ],
+  "sutton-coldfield": [
+    { "name": "Good Hope Hospital", "type": "hospital", "nhsTrust": "University Hospitals Birmingham NHS Foundation Trust" },
+    { "name": "BMI The Priory Hospital", "type": "hospital", "nhsTrust": "Private" },
+    { "name": "Sutton Coldfield Health Centre", "type": "health centre", "nhsTrust": "Birmingham and Solihull ICB" }
+  ],
+  "bromsgrove": [
+    { "name": "Princess of Wales Community Hospital", "type": "hospital", "nhsTrust": "Worcestershire Acute Hospitals NHS Trust" },
+    { "name": "Alexandra Hospital Redditch", "type": "hospital", "nhsTrust": "Worcestershire Acute Hospitals NHS Trust" }
+  ],
+  "redditch": [
+    { "name": "Alexandra Hospital", "type": "hospital", "nhsTrust": "Worcestershire Acute Hospitals NHS Trust" },
+    { "name": "Princess of Wales Community Hospital", "type": "hospital", "nhsTrust": "Worcestershire Acute Hospitals NHS Trust" },
+    { "name": "Smallwood Health Centre", "type": "health centre", "nhsTrust": "Herefordshire and Worcestershire ICB" }
+  ],
+  "kidderminster": [
+    { "name": "Kidderminster Hospital and Treatment Centre", "type": "hospital", "nhsTrust": "Worcestershire Acute Hospitals NHS Trust" },
+    { "name": "Worcestershire Royal Hospital", "type": "hospital", "nhsTrust": "Worcestershire Acute Hospitals NHS Trust" }
+  ],
+  "warwick": [
+    { "name": "Warwick Hospital", "type": "hospital", "nhsTrust": "South Warwickshire University NHS Foundation Trust" },
+    { "name": "Leamington Spa Rehabilitation Hospital", "type": "hospital", "nhsTrust": "South Warwickshire University NHS Foundation Trust" },
+    { "name": "Central England Rehabilitation Unit", "type": "clinic", "nhsTrust": "South Warwickshire University NHS Foundation Trust" }
+  ],
+  "leamington-spa": [
+    { "name": "Warwick Hospital", "type": "hospital", "nhsTrust": "South Warwickshire University NHS Foundation Trust" },
+    { "name": "Leamington Spa Rehabilitation Hospital", "type": "hospital", "nhsTrust": "South Warwickshire University NHS Foundation Trust" },
+    { "name": "Royal Leamington Spa Medical Centre", "type": "health centre", "nhsTrust": "Coventry and Warwickshire ICB" }
+  ],
+  "nuneaton": [
+    { "name": "George Eliot Hospital", "type": "hospital", "nhsTrust": "George Eliot Hospital NHS Trust" },
+    { "name": "Mary Ann Evans Hospice", "type": "clinic", "nhsTrust": "George Eliot Hospital NHS Trust" }
+  ],
+  "stafford": [
+    { "name": "County Hospital Stafford", "type": "hospital", "nhsTrust": "University Hospitals of North Midlands NHS Trust" },
+    { "name": "Stafford Rehabilitation Unit", "type": "health centre", "nhsTrust": "Midlands Partnership NHS Foundation Trust" },
+    { "name": "Staffordshire and Stoke Partnership NHS Trust", "type": "health centre", "nhsTrust": "Midlands Partnership NHS Foundation Trust" }
+  ],
+  "cannock": [
+    { "name": "Cannock Chase Hospital", "type": "hospital", "nhsTrust": "Royal Wolverhampton NHS Trust" },
+    { "name": "New Cross Hospital Wolverhampton", "type": "hospital", "nhsTrust": "Royal Wolverhampton NHS Trust" }
+  ],
+  "telford": [
+    { "name": "Princess Royal Hospital", "type": "hospital", "nhsTrust": "Shrewsbury and Telford Hospital NHS Trust" },
+    { "name": "Robert Jones and Agnes Hunt Orthopaedic Hospital", "type": "hospital", "nhsTrust": "Robert Jones and Agnes Hunt Orthopaedic Hospital NHS Foundation Trust" }
+  ],
+  "shrewsbury": [
+    { "name": "Royal Shrewsbury Hospital", "type": "hospital", "nhsTrust": "Shrewsbury and Telford Hospital NHS Trust" },
+    { "name": "Shelton Hospital", "type": "hospital", "nhsTrust": "Midlands Partnership NHS Foundation Trust" },
+    { "name": "Cross Houses Rehabilitation Hospital", "type": "hospital", "nhsTrust": "Shrewsbury and Telford Hospital NHS Trust" }
+  ]
+}
