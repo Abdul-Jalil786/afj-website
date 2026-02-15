@@ -83,6 +83,14 @@
     var form = document.getElementById('contact-form');
     if (!form) return;
 
+    // Pre-fill message from ?service= query param (enterprise quote redirect)
+    var params = new URLSearchParams(window.location.search);
+    var svcParam = params.get('service');
+    if (svcParam) {
+      var msgEl = form.querySelector('#message');
+      if (msgEl) msgEl.value = 'I would like to request a consultation for ' + svcParam + '.';
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 

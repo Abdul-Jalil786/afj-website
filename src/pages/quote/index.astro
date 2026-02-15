@@ -16,13 +16,13 @@ const jsonLD = {
     telephone: '0121 689 1000',
   },
   description:
-    'Get an instant estimated quote for SEND transport, patient transport, private hire, airport transfers and executive minibus hire from AFJ Limited.',
+    'Get an instant estimated quote for private minibus hire and airport transfers from AFJ Limited. Enterprise quotes available for SEND transport, patient transport and fleet services.',
 };
 ---
 
 <PageLayout
   title="Get a Quote"
-  description="Get an instant estimated quote for transport services from AFJ Limited. SEND transport, patient transport, private hire, airport transfers and executive minibus hire."
+  description="Get an instant estimated quote for private minibus hire and airport transfers from AFJ Limited. Enterprise quotes available for SEND transport, patient transport and fleet services."
   breadcrumbs={breadcrumbs}
   jsonLD={jsonLD}
 >
@@ -30,13 +30,13 @@ const jsonLD = {
     <div class="container-wide max-w-3xl">
       <!-- Header -->
       <div class="text-center mb-10">
-        <h1 class="text-afj-green mb-3">Get an Instant Quote</h1>
+        <h1 class="text-afj-green mb-3">Get a Quote</h1>
         <p class="text-afj-secondary text-lg max-w-2xl mx-auto">
-          Answer a few quick questions and receive an estimated price range straight away. No obligation, no waiting.
+          Select a service below. Private hire and airport transfers receive an instant estimate. Enterprise services connect you with our contracts team.
         </p>
       </div>
 
-      <!-- Progress Steps -->
+      <!-- Progress Steps (hidden for enterprise flow) -->
       <div class="flex items-center justify-center gap-2 mb-10" id="progressBar">
         <div class="step-indicator active" data-step="1">
           <span class="step-number">1</span>
@@ -65,10 +65,21 @@ const jsonLD = {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="serviceGrid">
           {Object.entries(quoteRules.services).map(([key, svc]) => (
             <button
-              class="service-card bg-white rounded-lg border-2 border-gray-200 p-5 text-left hover:border-afj-accent hover:shadow-md transition-all group"
+              class="service-card bg-white rounded-lg border-2 border-gray-200 p-5 text-left hover:border-afj-accent hover:shadow-md transition-all group relative"
               data-service={key}
+              data-type={(svc as any).type}
             >
-              <div class="flex items-start gap-3">
+              <span
+                class:list={[
+                  'absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full',
+                  (svc as any).type === 'instant'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-blue-100 text-blue-700',
+                ]}
+              >
+                {(svc as any).type === 'instant' ? 'Instant Quote' : 'Enterprise'}
+              </span>
+              <div class="flex items-start gap-3 pr-20">
                 <div class="w-10 h-10 bg-afj-accent/10 rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-afj-accent/20 transition-colors">
                   <svg class="w-5 h-5 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -81,6 +92,46 @@ const jsonLD = {
               </div>
             </button>
           ))}
+        </div>
+      </div>
+
+      <!-- STEP ENTERPRISE: Portal CTA for contract services -->
+      <div id="stepEnterprise" class="wizard-step hidden">
+        <div class="flex items-center gap-3 mb-6">
+          <button id="backEnterprise" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h2 class="text-xl font-bold text-gray-900" id="enterpriseTitle">Enterprise Service</h2>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-5">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3" id="enterpriseServiceName"></h3>
+          <p class="text-gray-600 max-w-md mx-auto mb-8" id="enterpriseDescription">
+            This service is tailored to your organisation's specific requirements. Our contracts team will work with you to build a bespoke solution and pricing structure.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <a
+              id="enterpriseContactLink"
+              href="/contact"
+              class="flex-1 bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors text-center"
+            >
+              Request a Consultation
+            </a>
+            <a
+              href="tel:01216891000"
+              class="flex-1 border-2 border-afj-accent text-afj-accent font-semibold py-3 px-6 rounded-lg hover:bg-afj-accent hover:text-white transition-colors text-center"
+            >
+              Call 0121 689 1000
+            </a>
+          </div>
         </div>
       </div>
 
@@ -289,11 +340,26 @@ const jsonLD = {
     border-color: #38A169;
     background-color: #F0FFF4;
   }
+  .toggle-btn {
+    padding: 0.625rem 1.25rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4A5568;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .toggle-btn:hover {
+    border-color: #38A169;
+  }
+  .toggle-btn.active {
+    border-color: #38A169;
+    background-color: #F0FFF4;
+    color: #276749;
+  }
 </style>
-
-<script is:inline>
-  var quoteRules = JSON.parse(document.getElementById('quoteRulesData')?.textContent || '{}');
-</script>
 
 <script is:inline define:vars={{ quoteRules }}>
   var selectedService = '';
@@ -302,27 +368,38 @@ const jsonLD = {
   var currentEstimate = null;
 
   var step1 = document.getElementById('step1');
+  var stepEnterprise = document.getElementById('stepEnterprise');
   var step2 = document.getElementById('step2');
   var step3 = document.getElementById('step3');
   var step4 = document.getElementById('step4');
   var progressBar = document.getElementById('progressBar');
 
-  function showStep(num) {
-    currentStep = num;
-    [step1, step2, step3, step4].forEach(function (el, i) {
-      if (i + 1 === num) {
-        el.classList.remove('hidden');
-      } else {
-        el.classList.add('hidden');
-      }
-    });
+  var allSteps = [step1, stepEnterprise, step2, step3, step4];
 
-    progressBar.querySelectorAll('.step-indicator').forEach(function (ind) {
-      var s = parseInt(ind.dataset.step);
-      ind.classList.remove('active', 'completed');
-      if (s === num) ind.classList.add('active');
-      if (s < num) ind.classList.add('completed');
-    });
+  function hideAllSteps() {
+    allSteps.forEach(function (el) { el.classList.add('hidden'); });
+  }
+
+  function showStep(id) {
+    hideAllSteps();
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('hidden');
+
+    // Update progress bar for instant flow
+    var stepMap = { step1: 1, step2: 2, step3: 3, step4: 4 };
+    var num = stepMap[id] || 0;
+
+    if (id === 'stepEnterprise') {
+      progressBar.classList.add('hidden');
+    } else {
+      progressBar.classList.remove('hidden');
+      progressBar.querySelectorAll('.step-indicator').forEach(function (ind) {
+        var s = parseInt(ind.dataset.step);
+        ind.classList.remove('active', 'completed');
+        if (s === num) ind.classList.add('active');
+        if (s < num) ind.classList.add('completed');
+      });
+    }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -334,14 +411,27 @@ const jsonLD = {
       card.classList.add('selected');
       selectedService = card.dataset.service;
       currentAnswers = {};
-      buildQuestions(selectedService);
-      showStep(2);
+
+      var svc = quoteRules.services[selectedService];
+      if (!svc) return;
+
+      if (svc.type === 'enterprise') {
+        // Show enterprise CTA
+        document.getElementById('enterpriseTitle').textContent = svc.label;
+        document.getElementById('enterpriseServiceName').textContent = svc.label;
+        document.getElementById('enterpriseContactLink').href = '/contact?service=' + encodeURIComponent(svc.label);
+        showStep('stepEnterprise');
+      } else {
+        // Show instant questions
+        buildQuestions(selectedService);
+        showStep('step2');
+      }
     });
   });
 
   function buildQuestions(serviceKey) {
     var svc = quoteRules.services[serviceKey];
-    if (!svc) return;
+    if (!svc || !svc.questions) return;
 
     document.getElementById('step2Title').textContent = svc.label + ' — Details';
 
@@ -350,35 +440,86 @@ const jsonLD = {
 
     svc.questions.forEach(function (q) {
       var div = document.createElement('div');
-      div.innerHTML =
-        '<label class="block text-sm font-medium text-afj-text mb-1">' + q.label + '</label>' +
-        '<select data-qid="' + q.id + '" class="question-select w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent bg-white">' +
-        '<option value="">Select...</option>' +
-        q.options.map(function (opt) {
-          return '<option value="' + opt.value + '">' + opt.label + '</option>';
-        }).join('') +
-        '</select>';
+      var required = q.required ? ' <span class="text-afj-red">*</span>' : '';
+      var labelHtml = '<label class="block text-sm font-medium text-afj-text mb-1">' + q.label + required + '</label>';
+      var inputHtml = '';
+      var inputClass = 'w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
+
+      if (q.inputType === 'select') {
+        inputHtml =
+          '<select data-qid="' + q.id + '" data-type="select"' + (q.required ? ' data-required="true"' : '') + ' class="quiz-input ' + inputClass + ' bg-white">' +
+          '<option value="">Select...</option>' +
+          q.options.map(function (opt) {
+            return '<option value="' + opt.value + '">' + opt.label + '</option>';
+          }).join('') +
+          '</select>';
+      } else if (q.inputType === 'text') {
+        inputHtml = '<input type="text" data-qid="' + q.id + '" data-type="text"' + (q.required ? ' data-required="true"' : '') + ' placeholder="' + (q.placeholder || '') + '" class="quiz-input ' + inputClass + '" />';
+      } else if (q.inputType === 'date') {
+        inputHtml = '<input type="date" data-qid="' + q.id + '" data-type="date"' + (q.required ? ' data-required="true"' : '') + ' class="quiz-input ' + inputClass + '" />';
+      } else if (q.inputType === 'time') {
+        inputHtml = '<input type="time" data-qid="' + q.id + '" data-type="time"' + (q.required ? ' data-required="true"' : '') + ' class="quiz-input ' + inputClass + '" />';
+      } else if (q.inputType === 'toggle') {
+        inputHtml =
+          '<div class="flex gap-2" data-qid="' + q.id + '" data-type="toggle">' +
+          '<button type="button" class="toggle-btn active" data-value="no">No</button>' +
+          '<button type="button" class="toggle-btn" data-value="yes">Yes</button>' +
+          '</div>';
+      }
+
+      div.innerHTML = labelHtml + inputHtml;
       container.appendChild(div);
     });
+
+    // Bind toggle click handlers
+    container.querySelectorAll('[data-type="toggle"]').forEach(function (group) {
+      group.querySelectorAll('.toggle-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          group.querySelectorAll('.toggle-btn').forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+        });
+      });
+    });
+  }
+
+  function collectAnswers() {
+    var answers = {};
+    var valid = true;
+
+    // Collect from text, date, time, select inputs
+    document.querySelectorAll('.quiz-input').forEach(function (input) {
+      var qid = input.dataset.qid;
+      var required = input.dataset.required === 'true';
+      var val = input.value.trim();
+
+      if (required && !val) {
+        valid = false;
+        input.style.borderColor = '#E53E3E';
+      } else {
+        input.style.borderColor = '';
+      }
+
+      if (val) answers[qid] = val;
+    });
+
+    // Collect from toggle groups
+    document.querySelectorAll('[data-type="toggle"]').forEach(function (group) {
+      var qid = group.dataset.qid;
+      var activeBtn = group.querySelector('.toggle-btn.active');
+      if (activeBtn) {
+        answers[qid] = activeBtn.dataset.value;
+      }
+    });
+
+    return valid ? answers : null;
   }
 
   // Step 2: get estimate
   document.getElementById('getEstimateBtn').addEventListener('click', function () {
-    var selects = document.querySelectorAll('.question-select');
-    var allAnswered = true;
-    currentAnswers = {};
+    var answers = collectAnswers();
+    if (!answers) return;
 
-    selects.forEach(function (sel) {
-      if (!sel.value) {
-        allAnswered = false;
-        sel.style.borderColor = '#E53E3E';
-      } else {
-        sel.style.borderColor = '';
-        currentAnswers[sel.dataset.qid] = sel.value;
-      }
-    });
-
-    if (!allAnswered) return;
+    currentAnswers = answers;
 
     var btn = document.getElementById('getEstimateBtn');
     btn.disabled = true;
@@ -395,10 +536,10 @@ const jsonLD = {
           currentEstimate = data.estimate;
           var svc = quoteRules.services[selectedService];
           document.getElementById('estimateServiceLabel').textContent = svc.label;
-          document.getElementById('estimateLow').textContent = '£' + data.estimate.low;
-          document.getElementById('estimateHigh').textContent = '£' + data.estimate.high;
+          document.getElementById('estimateLow').textContent = '\u00A3' + data.estimate.low;
+          document.getElementById('estimateHigh').textContent = '\u00A3' + data.estimate.high;
           document.getElementById('estimatePerUnit').textContent = data.estimate.perUnit;
-          showStep(3);
+          showStep('step3');
         } else {
           alert(data.error || 'Failed to calculate estimate.');
         }
@@ -414,26 +555,34 @@ const jsonLD = {
 
   // Step 3: request exact quote
   document.getElementById('requestQuoteBtn').addEventListener('click', function () {
-    // Pre-fill hidden fields
     var svc = quoteRules.services[selectedService];
     document.getElementById('formService').value = svc.label;
-    document.getElementById('formEstimate').value = '£' + currentEstimate.low + ' – £' + currentEstimate.high + ' ' + currentEstimate.perUnit;
+    document.getElementById('formEstimate').value = '\u00A3' + currentEstimate.low + ' \u2013 \u00A3' + currentEstimate.high + ' ' + currentEstimate.perUnit;
 
     // Build answers summary
-    var summary = svc.questions.map(function (q) {
-      var val = currentAnswers[q.id];
-      var opt = q.options.find(function (o) { return o.value === val; });
-      return q.label + ': ' + (opt ? opt.label : val);
-    }).join('\n');
-    document.getElementById('formAnswers').value = summary;
+    var lines = [];
+    if (svc.questions) {
+      svc.questions.forEach(function (q) {
+        var val = currentAnswers[q.id];
+        if (!val) return;
+        if (q.options) {
+          var opt = q.options.find(function (o) { return o.value === val; });
+          lines.push(q.label + ': ' + (opt ? opt.label : val));
+        } else {
+          lines.push(q.label + ': ' + val);
+        }
+      });
+    }
+    document.getElementById('formAnswers').value = lines.join('\n');
 
-    showStep(4);
+    showStep('step4');
   });
 
   // Back buttons
-  document.getElementById('back2').addEventListener('click', function () { showStep(1); });
-  document.getElementById('back3').addEventListener('click', function () { showStep(2); });
-  document.getElementById('back4').addEventListener('click', function () { showStep(3); });
+  document.getElementById('backEnterprise').addEventListener('click', function () { showStep('step1'); });
+  document.getElementById('back2').addEventListener('click', function () { showStep('step1'); });
+  document.getElementById('back3').addEventListener('click', function () { showStep('step2'); });
+  document.getElementById('back4').addEventListener('click', function () { showStep('step3'); });
 
   // Step 4: submit form via Web3Forms
   var quoteForm = document.getElementById('quoteForm');

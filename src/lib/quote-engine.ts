@@ -1,7 +1,5 @@
 import quoteRules from '../data/quote-rules.json';
 
-type ServiceKey = keyof typeof quoteRules.services;
-
 export interface QuoteEstimate {
   low: number;
   high: number;
@@ -10,34 +8,102 @@ export interface QuoteEstimate {
 }
 
 /**
- * Calculate an estimated price range based on service type and user answers.
- * Each answer maps to a question in quote-rules.json; its selected option
- * carries a multiplier that compounds on the base rate.
+ * Extract the postcode area letters from a UK postcode or city name.
+ * e.g. "B7 4QS" → "B", "CV6 3BL" → "CV", "Manchester" → "M"
+ */
+function extractArea(input: string): string {
+  const trimmed = input.trim().toUpperCase();
+
+  // Try to extract leading letters (postcode area)
+  const match = trimmed.match(/^([A-Z]{1,2})/);
+  if (match) {
+    const area = match[1];
+    if (area in quoteRules.distanceMatrix) return area;
+  }
+
+  // Try city name lookup
+  const lower = input.trim().toLowerCase();
+  const cityArea = (quoteRules.cityLookup as Record<string, string>)[lower];
+  if (cityArea) return cityArea;
+
+  return 'default';
+}
+
+/**
+ * Look up distance between two postcode areas in miles.
+ */
+function lookupDistance(fromArea: string, toArea: string): number {
+  const matrix = quoteRules.distanceMatrix as Record<string, Record<string, number>>;
+  const fromRow = matrix[fromArea] || matrix['default'];
+  return fromRow[toArea] ?? fromRow['default'] ?? 50;
+}
+
+/**
+ * Look up airport base rate from a postcode area.
+ */
+function lookupAirportRate(area: string, airportCode: string): number {
+  const rates = quoteRules.airportRates as Record<string, Record<string, number>>;
+  const areaRates = rates[area] || rates['default'];
+  return areaRates[airportCode] ?? rates['default'][airportCode] ?? 200;
+}
+
+/**
+ * Calculate an estimated price range for Private Hire or Airport Transfers.
  */
 export function estimateQuote(
   service: string,
   answers: Record<string, string>,
 ): QuoteEstimate {
-  const serviceKey = service as ServiceKey;
-  const config = quoteRules.services[serviceKey];
+  const pricing = (quoteRules.pricing as Record<string, any>)[service];
+  const svcConfig = (quoteRules.services as Record<string, any>)[service];
 
-  if (!config) {
-    throw new Error(`Unknown service: ${service}`);
+  if (!pricing || !svcConfig || svcConfig.type !== 'instant') {
+    throw new Error(`No pricing available for service: ${service}`);
   }
 
-  let rate = config.baseRate;
+  let rate: number;
 
-  for (const question of config.questions) {
-    const selectedValue = answers[question.id];
-    if (!selectedValue) continue;
+  if (service === 'private-hire') {
+    const fromArea = extractArea(answers.pickupPostcode || '');
+    const toArea = extractArea(answers.destinationPostcode || '');
+    const distance = lookupDistance(fromArea, toArea);
 
-    const option = question.options.find((o) => o.value === selectedValue);
-    if (option) {
-      rate *= option.multiplier;
+    rate = pricing.baseFare + distance * pricing.perMileRate;
+
+    // Passenger tier multiplier
+    const passengerKey = answers.passengers || '1-8';
+    const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;
+    rate *= passengerMult;
+
+    // Return journey
+    if (answers.returnJourney === 'yes') {
+      rate *= pricing.returnMultiplier;
     }
+  } else if (service === 'airport') {
+    const pickupArea = extractArea(answers.pickupPostcode || '');
+    const airportCode = (answers.airport || 'BHX').toUpperCase();
+
+    rate = lookupAirportRate(pickupArea, airportCode);
+
+    // Passenger tier multiplier
+    const passengerKey = answers.passengers || '1-8';
+    const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;
+    rate *= passengerMult;
+
+    // Meet and greet surcharge
+    if (answers.meetGreet === 'yes') {
+      rate += pricing.meetGreetSurcharge;
+    }
+
+    // Return journey
+    if (answers.returnJourney === 'yes') {
+      rate *= pricing.returnMultiplier;
+    }
+  } else {
+    throw new Error(`Unknown instant service: ${service}`);
   }
 
-  const spread = config.rangeSpread;
+  const spread = pricing.rangeSpread;
   const low = Math.round(rate * (1 - spread / 2));
   const high = Math.round(rate * (1 + spread / 2));
 
@@ -45,6 +111,6 @@ export function estimateQuote(
     low,
     high,
     currency: 'GBP',
-    perUnit: config.perUnit,
+    perUnit: svcConfig.perUnit,
   };
 }
