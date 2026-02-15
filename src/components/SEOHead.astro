@@ -18,10 +18,12 @@ const {
 } = Astro.props;
 
 const siteName = 'AFJ Limited';
+const gscVerification = import.meta.env.GOOGLE_SEARCH_CONSOLE_VERIFICATION;
 ---
 
 <!-- Primary Meta Tags -->
 <meta name="title" content={title} />
+{gscVerification && <meta name="google-site-verification" content={gscVerification} />}
 <meta name="description" content={description} />
 <meta name="robots" content="index, follow" />
 
