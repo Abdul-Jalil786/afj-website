@@ -10,16 +10,17 @@
 
 > **Update this section before every coding session.**
 
-**Tier 1 — Foundation Activation: COMPLETE (2026-02-15)**
-- [x] Contact form wired to Web3Forms (fetch-based, success/error states)
-- [x] GA4 tracking in BaseLayout (production-only, env var driven)
-- [x] Google Search Console verification meta tag in SEOHead
-- [x] WordPress redirect map: 50+ 301 redirects in seo/redirects.json consumed by astro.config.mjs
-- [x] Build passes with zero errors
+**Tier 1 — COMPLETE (2026-02-15)**
+All code committed and pushed. Environment variables need setting on Railway before features activate:
+- WEB3FORMS_API_KEY (contact form)
+- GA4_MEASUREMENT_ID (analytics)
+- GOOGLE_SEARCH_CONSOLE_VERIFICATION (search console)
+- GITHUB_TOKEN, GITHUB_REPO, DASHBOARD_SECRET, RESEND_API_KEY (content calendar)
 
-**Focus:** Tier 2 — Manager CMS with AI-assisted content editing
-**Do NOT touch:** Content calendar dashboard (stable), Social Impact Report components (stable), ContactForm (stable)
-**Branch:** Work on feature branches, merge to `main` when tested
+**NEXT SESSION: Tier 2 — Part 1: LLM Layer & Prompts**
+See Tier 2 Part 1 prompt below.
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable)
 
 ---
 
