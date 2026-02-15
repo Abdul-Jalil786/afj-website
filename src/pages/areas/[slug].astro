@@ -7,7 +7,6 @@ import FAQ from '../../components/FAQ.astro';
 import CTABanner from '../../components/CTABanner.astro';
 import SocialSidebar from '../../components/SocialSidebar.astro';
 import areas from '../../data/area-data/areas.json';
-import schoolsData from '../../data/area-data/schools.json';
 import hospitalsData from '../../data/area-data/hospitals.json';
 
 type AreaEntry = (typeof areas)[number];
@@ -21,7 +20,6 @@ export function getStaticPaths() {
 
 const { area } = Astro.props as { area: AreaEntry };
 
-const schools = (schoolsData as Record<string, { name: string; type: string; postcode: string }[]>)[area.slug] || [];
 const hospitals = (hospitalsData as Record<string, { name: string; type: string; nhsTrust: string }[]>)[area.slug] || [];
 
 const breadcrumbs = [
@@ -30,10 +28,8 @@ const breadcrumbs = [
 ];
 
 const stats = [
-  { value: 18, suffix: '+', label: 'Years Experience' },
   { value: 700, suffix: '+', label: 'Students Daily' },
-  { value: 100, suffix: '%', label: 'DBS Checked Staff' },
-  { value: 50, suffix: '+', label: 'Vehicles in Fleet' },
+  { value: 18, suffix: '+', label: 'Years Experience' },
 ];
 
 // Build service cards with area-specific descriptions
@@ -140,7 +136,7 @@ const faqItems = [
   {
     question: `Does AFJ provide SEND school transport in ${area.name}?`,
     answer: area.servicesAvailable.includes('SEND Transport')
-      ? `Yes, AFJ Limited provides SEND school transport in ${area.name}. We serve local schools including ${schools.slice(0, 3).map((s) => s.name).join(', ')}${schools.length > 3 ? ' and others' : ''}. Our drivers and passenger assistants are DBS-checked and trained to support students with additional needs.`
+      ? `Yes, AFJ Limited provides SEND school transport in ${area.name}. Our drivers and passenger assistants are DBS-checked, MiDAS and PATS certified, and trained to support students with additional needs. We transport 700+ students daily across our service areas.`
       : `AFJ primarily focuses on other transport services in ${area.name}. Please contact us to discuss your specific requirements.`,
   },
   {
@@ -223,30 +219,51 @@ const pageDescription = `AFJ Limited — ${area.servicesAvailable.slice(0, 3).jo
   <!-- Stats -->
   <StatsCounter stats={stats} />
 
-  <!-- SEND Schools Section -->
-  {area.servicesAvailable.includes('SEND Transport') && schools.length > 0 && (
+  <!-- SEND Transport Capability -->
+  {area.servicesAvailable.includes('SEND Transport') && (
     <section class="section-padding bg-afj-light-white">
       <div class="container-wide max-w-4xl">
-        <h2 class="text-afj-green text-center mb-3">SEND Schools We Serve in {area.name}</h2>
-        <p class="text-afj-secondary text-center mb-8 max-w-2xl mx-auto">
-          AFJ Limited provides safe, reliable transport for students with additional needs attending schools across {area.name}. Our DBS-checked drivers and passenger assistants are trained to support students with diverse learning needs.
+        <h2 class="text-afj-green text-center mb-3">SEND Transport in {area.name}</h2>
+        <p class="text-afj-secondary text-center mb-6 max-w-2xl mx-auto">
+          {area.region === 'West Midlands' || area.region === 'Warwickshire' || area.region === 'Worcestershire'
+            ? 'Providing SEND transport for schools and students across the West Midlands region.'
+            : area.region === 'North West'
+              ? 'Providing SEND transport for schools and students across the North West.'
+              : 'Extending our SEND transport expertise across the wider Midlands region.'}
         </p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {schools.map((school) => (
-            <div class="bg-white rounded-lg shadow-sm p-4 flex items-start gap-3">
-              <div class="w-8 h-8 bg-afj-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-4 h-4 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <div>
-                <p class="font-semibold text-afj-text text-sm">{school.name}</p>
-                <p class="text-xs text-gray-500">{school.type === 'special' ? 'Special School' : school.type === 'primary' ? 'Primary School' : 'Secondary School'} · {school.postcode}</p>
-              </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <div class="bg-white rounded-lg shadow-sm p-4 flex items-start gap-3">
+            <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <div>
+              <p class="font-semibold text-afj-text text-sm">DBS-Checked & Certified</p>
+              <p class="text-xs text-gray-500">Every driver and passenger assistant is DBS checked, MiDAS and PATS certified</p>
             </div>
-          ))}
+          </div>
+          <div class="bg-white rounded-lg shadow-sm p-4 flex items-start gap-3">
+            <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <div>
+              <p class="font-semibold text-afj-text text-sm">Wheelchair-Accessible Fleet</p>
+              <p class="text-xs text-gray-500">Modern vehicles with ramp access, safety restraints, and specialist equipment</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow-sm p-4 flex items-start gap-3">
+            <svg class="w-5 h-5 text-afj-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <div>
+              <p class="font-semibold text-afj-text text-sm">Dedicated Passenger Assistants</p>
+              <p class="text-xs text-gray-500">Trained staff supporting students with additional needs on every journey</p>
+            </div>
+          </div>
         </div>
-        <p class="text-center mt-6">
+        <p class="text-afj-secondary text-center text-sm mb-6">
+          AFJ is accredited by local councils to provide home-to-school transport for students with Education, Health and Care Plans. We transport 700+ students daily across our service areas.
+        </p>
+        <p class="text-center">
           <a href="/services/send-transport" class="text-afj-accent font-semibold hover:text-afj-green transition-colors text-sm">
             Learn more about our SEND Transport service →
           </a>
@@ -257,7 +274,7 @@ const pageDescription = `AFJ Limited — ${area.servicesAvailable.slice(0, 3).jo
 
   <!-- NEPTS Hospitals Section -->
   {area.servicesAvailable.includes('Patient Transport') && hospitals.length > 0 && (
-    <section class={`section-padding ${area.servicesAvailable.includes('SEND Transport') && schools.length > 0 ? '' : 'bg-afj-light-white'}`}>
+    <section class={`section-padding ${area.servicesAvailable.includes('SEND Transport') ? '' : 'bg-afj-light-white'}`}>
       <div class="container-wide max-w-4xl">
         <h2 class="text-afj-green text-center mb-3">Patient Transport in {area.name}</h2>
         <p class="text-afj-secondary text-center mb-8 max-w-2xl mx-auto">
