@@ -1,0 +1,220 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import departments from '../../data/departments.json';
+
+const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
+
+// Determine department and allowed pages
+type DeptKey = keyof typeof departments;
+let allowedPages: string[] = ['all'];
+let departmentName = 'Management';
+
+for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof departments[DeptKey]][]) {
+  if (dept.emails.includes(userEmail)) {
+    allowedPages = dept.pages;
+    departmentName = dept.name;
+    break;
+  }
+}
+
+// All editable pages in the site
+const allPages = [
+  { path: 'src/pages/index.astro', label: 'Homepage' },
+  { path: 'src/pages/about.astro', label: 'About Us' },
+  { path: 'src/pages/contact.astro', label: 'Contact' },
+  { path: 'src/pages/careers.astro', label: 'Careers' },
+  { path: 'src/pages/faq.astro', label: 'FAQ' },
+  { path: 'src/pages/vehicles-for-sale.astro', label: 'Vehicles for Sale' },
+  { path: 'src/pages/services/send-transport.astro', label: 'SEND Transport' },
+  { path: 'src/pages/services/patient-transport.astro', label: 'Patient Transport' },
+  { path: 'src/pages/services/fleet-maintenance.astro', label: 'Fleet Maintenance' },
+  { path: 'src/pages/services/vehicle-conversions.astro', label: 'Vehicle Conversions' },
+  { path: 'src/pages/services/driver-training.astro', label: 'Driver Training' },
+  { path: 'src/pages/services/private-hire.astro', label: 'Private Hire' },
+  { path: 'src/pages/services/executive-minibus.astro', label: 'Executive Minibus' },
+  { path: 'src/pages/services/airport-transfers.astro', label: 'Airport Transfers' },
+  { path: 'src/pages/areas/birmingham.astro', label: 'Area: Birmingham' },
+  { path: 'src/pages/areas/manchester.astro', label: 'Area: Manchester' },
+  { path: 'src/pages/areas/sandwell.astro', label: 'Area: Sandwell' },
+  { path: 'src/pages/areas/coventry.astro', label: 'Area: Coventry' },
+  { path: 'src/pages/areas/west-midlands.astro', label: 'Area: West Midlands' },
+];
+
+// Filter pages by department permissions
+function isAllowed(pagePath: string): boolean {
+  if (allowedPages[0] === 'all') return true;
+  const route = '/' + pagePath.replace('src/pages/', '').replace('.astro', '').replace('/index', '');
+  return allowedPages.some((pattern) => {
+    if (pattern.endsWith('/*')) {
+      return route.startsWith(pattern.slice(0, -2));
+    }
+    return route === pattern;
+  });
+}
+
+const visiblePages = allPages.filter((p) => isAllowed(p.path));
+---
+
+<AdminLayout title="Update Page Content" userEmail={userEmail}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Update Page Content</h1>
+      <p class="text-gray-600 mt-1">Describe what you want changed in plain English. AI will generate the edits for your approval.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Left: Input -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="space-y-4">
+          <div>
+            <label for="pagePath" class="block text-sm font-medium text-gray-700 mb-1">Select Page</label>
+            <select id="pagePath" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-afj-accent focus:border-afj-accent text-sm">
+              <option value="">Choose a page to update...</option>
+              {visiblePages.map((page) => (
+                <option value={page.path}>{page.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label for="instruction" class="block text-sm font-medium text-gray-700 mb-1">What do you want to change?</label>
+            <textarea
+              id="instruction"
+              rows="6"
+              placeholder="Describe the change in plain English, e.g.:&#10;&#10;Add a new paragraph to the introduction mentioning our new electric vehicle fleet.&#10;&#10;Update the phone number to 0121 689 2000.&#10;&#10;Add electric vehicle servicing to the fleet maintenance services list."
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-afj-accent focus:border-afj-accent text-sm"
+            ></textarea>
+          </div>
+
+          <button
+            id="previewBtn"
+            class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Preview Change
+          </button>
+
+          <div id="statusMsg" class="hidden text-sm text-center py-2 rounded-md"></div>
+        </div>
+      </div>
+
+      <!-- Right: Diff View -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Proposed Changes</h2>
+
+        <!-- Loading -->
+        <div id="loadingState" class="hidden flex flex-col items-center justify-center py-16 text-gray-500">
+          <svg class="animate-spin h-8 w-8 text-blue-600 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="text-sm">Analysing page and generating changes...</p>
+        </div>
+
+        <!-- Empty -->
+        <div id="emptyState" class="flex flex-col items-center justify-center py-16 text-gray-400">
+          <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+          <p class="text-sm">Select a page and describe your change to see a preview</p>
+        </div>
+
+        <!-- Diff Content -->
+        <div id="diffContent" class="hidden">
+          <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto whitespace-pre-wrap max-h-96 overflow-y-auto"><code id="diffCode"></code></pre>
+
+          <div class="mt-4 flex gap-3">
+            <button id="applyBtn" class="flex-1 bg-afj-accent text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-afj-green transition-colors text-sm">
+              Apply Change
+            </button>
+            <button id="discardBtn" class="flex-1 border border-gray-300 text-gray-700 font-medium py-2.5 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+              Discard
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    const pagePathSelect = document.getElementById('pagePath');
+    const instructionInput = document.getElementById('instruction');
+    const previewBtn = document.getElementById('previewBtn');
+    const loadingState = document.getElementById('loadingState');
+    const emptyState = document.getElementById('emptyState');
+    const diffContent = document.getElementById('diffContent');
+    const diffCode = document.getElementById('diffCode');
+    const applyBtn = document.getElementById('applyBtn');
+    const discardBtn = document.getElementById('discardBtn');
+    const statusMsg = document.getElementById('statusMsg');
+
+    let currentResponse = null;
+
+    function showStatus(message, isError) {
+      statusMsg.textContent = message;
+      statusMsg.className = 'text-sm text-center py-2 rounded-md ' + (isError ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700');
+      statusMsg.classList.remove('hidden');
+      setTimeout(() => statusMsg.classList.add('hidden'), 5000);
+    }
+
+    async function previewChange() {
+      const pagePath = pagePathSelect.value;
+      const instruction = instructionInput.value.trim();
+
+      if (!pagePath || !instruction) {
+        showStatus('Please select a page and describe the change.', true);
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      diffContent.classList.add('hidden');
+      loadingState.classList.remove('hidden');
+      previewBtn.disabled = true;
+      previewBtn.textContent = 'Analysing...';
+
+      try {
+        const res = await fetch('/api/ai/page-edit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pagePath, instruction }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          currentResponse = data;
+          diffCode.textContent = data.proposedContent;
+          loadingState.classList.add('hidden');
+          diffContent.classList.remove('hidden');
+          showStatus('Changes generated. Review below.', false);
+        } else {
+          throw new Error(data.error || 'Failed to generate changes');
+        }
+      } catch (err) {
+        loadingState.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        showStatus(err.message || 'AI is temporarily unavailable.', true);
+      } finally {
+        previewBtn.disabled = false;
+        previewBtn.textContent = 'Preview Change';
+      }
+    }
+
+    function discardChanges() {
+      currentResponse = null;
+      diffContent.classList.add('hidden');
+      emptyState.classList.remove('hidden');
+    }
+
+    async function applyChange() {
+      if (!currentResponse) return;
+      showStatus('Change submitted. It will be applied via GitHub and auto-deployed.', false);
+      discardChanges();
+    }
+
+    previewBtn.addEventListener('click', previewChange);
+    discardBtn.addEventListener('click', discardChanges);
+    applyBtn.addEventListener('click', applyChange);
+  </script>
+</AdminLayout>
