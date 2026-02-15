@@ -7,14 +7,29 @@ export interface QuoteEstimate {
   perUnit: string;
   distanceMiles?: number;
   durationMinutes?: number;
-  waitingHours?: number;
+  baseJourneyCost: number;
+  returnJourneyCost?: number;
+  deadheadCost?: number;
   deadheadMiles?: number;
+  waitingCost?: number;
+  waitingHours?: number;
+  dvsaBreakCost?: number;
   dvsaBreakApplied?: boolean;
+  additionalStopsCost?: number;
+  numberOfStops?: number;
+  meetGreetCost?: number;
+  airportArrivalCost?: number;
+  executiveUpgrade?: boolean;
+  subtotal: number;
   surchargePercent?: number;
   surchargeLabels?: string[];
-  regularDiscountApplied?: boolean;
+  surchargeCost?: number;
+  regularDiscountPercent?: number;
+  regularDiscountAmount?: number;
+  total: number;
   minimumApplied?: boolean;
-  numberOfStops?: number;
+  heavyLuggage?: boolean;
+  wheelchairRequired?: boolean;
 }
 
 /**
@@ -234,6 +249,7 @@ function lookupAirportRate(area: string, airportCode: string): number {
 
 /**
  * Calculate an estimated price range for Private Hire or Airport Transfers.
+ * Returns a full itemised breakdown of all cost components.
  */
 export async function estimateQuote(
   service: string,
@@ -247,13 +263,21 @@ export async function estimateQuote(
     throw new Error(`No pricing available for service: ${service}`);
   }
 
-  let rate: number;
+  let baseJourneyCost: number;
+  let returnJourneyCost: number | undefined;
+  let deadheadCostVal: number | undefined;
+  let deadheadMilesVal: number | undefined;
+  let waitingCostVal: number | undefined;
+  let waitingHoursVal: number | undefined;
+  let dvsaBreakCostVal: number | undefined;
+  let dvsaBreakApplied = false;
+  let additionalStopsCostVal: number | undefined;
+  let numberOfStops = 0;
+  let meetGreetCostVal: number | undefined;
+  let airportArrivalCostVal: number | undefined;
+  let executiveUpgrade = false;
   let distanceMiles: number | undefined;
   let durationMinutes: number | undefined;
-  let waitingHours: number | undefined;
-  let deadheadMiles: number | undefined;
-  let dvsaBreakApplied = false;
-  let numberOfStops = 0;
 
   if (service === 'private-hire') {
     // Collect intermediate stops
@@ -285,79 +309,71 @@ export async function estimateQuote(
     distanceMiles = distanceResult.miles;
     durationMinutes = distanceResult.minutes;
 
-    const oneWayCost = pricing.baseFare + distanceResult.miles * pricing.perMileRate;
-
-    // Passenger tier multiplier
     const passengerKey = answers.passengers || '1-8';
     const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;
+    const wage = pricing.driverWagePerHour ?? 13;
 
-    // Deadhead: driver travel from nearest base
+    // Base one-way journey cost (includes passenger multiplier)
+    const oneWay = (pricing.baseFare + distanceResult.miles * pricing.perMileRate) * passengerMult;
+    baseJourneyCost = oneWay;
+
+    // Deadhead from nearest base
     const deadhead = await getDeadheadFromBase(answers.pickupPostcode || '');
     const threshold = pricing.deadheadThresholdMiles ?? 30;
-    const wage = pricing.driverWagePerHour ?? 13;
-    let deadheadCost = 0;
-
-    // Stop waiting cost
-    const stopWaitCost = numberOfStops * ((pricing.stopWaitingMinutes ?? 10) / 60) * wage;
 
     if (answers.returnJourney === 'yes') {
-      const isSameDay = answers.returnType !== 'no'; // default is yes (same day)
+      const isSameDay = answers.returnType !== 'no';
+      returnJourneyCost = oneWay;
 
       if (isSameDay) {
-        // Same-day return: outbound + return journey + waiting time
-        rate = oneWayCost * 2 * passengerMult;
-
-        // Calculate waiting time from pickup and return pickup times
+        // Waiting time (separate from DVSA break for itemised display)
         if (answers.time && answers.returnPickupTime) {
           const pickupMin = parseTimeToMinutes(answers.time);
           const returnMin = parseTimeToMinutes(answers.returnPickupTime);
           const arrivalMin = pickupMin + distanceResult.minutes;
-          let waitingMin = returnMin - arrivalMin;
+          const rawWaitingMin = returnMin - arrivalMin;
 
-          if (waitingMin > 0) {
-            // DVSA break for 9+ passengers: 45-min break after 4.5h driving
+          if (rawWaitingMin > 0) {
+            waitingCostVal = (rawWaitingMin / 60) * wage;
+
             const passengerNum = parseInt(passengerKey) || 1;
             const totalDrivingMin = distanceResult.minutes * 2;
             const dvsaThreshold = pricing.dvsaDrivingThresholdMinutes ?? 270;
-            const dvsaBreak = pricing.dvsaBreakMinutes ?? 45;
+            const dvsaBreakMin = pricing.dvsaBreakMinutes ?? 45;
 
             if (passengerNum >= 9 && totalDrivingMin > dvsaThreshold) {
-              waitingMin += dvsaBreak;
+              dvsaBreakCostVal = (dvsaBreakMin / 60) * wage;
               dvsaBreakApplied = true;
             }
 
-            waitingHours = Math.round((waitingMin / 60) * 10) / 10; // 1 decimal
-            rate += (waitingMin / 60) * wage;
+            waitingHoursVal = Math.round(((rawWaitingMin + (dvsaBreakApplied ? dvsaBreakMin : 0)) / 60) * 10) / 10;
           }
         }
 
         // Deadhead: one round trip from base
         if (deadhead.miles > threshold) {
-          deadheadCost = (deadhead.minutes / 60) * 2 * wage;
-          deadheadMiles = deadhead.miles;
+          deadheadCostVal = (deadhead.minutes / 60) * 2 * wage;
+          deadheadMilesVal = deadhead.miles;
         }
       } else {
-        // Different-day return: two separate one-way trips
-        rate = oneWayCost * 2 * passengerMult;
-
-        // Deadhead: two separate round trips from base
+        // Different-day return: two separate round trips from base
         if (deadhead.miles > threshold) {
-          deadheadCost = (deadhead.minutes / 60) * 2 * wage * 2;
-          deadheadMiles = deadhead.miles;
+          deadheadCostVal = (deadhead.minutes / 60) * 2 * wage * 2;
+          deadheadMilesVal = deadhead.miles;
         }
       }
     } else {
-      // One-way journey
-      rate = oneWayCost * passengerMult;
-
-      // Deadhead: one round trip from base
+      // One-way: one round trip from base
       if (deadhead.miles > threshold) {
-        deadheadCost = (deadhead.minutes / 60) * 2 * wage;
-        deadheadMiles = deadhead.miles;
+        deadheadCostVal = (deadhead.minutes / 60) * 2 * wage;
+        deadheadMilesVal = deadhead.miles;
       }
     }
 
-    rate += deadheadCost + stopWaitCost;
+    // Stop waiting cost
+    if (numberOfStops > 0) {
+      additionalStopsCostVal = numberOfStops * ((pricing.stopWaitingMinutes ?? 10) / 60) * wage;
+    }
 
   } else if (service === 'airport') {
     const pickupArea = extractArea(answers.pickupPostcode || '');
@@ -368,58 +384,73 @@ export async function estimateQuote(
     // Executive upgrade on base rate before passenger multiplier
     if (answers.vehicleClass === 'executive') {
       baseRate *= 1 + (pricing.executivePercent ?? 30) / 100;
+      executiveUpgrade = true;
     }
 
-    // Passenger tier multiplier
     const passengerKey = answers.passengers || '1-8';
     const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;
-    rate = baseRate * passengerMult;
+    baseJourneyCost = baseRate * passengerMult;
 
-    // Meet and greet surcharge
+    // Meet and greet
     if (answers.meetGreet === 'yes') {
-      rate += pricing.meetGreetSurcharge;
+      meetGreetCostVal = pricing.meetGreetSurcharge;
     }
 
-    // Return journey
+    // Return journey: additional cost = pre-return total × (multiplier - 1)
+    const preReturn = baseJourneyCost + (meetGreetCostVal || 0);
     if (answers.returnJourney === 'yes') {
-      rate *= pricing.returnMultiplier;
+      returnJourneyCost = preReturn * (pricing.returnMultiplier - 1);
     }
 
-    // Arrival waiting cost (driver waits at airport)
+    // Arrival waiting cost
     if (answers.direction === 'yes') {
-      const arrivalWait = pricing.arrivalWaitingMinutes ?? 45;
       const wage = pricing.driverWagePerHour ?? 13;
-      rate += (arrivalWait / 60) * wage;
+      airportArrivalCostVal = ((pricing.arrivalWaitingMinutes ?? 45) / 60) * wage;
     }
   } else {
     throw new Error(`Unknown instant service: ${service}`);
   }
 
-  // Apply surcharges (both services)
+  // Subtotal: sum of all components
+  const subtotal = baseJourneyCost
+    + (returnJourneyCost || 0)
+    + (deadheadCostVal || 0)
+    + (waitingCostVal || 0)
+    + (dvsaBreakCostVal || 0)
+    + (additionalStopsCostVal || 0)
+    + (meetGreetCostVal || 0)
+    + (airportArrivalCostVal || 0);
+
+  // Surcharges (both services)
   const surchargeResult = calculateSurcharges(answers.date || '', answers.time || '');
+  let surchargeCostVal: number | undefined;
   if (surchargeResult.percent > 0) {
-    rate *= 1 + surchargeResult.percent / 100;
+    surchargeCostVal = subtotal * surchargeResult.percent / 100;
   }
 
-  // Apply regular booking discount (private-hire only)
-  let regularDiscountApplied = false;
+  const afterSurcharge = subtotal + (surchargeCostVal || 0);
+
+  // Regular discount (private-hire only)
+  let regularDiscountPct: number | undefined;
+  let regularDiscountAmt: number | undefined;
   if (service === 'private-hire' && answers.regularBooking === 'yes') {
-    const discountPct = pricing.regularDiscountPercent ?? 10;
-    rate *= 1 - discountPct / 100;
-    regularDiscountApplied = true;
+    regularDiscountPct = pricing.regularDiscountPercent ?? 10;
+    regularDiscountAmt = afterSurcharge * regularDiscountPct / 100;
   }
 
-  // Apply minimum booking floor
+  let total = afterSurcharge - (regularDiscountAmt || 0);
+
+  // Minimum booking floor
   let minimumApplied = false;
   const minimum = minimums[service];
-  if (minimum && rate < minimum) {
-    rate = minimum;
+  if (minimum && total < minimum) {
+    total = minimum;
     minimumApplied = true;
   }
 
   const spread = pricing.rangeSpread;
-  const low = Math.round(rate * (1 - spread / 2));
-  const high = Math.round(rate * (1 + spread / 2));
+  const low = Math.round(total * (1 - spread / 2));
+  const high = Math.round(total * (1 + spread / 2));
 
   return {
     low,
@@ -428,13 +459,28 @@ export async function estimateQuote(
     perUnit: svcConfig.perUnit,
     distanceMiles,
     durationMinutes,
-    waitingHours,
-    deadheadMiles,
+    baseJourneyCost,
+    returnJourneyCost: returnJourneyCost || undefined,
+    deadheadCost: deadheadCostVal || undefined,
+    deadheadMiles: deadheadMilesVal,
+    waitingCost: waitingCostVal || undefined,
+    waitingHours: waitingHoursVal,
+    dvsaBreakCost: dvsaBreakCostVal || undefined,
     dvsaBreakApplied: dvsaBreakApplied || undefined,
+    additionalStopsCost: additionalStopsCostVal || undefined,
+    numberOfStops: numberOfStops || undefined,
+    meetGreetCost: meetGreetCostVal || undefined,
+    airportArrivalCost: airportArrivalCostVal || undefined,
+    executiveUpgrade: executiveUpgrade || undefined,
+    subtotal,
     surchargePercent: surchargeResult.percent || undefined,
     surchargeLabels: surchargeResult.labels.length ? surchargeResult.labels : undefined,
-    regularDiscountApplied: regularDiscountApplied || undefined,
+    surchargeCost: surchargeCostVal || undefined,
+    regularDiscountPercent: regularDiscountPct,
+    regularDiscountAmount: regularDiscountAmt || undefined,
+    total,
     minimumApplied: minimumApplied || undefined,
-    numberOfStops: numberOfStops || undefined,
+    heavyLuggage: answers.luggage === 'heavy' || undefined,
+    wheelchairRequired: answers.wheelchair === 'yes' || undefined,
   };
 }
