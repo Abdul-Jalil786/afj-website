@@ -2,7 +2,7 @@
 
 > This is the primary instruction file for Claude Code working on the AFJ website.
 > Read this ENTIRE file before making any changes. Follow all rules strictly.
-> Last updated: 2026-02-14
+> Last updated: 2026-02-15
 
 ---
 
@@ -17,10 +17,31 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - GOOGLE_SEARCH_CONSOLE_VERIFICATION (search console)
 - GITHUB_TOKEN, GITHUB_REPO, DASHBOARD_SECRET, RESEND_API_KEY (content calendar)
 
-**NEXT SESSION: Tier 2 — Part 1: LLM Layer & Prompts**
-See Tier 2 Part 1 prompt below.
+**Tier 2 Part 1 — COMPLETE (2026-02-15): LLM Layer & Prompts**
+- `src/lib/llm.ts` — LLM provider abstraction (Anthropic/Groq switchable)
+- `src/lib/prompts.ts` — System prompts with brand voice (BLOG_DRAFT, PAGE_EDIT, TESTIMONIAL, SEO_PAGE)
+- `src/pages/api/ai/test.ts` — Test endpoint for LLM layer verification
+- `.env.example` updated with LLM_PROVIDER, LLM_MODEL, LLM_API_KEY, LLM_MAX_TOKENS
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable)
+**Tier 2 Part 2 — COMPLETE (2026-02-15): Admin Dashboard**
+- `src/data/departments.json` — Department config (Management, Operations, Training, Fleet, Marketing)
+- `src/layouts/AdminLayout.astro` — Admin-specific layout with simplified nav
+- `src/pages/admin/index.astro` — Dashboard home with quick action cards
+- `src/pages/admin/content.astro` — AI blog draft creator (generate, preview, edit, publish)
+- `src/pages/admin/pages.astro` — NL page update interface (describe change, preview diff, apply)
+- `src/pages/admin/approvals.astro` — Approval queue for pending content
+- `src/pages/api/ai/draft.ts` — AI blog draft generation endpoint
+- `src/pages/api/ai/page-edit.ts` — AI page edit endpoint (reads file from GitHub, generates diff)
+- `/admin/*` excluded from sitemap
+- All admin pages server-rendered (prerender = false)
+
+**NEXT SESSION: Tier 2 — Part 3: Approval Workflow & Email Notifications**
+- Wire approval submit to store pending items via GitHub API
+- Email notifications to Jay on new submissions (via Resend)
+- Approve/reject actions that commit or discard changes
+- Cloudflare Zero Trust integration testing
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable)
 
 ---
 
