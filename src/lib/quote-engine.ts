@@ -30,12 +30,76 @@ function extractArea(input: string): string {
 }
 
 /**
- * Look up distance between two postcode areas in miles.
+ * Look up distance between two postcode areas in miles (hardcoded fallback).
  */
 function lookupDistance(fromArea: string, toArea: string): number {
   const matrix = quoteRules.distanceMatrix as Record<string, Record<string, number>>;
   const fromRow = matrix[fromArea] || matrix['default'];
   return fromRow[toArea] ?? fromRow['default'] ?? 50;
+}
+
+/**
+ * Fetch lat/lng coordinates for a UK postcode via Postcodes.io.
+ */
+async function fetchCoords(postcode: string): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const res = await fetch(
+      `https://api.postcodes.io/postcodes/${encodeURIComponent(postcode.trim())}`,
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.result?.latitude != null && data.result?.longitude != null) {
+      return { lat: data.result.latitude, lng: data.result.longitude };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Get actual driving distance in miles between two coordinates via OSRM.
+ */
+async function fetchDrivingMiles(
+  lat1: number, lng1: number,
+  lat2: number, lng2: number,
+): Promise<number | null> {
+  try {
+    const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=false`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.routes?.[0]?.distance) {
+      return data.routes[0].distance / 1609.344; // metres → miles
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Get distance between two postcodes: tries real driving mileage first,
+ * falls back to the hardcoded distance matrix.
+ */
+async function getDistance(pickup: string, destination: string): Promise<number> {
+  const [fromCoords, toCoords] = await Promise.all([
+    fetchCoords(pickup),
+    fetchCoords(destination),
+  ]);
+
+  if (fromCoords && toCoords) {
+    const miles = await fetchDrivingMiles(
+      fromCoords.lat, fromCoords.lng,
+      toCoords.lat, toCoords.lng,
+    );
+    if (miles != null && miles > 0) return Math.round(miles);
+  }
+
+  // Fallback to hardcoded matrix
+  const fromArea = extractArea(pickup);
+  const toArea = extractArea(destination);
+  return lookupDistance(fromArea, toArea);
 }
 
 /**
@@ -50,10 +114,10 @@ function lookupAirportRate(area: string, airportCode: string): number {
 /**
  * Calculate an estimated price range for Private Hire or Airport Transfers.
  */
-export function estimateQuote(
+export async function estimateQuote(
   service: string,
   answers: Record<string, string>,
-): QuoteEstimate {
+): Promise<QuoteEstimate> {
   const pricing = (quoteRules.pricing as Record<string, any>)[service];
   const svcConfig = (quoteRules.services as Record<string, any>)[service];
 
@@ -64,9 +128,10 @@ export function estimateQuote(
   let rate: number;
 
   if (service === 'private-hire') {
-    const fromArea = extractArea(answers.pickupPostcode || '');
-    const toArea = extractArea(answers.destinationPostcode || '');
-    const distance = lookupDistance(fromArea, toArea);
+    const distance = await getDistance(
+      answers.pickupPostcode || '',
+      answers.destinationPostcode || '',
+    );
 
     rate = pricing.baseFare + distance * pricing.perMileRate;
 

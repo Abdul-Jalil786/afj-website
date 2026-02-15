@@ -17,7 +17,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const estimate = estimateQuote(service, answers);
+    const estimate = await estimateQuote(service, answers);
 
     return new Response(
       JSON.stringify({ success: true, estimate }),
