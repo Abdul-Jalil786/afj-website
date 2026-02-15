@@ -1,7 +1,7 @@
 # SYSTEM-MAP.md — AFJ Limited Digital Platform
 
 > Living document. Updated every time a feature is built, modified, or planned.
-> Last updated: 2026-02-15
+> Last updated: 2026-02-16
 
 ---
 
@@ -73,25 +73,30 @@ Chronological record of every major feature, based on git history.
   - Dynamic wildcard patterns (wp-content/*, category/*, etc.) documented for Cloudflare rules
 - **astro.config.mjs** loads redirects from `seo/redirects.json` at build time
 
-### Phase 6 — Manager CMS with AI (PLANNED)
+### Phase 6 — Manager CMS with AI (COMPLETE)
+- **LLM abstraction layer** (`src/lib/llm.ts`) — Anthropic/Groq switchable via env vars
+- **System prompts library** (`src/lib/prompts.ts`) — brand voice baked in
 - **Admin dashboard** at `/admin` protected by Cloudflare Zero Trust
-- Department-based access control (Operations, Training, Fleet, Marketing, Management)
-- **AI blog draft generator** — managers enter title + key points, Haiku generates draft in brand voice
-- **NL page update system** — managers describe changes in plain English, AI generates diff for approval
-- **Approval workflow** — optional review step before content goes live
-- **LLM abstraction layer** — swappable between Anthropic Haiku and Groq/Llama
+- Department-based access control via `src/data/departments.json`
+- **AI blog draft generator** at `/admin/content` — title + key points → Haiku draft → review → publish
+- **NL page update system** at `/admin/pages` — describe change → AI diff → approve → deploy
+- **Approval workflow** at `/admin/approvals` — pending items via GitHub API, email notifications via Resend
 
-### Phase 7 — Customer-Facing Innovation (PLANNED)
-- **Intelligent quote wizard** at `/quote` with service-specific guided flows
-- **Programmatic SEO** — 20-25 additional area pages with real local school/hospital data
-- **Public compliance dashboard** at `/compliance` with live trust signals
-- **Testimonial/case study engine** — one input creates testimonial card + full case study
+### Phase 7 — Customer-Facing Innovation (COMPLETE)
+- **Intelligent quote wizard** at `/quote` — 4-step wizard with instant estimates for 5 services
+- **Programmatic SEO** — 25 area pages generated from `src/data/area-data/` via `[slug].astro`
+- **Public compliance dashboard** at `/compliance` — 8 compliance items, admin editor at `/admin/compliance`
+- **Testimonial/case study engine** at `/admin/testimonials` — AI-powered via TESTIMONIAL_SYSTEM_PROMPT
 
-### Phase 8 — SEO & Automation (PLANNED)
-- JSON-LD schema markup (LocalBusiness, services, FAQ, breadcrumbs)
-- Social media publishing automation (Facebook, LinkedIn APIs)
-- Email auto-responses for form submissions
-- WordPress redirect map deployment
+### Phase 8 — SEO & Automation (COMPLETE)
+- **JSON-LD schema markup** — global LocalBusiness on all pages via SEOHead, Service on 8 service pages, FAQPage on FAQ, BreadcrumbList via Breadcrumbs component
+- Homepage schema enhanced with both offices, geo, opening hours, hasOfferCatalog
+- `seo/schema-markup/*.json` — reference templates (local-business, services, faq, breadcrumb)
+- **Social media publishing** — `social-media/scripts/facebook-publish.py` and `linkedin-publish.py`
+  - Standalone Python scripts, read blog .md, generate social copy via Anthropic API, publish via platform APIs
+  - `--dry-run` mode, fallback templates, no external dependencies
+- **Email auto-responses** — `POST /api/contact/submit` handles Web3Forms + Resend notification + customer auto-response
+- ContactForm.astro updated to use new endpoint
 
 ### Phase 9 — CI/CD & Quality (PLANNED)
 - GitHub Actions: Lighthouse audits, broken link checks, deploy validation
@@ -108,80 +113,64 @@ Chronological record of every major feature, based on git history.
 
 ## 3. Architecture Map
 
-### Public Pages (29 current + planned expansions)
+### Public Pages (55+ live routes)
 
 ```
-CURRENT LIVE ROUTES (29):
+LIVE ROUTES:
 /                               Homepage (hero slider, core values, services, stats)
 /about                          About Us
-/contact                        Contact form → Web3Forms → info@afjltd.co.uk
+/contact                        Contact form → /api/contact/submit → Web3Forms + Resend auto-response
 /careers                        Careers page
-/faq                            FAQ with accordion
+/faq                            FAQ with accordion + FAQPage JSON-LD
 /vehicles-for-sale              Vehicle sales listing
 /privacy-policy                 Privacy policy
 /carbon-reduction-plan          Carbon reduction plan
 /social-impact                  Social Impact Report (interactive)
+/compliance                     Public compliance dashboard (8 items, grouped by category)
 /blog                           Blog/News listing (16 published posts)
 /blog/[slug]                    Dynamic blog post pages
-/services                       Services overview
-/services/send-transport        Home to School Transport (SEND)
-/services/patient-transport     Non-Emergency Patient Transport
-/services/fleet-maintenance     Fleet Maintenance
-/services/vehicle-conversions   Vehicle Conversions
-/services/driver-training       Driver, ACA & PA Training
-/services/private-hire          Private Minibus Hire
-/services/executive-minibus     Executive Minibus Hire
-/services/airport-transfers     Airport Transfers
-/areas                          Areas served overview
-/areas/birmingham               Local SEO — Birmingham
-/areas/manchester               Local SEO — Manchester
-/areas/sandwell                 Local SEO — Sandwell
-/areas/coventry                 Local SEO — Coventry
-/areas/west-midlands            Local SEO — West Midlands
+/quote                          Intelligent quote wizard (4-step, 5 services)
+/services                       Services overview (ItemList JSON-LD)
+/services/send-transport        Home to School Transport (SEND) + Service JSON-LD
+/services/patient-transport     Non-Emergency Patient Transport + Service JSON-LD
+/services/fleet-maintenance     Fleet Maintenance + Service JSON-LD
+/services/vehicle-conversions   Vehicle Conversions + Service JSON-LD
+/services/driver-training       Driver, ACA & PA Training + Service JSON-LD
+/services/private-hire          Private Minibus Hire + Service JSON-LD
+/services/executive-minibus     Executive Minibus Hire + Service JSON-LD
+/services/airport-transfers     Airport Transfers + Service JSON-LD
+/areas                          Areas served overview (25 areas, 7 regions)
+/areas/[slug]                   25 programmatic local SEO pages (dynamic template)
 /404                            Custom 404 page
-
-PLANNED PUBLIC ROUTES:
-/quote                          Intelligent quote wizard (multi-step, service-specific)
-/compliance                     Public compliance dashboard (CQC, DBS, MOT, insurance)
-/areas/solihull                  Programmatic SEO (example — 20-25 new area pages)
-/areas/walsall                  
-/areas/wolverhampton            
-/areas/dudley                   
-/areas/stoke-on-trent           
-/areas/derby                    
-... (additional areas based on service coverage data)
++ 50+ WordPress redirect pages (301 → new routes)
 ```
 
 ### Internal Tools & Admin (Cloudflare Zero Trust protected)
 
 ```
-CURRENT:
 /image-library                  Image browser with bulk rename tool
 /content-calendar               Content calendar dashboard
-
-PLANNED:
 /admin                          Manager CMS dashboard home
-/admin/content                  AI-assisted content editor (blog drafting)
-/admin/pages                    NL page update requests (describe → diff → approve)
+/admin/content                  AI blog draft creator (generate, preview, edit, publish)
+/admin/pages                    NL page update interface (describe change → AI diff → apply)
 /admin/approvals                Pending content approval queue
-/admin/compliance               Compliance data editor
-/admin/testimonials             Testimonial/case study creator
+/admin/compliance               Compliance data editor (operations + management only)
+/admin/testimonials             AI testimonial/case study creator
 ```
 
 ### API Endpoints
 
 ```
-CURRENT:
 POST /api/blog/create           Creates blog .md file via GitHub API → auto-deploys
 POST /api/notify                Sends email reminder via Resend API
-
-PLANNED:
+POST /api/contact/submit        Contact form: Web3Forms + Resend notification + auto-response
 POST /api/ai/draft              AI blog draft generation (Haiku/Groq)
 POST /api/ai/page-edit          AI page content update (NL → diff)
-POST /api/ai/seo-generate       AI local SEO page generation
-POST /api/quote/estimate        Intelligent quote estimation (rule-based)
-GET  /api/compliance/status     Compliance dashboard data from JSON
-POST /api/testimonial/create    Create testimonial + case study from raw feedback
+POST /api/ai/testimonial        AI testimonial/case study from raw feedback
+POST /api/quote/estimate        Intelligent quote estimation (rule-based, public)
+GET  /api/compliance/status     Compliance dashboard data (public, cached)
+POST /api/admin/approval        Approval workflow (GET list, POST submit, PUT approve/reject)
+POST /api/admin/compliance      Update compliance data via GitHub API
 ```
 
 ### Components (27 current + planned)
@@ -235,58 +224,55 @@ Quote Wizard (PLANNED, 3):
   EstimateDisplay.astro         Price range display with CTA
 ```
 
-### Library Modules (PLANNED)
+### Library Modules
 
 ```
 src/lib/
   llm.ts                        LLM provider abstraction (Anthropic ↔ Groq swappable)
-  prompts.ts                    System prompts with brand voice guidelines
-  quote-engine.ts               Rule-based quote estimation
-  github.ts                     GitHub API helper (create files, PRs)
+  prompts.ts                    System prompts with brand voice (BLOG_DRAFT, PAGE_EDIT, TESTIMONIAL, SEO_PAGE)
+  quote-engine.ts               Rule-based quote estimation for 5 services
 ```
 
 ### Data Files
 
 ```
-CURRENT:
 src/content/blog/*.md           16 published blog posts (Astro content collection)
 src/content/testimonials/       Testimonials JSON
+src/data/compliance.json        8 compliance items (CQC, DBS, MOT, insurance, certs, accessibility, safeguarding, carbon)
+src/data/departments.json       Department → page mapping for admin access control
+src/data/quote-rules.json       Quote estimation rules and price ranges per service
+src/data/area-data/areas.json   25 areas with metadata (slug, council, population, distance, region, services)
+src/data/area-data/schools.json 3-5 SEND schools per area with postcodes
+src/data/area-data/hospitals.json 2-3 hospitals/clinics per area with NHS trust names
 seo/content-calendar.csv        24 planned blog posts (W1–W12, Feb–May 2026)
+seo/redirects.json              50+ WordPress old URL → new URL 301 redirects
+seo/schema-markup/*.json        JSON-LD structured data templates (local-business, services, faq, breadcrumb)
 social-media/content/           10 social media templates (5 Facebook, 5 LinkedIn)
+social-media/scripts/           Facebook and LinkedIn publishing scripts (Python)
 public/images/                  All site images (optimised, descriptive filenames)
 public/documents/               PDFs (brochure, carbon reduction plan)
 public/social-impact-report/    Social Impact Report assets
-
-PLANNED:
-src/data/compliance.json        Compliance status (CQC, DBS, MOT, insurance)
-src/data/departments.json       Department → page mapping for admin access control
-src/data/quote-rules.json       Quote estimation rules and price ranges per service
-src/data/area-data/schools.json Local school data for programmatic SEO
-src/data/area-data/hospitals.json Local hospital data for NEPTS SEO pages
-src/data/area-data/areas.json   Area metadata (councils, distances, populations)
-seo/redirects.json              WordPress old URL → new URL mapping
-seo/schema-markup/*.json        JSON-LD structured data templates
 ```
 
 ### External Integrations
 
 ```
-CURRENT:
-GitHub API          → Blog post creation from dashboard (needs GITHUB_TOKEN)
-Resend API          → Email notifications (needs RESEND_API_KEY)
-Railway             → Auto-deploy on push to main
-Cloudflare          → DNS, SSL, domain management
-Google Fonts        → Inter font family
-
-PLANNED:
-Cloudflare Zero Trust → Authentication for /admin/* routes
-Anthropic API       → Haiku 4.5 for AI content features
-Groq API            → Alternative LLM provider (Llama 3.3 70B)
+BUILT (needs env vars on Railway to activate):
+GitHub API          → Blog post creation, approval workflow, compliance updates
+Resend API          → Email notifications, auto-responses, approval emails
+Anthropic API       → Haiku 4.5 for AI content features (blog drafts, page edits, testimonials)
+Groq API            → Alternative LLM provider (Llama 3.3 70B) — swap-ready
 Web3Forms           → Contact form submission handling
 Google Analytics    → GA4 tracking
 Google Search Console → SEO verification and monitoring
-Facebook Graph API  → Social media auto-publishing
-LinkedIn API        → Social media auto-publishing
+Cloudflare Zero Trust → Authentication for /admin/* routes
+Facebook Graph API  → Social media auto-publishing (Python script)
+LinkedIn API        → Social media auto-publishing (Python script)
+
+ALWAYS ACTIVE:
+Railway             → Auto-deploy on push to main
+Cloudflare          → DNS, SSL, domain management
+Google Fonts        → Inter font family
 ```
 
 ---
@@ -294,52 +280,44 @@ LinkedIn API        → Social media auto-publishing
 ## 4. Current System Status
 
 ### Live & Working ✅
-- All 29 public pages render and build successfully
+- 55+ public routes render and build successfully
+- 25 programmatic area pages with real school/hospital data
 - Blog with 16 published posts
 - Hero slider with 6 service slides
-- Contact form wired to Web3Forms (needs `WEB3FORMS_API_KEY` on Railway)
-- Google Analytics 4 integrated (needs `GA4_MEASUREMENT_ID` on Railway)
-- Google Search Console verification (needs `GOOGLE_SEARCH_CONSOLE_VERIFICATION` on Railway)
+- Contact form → `/api/contact/submit` → Web3Forms + Resend auto-response
+- Google Analytics 4 integrated
+- Google Search Console verification
 - 50+ WordPress 301 redirects active in build
-- Cookie consent banner
-- Social sidebar
-- SEO meta tags and Open Graph
-- Sitemap generation (excludes internal pages)
-- Image library internal tool
-- Content calendar dashboard UI
+- Cookie consent banner and social sidebar
+- Full JSON-LD schema markup (LocalBusiness on all pages, Service, FAQPage, BreadcrumbList)
+- Sitemap generation (excludes internal/admin pages)
+- Image library and content calendar internal tools
+- Admin dashboard with AI blog drafting, NL page editing, approval workflow
+- Intelligent quote wizard with instant estimates
+- Public compliance dashboard
+- AI testimonial/case study generator
+- Social media publishing scripts (Facebook, LinkedIn)
 
 ### Needs Environment Variables to Activate ⚙️
 | Feature | Env Vars Required | Status |
 |---------|-------------------|--------|
-| Contact form submission | `WEB3FORMS_API_KEY` | Code integrated, needs token on Railway |
-| Google Analytics | `GA4_MEASUREMENT_ID` | Code integrated, needs ID on Railway |
-| Search Console | `GOOGLE_SEARCH_CONSOLE_VERIFICATION` | Code integrated, needs verification string |
-| Blog creation via dashboard | `GITHUB_TOKEN`, `GITHUB_REPO`, `DASHBOARD_SECRET` | UI built, needs tokens |
-| Email notifications | `RESEND_API_KEY`, `DASHBOARD_SECRET` | UI built, needs tokens |
-| AI content features | `LLM_PROVIDER`, `LLM_MODEL`, `LLM_API_KEY` | Not built yet |
-| Facebook publishing | `FACEBOOK_PAGE_ID`, `FACEBOOK_ACCESS_TOKEN` | Scripts not built |
-| LinkedIn publishing | `LINKEDIN_ORG_ID`, `LINKEDIN_ACCESS_TOKEN` | Scripts not built |
+| Contact form + auto-response | `WEB3FORMS_API_KEY`, `RESEND_API_KEY` | Code complete, needs tokens |
+| Google Analytics | `GA4_MEASUREMENT_ID` | Code complete, needs ID |
+| Search Console | `GOOGLE_SEARCH_CONSOLE_VERIFICATION` | Code complete, needs string |
+| Blog creation + admin | `GITHUB_TOKEN`, `GITHUB_REPO`, `DASHBOARD_SECRET` | Code complete, needs tokens |
+| Email notifications | `RESEND_API_KEY`, `DASHBOARD_SECRET` | Code complete, needs tokens |
+| AI content features | `LLM_PROVIDER`, `LLM_MODEL`, `LLM_API_KEY` | Code complete, needs API key |
+| Admin auth | Cloudflare Zero Trust config | Code complete, needs CF config |
+| Facebook publishing | `FACEBOOK_PAGE_ID`, `FACEBOOK_ACCESS_TOKEN` | Script built, needs tokens |
+| LinkedIn publishing | `LINKEDIN_ORG_ID`, `LINKEDIN_ACCESS_TOKEN` | Script built, needs tokens |
 
 ### Not Yet Built 🔨
 | Feature | Priority | Phase | Dependencies |
 |---------|----------|-------|-------------|
-| ~~Contact form backend (Web3Forms)~~ | ~~HIGH~~ | ~~5~~ | ~~DONE — code integrated, needs token~~ |
-| ~~WordPress redirect map~~ | ~~HIGH~~ | ~~5~~ | ~~DONE — 50+ redirects in seo/redirects.json~~ |
-| LLM abstraction layer | HIGH | 6 | LLM_API_KEY |
-| Admin dashboard with Cloudflare Zero Trust | HIGH | 6 | Cloudflare Access config |
-| AI blog draft generator | HIGH | 6 | LLM layer |
-| NL page update system | HIGH | 6 | LLM layer, GitHub API |
-| Approval workflow | MEDIUM | 6 | Admin dashboard |
-| Intelligent quote wizard | HIGH | 7 | Quote rules data |
-| Programmatic SEO pages (20-25 areas) | HIGH | 7 | Area data (schools, hospitals) |
-| Public compliance dashboard | MEDIUM | 7 | compliance.json |
-| Testimonial/case study engine | MEDIUM | 7 | Admin dashboard, LLM |
-| JSON-LD schema markup | MEDIUM | 8 | None |
-| Social media publishing scripts | MEDIUM | 8 | Facebook/LinkedIn API tokens |
-| Email auto-responses | LOW | 8 | Resend API |
 | CI/CD workflows (Lighthouse, link checks) | LOW | 9 | GitHub Actions config |
-| WebP image conversion | LOW | 9 | Build script |
+| WebP image conversion audit | LOW | 9 | Build script |
 | WCAG 2.1 AA audit | LOW | 9 | Manual review |
+| Core Web Vitals monitoring | LOW | 9 | Analytics data |
 | Council self-service portal | FUTURE | 10 | Telemex fleet system |
 | Parent notification system | FUTURE | 10 | Telemex fleet system |
 | Fleet performance dashboard | FUTURE | 10 | Telemex fleet system |
@@ -464,17 +442,19 @@ RAILWAY_TOKEN=
 
 | Category | Current | Planned |
 |----------|---------|---------|
-| Public pages | 29 routes | ~55 routes (with area expansion) |
-| Internal tools | 2 | 2 + admin dashboard (6 routes) |
-| API endpoints | 2 | 8 |
-| Components | 27 | 34 |
-| Library modules | 0 | 4 |
-| Data files | 3 | 10 |
+| Public pages | 55+ routes | +3 CI/CD workflows |
+| Internal tools | 2 + admin dashboard (6 routes) | — |
+| API endpoints | 10 | — |
+| Components | 27 | — |
+| Library modules | 3 | — |
+| Data files | 12 | — |
 | Blog posts (published) | 16 | 40+ |
 | Blog posts (planned) | 24 | 24 (in content calendar) |
-| Social media templates | 10 | 10 |
-| Local SEO area pages | 5 | 25-30 |
-| Service pages | 8 | 8 |
+| Social media templates | 10 | — |
+| Social media scripts | 2 (Facebook, LinkedIn) | — |
+| Local SEO area pages | 25 | — |
+| Service pages | 8 | — |
+| JSON-LD schemas | 4 types (LocalBusiness, Service, FAQPage, BreadcrumbList) | — |
 | CI/CD workflows | 0 | 3 |
 
 ---

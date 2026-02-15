@@ -75,12 +75,26 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - AdminLayout nav updated with Compliance and Testimonials links
 - Admin dashboard index updated with Compliance Editor and Testimonials quick action cards
 
-**NEXT SESSION: Tier 4 — SEO & Automation**
-- JSON-LD schema markup for LocalBusiness, services, FAQ, breadcrumbs
-- Social media publishing scripts
-- Email auto-responses for form submissions
+**Tier 4 — COMPLETE (2026-02-15): SEO & Automation**
+- SEOHead.astro now injects global `LocalBusiness` JSON-LD schema on every page (both offices, geo, opening hours, sameAs)
+- Homepage schema enhanced with `hasOfferCatalog` listing all 8 services, Manchester office, geo coordinates
+- All 8 service pages already had `Service` schema — confirmed in place
+- FAQ page already had `FAQPage` schema — confirmed in place
+- Breadcrumbs component already emits `BreadcrumbList` schema — confirmed in place
+- `seo/schema-markup/local-business.json` updated with both offices, correct social links
+- `social-media/scripts/facebook-publish.py` — standalone script: reads blog .md, generates FB post via Anthropic API, publishes via Graph API
+- `social-media/scripts/linkedin-publish.py` — standalone script: same pattern for LinkedIn organisation page via UGC Post API
+- Both scripts: `--dry-run` mode, fallback templates, structured logging, no external Python dependencies
+- `src/pages/api/contact/submit.ts` — POST endpoint handling full contact flow: Web3Forms + Resend notification + auto-response email to customer
+- ContactForm.astro updated to POST JSON to `/api/contact/submit` instead of direct Web3Forms submission
+- Auto-response includes 24h response promise, link to quote wizard, contact details
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable)
+**NEXT SESSION: Tier 5 — CI/CD & Quality**
+- GitHub Actions: Lighthouse audits, broken link checks, deploy validation
+- WebP image conversion audit
+- WCAG 2.1 AA accessibility audit
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable)
 
 ---
 
