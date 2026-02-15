@@ -1,0 +1,162 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import departments from '../../data/departments.json';
+import complianceData from '../../data/compliance.json';
+
+const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
+
+// Determine permissions — only operations and management can edit compliance
+type DeptKey = keyof typeof departments;
+let userDepartment: DeptKey = 'management';
+let departmentName = 'Management';
+let canEdit = true;
+
+for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof departments[DeptKey]][]) {
+  if (dept.emails.includes(userEmail)) {
+    userDepartment = key;
+    departmentName = dept.name;
+    break;
+  }
+}
+
+canEdit = userDepartment === 'management' || userDepartment === 'operations';
+---
+
+<AdminLayout title="Compliance Editor" userEmail={userEmail}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Compliance Editor</h1>
+        <p class="text-gray-600 mt-1">Update compliance figures. Changes are saved via the GitHub API and auto-deploy.</p>
+      </div>
+      <a href="/compliance" target="_blank" class="text-sm text-afj-accent hover:underline">View public page &rarr;</a>
+    </div>
+
+    {!canEdit ? (
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
+        <p class="text-amber-800 font-medium">You do not have permission to edit compliance data.</p>
+        <p class="text-amber-600 text-sm mt-1">Only Operations and Management departments can update compliance figures.</p>
+      </div>
+    ) : (
+      <div>
+        <!-- Last Updated -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6 flex items-center justify-between">
+          <div class="text-sm text-gray-600">
+            Last updated: <span id="lastUpdated" class="font-medium text-gray-900">{complianceData.lastUpdated}</span>
+          </div>
+          <div id="saveStatus" class="text-sm hidden"></div>
+        </div>
+
+        <!-- Compliance Items Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="complianceGrid">
+          {complianceData.items.map((item) => (
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-item-id={item.id}>
+              <div class="flex items-start justify-between mb-4">
+                <div>
+                  <h3 class="font-semibold text-gray-900">{item.label}</h3>
+                  <span class="text-xs text-gray-400">{item.category}</span>
+                </div>
+                <select
+                  class="status-select text-xs border border-gray-300 rounded-md px-2 py-1 focus:ring-2 focus:ring-afj-accent focus:border-afj-accent"
+                  data-field="status"
+                >
+                  <option value="pass" selected={item.status === 'pass'}>Compliant</option>
+                  <option value="warning" selected={item.status === 'warning'}>Review Due</option>
+                  <option value="fail" selected={item.status === 'fail'}>Action Required</option>
+                </select>
+              </div>
+
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 mb-1">Value</label>
+                  <input
+                    type="text"
+                    value={item.value}
+                    data-field="value"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 mb-1">Detail</label>
+                  <input
+                    type="text"
+                    value={item.detail}
+                    data-field="detail"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Save Button -->
+        <div class="mt-8 flex justify-end">
+          <button
+            id="saveBtn"
+            class="bg-afj-accent text-white font-semibold py-3 px-8 rounded-lg hover:bg-afj-green transition-colors"
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <script is:inline>
+    const saveBtn = document.getElementById('saveBtn');
+    const saveStatus = document.getElementById('saveStatus');
+    const grid = document.getElementById('complianceGrid');
+
+    if (saveBtn && grid) {
+      saveBtn.addEventListener('click', async () => {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        // Collect all item data from the form
+        const cards = grid.querySelectorAll('[data-item-id]');
+        const items = [];
+
+        cards.forEach((card) => {
+          const id = card.getAttribute('data-item-id');
+          const value = card.querySelector('[data-field="value"]').value;
+          const detail = card.querySelector('[data-field="detail"]').value;
+          const status = card.querySelector('[data-field="status"]').value;
+          items.push({ id, value, detail, status });
+        });
+
+        try {
+          const res = await fetch('/api/admin/compliance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items }),
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            showSaveStatus('Changes saved and deploying.', false);
+            document.getElementById('lastUpdated').textContent = new Date().toISOString().split('T')[0];
+          } else {
+            throw new Error(data.error || 'Failed to save');
+          }
+        } catch (err) {
+          showSaveStatus(err.message || 'Failed to save changes.', true);
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Save Changes';
+        }
+      });
+    }
+
+    function showSaveStatus(message, isError) {
+      if (!saveStatus) return;
+      saveStatus.textContent = message;
+      saveStatus.className = 'text-sm ' + (isError ? 'text-red-600' : 'text-green-600');
+      saveStatus.classList.remove('hidden');
+      setTimeout(() => saveStatus.classList.add('hidden'), 5000);
+    }
+  </script>
+</AdminLayout>

@@ -1,0 +1,77 @@
+{
+  "lastUpdated": "2026-02-15",
+  "items": [
+    {
+      "id": "cqc-rating",
+      "category": "Regulatory",
+      "label": "CQC Rating",
+      "value": "Good",
+      "detail": "Inspected March 2025",
+      "status": "pass",
+      "icon": "shield"
+    },
+    {
+      "id": "dbs-checks",
+      "category": "Staff",
+      "label": "DBS Checks",
+      "value": "All 47 drivers checked",
+      "detail": "Enhanced DBS — renewed annually",
+      "status": "pass",
+      "icon": "check"
+    },
+    {
+      "id": "mot-pass-rate",
+      "category": "Fleet",
+      "label": "Fleet MOT Pass Rate",
+      "value": "98%",
+      "detail": "First-time pass rate",
+      "status": "pass",
+      "icon": "truck"
+    },
+    {
+      "id": "fleet-insurance",
+      "category": "Fleet",
+      "label": "Fleet Insurance",
+      "value": "Fully insured",
+      "detail": "Policy renewed January 2026",
+      "status": "pass",
+      "icon": "shield"
+    },
+    {
+      "id": "driver-certifications",
+      "category": "Staff",
+      "label": "Driver Certifications",
+      "value": "MiDAS and PATS certified",
+      "detail": "All drivers hold current certificates",
+      "status": "pass",
+      "icon": "certificate"
+    },
+    {
+      "id": "wheelchair-accessibility",
+      "category": "Fleet",
+      "label": "Wheelchair Accessibility",
+      "value": "85%",
+      "detail": "Of fleet wheelchair accessible",
+      "status": "pass",
+      "icon": "accessibility"
+    },
+    {
+      "id": "safeguarding",
+      "category": "Staff",
+      "label": "Safeguarding",
+      "value": "Level 3 trained",
+      "detail": "All staff safeguarding trained",
+      "status": "pass",
+      "icon": "users"
+    },
+    {
+      "id": "carbon-reduction",
+      "category": "Environmental",
+      "label": "Carbon Reduction Plan",
+      "value": "Active",
+      "detail": "Published and monitored — PPN 06/21 compliant",
+      "status": "pass",
+      "icon": "leaf"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/Hero.astro';
+import CTABanner from '../components/CTABanner.astro';
+import AccreditationBadges from '../components/AccreditationBadges.astro';
+import SocialSidebar from '../components/SocialSidebar.astro';
+import complianceData from '../data/compliance.json';
+
+const breadcrumbs = [{ label: 'Compliance & Standards' }];
+
+// Group items by category
+type ComplianceItem = (typeof complianceData.items)[number];
+const grouped: Record<string, ComplianceItem[]> = {};
+for (const item of complianceData.items) {
+  if (!grouped[item.category]) grouped[item.category] = [];
+  grouped[item.category].push(item);
+}
+
+const categoryOrder = ['Regulatory', 'Staff', 'Fleet', 'Environmental'];
+const categoryIcons: Record<string, string> = {
+  Regulatory: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+  Staff: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+  Fleet: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4',
+  Environmental: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+};
+
+const statusColour: Record<string, { bg: string; text: string; dot: string }> = {
+  pass: { bg: 'bg-green-50', text: 'text-green-700', dot: 'bg-green-500' },
+  warning: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
+  fail: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500' },
+};
+
+const passCount = complianceData.items.filter((i) => i.status === 'pass').length;
+const totalCount = complianceData.items.length;
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'AFJ Limited',
+  description: 'AFJ Limited compliance and accreditation status — CQC rated Good, fully DBS-checked drivers, fleet MOT pass rate 98%.',
+  telephone: '0121 689 1000',
+};
+---
+
+<PageLayout
+  title="Compliance & Standards"
+  description="AFJ Limited's compliance dashboard — CQC rated Good, all drivers DBS-checked, 98% fleet MOT pass rate, MiDAS and PATS certified."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero
+    title="Compliance & Standards"
+    subtitle="Transparent reporting on our safety standards, accreditations, and regulatory compliance."
+  />
+
+  <!-- Overview Banner -->
+  <section class="section-padding bg-afj-dark-blue text-white">
+    <div class="container-wide">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <h2 class="text-2xl font-bold mb-2">All Standards Met</h2>
+          <p class="text-gray-300">
+            {passCount} of {totalCount} compliance checks passed. Last updated {complianceData.lastUpdated}.
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 bg-green-500/20 text-green-300 px-4 py-2 rounded-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="font-semibold">{passCount}/{totalCount} Passed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compliance Grid -->
+  <section class="section-padding">
+    <div class="container-wide">
+      {categoryOrder.filter((cat) => grouped[cat]).map((category) => (
+        <div class="mb-10">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-lg bg-afj-accent/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={categoryIcons[category] || ''} />
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold text-afj-dark-blue">{category}</h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {grouped[category].map((item) => {
+              const colours = statusColour[item.status] || statusColour.pass;
+              return (
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
+                  <div class="flex items-start justify-between mb-3">
+                    <h3 class="font-semibold text-afj-text">{item.label}</h3>
+                    <span class:list={['inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full', colours.bg, colours.text]}>
+                      <span class:list={['w-1.5 h-1.5 rounded-full', colours.dot]}></span>
+                      {item.status === 'pass' ? 'Compliant' : item.status === 'warning' ? 'Review Due' : 'Action Required'}
+                    </span>
+                  </div>
+                  <p class="text-2xl font-bold text-afj-dark-blue mb-1">{item.value}</p>
+                  <p class="text-sm text-gray-500">{item.detail}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+
+      <!-- Last Updated -->
+      <div class="mt-8 text-center text-sm text-gray-400">
+        <p>Data last updated: {complianceData.lastUpdated}. For queries about our compliance status, <a href="/contact" class="text-afj-accent hover:underline">contact us</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Accreditations -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide">
+      <h2 class="text-2xl font-bold text-afj-dark-blue text-center mb-8">Our Accreditations</h2>
+      <AccreditationBadges />
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Need to Verify Our Compliance?"
+    description="Contact our operations team for detailed compliance documentation, insurance certificates, or accreditation evidence."
+    variant="navy"
+  />
+</PageLayout>
