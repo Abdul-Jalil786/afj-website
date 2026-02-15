@@ -359,6 +359,38 @@ const jsonLD = {
     background-color: #F0FFF4;
     color: #276749;
   }
+  .autocomplete-wrap {
+    position: relative;
+  }
+  .autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-top: 0;
+    border-radius: 0 0 0.5rem 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1);
+    display: none;
+  }
+  .autocomplete-list.open {
+    display: block;
+  }
+  .autocomplete-item {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    color: #374151;
+  }
+  .autocomplete-item:hover,
+  .autocomplete-item.highlighted {
+    background-color: #F0FFF4;
+    color: #276749;
+  }
 </style>
 
 <script is:inline define:vars={{ quoteRules }}>
@@ -375,6 +407,118 @@ const jsonLD = {
   var progressBar = document.getElementById('progressBar');
 
   var allSteps = [step1, stepEnterprise, step2, step3, step4];
+
+  // --- Postcodes.io autocomplete helpers ---
+  function debounce(fn, ms) {
+    var timer;
+    return function () {
+      var args = arguments;
+      var ctx = this;
+      clearTimeout(timer);
+      timer = setTimeout(function () { fn.apply(ctx, args); }, ms);
+    };
+  }
+
+  function fetchSuggestions(query, callback) {
+    var q = query.trim();
+    if (q.length < 2) { callback([]); return; }
+
+    var isPostcode = /^[A-Z]{1,2}\d/i.test(q);
+    var url = isPostcode
+      ? 'https://api.postcodes.io/postcodes/' + encodeURIComponent(q) + '/autocomplete?limit=8'
+      : 'https://api.postcodes.io/places?q=' + encodeURIComponent(q) + '&limit=8';
+
+    fetch(url)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (!data.result || !data.result.length) { callback([]); return; }
+        if (isPostcode) {
+          callback(data.result);
+        } else {
+          var seen = {};
+          var names = [];
+          data.result.forEach(function (p) {
+            var name = p.name_1 || p.place_name || '';
+            if (name && !seen[name]) { seen[name] = true; names.push(name); }
+          });
+          callback(names);
+        }
+      })
+      .catch(function () { callback([]); });
+  }
+
+  function attachAutocomplete(inputEl) {
+    // Wrap input in a relative container
+    var wrap = document.createElement('div');
+    wrap.className = 'autocomplete-wrap';
+    inputEl.parentNode.insertBefore(wrap, inputEl);
+    wrap.appendChild(inputEl);
+
+    // Create dropdown list
+    var list = document.createElement('div');
+    list.className = 'autocomplete-list';
+    list.setAttribute('role', 'listbox');
+    wrap.appendChild(list);
+
+    var highlightIdx = -1;
+
+    function showList(items) {
+      list.innerHTML = '';
+      highlightIdx = -1;
+      if (!items.length) { list.classList.remove('open'); return; }
+      items.forEach(function (text, i) {
+        var item = document.createElement('div');
+        item.className = 'autocomplete-item';
+        item.setAttribute('role', 'option');
+        item.textContent = text;
+        item.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          inputEl.value = text;
+          list.classList.remove('open');
+        });
+        list.appendChild(item);
+      });
+      list.classList.add('open');
+    }
+
+    function updateHighlight() {
+      var items = list.querySelectorAll('.autocomplete-item');
+      items.forEach(function (el, i) {
+        el.classList.toggle('highlighted', i === highlightIdx);
+      });
+    }
+
+    var debouncedFetch = debounce(function () {
+      fetchSuggestions(inputEl.value, showList);
+    }, 300);
+
+    inputEl.addEventListener('input', debouncedFetch);
+
+    inputEl.addEventListener('keydown', function (e) {
+      var items = list.querySelectorAll('.autocomplete-item');
+      if (!items.length) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        highlightIdx = Math.min(highlightIdx + 1, items.length - 1);
+        updateHighlight();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        highlightIdx = Math.max(highlightIdx - 1, 0);
+        updateHighlight();
+      } else if (e.key === 'Enter' && highlightIdx >= 0) {
+        e.preventDefault();
+        inputEl.value = items[highlightIdx].textContent;
+        list.classList.remove('open');
+      } else if (e.key === 'Escape') {
+        list.classList.remove('open');
+      }
+    });
+
+    inputEl.addEventListener('blur', function () {
+      setTimeout(function () { list.classList.remove('open'); }, 150);
+    });
+  }
 
   function hideAllSteps() {
     allSteps.forEach(function (el) { el.classList.add('hidden'); });
@@ -454,7 +598,8 @@ const jsonLD = {
           }).join('') +
           '</select>';
       } else if (q.inputType === 'text') {
-        inputHtml = '<input type="text" data-qid="' + q.id + '" data-type="text"' + (q.required ? ' data-required="true"' : '') + ' placeholder="' + (q.placeholder || '') + '" class="quiz-input ' + inputClass + '" />';
+        var autoOff = q.id.toLowerCase().indexOf('postcode') !== -1 ? ' autocomplete="off"' : '';
+        inputHtml = '<input type="text" data-qid="' + q.id + '" data-type="text"' + (q.required ? ' data-required="true"' : '') + autoOff + ' placeholder="' + (q.placeholder || '') + '" class="quiz-input ' + inputClass + '" />';
       } else if (q.inputType === 'date') {
         inputHtml = '<input type="date" data-qid="' + q.id + '" data-type="date"' + (q.required ? ' data-required="true"' : '') + ' class="quiz-input ' + inputClass + '" />';
       } else if (q.inputType === 'time') {
@@ -479,6 +624,14 @@ const jsonLD = {
           btn.classList.add('active');
         });
       });
+    });
+
+    // Attach autocomplete to postcode/city text inputs
+    container.querySelectorAll('input[data-type="text"]').forEach(function (input) {
+      var qid = input.dataset.qid || '';
+      if (qid.toLowerCase().indexOf('postcode') !== -1) {
+        attachAutocomplete(input);
+      }
     });
   }
 
