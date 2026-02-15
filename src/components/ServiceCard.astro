@@ -14,7 +14,7 @@ const { icon, image, title, description, href } = Astro.props;
   <!-- Service Image -->
   {image && (
     <div class="aspect-video overflow-hidden rounded-lg -mx-6 -mt-6 mb-4">
-      <img src={image} alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+      <img src={image} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
     </div>
   )}
 

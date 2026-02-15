@@ -76,6 +76,9 @@
     var consent = localStorage.getItem('afj-cookie-consent');
     if (!consent) {
       banner.classList.remove('hidden');
+      // Focus first action button for keyboard/screen reader users
+      var acceptBtn = document.getElementById('cookie-accept');
+      if (acceptBtn) acceptBtn.focus();
     }
 
     function hideBanner() {
