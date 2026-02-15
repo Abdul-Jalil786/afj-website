@@ -5,6 +5,8 @@ export interface QuoteEstimate {
   high: number;
   currency: string;
   perUnit: string;
+  distanceMiles?: number;
+  durationMinutes?: number;
 }
 
 /**
@@ -63,14 +65,18 @@ async function fetchCoords(postcode: string): Promise<{ lat: number; lng: number
 async function fetchDrivingMiles(
   lat1: number, lng1: number,
   lat2: number, lng2: number,
-): Promise<number | null> {
+): Promise<{ miles: number; minutes: number } | null> {
   try {
     const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=false`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
-    if (data.routes?.[0]?.distance) {
-      return data.routes[0].distance / 1609.344; // metres → miles
+    const route = data.routes?.[0];
+    if (route?.distance) {
+      return {
+        miles: route.distance / 1609.344,
+        minutes: route.duration ? route.duration / 60 : 0,
+      };
     }
     return null;
   } catch {
@@ -82,24 +88,26 @@ async function fetchDrivingMiles(
  * Get distance between two postcodes: tries real driving mileage first,
  * falls back to the hardcoded distance matrix.
  */
-async function getDistance(pickup: string, destination: string): Promise<number> {
+async function getDistance(pickup: string, destination: string): Promise<{ miles: number; minutes: number | null }> {
   const [fromCoords, toCoords] = await Promise.all([
     fetchCoords(pickup),
     fetchCoords(destination),
   ]);
 
   if (fromCoords && toCoords) {
-    const miles = await fetchDrivingMiles(
+    const result = await fetchDrivingMiles(
       fromCoords.lat, fromCoords.lng,
       toCoords.lat, toCoords.lng,
     );
-    if (miles != null && miles > 0) return Math.round(miles);
+    if (result != null && result.miles > 0) {
+      return { miles: Math.round(result.miles), minutes: Math.round(result.minutes) };
+    }
   }
 
-  // Fallback to hardcoded matrix
+  // Fallback to hardcoded matrix (no duration available)
   const fromArea = extractArea(pickup);
   const toArea = extractArea(destination);
-  return lookupDistance(fromArea, toArea);
+  return { miles: lookupDistance(fromArea, toArea), minutes: null };
 }
 
 /**
@@ -126,14 +134,21 @@ export async function estimateQuote(
   }
 
   let rate: number;
+  let distanceMiles: number | undefined;
+  let durationMinutes: number | undefined;
 
   if (service === 'private-hire') {
-    const distance = await getDistance(
+    const distanceResult = await getDistance(
       answers.pickupPostcode || '',
       answers.destinationPostcode || '',
     );
 
-    rate = pricing.baseFare + distance * pricing.perMileRate;
+    distanceMiles = distanceResult.miles;
+    if (distanceResult.minutes != null) {
+      durationMinutes = distanceResult.minutes;
+    }
+
+    rate = pricing.baseFare + distanceResult.miles * pricing.perMileRate;
 
     // Passenger tier multiplier
     const passengerKey = answers.passengers || '1-8';
@@ -177,5 +192,7 @@ export async function estimateQuote(
     high,
     currency: 'GBP',
     perUnit: svcConfig.perUnit,
+    distanceMiles,
+    durationMinutes,
   };
 }

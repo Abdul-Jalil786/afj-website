@@ -170,6 +170,7 @@ const jsonLD = {
 
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
           <p class="text-sm text-gray-500 mb-2" id="estimateServiceLabel"></p>
+          <p class="text-sm text-gray-600 mb-3 hidden" id="estimateDistance"></p>
           <div class="flex items-center justify-center gap-3 mb-2">
             <span class="text-4xl md:text-5xl font-bold text-afj-green" id="estimateLow"></span>
             <span class="text-2xl text-gray-400">&ndash;</span>
@@ -689,6 +690,24 @@ const jsonLD = {
           currentEstimate = data.estimate;
           var svc = quoteRules.services[selectedService];
           document.getElementById('estimateServiceLabel').textContent = svc.label;
+
+          // Show distance and travel time for private hire
+          var distanceEl = document.getElementById('estimateDistance');
+          if (data.estimate.distanceMiles) {
+            var distText = 'Estimated distance: ' + data.estimate.distanceMiles + ' miles';
+            if (data.estimate.durationMinutes) {
+              var totalMin = data.estimate.durationMinutes;
+              var hrs = Math.floor(totalMin / 60);
+              var mins = totalMin % 60;
+              var timeStr = hrs > 0 ? hrs + 'h ' + mins + 'm' : mins + ' min';
+              distText += ' \u00B7 approx. ' + timeStr;
+            }
+            distanceEl.textContent = distText;
+            distanceEl.classList.remove('hidden');
+          } else {
+            distanceEl.classList.add('hidden');
+          }
+
           document.getElementById('estimateLow').textContent = '\u00A3' + data.estimate.low;
           document.getElementById('estimateHigh').textContent = '\u00A3' + data.estimate.high;
           document.getElementById('estimatePerUnit').textContent = data.estimate.perUnit;
