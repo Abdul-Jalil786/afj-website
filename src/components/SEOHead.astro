@@ -19,6 +19,54 @@ const {
 
 const siteName = 'AFJ Limited';
 const gscVerification = import.meta.env.GOOGLE_SEARCH_CONSOLE_VERIFICATION;
+
+// Global LocalBusiness schema — injected on every page so Google always
+// associates organisation info with every URL on the site.
+const globalOrgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': 'https://www.afjltd.co.uk/#organization',
+  name: 'AFJ Limited',
+  url: 'https://www.afjltd.co.uk',
+  logo: 'https://www.afjltd.co.uk/images/logo/afj-logo-final.png',
+  telephone: '0121 689 1000',
+  email: 'info@afjltd.co.uk',
+  foundingDate: '2006',
+  address: [
+    {
+      '@type': 'PostalAddress',
+      streetAddress: 'AFJ Business Center, 2-18 Forster Street, Nechells',
+      addressLocality: 'Birmingham',
+      addressRegion: 'West Midlands',
+      postalCode: 'B7 4JD',
+      addressCountry: 'GB',
+    },
+    {
+      '@type': 'PostalAddress',
+      streetAddress: 'AFJ Manchester Office',
+      addressLocality: 'Manchester',
+      addressRegion: 'Greater Manchester',
+      addressCountry: 'GB',
+    },
+  ],
+  geo: { '@type': 'GeoCoordinates', latitude: 52.493, longitude: -1.878 },
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    opens: '08:00',
+    closes: '18:00',
+  },
+  sameAs: [
+    'https://www.facebook.com/afjtravel',
+    'https://uk.linkedin.com/company/afj-ltd',
+  ],
+};
+
+// Skip the global org schema on the homepage — it already has a richer
+// LocalBusiness schema with hasOfferCatalog etc.
+const isHomepage = Astro.url.pathname === '/' || Astro.url.pathname === '';
+const pageHasLocalBusiness = jsonLD && (jsonLD as any)['@type'] === 'LocalBusiness';
+const showGlobalOrg = !isHomepage && !pageHasLocalBusiness;
 ---
 
 <!-- Primary Meta Tags -->
@@ -52,4 +100,8 @@ const gscVerification = import.meta.env.GOOGLE_SEARCH_CONSOLE_VERIFICATION;
 
 {jsonLD && (
   <script type="application/ld+json" set:html={JSON.stringify(jsonLD)} />
+)}
+
+{showGlobalOrg && (
+  <script type="application/ld+json" set:html={JSON.stringify(globalOrgSchema)} />
 )}

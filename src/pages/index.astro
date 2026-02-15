@@ -67,25 +67,66 @@ const services = [
 const jsonLD = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
+  '@id': 'https://www.afjltd.co.uk/#organization',
   name: 'AFJ Limited',
+  alternateName: 'AFJ',
   description: 'Your Partner in Safe, Reliable Transport Solutions. Specialist SEND school transport, non-emergency patient transport, fleet maintenance, vehicle conversions, and training services in Birmingham and Manchester.',
   url: 'https://www.afjltd.co.uk',
+  logo: 'https://www.afjltd.co.uk/images/logo/afj-logo-final.png',
   telephone: '0121 689 1000',
   email: 'info@afjltd.co.uk',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'AFJ Business Center, 2-18 Forster Street, Nechells',
-    addressLocality: 'Birmingham',
-    addressRegion: 'West Midlands',
-    postalCode: 'B7 4JD',
-    addressCountry: 'GB',
-  },
-  areaServed: ['Birmingham', 'Manchester', 'West Midlands', 'North West England', 'Sandwell', 'Coventry'],
   foundingDate: '2006',
-  sameAs: [
-    'https://www.facebook.com/afjlimited',
-    'https://www.linkedin.com/company/afj-limited',
+  address: [
+    {
+      '@type': 'PostalAddress',
+      streetAddress: 'AFJ Business Center, 2-18 Forster Street, Nechells',
+      addressLocality: 'Birmingham',
+      addressRegion: 'West Midlands',
+      postalCode: 'B7 4JD',
+      addressCountry: 'GB',
+    },
+    {
+      '@type': 'PostalAddress',
+      streetAddress: 'AFJ Manchester Office',
+      addressLocality: 'Manchester',
+      addressRegion: 'Greater Manchester',
+      addressCountry: 'GB',
+    },
   ],
+  geo: { '@type': 'GeoCoordinates', latitude: 52.493, longitude: -1.878 },
+  areaServed: [
+    { '@type': 'City', name: 'Birmingham' },
+    { '@type': 'City', name: 'Manchester' },
+    { '@type': 'AdministrativeArea', name: 'West Midlands' },
+    { '@type': 'AdministrativeArea', name: 'North West England' },
+    { '@type': 'City', name: 'Sandwell' },
+    { '@type': 'City', name: 'Coventry' },
+  ],
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    opens: '08:00',
+    closes: '18:00',
+  },
+  sameAs: [
+    'https://www.facebook.com/afjtravel',
+    'https://uk.linkedin.com/company/afj-ltd',
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Transport Services',
+    itemListElement: [
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Home to School Transport (SEND)', url: 'https://www.afjltd.co.uk/services/send-transport' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Non-Emergency Patient Transport (NEPTS)', url: 'https://www.afjltd.co.uk/services/patient-transport' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Fleet Maintenance', url: 'https://www.afjltd.co.uk/services/fleet-maintenance' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Vehicle Conversions', url: 'https://www.afjltd.co.uk/services/vehicle-conversions' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Driver, ACA & PA Training', url: 'https://www.afjltd.co.uk/services/driver-training' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Private Minibus Hire', url: 'https://www.afjltd.co.uk/services/private-hire' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Executive Minibus Hire', url: 'https://www.afjltd.co.uk/services/executive-minibus' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Airport Transfers', url: 'https://www.afjltd.co.uk/services/airport-transfers' } },
+    ],
+  },
+  priceRange: '$$',
 };
 ---
 

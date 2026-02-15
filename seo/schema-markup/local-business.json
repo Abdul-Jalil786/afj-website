@@ -6,19 +6,28 @@
   "alternateName": "AFJ",
   "description": "Your Partner in Safe, Reliable Transport Solutions. Established in 2006, AFJ Limited provides SEND school transport, non-emergency patient transport, fleet maintenance, vehicle conversions, driver training, and private minibus hire across Birmingham, Manchester, and the West Midlands.",
   "url": "https://www.afjltd.co.uk",
-  "logo": "https://www.afjltd.co.uk/images/afj-logo.png",
-  "image": "https://www.afjltd.co.uk/images/afj-hero.png",
+  "logo": "https://www.afjltd.co.uk/images/logo/afj-logo-final.png",
+  "image": "https://www.afjltd.co.uk/images/logo/afj-logo-final.png",
   "telephone": "0121 689 1000",
-  "email": ["info@afjltd.co.uk", "sales@afjltd.co.uk"],
+  "email": "info@afjltd.co.uk",
   "foundingDate": "2006",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "AFJ Business Center, 2-18 Forster Street, Nechells",
-    "addressLocality": "Birmingham",
-    "addressRegion": "West Midlands",
-    "postalCode": "B7 4JD",
-    "addressCountry": "GB"
-  },
+  "address": [
+    {
+      "@type": "PostalAddress",
+      "streetAddress": "AFJ Business Center, 2-18 Forster Street, Nechells",
+      "addressLocality": "Birmingham",
+      "addressRegion": "West Midlands",
+      "postalCode": "B7 4JD",
+      "addressCountry": "GB"
+    },
+    {
+      "@type": "PostalAddress",
+      "streetAddress": "AFJ Manchester Office",
+      "addressLocality": "Manchester",
+      "addressRegion": "Greater Manchester",
+      "addressCountry": "GB"
+    }
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 52.4930,
@@ -30,7 +39,11 @@
     { "@type": "AdministrativeArea", "name": "West Midlands" },
     { "@type": "AdministrativeArea", "name": "North West England" },
     { "@type": "City", "name": "Sandwell" },
-    { "@type": "City", "name": "Coventry" }
+    { "@type": "City", "name": "Coventry" },
+    { "@type": "City", "name": "Wolverhampton" },
+    { "@type": "City", "name": "Walsall" },
+    { "@type": "City", "name": "Dudley" },
+    { "@type": "City", "name": "Solihull" }
   ],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
@@ -41,8 +54,7 @@
         "itemOffered": {
           "@type": "Service",
           "name": "Home to School Transport (SEND)",
-          "description": "Over 700 students transported daily with DBS-checked drivers and passenger assistants. Council-accredited SEND transport across Birmingham and Manchester.",
-          "url": "https://www.afjltd.co.uk/services/send-transport/"
+          "url": "https://www.afjltd.co.uk/services/send-transport"
         }
       },
       {
@@ -50,8 +62,7 @@
         "itemOffered": {
           "@type": "Service",
           "name": "Non-Emergency Patient Transport (NEPTS)",
-          "description": "CQC rated 'Good' patient transport service. NHS trust contracts across West Midlands and North West for renal dialysis, discharge, bariatric, and long-distance transport.",
-          "url": "https://www.afjltd.co.uk/services/patient-transport/"
+          "url": "https://www.afjltd.co.uk/services/patient-transport"
         }
       },
       {
@@ -59,8 +70,7 @@
         "itemOffered": {
           "@type": "Service",
           "name": "Fleet Maintenance",
-          "description": "In-house vehicle maintenance workshop with skilled technicians and state-of-the-art facilities in Birmingham.",
-          "url": "https://www.afjltd.co.uk/services/fleet-maintenance/"
+          "url": "https://www.afjltd.co.uk/services/fleet-maintenance"
         }
       },
       {
@@ -68,8 +78,7 @@
         "itemOffered": {
           "@type": "Service",
           "name": "Vehicle Conversions",
-          "description": "VOSA-certified wheelchair-accessible vehicle conversions, ambulance conversions, and luxury minibus conversions.",
-          "url": "https://www.afjltd.co.uk/services/vehicle-conversions/"
+          "url": "https://www.afjltd.co.uk/services/vehicle-conversions"
         }
       },
       {
@@ -77,8 +86,7 @@
         "itemOffered": {
           "@type": "Service",
           "name": "Driver, ACA & PA Training",
-          "description": "QualSafe-approved training programmes including Driver CPC, Ambulance Care Assistant, and Passenger Assistant certification.",
-          "url": "https://www.afjltd.co.uk/services/driver-training/"
+          "url": "https://www.afjltd.co.uk/services/driver-training"
         }
       },
       {
@@ -86,8 +94,7 @@
         "itemOffered": {
           "@type": "Service",
           "name": "Private Minibus Hire",
-          "description": "Modern fleet of 16-seater wheelchair-accessible minibuses for corporate events, school trips, and group travel.",
-          "url": "https://www.afjltd.co.uk/services/private-hire/"
+          "url": "https://www.afjltd.co.uk/services/private-hire"
         }
       },
       {
@@ -95,8 +102,7 @@
         "itemOffered": {
           "@type": "Service",
           "name": "Executive Minibus Hire",
-          "description": "Luxury minibus hire with driver for corporate travel, events, race days, and airport transfers.",
-          "url": "https://www.afjltd.co.uk/services/executive-minibus/"
+          "url": "https://www.afjltd.co.uk/services/executive-minibus"
         }
       },
       {
@@ -104,17 +110,14 @@
         "itemOffered": {
           "@type": "Service",
           "name": "Airport Transfers",
-          "description": "Reliable airport transfer service from Birmingham Airport and beyond with experienced drivers.",
-          "url": "https://www.afjltd.co.uk/services/airport-transfers/"
+          "url": "https://www.afjltd.co.uk/services/airport-transfers"
         }
       }
     ]
   },
   "sameAs": [
-    "https://www.facebook.com/afjlimited",
-    "https://www.linkedin.com/company/afjlimited",
-    "https://www.instagram.com/afjlimited",
-    "https://twitter.com/afjlimited"
+    "https://www.facebook.com/afjtravel",
+    "https://uk.linkedin.com/company/afj-ltd"
   ],
   "openingHoursSpecification": {
     "@type": "OpeningHoursSpecification",
@@ -122,10 +125,5 @@
     "opens": "08:00",
     "closes": "18:00"
   },
-  "priceRange": "$$",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "reviewCount": "50"
-  }
+  "priceRange": "$$"
 }
