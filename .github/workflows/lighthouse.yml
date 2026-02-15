@@ -1,0 +1,167 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    name: Lighthouse Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Start server
+        run: |
+          node ./dist/server/entry.mjs &
+          sleep 5
+        env:
+          HOST: 0.0.0.0
+          PORT: 4321
+
+      - name: Wait for server
+        run: |
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:4321 > /dev/null; then
+              echo "Server is ready"
+              break
+            fi
+            echo "Waiting for server... ($i)"
+            sleep 2
+          done
+
+      - name: Run Lighthouse — Homepage
+        id: lh_home
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: http://localhost:4321/
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Run Lighthouse — SEND Transport
+        id: lh_service
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: http://localhost:4321/services/send-transport
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Run Lighthouse — Blog Post
+        id: lh_blog
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: http://localhost:4321/blog/5-keys-to-reliable-home-to-school-transport-in-the-uk
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Run Lighthouse — Quote Page
+        id: lh_quote
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: http://localhost:4321/quote
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Check scores and post comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const glob = require('@actions/glob');
+
+            // Thresholds (0-1 scale)
+            const thresholds = {
+              performance: 0.85,
+              accessibility: 0.90,
+              'best-practices': 0.85,
+              seo: 0.90,
+            };
+
+            const pages = [
+              { name: 'Homepage', id: 'lh_home' },
+              { name: 'SEND Transport', id: 'lh_service' },
+              { name: 'Blog Post', id: 'lh_blog' },
+              { name: 'Quote Page', id: 'lh_quote' },
+            ];
+
+            // Find all Lighthouse JSON results
+            const globber = await glob.create('.lighthouseci/*.json');
+            const files = await globber.glob();
+
+            let allResults = [];
+            let failed = false;
+
+            for (const file of files) {
+              try {
+                const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+                const url = data.finalUrl || data.requestedUrl || 'Unknown';
+                const cats = data.categories || {};
+
+                const scores = {
+                  performance: cats.performance?.score ?? 0,
+                  accessibility: cats.accessibility?.score ?? 0,
+                  'best-practices': cats['best-practices']?.score ?? 0,
+                  seo: cats.seo?.score ?? 0,
+                };
+
+                let pageFailed = false;
+                for (const [key, threshold] of Object.entries(thresholds)) {
+                  if (scores[key] < threshold) {
+                    pageFailed = true;
+                    failed = true;
+                  }
+                }
+
+                allResults.push({ url, scores, pageFailed });
+              } catch (e) {
+                console.log(`Could not parse ${file}: ${e.message}`);
+              }
+            }
+
+            // Build comment
+            let comment = '## Lighthouse CI Results\n\n';
+            comment += '| Page | Performance | Accessibility | Best Practices | SEO | Status |\n';
+            comment += '|------|:-----------:|:-------------:|:--------------:|:---:|:------:|\n';
+
+            for (const r of allResults) {
+              const shortUrl = r.url.replace('http://localhost:4321', '');
+              const perf = Math.round(r.scores.performance * 100);
+              const a11y = Math.round(r.scores.accessibility * 100);
+              const bp = Math.round(r.scores['best-practices'] * 100);
+              const seo = Math.round(r.scores.seo * 100);
+              const status = r.pageFailed ? '❌ Fail' : '✅ Pass';
+              comment += `| ${shortUrl || '/'} | ${perf} | ${a11y} | ${bp} | ${seo} | ${status} |\n`;
+            }
+
+            comment += '\n**Thresholds:** Performance ≥ 85, Accessibility ≥ 90, Best Practices ≥ 85, SEO ≥ 90\n';
+
+            if (failed) {
+              comment += '\n⚠️ **Some pages are below threshold.** Please investigate before merging.\n';
+            }
+
+            // Post PR comment
+            if (context.payload.pull_request) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: comment,
+              });
+            }
+
+            if (failed) {
+              core.setFailed('Lighthouse scores below threshold');
+            }
