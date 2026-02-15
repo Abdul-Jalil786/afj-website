@@ -101,19 +101,25 @@ All code committed and pushed. Environment variables need setting on Railway bef
 **Quote Wizard Overhaul — COMPLETE (2026-02-16)**
 - Enterprise portal badge "Enterprise / Contract" with e-portal CTA and per-service descriptions
 - Real driving distance via Postcodes.io + OSRM with hardcoded matrix fallback
-- Driver hours pricing model replacing flat 1.75x return multiplier
-- Same-day return: waiting time at £13/hr, DVSA break (9+ pax, 4.5h+ driving)
-- Different-day return: two one-way trips, double deadhead, return date + pickup time
-- Deadhead from nearest base (Birmingham B7 4JD / Manchester M35 0BR) at £13/hr when >30mi
-- Luggage dropdown, wheelchair toggle, peak surcharges (time/day/bank holiday stacking)
-- Multi-stop support (up to 2 stops with autocomplete), regular booking 10% discount
-- Airport: arrival/departure toggle with 45-min arrival waiting, executive tier (+30%), vehicle class
-- Minimum booking floors (private-hire £35, airport £45)
-- Itemised quote breakdown: base journey, return, deadhead, waiting, DVSA break, stops, meet & greet, arrival, subtotal, surcharges, discounts, total — all displayed as individual line items
 - Custom toggle labels (toggleLabels), conditional field visibility (showWhen)
+- Luggage dropdown, wheelchair toggle, multi-stop support (up to 2 stops with autocomplete)
+- Airport: arrival/departure toggle, executive tier (+30%), meet & greet, fixed-rate model unchanged
+
+**Pricing Refactor + Admin Cost Portal — COMPLETE (2026-02-16)**
+- Cost-per-mile + charge-out-rate model replaces baseFare + perMileRate for private hire
+- Three-tier return pricing:
+  - **Split**: pickup near base + gap ≥ 5 hours → driver returns to base, zero waiting charge
+  - **Wait**: pickup far from base OR short gap → driver stays, waiting charged at £17/hr
+  - **Separate**: different-day → two independent bookings, per-leg surcharges
+- Deadhead rolled into journey miles (not shown as separate line to customer)
+- Admin pricing portal at `/admin/pricing` (management only):
+  - Core pricing (costPerMile, chargeOutRate, driverWage + margin display)
+  - Operational thresholds, minimum floors, passenger multipliers, surcharges, bank holidays, DVSA
+  - Quote preview panel for testing changes before saving
+- `GET /api/admin/pricing` and `POST /api/admin/pricing` endpoints (GitHub API commit)
 - Flags: heavy luggage, wheelchair accessible, executive vehicle badges on estimate
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable)
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable)
 
 ---
 
@@ -233,7 +239,8 @@ afj-website/
 │   │   │   ├── index.astro         # Dashboard home
 │   │   │   ├── content.astro       # Content editor with AI drafting
 │   │   │   ├── pages.astro         # Page update requests (NL → code)
-│   │   │   └── approvals.astro     # Pending content approval queue
+│   │   │   ├── approvals.astro     # Pending content approval queue
+│   │   │   └── pricing.astro       # 🆕 Pricing configuration portal (management only)
 │   │   ├── api/
 │   │   │   ├── blog/
 │   │   │   │   └── create.ts       # POST — create blog via GitHub API
@@ -244,8 +251,11 @@ afj-website/
 │   │   │   │   └── seo-generate.ts # 🆕 POST — AI local SEO page generation
 │   │   │   ├── quote/
 │   │   │   │   └── estimate.ts     # 🆕 POST — intelligent quote estimation
-│   │   │   └── compliance/
-│   │   │       └── status.ts       # 🆕 GET — compliance dashboard data
+│   │   │   ├── compliance/
+│   │   │   │   └── status.ts       # 🆕 GET — compliance dashboard data
+│   │   │   └── admin/
+│   │   │       ├── pricing.ts      # 🆕 GET/POST — pricing config read/write
+│   │   │       └── compliance.ts   # POST — compliance data update via GitHub API
 │   │   ├── quote/
 │   │   │   └── index.astro         # 🆕 Intelligent quote wizard
 │   │   ├── compliance.astro        # 🆕 Public compliance dashboard
@@ -478,7 +488,25 @@ The quote wizard at `/quote` is a public-facing multi-step form.
 | Executive Minibus | Event type, date, pickup/dropoff, passengers, hours needed |
 
 ### Estimation Logic
-Stored in `src/data/quote-rules.json`. Rule-based, not AI-powered (no need for LLM here — simple distance × rate × factors). The quote is an estimate range to set expectations, not a binding price.
+Stored in `src/data/quote-rules.json`. Rule-based, not AI-powered (no need for LLM here). The quote is an estimate range to set expectations, not a binding price.
+
+### Pricing Model (Private Hire)
+Cost = (miles × costPerMile) + (hours × chargeOutRatePerHour), then × passengerMultiplier.
+- `costPerMile` (default £0.45) covers fuel, wear, insurance, depreciation, compliance — set by admin
+- `chargeOutRatePerHour` (default £17) is what we charge clients per driver hour — set by admin
+- `driverWagePerHour` (default £13) is what we pay the driver — shown in admin for margin visibility only
+
+**Three-tier return pricing:**
+1. **Split** (same-day, pickup near base, gap ≥ 5 hours) — driver returns to base between legs. Two separate leg costs, zero waiting charge. Customer sees "Separate return collection" line.
+2. **Wait** (same-day, far from base OR short gap) — driver stays at destination. Journey + return + waiting hours at charge-out rate. Customer sees "Driver waiting time" line.
+3. **Separate** (different-day) — two independent bookings. Surcharges applied per-leg based on each leg's date/time.
+
+Deadhead (base→pickup) is rolled into journey miles — not shown as a separate line item. Only charged when pickup is >30 miles from nearest base.
+
+**Airport transfers** use a separate fixed-rate model (`airportRates` table), not the cost-per-mile formula.
+
+### Admin Pricing Portal (`/admin/pricing`)
+Management-only admin page for configuring all pricing inputs without touching code. Changes commit to `quote-rules.json` via GitHub API and auto-deploy via Railway. Includes a quote preview panel to test impact of changes before saving.
 
 ---
 

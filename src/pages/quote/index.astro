@@ -827,6 +827,18 @@ const jsonLD = {
     return valid ? answers : null;
   }
 
+  // Format miles and minutes into a readable note string
+  function formatMilesTime(miles, minutes) {
+    if (!miles) return null;
+    var note = miles + ' miles';
+    if (minutes) {
+      var hrs = Math.floor(minutes / 60);
+      var mins = minutes % 60;
+      note += ' \u00B7 approx. ' + (hrs > 0 ? hrs + 'h ' + mins + 'm' : mins + ' min');
+    }
+    return note;
+  }
+
   // Render itemised breakdown in Step 3
   function renderBreakdown(est) {
     var lines = document.getElementById('breakdownLines');
@@ -842,25 +854,38 @@ const jsonLD = {
       lines.appendChild(div);
     }
 
-    // Journey info note
-    var journeyNote = null;
-    if (est.distanceMiles) {
-      journeyNote = est.distanceMiles + ' miles';
-      if (est.durationMinutes) {
-        var hrs = Math.floor(est.durationMinutes / 60);
-        var mins = est.durationMinutes % 60;
-        journeyNote += ' \u00B7 approx. ' + (hrs > 0 ? hrs + 'h ' + mins + 'm' : mins + ' min');
+    // Journey line — always shown
+    addLine('Journey', est.journeyCost, formatMilesTime(est.journeyMiles, est.journeyMinutes));
+
+    // Return line — depends on return type
+    if (est.returnJourneyCost) {
+      if (est.returnType === 'split') {
+        addLine('Separate return collection', est.returnJourneyCost, formatMilesTime(est.returnMiles, est.returnMinutes));
+      } else {
+        addLine('Return journey', est.returnJourneyCost, formatMilesTime(est.returnMiles, est.returnMinutes));
       }
     }
 
-    addLine('Base journey', est.baseJourneyCost, journeyNote);
-    if (est.returnJourneyCost) addLine('Return journey', est.returnJourneyCost);
-    if (est.meetGreetCost) addLine('Meet & greet', est.meetGreetCost);
-    if (est.deadheadCost) addLine('Driver travel from base', est.deadheadCost, est.deadheadMiles + ' mi from nearest base');
+    // Waiting time — same-day wait only
     if (est.waitingCost) addLine('Driver waiting time', est.waitingCost, est.waitingHours + ' hours');
-    if (est.dvsaBreakCost) addLine('DVSA break allowance', est.dvsaBreakCost);
+
+    // DVSA break
+    if (est.dvsaBreakCost) addLine('DVSA driver break (45 min)', est.dvsaBreakCost);
+
+    // Additional stops
     if (est.additionalStopsCost) addLine(est.numberOfStops + ' additional stop' + (est.numberOfStops > 1 ? 's' : ''), est.additionalStopsCost);
+
+    // Airport-specific
+    if (est.meetGreetCost) addLine('Meet & greet', est.meetGreetCost);
     if (est.airportArrivalCost) addLine('Arrival waiting (45 min)', est.airportArrivalCost);
+
+    // Return message for split returns
+    if (est.returnMessage) {
+      var msgDiv = document.createElement('div');
+      msgDiv.className = 'mt-3 text-xs text-green-700 bg-green-50 rounded px-3 py-2';
+      msgDiv.textContent = est.returnMessage;
+      lines.appendChild(msgDiv);
+    }
 
     // Subtotal
     document.getElementById('breakdownSubtotal').innerHTML =

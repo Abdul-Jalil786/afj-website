@@ -97,15 +97,19 @@
       "type": "enterprise"
     }
   },
+  "costPerMile": 0.45,
+  "chargeOutRatePerHour": 17,
+  "driverWagePerHour": 13,
+  "deadheadThresholdMiles": 30,
+  "minGapForSplitReturnHours": 5,
+  "dvsa": {
+    "breakThresholdHours": 4.5,
+    "breakDurationMinutes": 45,
+    "minimumPassengers": 9
+  },
   "pricing": {
     "private-hire": {
-      "baseFare": 40,
-      "perMileRate": 2.5,
-      "passengerMultipliers": { "1-8": 1.0, "9-16": 1.3, "17-24": 1.7, "25-33": 2.1 },
-      "driverWagePerHour": 13,
-      "deadheadThresholdMiles": 30,
-      "dvsaBreakMinutes": 45,
-      "dvsaDrivingThresholdMinutes": 270,
+      "passengerMultipliers": { "1-8": 1.0, "9-16": 1.3, "17-24": 1.6, "25-33": 2.0 },
       "averageSpeedMph": 40,
       "stopWaitingMinutes": 10,
       "regularDiscountPercent": 10,
@@ -188,7 +192,7 @@
     "leeds": "default"
   },
   "bases": [
-    { "postcode": "B7 4JD", "label": "Birmingham" },
-    { "postcode": "M35 0BR", "label": "Manchester" }
+    { "name": "Birmingham", "postcode": "B7 4JD", "lat": 52.4912, "lng": -1.8876 },
+    { "name": "Manchester", "postcode": "M35 0BR", "lat": 53.5074, "lng": -2.1553 }
   ]
 }

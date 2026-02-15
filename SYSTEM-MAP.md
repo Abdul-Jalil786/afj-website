@@ -105,7 +105,30 @@ Chronological record of every major feature, based on git history.
 - `scripts/image-audit.mjs` — Image optimization audit (scan >500KB, WebP conversion via sharp)
 - Accessibility fixes: skip-to-content link, ServiceCard alt text, Footer ARIA, CookieBanner focus management
 
-### Phase 9.1 — Quote Wizard Overhaul (2026-02-15/16) ← LATEST
+### Phase 9.2 — Pricing Refactor + Admin Cost Portal (2026-02-16) ← LATEST
+- **Cost-based pricing model** for private hire — replaces baseFare + perMileRate with two admin-configurable inputs:
+  - `costPerMile` (£0.45) — combined fuel + wear + insurance + depreciation + compliance
+  - `chargeOutRatePerHour` (£17) — what we charge clients per driver hour (vs £13 driver wage)
+- **Three-tier return pricing** for private hire:
+  - **Split**: pickup near base + gap ≥ minGapForSplitReturnHours → driver returns to base between legs, zero waiting charge
+  - **Wait**: pickup far from base OR short gap → driver stays at destination, waiting time charged at charge-out rate
+  - **Separate**: different-day return → two independent bookings, surcharges applied per-leg based on each leg's date/time
+- **Deadhead rolled into journey miles** — no separate "Driver travel from base" line; deadhead miles/hours included in Journey line
+- **Admin pricing portal** at `/admin/pricing` — management-only, 7 sections:
+  1. Core Pricing (costPerMile, chargeOutRate, driverWage + margin display)
+  2. Operational Thresholds (deadhead threshold, min gap for split return)
+  3. Minimum Booking Floors (private hire, airport)
+  4. Passenger Multipliers (editable per band)
+  5. Surcharges (editable percentages)
+  6. Bank Holiday Dates (add/remove)
+  7. DVSA Compliance (break threshold, duration, min passengers)
+  8. Quote Preview panel (test quotes with current saved values)
+- **API endpoints**: `GET /api/admin/pricing` (read config), `POST /api/admin/pricing` (write via GitHub API)
+- **Airport transfers unchanged** — keeps fixed-rate model with airport rates table
+- Updated passenger multipliers: 17-24 → 1.6 (was 1.7), 25-33 → 2.0 (was 2.1)
+- DVSA config moved to top-level `dvsa` object (breakThresholdHours, breakDurationMinutes, minimumPassengers)
+
+### Phase 9.1 — Quote Wizard Overhaul (2026-02-15/16)
 - **Postcode/city autocomplete** on quote form text inputs via Postcodes.io API
   - Routing heuristic: `/^[A-Z]{1,2}\d/i` → postcode autocomplete endpoint; else → places search endpoint
   - Debounced 300ms, keyboard navigation (arrows, Enter, Escape), up to 8 suggestions
@@ -185,6 +208,7 @@ LIVE ROUTES:
 /admin/content                  AI blog draft creator (generate, preview, edit, publish)
 /admin/pages                    NL page update interface (describe change → AI diff → apply)
 /admin/approvals                Pending content approval queue
+/admin/pricing                  Pricing configuration portal (management only)
 /admin/compliance               Compliance data editor (operations + management only)
 /admin/testimonials             AI testimonial/case study creator
 ```
@@ -201,6 +225,8 @@ POST /api/ai/testimonial        AI testimonial/case study from raw feedback
 POST /api/quote/estimate        Intelligent quote estimation (rule-based, public)
 GET  /api/compliance/status     Compliance dashboard data (public, cached)
 POST /api/admin/approval        Approval workflow (GET list, POST submit, PUT approve/reject)
+GET  /api/admin/pricing         Read current pricing config from quote-rules.json
+POST /api/admin/pricing         Update pricing config via GitHub API
 POST /api/admin/compliance      Update compliance data via GitHub API
 ```
 
@@ -255,10 +281,11 @@ Social Impact (7):
 src/lib/
   llm.ts                        LLM provider abstraction (Anthropic ↔ Groq swappable)
   prompts.ts                    System prompts with brand voice (BLOG_DRAFT, PAGE_EDIT, TESTIMONIAL, SEO_PAGE)
-  quote-engine.ts               Quote estimation engine — real driving distance (OSRM + Postcodes.io),
-                                  driver hours pricing, deadhead, DVSA breaks, multi-stop chaining,
-                                  surcharges, regular discount, executive/arrival, minimum floors,
-                                  full itemised breakdown, fallback to hardcoded distance matrix
+  quote-engine.ts               Quote estimation engine — cost-per-mile + charge-out-rate model,
+                                  three-tier return pricing (split/wait/separate), OSRM + Postcodes.io,
+                                  deadhead rolled into journey, DVSA breaks, multi-stop chaining,
+                                  per-leg surcharges for different-day, regular discount, minimum floors,
+                                  airport fixed-rate unchanged, full itemised breakdown
 ```
 
 ### Data Files
@@ -268,10 +295,11 @@ src/content/blog/*.md           16 published blog posts (Astro content collectio
 src/content/testimonials/       Testimonials JSON
 src/data/compliance.json        8 compliance items (CQC, DBS, MOT, insurance, certs, accessibility, safeguarding, carbon)
 src/data/departments.json       Department → page mapping for admin access control
-src/data/quote-rules.json       Quote rules: pricing (baseFare, perMile, driver wage, deadhead, DVSA,
-                                  stop waiting, regular discount, executive, arrival waiting),
-                                  surcharges (time/day/bank holiday), minimum booking, distance matrix,
-                                  airport rates, city lookup, base postcodes, bank holidays 2026,
+src/data/quote-rules.json       Quote rules: cost-per-mile (£0.45), charge-out rate (£17/hr),
+                                  driver wage (£13/hr), deadhead threshold (30mi), split return gap (5hr),
+                                  DVSA config, passenger multipliers, surcharges (time/day/bank holiday),
+                                  minimum booking, distance matrix, airport rates, city lookup,
+                                  base postcodes with lat/lng, bank holidays 2026,
                                   service questions with showWhen, toggleLabels, luggage, wheelchair
 src/data/area-data/areas.json   25 areas with metadata (slug, council, population, distance, region, services)
 src/data/area-data/schools.json 3-5 SEND schools per area with postcodes (not imported by area pages — competitive protection)
@@ -327,7 +355,8 @@ OSRM                → Real driving distance and duration via router.project-os
 - Sitemap generation (excludes internal/admin pages)
 - Image library and content calendar internal tools
 - Admin dashboard with AI blog drafting, NL page editing, approval workflow
-- Intelligent quote wizard with real driving mileage, driver hours pricing, postcode autocomplete
+- Intelligent quote wizard with cost-based pricing, three-tier returns, postcode autocomplete
+- Admin pricing configuration portal at /admin/pricing
 - Public compliance dashboard
 - AI testimonial/case study generator
 - Social media publishing scripts (Facebook, LinkedIn)
@@ -392,11 +421,24 @@ Customer → /quote → selects service type (instant or enterprise)
   → POST /api/quote/estimate
     → Postcodes.io (lat/lng) + OSRM (driving distance/duration) [fallback: hardcoded matrix]
     → Multi-stop: chains distance through up to 2 intermediate stops
-    → Calculates: base journey + return + deadhead + waiting + DVSA + stops + meet&greet + arrival
-    → Applies: surcharges (time/day/bank holiday) → regular discount → minimum floor → range spread
-    → Returns: full itemised breakdown with all cost components + price range
-  → Estimate screen: itemised breakdown table + price range + luggage/wheelchair/executive flags
+    → Private hire: cost-per-mile + charge-out-rate model
+      → One-way: journey miles × £/mi + driving hours × £/hr (deadhead rolled in if >30mi from base)
+      → Same-day return: SPLIT (driver returns to base, no waiting) or WAIT (driver stays, waiting charged)
+        → Split conditions: pickup within deadhead threshold + gap ≥ 5 hours
+      → Different-day return: two separate bookings, surcharges per-leg
+    → Airport: fixed-rate model from airportRates table (unchanged)
+    → Applies: passenger multiplier → surcharges (time/day/bank holiday) → regular discount → minimum floor → range spread
+    → Returns: full itemised breakdown + price range + return type indicator
+  → Estimate screen: journey/return/waiting/DVSA line items + flags + split return message
   → Customer can submit full quote request → Web3Forms → info@afjltd.co.uk
+```
+
+### Admin Pricing Config (Current)
+```
+Admin → /admin/pricing (Cloudflare Zero Trust) → edits cost/rate/thresholds/surcharges
+  → Save Changes → POST /api/admin/pricing
+    → Merges into quote-rules.json → GitHub API commit → Railway auto-deploy
+  → Test Quote Preview → POST /api/quote/estimate with current saved values
 ```
 
 ### Contact Form (Current)

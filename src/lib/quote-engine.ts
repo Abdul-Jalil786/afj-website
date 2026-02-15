@@ -5,12 +5,22 @@ export interface QuoteEstimate {
   high: number;
   currency: string;
   perUnit: string;
+
+  // Journey details (customer-visible)
   distanceMiles?: number;
   durationMinutes?: number;
-  baseJourneyCost: number;
+
+  // Return scenario
+  returnType?: 'split' | 'wait' | 'separate';
+  returnMessage?: string;
+
+  // Line items
+  journeyCost: number;
+  journeyMiles: number;
+  journeyMinutes: number;
   returnJourneyCost?: number;
-  deadheadCost?: number;
-  deadheadMiles?: number;
+  returnMiles?: number;
+  returnMinutes?: number;
   waitingCost?: number;
   waitingHours?: number;
   dvsaBreakCost?: number;
@@ -195,10 +205,11 @@ function calculateSurcharges(date: string, time: string): { percent: number; lab
 
 /**
  * Calculate driving distance from the nearest company base to a pickup postcode.
- * Bases are defined in quote-rules.json.
+ * Uses hardcoded base lat/lng first (no API call needed), then OSRM for driving route.
+ * Falls back to distance matrix if OSRM fails.
  */
 async function getDeadheadFromBase(pickupPostcode: string): Promise<{ miles: number; minutes: number }> {
-  const bases = (quoteRules as any).bases as { postcode: string; label: string }[];
+  const bases = (quoteRules as any).bases as { name: string; postcode: string; lat: number; lng: number }[];
   if (!bases || !bases.length) return { miles: 0, minutes: 0 };
 
   const pickupCoords = await fetchCoords(pickupPostcode);
@@ -210,21 +221,17 @@ async function getDeadheadFromBase(pickupPostcode: string): Promise<{ miles: num
     return { miles, minutes: Math.round((miles / avgSpeedMph) * 60) };
   }
 
-  // Fetch coords for all bases in parallel
-  const baseCoords = await Promise.all(bases.map((b) => fetchCoords(b.postcode)));
-
-  // Calculate distance from each base to pickup
+  // Use hardcoded base coords — no API call needed for base geocoding
   let best: { miles: number; minutes: number } | null = null;
 
-  for (let i = 0; i < bases.length; i++) {
-    const bc = baseCoords[i];
-    if (!bc) continue;
-
-    const result = await fetchDrivingMiles(bc.lat, bc.lng, pickupCoords.lat, pickupCoords.lng);
-    if (result && result.miles > 0) {
-      const rounded = { miles: Math.round(result.miles), minutes: Math.round(result.minutes) };
-      if (!best || rounded.miles < best.miles) {
-        best = rounded;
+  for (const base of bases) {
+    if (base.lat && base.lng) {
+      const result = await fetchDrivingMiles(base.lat, base.lng, pickupCoords.lat, pickupCoords.lng);
+      if (result && result.miles > 0) {
+        const rounded = { miles: Math.round(result.miles), minutes: Math.round(result.minutes) };
+        if (!best || rounded.miles < best.miles) {
+          best = rounded;
+        }
       }
     }
   }
@@ -248,7 +255,19 @@ function lookupAirportRate(area: string, airportCode: string): number {
 }
 
 /**
+ * Calculate a cost-based price for a leg using costPerMile + chargeOutRatePerHour.
+ */
+function calculateLegCost(miles: number, minutes: number): number {
+  const costPerMile = (quoteRules as any).costPerMile ?? 0.45;
+  const chargeOutRate = (quoteRules as any).chargeOutRatePerHour ?? 17;
+  const hours = minutes / 60;
+  return (miles * costPerMile) + (hours * chargeOutRate);
+}
+
+/**
  * Calculate an estimated price range for Private Hire or Airport Transfers.
+ * Private hire uses a cost-based model (costPerMile + chargeOutRatePerHour).
+ * Airport transfers use fixed-rate pricing.
  * Returns a full itemised breakdown of all cost components.
  */
 export async function estimateQuote(
@@ -263,10 +282,14 @@ export async function estimateQuote(
     throw new Error(`No pricing available for service: ${service}`);
   }
 
-  let baseJourneyCost: number;
+  let journeyCost: number;
+  let journeyMiles: number;
+  let journeyMinutes: number;
   let returnJourneyCost: number | undefined;
-  let deadheadCostVal: number | undefined;
-  let deadheadMilesVal: number | undefined;
+  let returnMilesVal: number | undefined;
+  let returnMinutesVal: number | undefined;
+  let returnTypeVal: 'split' | 'wait' | 'separate' | undefined;
+  let returnMessage: string | undefined;
   let waitingCostVal: number | undefined;
   let waitingHoursVal: number | undefined;
   let dvsaBreakCostVal: number | undefined;
@@ -280,14 +303,19 @@ export async function estimateQuote(
   let durationMinutes: number | undefined;
 
   if (service === 'private-hire') {
+    const chargeOutRate = (quoteRules as any).chargeOutRatePerHour ?? 17;
+    const deadheadThreshold = (quoteRules as any).deadheadThresholdMiles ?? 30;
+    const minGapForSplit = (quoteRules as any).minGapForSplitReturnHours ?? 5;
+    const dvsa = (quoteRules as any).dvsa || {};
+
     // Collect intermediate stops
     const stops: string[] = [];
     if (answers.stop1) stops.push(answers.stop1);
     if (answers.stop2) stops.push(answers.stop2);
     numberOfStops = stops.length;
 
-    // Calculate total distance (chaining through stops)
-    let distanceResult: { miles: number; minutes: number };
+    // Calculate core journey distance (pickup → stops → destination)
+    let coreDistance: { miles: number; minutes: number };
     if (stops.length > 0) {
       const waypoints = [answers.pickupPostcode || '', ...stops, answers.destinationPostcode || ''];
       const legs: Promise<{ miles: number; minutes: number }>[] = [];
@@ -295,87 +323,187 @@ export async function estimateQuote(
         legs.push(getDistance(waypoints[i], waypoints[i + 1]));
       }
       const legResults = await Promise.all(legs);
-      distanceResult = {
+      coreDistance = {
         miles: legResults.reduce((sum, r) => sum + r.miles, 0),
         minutes: legResults.reduce((sum, r) => sum + r.minutes, 0),
       };
     } else {
-      distanceResult = await getDistance(
+      coreDistance = await getDistance(
         answers.pickupPostcode || '',
         answers.destinationPostcode || '',
       );
     }
 
-    distanceMiles = distanceResult.miles;
-    durationMinutes = distanceResult.minutes;
+    // Get deadhead from nearest base
+    const deadhead = await getDeadheadFromBase(answers.pickupPostcode || '');
+    const deadheadApplies = deadhead.miles > deadheadThreshold;
+
+    // Also get deadhead from destination to base (for return legs)
+    const destDeadhead = await getDeadheadFromBase(answers.destinationPostcode || '');
 
     const passengerKey = answers.passengers || '1-8';
     const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;
-    const wage = pricing.driverWagePerHour ?? 13;
-
-    // Base one-way journey cost (includes passenger multiplier)
-    const oneWay = (pricing.baseFare + distanceResult.miles * pricing.perMileRate) * passengerMult;
-    baseJourneyCost = oneWay;
-
-    // Deadhead from nearest base
-    const deadhead = await getDeadheadFromBase(answers.pickupPostcode || '');
-    const threshold = pricing.deadheadThresholdMiles ?? 30;
 
     if (answers.returnJourney === 'yes') {
       const isSameDay = answers.returnType !== 'no';
-      returnJourneyCost = oneWay;
 
-      if (isSameDay) {
-        // Waiting time (separate from DVSA break for itemised display)
+      if (!isSameDay) {
+        // ── SCENARIO 1: Different-day return ──
+        // Two completely separate bookings priced independently
+        returnTypeVal = 'separate';
+
+        // Outbound: base→pickup→destination→base (deadhead rolled into total)
+        let outboundMiles = coreDistance.miles;
+        let outboundMinutes = coreDistance.minutes;
+        if (deadheadApplies) {
+          outboundMiles += deadhead.miles + destDeadhead.miles;
+          outboundMinutes += deadhead.minutes + destDeadhead.minutes;
+        }
+
+        // Return: base→destination→pickup→base (reverse route, same core distance)
+        let returnMiles = coreDistance.miles;
+        let returnMin = coreDistance.minutes;
+        if (deadheadApplies) {
+          returnMiles += destDeadhead.miles + deadhead.miles;
+          returnMin += destDeadhead.minutes + deadhead.minutes;
+        }
+
+        journeyCost = calculateLegCost(outboundMiles, outboundMinutes) * passengerMult;
+        journeyMiles = outboundMiles;
+        journeyMinutes = outboundMinutes;
+
+        returnJourneyCost = calculateLegCost(returnMiles, returnMin) * passengerMult;
+        returnMilesVal = returnMiles;
+        returnMinutesVal = returnMin;
+
+        distanceMiles = outboundMiles + returnMiles;
+        durationMinutes = outboundMinutes + returnMin;
+
+      } else {
+        // Same-day return — determine SPLIT vs WAIT
+        let gapHours = 0;
+
         if (answers.time && answers.returnPickupTime) {
           const pickupMin = parseTimeToMinutes(answers.time);
           const returnMin = parseTimeToMinutes(answers.returnPickupTime);
-          const arrivalMin = pickupMin + distanceResult.minutes;
+          const arrivalMin = pickupMin + coreDistance.minutes;
           const rawWaitingMin = returnMin - arrivalMin;
+          gapHours = rawWaitingMin > 0 ? rawWaitingMin / 60 : 0;
+        }
 
-          if (rawWaitingMin > 0) {
-            waitingCostVal = (rawWaitingMin / 60) * wage;
+        const canSplit = !deadheadApplies || deadhead.miles <= deadheadThreshold;
+        const gapLongEnough = gapHours >= minGapForSplit;
 
-            const passengerNum = parseInt(passengerKey) || 1;
-            const totalDrivingMin = distanceResult.minutes * 2;
-            const dvsaThreshold = pricing.dvsaDrivingThresholdMinutes ?? 270;
-            const dvsaBreakMin = pricing.dvsaBreakMinutes ?? 45;
+        if (canSplit && gapLongEnough) {
+          // ── SCENARIO 2: Same-day SPLIT ──
+          // Driver returns to base between legs — no waiting charge
+          returnTypeVal = 'split';
+          returnMessage = 'Your return will be handled as a separate collection \u2014 no waiting charges apply';
 
-            if (passengerNum >= 9 && totalDrivingMin > dvsaThreshold) {
-              dvsaBreakCostVal = (dvsaBreakMin / 60) * wage;
-              dvsaBreakApplied = true;
-            }
-
-            waitingHoursVal = Math.round(((rawWaitingMin + (dvsaBreakApplied ? dvsaBreakMin : 0)) / 60) * 10) / 10;
+          // Leg 1: base → pickup → destination → base
+          let leg1Miles = coreDistance.miles;
+          let leg1Minutes = coreDistance.minutes;
+          if (deadheadApplies) {
+            leg1Miles += deadhead.miles + destDeadhead.miles;
+            leg1Minutes += deadhead.minutes + destDeadhead.minutes;
           }
-        }
 
-        // Deadhead: one round trip from base
-        if (deadhead.miles > threshold) {
-          deadheadCostVal = (deadhead.minutes / 60) * 2 * wage;
-          deadheadMilesVal = deadhead.miles;
-        }
-      } else {
-        // Different-day return: two separate round trips from base
-        if (deadhead.miles > threshold) {
-          deadheadCostVal = (deadhead.minutes / 60) * 2 * wage * 2;
-          deadheadMilesVal = deadhead.miles;
+          // Leg 2: base → destination → pickup → base
+          let leg2Miles = coreDistance.miles;
+          let leg2Minutes = coreDistance.minutes;
+          if (deadheadApplies) {
+            leg2Miles += destDeadhead.miles + deadhead.miles;
+            leg2Minutes += destDeadhead.minutes + deadhead.minutes;
+          }
+
+          const totalMiles = leg1Miles + leg2Miles;
+          const totalMinutes = leg1Minutes + leg2Minutes;
+
+          journeyCost = calculateLegCost(leg1Miles, leg1Minutes) * passengerMult;
+          journeyMiles = leg1Miles;
+          journeyMinutes = leg1Minutes;
+
+          returnJourneyCost = calculateLegCost(leg2Miles, leg2Minutes) * passengerMult;
+          returnMilesVal = leg2Miles;
+          returnMinutesVal = leg2Minutes;
+
+          distanceMiles = totalMiles;
+          durationMinutes = totalMinutes;
+
+        } else {
+          // ── SCENARIO 3: Same-day WAIT ──
+          // Driver stays at destination with vehicle
+          returnTypeVal = 'wait';
+
+          // Route: base → pickup → destination → (wait) → destination → pickup → base
+          let totalMiles = coreDistance.miles * 2; // out and back
+          let totalDrivingMinutes = coreDistance.minutes * 2;
+
+          if (deadheadApplies) {
+            totalMiles += deadhead.miles + deadhead.miles; // base→pickup + pickup→base
+            totalDrivingMinutes += deadhead.minutes + deadhead.minutes;
+          }
+
+          journeyCost = calculateLegCost(
+            coreDistance.miles + (deadheadApplies ? deadhead.miles : 0),
+            coreDistance.minutes + (deadheadApplies ? deadhead.minutes : 0),
+          ) * passengerMult;
+          journeyMiles = coreDistance.miles + (deadheadApplies ? deadhead.miles : 0);
+          journeyMinutes = coreDistance.minutes + (deadheadApplies ? deadhead.minutes : 0);
+
+          const returnCoreMiles = coreDistance.miles + (deadheadApplies ? deadhead.miles : 0);
+          const returnCoreMin = coreDistance.minutes + (deadheadApplies ? deadhead.minutes : 0);
+          returnJourneyCost = calculateLegCost(returnCoreMiles, returnCoreMin) * passengerMult;
+          returnMilesVal = returnCoreMiles;
+          returnMinutesVal = returnCoreMin;
+
+          // Waiting time
+          if (gapHours > 0) {
+            waitingCostVal = gapHours * chargeOutRate;
+            waitingHoursVal = Math.round(gapHours * 10) / 10;
+          }
+
+          // DVSA break
+          const passengerNum = parseInt(passengerKey) || 1;
+          const dvsaThresholdHrs = dvsa.breakThresholdHours ?? 4.5;
+          const dvsaBreakMin = dvsa.breakDurationMinutes ?? 45;
+          const dvsaMinPax = dvsa.minimumPassengers ?? 9;
+          if (passengerNum >= dvsaMinPax && (totalDrivingMinutes / 60) > dvsaThresholdHrs) {
+            dvsaBreakCostVal = (dvsaBreakMin / 60) * chargeOutRate;
+            dvsaBreakApplied = true;
+          }
+
+          distanceMiles = totalMiles;
+          durationMinutes = totalDrivingMinutes;
         }
       }
     } else {
-      // One-way: one round trip from base
-      if (deadhead.miles > threshold) {
-        deadheadCostVal = (deadhead.minutes / 60) * 2 * wage;
-        deadheadMilesVal = deadhead.miles;
+      // ── ONE-WAY TRIP ──
+      // Route: base → pickup → destination → base
+      let totalMiles = coreDistance.miles;
+      let totalMinutes = coreDistance.minutes;
+
+      if (deadheadApplies) {
+        // Round-trip deadhead: base→pickup + destination→base
+        totalMiles += deadhead.miles + destDeadhead.miles;
+        totalMinutes += deadhead.minutes + destDeadhead.minutes;
       }
+
+      journeyCost = calculateLegCost(totalMiles, totalMinutes) * passengerMult;
+      journeyMiles = totalMiles;
+      journeyMinutes = totalMinutes;
+      distanceMiles = totalMiles;
+      durationMinutes = totalMinutes;
     }
 
     // Stop waiting cost
     if (numberOfStops > 0) {
-      additionalStopsCostVal = numberOfStops * ((pricing.stopWaitingMinutes ?? 10) / 60) * wage;
+      const stopWaitMin = pricing.stopWaitingMinutes ?? 10;
+      additionalStopsCostVal = numberOfStops * (stopWaitMin / 60) * chargeOutRate;
     }
 
   } else if (service === 'airport') {
+    // Airport: keep existing fixed-rate model
     const pickupArea = extractArea(answers.pickupPostcode || '');
     const airportCode = (answers.airport || 'BHX').toUpperCase();
 
@@ -389,15 +517,17 @@ export async function estimateQuote(
 
     const passengerKey = answers.passengers || '1-8';
     const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;
-    baseJourneyCost = baseRate * passengerMult;
+    journeyCost = baseRate * passengerMult;
+    journeyMiles = 0;
+    journeyMinutes = 0;
 
     // Meet and greet
     if (answers.meetGreet === 'yes') {
       meetGreetCostVal = pricing.meetGreetSurcharge;
     }
 
-    // Return journey: additional cost = pre-return total × (multiplier - 1)
-    const preReturn = baseJourneyCost + (meetGreetCostVal || 0);
+    // Return journey: additional cost = pre-return total x (multiplier - 1)
+    const preReturn = journeyCost + (meetGreetCostVal || 0);
     if (answers.returnJourney === 'yes') {
       returnJourneyCost = preReturn * (pricing.returnMultiplier - 1);
     }
@@ -412,20 +542,48 @@ export async function estimateQuote(
   }
 
   // Subtotal: sum of all components
-  const subtotal = baseJourneyCost
+  const subtotal = journeyCost
     + (returnJourneyCost || 0)
-    + (deadheadCostVal || 0)
     + (waitingCostVal || 0)
     + (dvsaBreakCostVal || 0)
     + (additionalStopsCostVal || 0)
     + (meetGreetCostVal || 0)
     + (airportArrivalCostVal || 0);
 
-  // Surcharges (both services)
-  const surchargeResult = calculateSurcharges(answers.date || '', answers.time || '');
+  // Surcharges — for different-day returns, combine surcharges from both legs
   let surchargeCostVal: number | undefined;
-  if (surchargeResult.percent > 0) {
-    surchargeCostVal = subtotal * surchargeResult.percent / 100;
+  const allSurchargeLabels: string[] = [];
+  let totalSurchargePercent = 0;
+
+  if (service === 'private-hire' && returnTypeVal === 'separate') {
+    // Apply surcharges independently to each leg
+    const outSurcharge = calculateSurcharges(answers.date || '', answers.time || '');
+    const retSurcharge = calculateSurcharges(answers.returnDate || answers.date || '', answers.returnPickupTime || answers.time || '');
+
+    let totalSurchargeCost = 0;
+    if (outSurcharge.percent > 0) {
+      totalSurchargeCost += journeyCost * outSurcharge.percent / 100;
+    }
+    if (retSurcharge.percent > 0 && returnJourneyCost) {
+      totalSurchargeCost += returnJourneyCost * retSurcharge.percent / 100;
+    }
+
+    if (totalSurchargeCost > 0) {
+      surchargeCostVal = totalSurchargeCost;
+      // Combine unique labels
+      const seen = new Set<string>();
+      [...outSurcharge.labels, ...retSurcharge.labels].forEach((l) => {
+        if (!seen.has(l)) { seen.add(l); allSurchargeLabels.push(l); }
+      });
+      totalSurchargePercent = Math.round((totalSurchargeCost / subtotal) * 100);
+    }
+  } else {
+    const surchargeResult = calculateSurcharges(answers.date || '', answers.time || '');
+    if (surchargeResult.percent > 0) {
+      surchargeCostVal = subtotal * surchargeResult.percent / 100;
+      allSurchargeLabels.push(...surchargeResult.labels);
+      totalSurchargePercent = surchargeResult.percent;
+    }
   }
 
   const afterSurcharge = subtotal + (surchargeCostVal || 0);
@@ -459,10 +617,14 @@ export async function estimateQuote(
     perUnit: svcConfig.perUnit,
     distanceMiles,
     durationMinutes,
-    baseJourneyCost,
+    returnType: returnTypeVal,
+    returnMessage,
+    journeyCost,
+    journeyMiles: journeyMiles!,
+    journeyMinutes: journeyMinutes!,
     returnJourneyCost: returnJourneyCost || undefined,
-    deadheadCost: deadheadCostVal || undefined,
-    deadheadMiles: deadheadMilesVal,
+    returnMiles: returnMilesVal,
+    returnMinutes: returnMinutesVal,
     waitingCost: waitingCostVal || undefined,
     waitingHours: waitingHoursVal,
     dvsaBreakCost: dvsaBreakCostVal || undefined,
@@ -473,8 +635,8 @@ export async function estimateQuote(
     airportArrivalCost: airportArrivalCostVal || undefined,
     executiveUpgrade: executiveUpgrade || undefined,
     subtotal,
-    surchargePercent: surchargeResult.percent || undefined,
-    surchargeLabels: surchargeResult.labels.length ? surchargeResult.labels : undefined,
+    surchargePercent: totalSurchargePercent || undefined,
+    surchargeLabels: allSurchargeLabels.length ? allSurchargeLabels : undefined,
     surchargeCost: surchargeCostVal || undefined,
     regularDiscountPercent: regularDiscountPct,
     regularDiscountAmount: regularDiscountAmt || undefined,

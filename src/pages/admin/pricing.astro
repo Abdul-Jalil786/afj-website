@@ -1,0 +1,468 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import departments from '../../data/departments.json';
+import quoteRules from '../../data/quote-rules.json';
+
+const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
+
+type DeptKey = keyof typeof departments;
+let userDepartment: DeptKey = 'management';
+
+for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof departments[DeptKey]][]) {
+  if (dept.emails.includes(userEmail)) {
+    userDepartment = key;
+    break;
+  }
+}
+
+const canEdit = userDepartment === 'management';
+---
+
+<AdminLayout title="Pricing Configuration" userEmail={userEmail}>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Pricing Configuration</h1>
+        <p class="text-gray-600 mt-1">Adjust cost inputs, thresholds and surcharges. Changes deploy automatically via GitHub.</p>
+      </div>
+      <a href="/quote" target="_blank" class="text-sm text-afj-accent hover:underline">View quote wizard &rarr;</a>
+    </div>
+
+    {!canEdit ? (
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
+        <p class="text-amber-800 font-medium">You do not have permission to edit pricing.</p>
+        <p class="text-amber-600 text-sm mt-1">Only the Management department can update pricing configuration.</p>
+      </div>
+    ) : (
+      <div>
+        <div id="saveStatus" class="text-sm hidden mb-4"></div>
+
+        <!-- Section 1: Core Pricing -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Core Pricing</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Cost per mile (&pound;)</label>
+              <input type="number" step="0.01" min="0" id="costPerMile" value={quoteRules.costPerMile}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+              <p class="text-xs text-gray-400 mt-1">Fuel + wear + insurance + depreciation + compliance</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Charge-out rate (&pound;/hr)</label>
+              <input type="number" step="0.01" min="0" id="chargeOutRatePerHour" value={quoteRules.chargeOutRatePerHour}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+              <p class="text-xs text-gray-400 mt-1">What we charge clients per driver hour</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Driver wage (&pound;/hr)</label>
+              <input type="number" step="0.01" min="0" id="driverWagePerHour" value={quoteRules.driverWagePerHour}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+              <p class="text-xs text-gray-400 mt-1">What we pay the driver (margin visibility only)</p>
+            </div>
+          </div>
+          <div class="mt-3 text-sm text-gray-600">
+            Margin per driver hour: <span id="marginDisplay" class="font-semibold text-afj-green"></span>
+          </div>
+        </div>
+
+        <!-- Section 2: Operational Thresholds -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Operational Thresholds</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Deadhead threshold (miles)</label>
+              <input type="number" step="1" min="0" id="deadheadThresholdMiles" value={quoteRules.deadheadThresholdMiles}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+              <p class="text-xs text-gray-400 mt-1">Pickup distance from base before deadhead is charged</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Min gap for split return (hours)</label>
+              <input type="number" step="0.5" min="0" id="minGapForSplitReturnHours" value={quoteRules.minGapForSplitReturnHours}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+              <p class="text-xs text-gray-400 mt-1">Minimum waiting gap to split same-day return into two legs</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Minimum Booking Floors -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Minimum Booking Floors</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Private hire minimum (&pound;)</label>
+              <input type="number" step="1" min="0" id="minPrivateHire" value={quoteRules.minimumBooking['private-hire']}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Airport transfer minimum (&pound;)</label>
+              <input type="number" step="1" min="0" id="minAirport" value={quoteRules.minimumBooking.airport}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Passenger Multipliers -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Passenger Multipliers</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {Object.entries(quoteRules.pricing['private-hire'].passengerMultipliers).map(([band, mult]) => (
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{band} pax</label>
+                <input type="number" step="0.1" min="0.1" data-pax-band={band} value={mult}
+                  class="pax-mult w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Section 5: Surcharges -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Surcharges</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Early morning (before 07:00) %</label>
+              <input type="number" step="1" min="0" id="surEarlyMorning" value={quoteRules.surcharges.earlyMorning.percent}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Late night (after 22:00) %</label>
+              <input type="number" step="1" min="0" id="surLateNight" value={quoteRules.surcharges.lateNight.percent}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Saturday %</label>
+              <input type="number" step="1" min="0" id="surSaturday" value={quoteRules.surcharges.saturday.percent}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Sunday %</label>
+              <input type="number" step="1" min="0" id="surSunday" value={quoteRules.surcharges.sunday.percent}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Bank holiday %</label>
+              <input type="number" step="1" min="0" id="surBankHoliday" value={quoteRules.surcharges.bankHoliday.percent}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 6: Bank Holiday Dates -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Bank Holiday Dates</h2>
+          <div id="bankHolidayList" class="space-y-2 mb-3">
+            {quoteRules.bankHolidays.map((d) => (
+              <div class="flex items-center gap-2 bh-row">
+                <input type="date" value={d} class="bh-date px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+                <button type="button" class="bh-remove text-gray-400 hover:text-red-500 text-xl font-bold px-2">&times;</button>
+              </div>
+            ))}
+          </div>
+          <button type="button" id="addBankHoliday" class="text-sm text-afj-accent hover:text-afj-green font-medium">+ Add date</button>
+        </div>
+
+        <!-- Section 7: DVSA Compliance -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">DVSA Compliance</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Break threshold (hours driving)</label>
+              <input type="number" step="0.5" min="0" id="dvsaBreakThreshold" value={quoteRules.dvsa.breakThresholdHours}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Break duration (minutes)</label>
+              <input type="number" step="1" min="0" id="dvsaBreakDuration" value={quoteRules.dvsa.breakDurationMinutes}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Minimum passengers for break</label>
+              <input type="number" step="1" min="1" id="dvsaMinPassengers" value={quoteRules.dvsa.minimumPassengers}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="flex justify-end mb-8">
+          <button id="saveBtn"
+            class="bg-afj-accent text-white font-semibold py-3 px-8 rounded-lg hover:bg-afj-green transition-colors">
+            Save Changes
+          </button>
+        </div>
+
+        <!-- Section 8: Quote Preview -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Test Quote Preview</h2>
+          <p class="text-sm text-gray-500 mb-4">Preview how pricing changes affect quotes before saving.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Pickup postcode</label>
+              <input type="text" id="previewPickup" value="B7 4QS" placeholder="e.g. B7 4QS"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Destination</label>
+              <input type="text" id="previewDest" value="M1 1AD" placeholder="e.g. M1 1AD"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Passengers</label>
+              <select id="previewPax" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white">
+                <option value="1-8">1-8</option>
+                <option value="9-16">9-16</option>
+                <option value="17-24">17-24</option>
+                <option value="25-33">25-33</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Date</label>
+              <input type="date" id="previewDate" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Pickup time</label>
+              <input type="time" id="previewTime" value="09:00" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Return?</label>
+              <select id="previewReturn" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white">
+                <option value="no">One-way</option>
+                <option value="same-day">Same-day return</option>
+                <option value="different-day">Different-day return</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Return time</label>
+              <input type="time" id="previewReturnTime" value="17:00" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+            </div>
+            <div class="flex items-end">
+              <button type="button" id="previewBtn"
+                class="w-full bg-gray-800 text-white font-medium py-2 px-4 rounded-md hover:bg-gray-700 transition-colors text-sm">
+                Calculate Preview
+              </button>
+            </div>
+          </div>
+
+          <div id="previewResult" class="hidden">
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <h3 class="text-sm font-semibold text-gray-700 mb-2">Current (saved) values</h3>
+                  <div id="previewCurrent" class="text-2xl font-bold text-gray-500">--</div>
+                  <div id="previewCurrentDetail" class="text-xs text-gray-400 mt-1"></div>
+                </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-gray-700 mb-2">With edited values</h3>
+                  <div id="previewEdited" class="text-2xl font-bold text-afj-green">--</div>
+                  <div id="previewEditedDetail" class="text-xs text-gray-400 mt-1"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <script is:inline>
+    var saveBtn = document.getElementById('saveBtn');
+    var saveStatus = document.getElementById('saveStatus');
+
+    // Margin display
+    function updateMargin() {
+      var chargeOut = parseFloat(document.getElementById('chargeOutRatePerHour').value) || 0;
+      var wage = parseFloat(document.getElementById('driverWagePerHour').value) || 0;
+      var margin = chargeOut - wage;
+      var el = document.getElementById('marginDisplay');
+      if (el) el.textContent = '\u00A3' + margin.toFixed(2);
+    }
+
+    var chargeOutEl = document.getElementById('chargeOutRatePerHour');
+    var wageEl = document.getElementById('driverWagePerHour');
+    if (chargeOutEl) chargeOutEl.addEventListener('input', updateMargin);
+    if (wageEl) wageEl.addEventListener('input', updateMargin);
+    updateMargin();
+
+    // Bank holiday management
+    var bhList = document.getElementById('bankHolidayList');
+    var addBhBtn = document.getElementById('addBankHoliday');
+
+    function bindBhRemove() {
+      bhList.querySelectorAll('.bh-remove').forEach(function (btn) {
+        btn.onclick = function () { btn.closest('.bh-row').remove(); };
+      });
+    }
+    bindBhRemove();
+
+    if (addBhBtn) {
+      addBhBtn.addEventListener('click', function () {
+        var row = document.createElement('div');
+        row.className = 'flex items-center gap-2 bh-row';
+        row.innerHTML =
+          '<input type="date" class="bh-date px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />' +
+          '<button type="button" class="bh-remove text-gray-400 hover:text-red-500 text-xl font-bold px-2">&times;</button>';
+        bhList.appendChild(row);
+        bindBhRemove();
+      });
+    }
+
+    // Collect all form values
+    function collectConfig() {
+      var paxMults = {};
+      document.querySelectorAll('.pax-mult').forEach(function (inp) {
+        paxMults[inp.dataset.paxBand] = parseFloat(inp.value) || 1.0;
+      });
+
+      var bankHolidays = [];
+      document.querySelectorAll('.bh-date').forEach(function (inp) {
+        if (inp.value) bankHolidays.push(inp.value);
+      });
+
+      return {
+        costPerMile: parseFloat(document.getElementById('costPerMile').value),
+        chargeOutRatePerHour: parseFloat(document.getElementById('chargeOutRatePerHour').value),
+        driverWagePerHour: parseFloat(document.getElementById('driverWagePerHour').value),
+        deadheadThresholdMiles: parseInt(document.getElementById('deadheadThresholdMiles').value),
+        minGapForSplitReturnHours: parseFloat(document.getElementById('minGapForSplitReturnHours').value),
+        minimumBooking: {
+          'private-hire': parseInt(document.getElementById('minPrivateHire').value),
+          airport: parseInt(document.getElementById('minAirport').value),
+        },
+        passengerMultipliers: paxMults,
+        surcharges: {
+          earlyMorning: { before: '07:00', percent: parseInt(document.getElementById('surEarlyMorning').value), label: 'Early morning' },
+          lateNight: { after: '22:00', percent: parseInt(document.getElementById('surLateNight').value), label: 'Late night' },
+          saturday: { dayOfWeek: 6, percent: parseInt(document.getElementById('surSaturday').value), label: 'Saturday' },
+          sunday: { dayOfWeek: 0, percent: parseInt(document.getElementById('surSunday').value), label: 'Sunday' },
+          bankHoliday: { percent: parseInt(document.getElementById('surBankHoliday').value), label: 'Bank holiday' },
+        },
+        bankHolidays: bankHolidays,
+        dvsa: {
+          breakThresholdHours: parseFloat(document.getElementById('dvsaBreakThreshold').value),
+          breakDurationMinutes: parseInt(document.getElementById('dvsaBreakDuration').value),
+          minimumPassengers: parseInt(document.getElementById('dvsaMinPassengers').value),
+        },
+      };
+    }
+
+    // Save handler
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        var config = collectConfig();
+
+        fetch('/api/admin/pricing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(config),
+        })
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            if (data.success) {
+              showStatus('Changes saved. Deployment will complete in ~2 minutes.', false);
+            } else {
+              throw new Error(data.error || 'Failed to save');
+            }
+          })
+          .catch(function (err) {
+            showStatus(err.message || 'Failed to save changes.', true);
+          })
+          .finally(function () {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+          });
+      });
+    }
+
+    function showStatus(message, isError) {
+      if (!saveStatus) return;
+      saveStatus.textContent = message;
+      saveStatus.className = 'text-sm mb-4 ' + (isError ? 'text-red-600' : 'text-green-600');
+      saveStatus.classList.remove('hidden');
+      setTimeout(function () { saveStatus.classList.add('hidden'); }, 6000);
+    }
+
+    // Quote preview
+    var previewBtn = document.getElementById('previewBtn');
+    if (previewBtn) {
+      // Set default date to tomorrow
+      var tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      var dateStr = tomorrow.toISOString().split('T')[0];
+      document.getElementById('previewDate').value = dateStr;
+
+      previewBtn.addEventListener('click', function () {
+        previewBtn.disabled = true;
+        previewBtn.textContent = 'Calculating...';
+
+        var returnVal = document.getElementById('previewReturn').value;
+        var answers = {
+          pickupPostcode: document.getElementById('previewPickup').value,
+          destinationPostcode: document.getElementById('previewDest').value,
+          passengers: document.getElementById('previewPax').value,
+          date: document.getElementById('previewDate').value,
+          time: document.getElementById('previewTime').value,
+        };
+
+        if (returnVal === 'same-day') {
+          answers.returnJourney = 'yes';
+          answers.returnType = 'yes';
+          answers.returnPickupTime = document.getElementById('previewReturnTime').value;
+        } else if (returnVal === 'different-day') {
+          answers.returnJourney = 'yes';
+          answers.returnType = 'no';
+          // Use next day as return date
+          var retDate = new Date(answers.date);
+          retDate.setDate(retDate.getDate() + 2);
+          answers.returnDate = retDate.toISOString().split('T')[0];
+          answers.returnPickupTime = document.getElementById('previewReturnTime').value;
+        }
+
+        // Fetch current saved quote
+        fetch('/api/quote/estimate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ service: 'private-hire', answers: answers }),
+        })
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            var resultEl = document.getElementById('previewResult');
+            resultEl.classList.remove('hidden');
+
+            if (data.success) {
+              var est = data.estimate;
+              document.getElementById('previewCurrent').textContent =
+                '\u00A3' + est.low + ' \u2013 \u00A3' + est.high;
+              var detail = 'Total: \u00A3' + Math.round(est.total);
+              if (est.returnType) detail += ' (' + est.returnType + ' return)';
+              document.getElementById('previewCurrentDetail').textContent = detail;
+
+              // For the "edited" column, show the same result since changes aren't saved yet
+              document.getElementById('previewEdited').textContent =
+                '\u00A3' + est.low + ' \u2013 \u00A3' + est.high;
+              document.getElementById('previewEditedDetail').textContent =
+                'Save changes first, then re-test to see updated prices';
+            } else {
+              document.getElementById('previewCurrent').textContent = 'Error';
+              document.getElementById('previewCurrentDetail').textContent = data.error || 'Unknown error';
+              document.getElementById('previewEdited').textContent = '--';
+              document.getElementById('previewEditedDetail').textContent = '';
+            }
+          })
+          .catch(function () {
+            document.getElementById('previewResult').classList.remove('hidden');
+            document.getElementById('previewCurrent').textContent = 'Error';
+            document.getElementById('previewCurrentDetail').textContent = 'Failed to fetch quote';
+          })
+          .finally(function () {
+            previewBtn.disabled = false;
+            previewBtn.textContent = 'Calculate Preview';
+          });
+      });
+    }
+  </script>
+</AdminLayout>
