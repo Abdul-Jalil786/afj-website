@@ -7,6 +7,7 @@ interface Props {
 }
 
 const { title, description = 'AFJ Limited — Your Partner in Safe, Reliable Transport Solutions' } = Astro.props;
+const ga4Id = import.meta.env.GA4_MEASUREMENT_ID;
 ---
 
 <!doctype html>
@@ -22,6 +23,15 @@ const { title, description = 'AFJ Limited — Your Partner in Safe, Reliable Tra
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    {import.meta.env.PROD && ga4Id && (
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}></script>
+      <script is:inline define:vars={{ ga4Id }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', ga4Id);
+      </script>
+    )}
     <title>{title}</title>
     <slot name="head" />
   </head>
