@@ -1,0 +1,254 @@
+{
+  "services": {
+    "send": {
+      "label": "SEND Transport",
+      "description": "Home to school transport for students with additional needs",
+      "perUnit": "per student per day",
+      "baseRate": 35,
+      "questions": [
+        {
+          "id": "students",
+          "label": "Number of students",
+          "type": "select",
+          "options": [
+            { "value": "1-3", "label": "1-3 students", "multiplier": 1.0 },
+            { "value": "4-8", "label": "4-8 students", "multiplier": 0.85 },
+            { "value": "9-16", "label": "9-16 students", "multiplier": 0.7 }
+          ]
+        },
+        {
+          "id": "area",
+          "label": "Pickup area",
+          "type": "select",
+          "options": [
+            { "value": "birmingham", "label": "Birmingham", "multiplier": 1.0 },
+            { "value": "sandwell", "label": "Sandwell", "multiplier": 1.05 },
+            { "value": "coventry", "label": "Coventry", "multiplier": 1.15 },
+            { "value": "manchester", "label": "Manchester", "multiplier": 1.25 },
+            { "value": "other", "label": "Other West Midlands", "multiplier": 1.1 }
+          ]
+        },
+        {
+          "id": "accessibility",
+          "label": "Accessibility requirements",
+          "type": "select",
+          "options": [
+            { "value": "standard", "label": "Standard seating", "multiplier": 1.0 },
+            { "value": "wheelchair", "label": "Wheelchair accessible", "multiplier": 1.2 },
+            { "value": "specialist", "label": "Specialist equipment needed", "multiplier": 1.35 }
+          ]
+        },
+        {
+          "id": "duration",
+          "label": "Contract duration",
+          "type": "select",
+          "options": [
+            { "value": "term", "label": "One term", "multiplier": 1.0 },
+            { "value": "year", "label": "Full academic year", "multiplier": 0.9 },
+            { "value": "multi-year", "label": "Multi-year contract", "multiplier": 0.8 }
+          ]
+        }
+      ],
+      "rangeSpread": 0.2
+    },
+    "nepts": {
+      "label": "Non-Emergency Patient Transport",
+      "description": "Transport to hospitals, clinics and medical appointments",
+      "perUnit": "per journey",
+      "baseRate": 45,
+      "questions": [
+        {
+          "id": "area",
+          "label": "Pickup area",
+          "type": "select",
+          "options": [
+            { "value": "birmingham", "label": "Birmingham", "multiplier": 1.0 },
+            { "value": "sandwell", "label": "Sandwell", "multiplier": 1.05 },
+            { "value": "coventry", "label": "Coventry", "multiplier": 1.2 },
+            { "value": "manchester", "label": "Manchester", "multiplier": 1.3 },
+            { "value": "other", "label": "Other West Midlands", "multiplier": 1.1 }
+          ]
+        },
+        {
+          "id": "wheelchair",
+          "label": "Wheelchair accessible vehicle needed?",
+          "type": "select",
+          "options": [
+            { "value": "no", "label": "No", "multiplier": 1.0 },
+            { "value": "yes", "label": "Yes", "multiplier": 1.25 }
+          ]
+        },
+        {
+          "id": "frequency",
+          "label": "How often?",
+          "type": "select",
+          "options": [
+            { "value": "one-off", "label": "One-off journey", "multiplier": 1.0 },
+            { "value": "weekly", "label": "Weekly regular booking", "multiplier": 0.9 },
+            { "value": "daily", "label": "Daily regular booking", "multiplier": 0.75 }
+          ]
+        },
+        {
+          "id": "time",
+          "label": "Time of day",
+          "type": "select",
+          "options": [
+            { "value": "daytime", "label": "Daytime (8am-6pm)", "multiplier": 1.0 },
+            { "value": "early", "label": "Early morning (before 8am)", "multiplier": 1.1 },
+            { "value": "evening", "label": "Evening (after 6pm)", "multiplier": 1.15 }
+          ]
+        }
+      ],
+      "rangeSpread": 0.2
+    },
+    "private-hire": {
+      "label": "Private Minibus Hire",
+      "description": "Minibus hire for events, outings and group travel",
+      "perUnit": "per hire",
+      "baseRate": 150,
+      "questions": [
+        {
+          "id": "passengers",
+          "label": "Number of passengers",
+          "type": "select",
+          "options": [
+            { "value": "1-8", "label": "1-8 passengers", "multiplier": 0.8 },
+            { "value": "9-16", "label": "9-16 passengers", "multiplier": 1.0 },
+            { "value": "17-32", "label": "17-32 passengers (2 vehicles)", "multiplier": 1.9 }
+          ]
+        },
+        {
+          "id": "distance",
+          "label": "Approximate distance",
+          "type": "select",
+          "options": [
+            { "value": "local", "label": "Local (under 15 miles)", "multiplier": 1.0 },
+            { "value": "regional", "label": "Regional (15-50 miles)", "multiplier": 1.5 },
+            { "value": "national", "label": "National (50+ miles)", "multiplier": 2.2 }
+          ]
+        },
+        {
+          "id": "returnJourney",
+          "label": "Return journey needed?",
+          "type": "select",
+          "options": [
+            { "value": "one-way", "label": "One way only", "multiplier": 1.0 },
+            { "value": "return", "label": "Return journey", "multiplier": 1.7 }
+          ]
+        },
+        {
+          "id": "luggage",
+          "label": "Luggage requirements",
+          "type": "select",
+          "options": [
+            { "value": "none", "label": "No luggage", "multiplier": 1.0 },
+            { "value": "light", "label": "Light luggage", "multiplier": 1.0 },
+            { "value": "heavy", "label": "Heavy or bulky items", "multiplier": 1.1 }
+          ]
+        }
+      ],
+      "rangeSpread": 0.25
+    },
+    "airport": {
+      "label": "Airport Transfers",
+      "description": "Reliable transfers to and from all major UK airports",
+      "perUnit": "per transfer",
+      "baseRate": 120,
+      "questions": [
+        {
+          "id": "airport",
+          "label": "Which airport?",
+          "type": "select",
+          "options": [
+            { "value": "bhx", "label": "Birmingham Airport (BHX)", "multiplier": 1.0 },
+            { "value": "man", "label": "Manchester Airport (MAN)", "multiplier": 1.4 },
+            { "value": "ema", "label": "East Midlands Airport (EMA)", "multiplier": 1.2 },
+            { "value": "lhr", "label": "London Heathrow (LHR)", "multiplier": 2.2 },
+            { "value": "lgw", "label": "London Gatwick (LGW)", "multiplier": 2.3 },
+            { "value": "stn", "label": "London Stansted (STN)", "multiplier": 2.4 }
+          ]
+        },
+        {
+          "id": "passengers",
+          "label": "Number of passengers",
+          "type": "select",
+          "options": [
+            { "value": "1-4", "label": "1-4 passengers", "multiplier": 1.0 },
+            { "value": "5-8", "label": "5-8 passengers", "multiplier": 1.3 },
+            { "value": "9-16", "label": "9-16 passengers", "multiplier": 1.8 }
+          ]
+        },
+        {
+          "id": "meetGreet",
+          "label": "Meet and greet service?",
+          "type": "select",
+          "options": [
+            { "value": "no", "label": "No — curbside pickup", "multiplier": 1.0 },
+            { "value": "yes", "label": "Yes — meet in arrivals", "multiplier": 1.15 }
+          ]
+        },
+        {
+          "id": "time",
+          "label": "Pickup time",
+          "type": "select",
+          "options": [
+            { "value": "daytime", "label": "Daytime (6am-10pm)", "multiplier": 1.0 },
+            { "value": "night", "label": "Night (10pm-6am)", "multiplier": 1.2 }
+          ]
+        }
+      ],
+      "rangeSpread": 0.15
+    },
+    "executive": {
+      "label": "Executive Minibus Hire",
+      "description": "Premium minibus hire for corporate events and special occasions",
+      "perUnit": "per hire",
+      "baseRate": 250,
+      "questions": [
+        {
+          "id": "eventType",
+          "label": "Type of event",
+          "type": "select",
+          "options": [
+            { "value": "corporate", "label": "Corporate event", "multiplier": 1.0 },
+            { "value": "wedding", "label": "Wedding", "multiplier": 1.15 },
+            { "value": "sports", "label": "Sports event", "multiplier": 1.0 },
+            { "value": "other", "label": "Other occasion", "multiplier": 1.0 }
+          ]
+        },
+        {
+          "id": "passengers",
+          "label": "Number of passengers",
+          "type": "select",
+          "options": [
+            { "value": "1-8", "label": "1-8 passengers", "multiplier": 0.85 },
+            { "value": "9-16", "label": "9-16 passengers", "multiplier": 1.0 },
+            { "value": "17-32", "label": "17-32 passengers (2 vehicles)", "multiplier": 1.85 }
+          ]
+        },
+        {
+          "id": "hours",
+          "label": "Hours needed",
+          "type": "select",
+          "options": [
+            { "value": "1-3", "label": "1-3 hours", "multiplier": 1.0 },
+            { "value": "4-6", "label": "4-6 hours (half day)", "multiplier": 1.6 },
+            { "value": "7-10", "label": "7-10 hours (full day)", "multiplier": 2.2 },
+            { "value": "overnight", "label": "Overnight", "multiplier": 2.8 }
+          ]
+        },
+        {
+          "id": "distance",
+          "label": "Approximate distance",
+          "type": "select",
+          "options": [
+            { "value": "local", "label": "Local (under 15 miles)", "multiplier": 1.0 },
+            { "value": "regional", "label": "Regional (15-50 miles)", "multiplier": 1.3 },
+            { "value": "national", "label": "National (50+ miles)", "multiplier": 1.8 }
+          ]
+        }
+      ],
+      "rangeSpread": 0.2
+    }
+  }
+}

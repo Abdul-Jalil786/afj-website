@@ -45,13 +45,20 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - Rejection modal with optional feedback reason
 - Content preview modal
 
-**NEXT SESSION: Tier 3 — Part 1: Quote Wizard**
-- Build intelligent quote wizard at `/quote`
-- Create `src/data/quote-rules.json` with estimation logic
-- Multi-step form per service type
-- Rule-based price range estimation (not AI-powered)
+**Tier 3 Part 1 — COMPLETE (2026-02-15): Intelligent Quote Wizard**
+- `src/data/quote-rules.json` — Estimation rules for 5 services (SEND, NEPTS, Private Hire, Airport, Executive)
+- `src/lib/quote-engine.ts` — `estimateQuote(service, answers)` returning `{ low, high, currency, perUnit }`
+- `src/pages/quote/index.astro` — 4-step public wizard (service → questions → estimate → Web3Forms contact)
+- `src/pages/api/quote/estimate.ts` — Public endpoint (no auth) for price estimation
+- "Get a Quote" button added to Header.astro (desktop + mobile)
+- Progress indicator, back navigation, mobile-responsive
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable)
+**NEXT SESSION: Tier 3 — Part 2: Programmatic SEO Pages**
+- Populate `src/data/area-data/` with school and hospital data
+- Build AI-assisted area page generator
+- Generate 20-25 additional area pages
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable)
 
 ---
 
