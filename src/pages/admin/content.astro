@@ -329,7 +329,36 @@ const categories = [
 
     async function submitForApproval() {
       if (!currentDraft) return;
-      showStatus('Content submitted for approval. Jay will be notified.', false);
+      const { title, slug, description, pubDate, image, imageAlt, tags, body } = extractFromDraft(currentDraft);
+
+      submitApprovalBtn && (submitApprovalBtn.disabled = true);
+      submitApprovalBtn && (submitApprovalBtn.textContent = 'Submitting...');
+
+      try {
+        const res = await fetch('/api/admin/approval', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'blog',
+            title,
+            content: currentDraft,
+            metadata: { slug, description, pubDate, image, imageAlt, tags },
+          }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          showStatus('Your content has been submitted for approval. You\'ll be notified when it\'s published.', false);
+        } else {
+          throw new Error(data.error || 'Failed to submit');
+        }
+      } catch (err) {
+        showStatus(err.message || 'Failed to submit for approval.', true);
+      } finally {
+        submitApprovalBtn && (submitApprovalBtn.disabled = false);
+        submitApprovalBtn && (submitApprovalBtn.textContent = 'Submit for Approval');
+      }
     }
 
     generateBtn.addEventListener('click', generateDraft);

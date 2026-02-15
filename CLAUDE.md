@@ -35,13 +35,23 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - `/admin/*` excluded from sitemap
 - All admin pages server-rendered (prerender = false)
 
-**NEXT SESSION: Tier 2 — Part 3: Approval Workflow & Email Notifications**
-- Wire approval submit to store pending items via GitHub API
-- Email notifications to Jay on new submissions (via Resend)
-- Approve/reject actions that commit or discard changes
-- Cloudflare Zero Trust integration testing
+**Tier 2 Part 3 — COMPLETE (2026-02-15): Approval Workflow & Email Notifications**
+- `src/pages/api/admin/approval.ts` — Full approval API (GET list, POST submit, PUT approve/reject)
+- Pending items stored as JSON files in `pending/` directory via GitHub API
+- Email notifications on submit (to NOTIFICATION_EMAIL), approve, and reject (to author) via Resend
+- Non-management users: Submit for Approval button on content.astro and pages.astro
+- Management users: Direct Publish/Apply buttons (bypass approval queue)
+- `src/pages/admin/approvals.astro` — Dynamic loading of pending items with Approve/Reject/Preview
+- Rejection modal with optional feedback reason
+- Content preview modal
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable)
+**NEXT SESSION: Tier 3 — Part 1: Quote Wizard**
+- Build intelligent quote wizard at `/quote`
+- Create `src/data/quote-rules.json` with estimation logic
+- Multi-step form per service type
+- Rule-based price range estimation (not AI-powered)
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable)
 
 ---
 

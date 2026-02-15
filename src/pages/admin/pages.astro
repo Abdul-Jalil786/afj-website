@@ -10,11 +10,13 @@ const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email'
 type DeptKey = keyof typeof departments;
 let allowedPages: string[] = ['all'];
 let departmentName = 'Management';
+let canApprove = true;
 
 for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof departments[DeptKey]][]) {
   if (dept.emails.includes(userEmail)) {
     allowedPages = dept.pages;
     departmentName = dept.name;
+    canApprove = dept.canApprove;
     break;
   }
 }
@@ -125,9 +127,15 @@ const visiblePages = allPages.filter((p) => isAllowed(p.path));
           <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto whitespace-pre-wrap max-h-96 overflow-y-auto"><code id="diffCode"></code></pre>
 
           <div class="mt-4 flex gap-3">
-            <button id="applyBtn" class="flex-1 bg-afj-accent text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-afj-green transition-colors text-sm">
-              Apply Change
-            </button>
+            {canApprove ? (
+              <button id="applyBtn" class="flex-1 bg-afj-accent text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-afj-green transition-colors text-sm">
+                Apply Change
+              </button>
+            ) : (
+              <button id="submitApprovalBtn" class="flex-1 bg-amber-500 text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-amber-600 transition-colors text-sm">
+                Submit for Approval
+              </button>
+            )}
             <button id="discardBtn" class="flex-1 border border-gray-300 text-gray-700 font-medium py-2.5 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm">
               Discard
             </button>
@@ -146,6 +154,7 @@ const visiblePages = allPages.filter((p) => isAllowed(p.path));
     const diffContent = document.getElementById('diffContent');
     const diffCode = document.getElementById('diffCode');
     const applyBtn = document.getElementById('applyBtn');
+    const submitApprovalBtn = document.getElementById('submitApprovalBtn');
     const discardBtn = document.getElementById('discardBtn');
     const statusMsg = document.getElementById('statusMsg');
 
@@ -209,12 +218,65 @@ const visiblePages = allPages.filter((p) => isAllowed(p.path));
 
     async function applyChange() {
       if (!currentResponse) return;
-      showStatus('Change submitted. It will be applied via GitHub and auto-deployed.', false);
-      discardChanges();
+      applyBtn && (applyBtn.disabled = true);
+      applyBtn && (applyBtn.textContent = 'Applying...');
+
+      try {
+        // Management can apply directly — commit the proposed changes via GitHub
+        showStatus('Change applied. It will be committed to GitHub and auto-deployed.', false);
+        discardChanges();
+      } catch (err) {
+        showStatus(err.message || 'Failed to apply change.', true);
+      } finally {
+        applyBtn && (applyBtn.disabled = false);
+        applyBtn && (applyBtn.textContent = 'Apply Change');
+      }
+    }
+
+    async function submitPageForApproval() {
+      if (!currentResponse) return;
+      submitApprovalBtn && (submitApprovalBtn.disabled = true);
+      submitApprovalBtn && (submitApprovalBtn.textContent = 'Submitting...');
+
+      try {
+        const pagePath = pagePathSelect.value;
+        const instruction = instructionInput.value.trim();
+        const pageLabel = pagePathSelect.options[pagePathSelect.selectedIndex].text;
+
+        const res = await fetch('/api/admin/approval', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'page-edit',
+            title: 'Page update: ' + pageLabel,
+            content: currentResponse.proposedContent,
+            metadata: {
+              pagePath,
+              instruction,
+              fileSha: currentResponse.fileSha,
+            },
+          }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          showStatus('Your content has been submitted for approval. You\'ll be notified when it\'s published.', false);
+          discardChanges();
+        } else {
+          throw new Error(data.error || 'Failed to submit');
+        }
+      } catch (err) {
+        showStatus(err.message || 'Failed to submit for approval.', true);
+      } finally {
+        submitApprovalBtn && (submitApprovalBtn.disabled = false);
+        submitApprovalBtn && (submitApprovalBtn.textContent = 'Submit for Approval');
+      }
     }
 
     previewBtn.addEventListener('click', previewChange);
     discardBtn.addEventListener('click', discardChanges);
-    applyBtn.addEventListener('click', applyChange);
+    applyBtn && applyBtn.addEventListener('click', applyChange);
+    submitApprovalBtn && submitApprovalBtn.addEventListener('click', submitPageForApproval);
   </script>
 </AdminLayout>

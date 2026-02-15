@@ -33,63 +33,274 @@ for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof depart
       </p>
     </div>
 
-    <!-- Pending Items Container -->
-    <div id="pendingItems">
-      <!-- Empty State -->
-      <div id="emptyState" class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-        <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h3 class="text-lg font-medium text-gray-900 mb-1">No pending items</h3>
-        <p class="text-gray-500 text-sm">
-          {canApprove
-            ? 'All content has been reviewed. New submissions will appear here.'
-            : 'You have no pending submissions. Create a blog post or update a page to get started.'}
-        </p>
-        <div class="mt-6 flex justify-center gap-4">
-          <a href="/admin/content" class="btn-primary text-sm">Create Blog Post</a>
-          <a href="/admin/pages" class="btn-outline text-sm">Update a Page</a>
+    <!-- Loading State -->
+    <div id="loadingState" class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+      <svg class="animate-spin h-8 w-8 text-afj-accent mx-auto mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="text-gray-500 text-sm">Loading pending items...</p>
+    </div>
+
+    <!-- Items Container (populated by JS) -->
+    <div id="itemsContainer" class="hidden space-y-4"></div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+      <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h3 class="text-lg font-medium text-gray-900 mb-1">No pending items</h3>
+      <p class="text-gray-500 text-sm">
+        {canApprove
+          ? 'All content has been reviewed. New submissions will appear here.'
+          : 'You have no pending submissions.'}
+      </p>
+      <div class="mt-6 flex justify-center gap-4">
+        <a href="/admin/content" class="btn-primary text-sm">Create Blog Post</a>
+        <a href="/admin/pages" class="btn-outline text-sm">Update a Page</a>
+      </div>
+    </div>
+
+    <!-- Status Message -->
+    <div id="statusMsg" class="hidden text-sm text-center py-2 rounded-md mt-4"></div>
+
+    <!-- Rejection Modal -->
+    <div id="rejectModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">Reject Content</h3>
+        <p class="text-sm text-gray-600 mb-4" id="rejectModalTitle"></p>
+        <label for="rejectReason" class="block text-sm font-medium text-gray-700 mb-1">Feedback (optional)</label>
+        <textarea
+          id="rejectReason"
+          rows="3"
+          placeholder="Explain what needs to be changed..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-400 focus:border-red-400 text-sm"
+        ></textarea>
+        <div class="mt-4 flex gap-3">
+          <button id="confirmRejectBtn" class="flex-1 bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors text-sm">
+            Reject
+          </button>
+          <button id="cancelRejectBtn" class="flex-1 border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+            Cancel
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Approval Item Template (hidden, used by JS for future dynamic items) -->
-    <template id="approvalCardTemplate">
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
-        <div class="flex items-start justify-between">
-          <div>
-            <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-700 mb-2">Pending</span>
-            <h3 class="text-lg font-semibold text-gray-900 item-title"></h3>
-            <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
-              <span class="item-author"></span>
-              <span class="item-department"></span>
-              <span class="item-date"></span>
+    <!-- Content Preview Modal -->
+    <div id="previewModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b">
+          <h3 class="text-lg font-semibold text-gray-900">Content Preview</h3>
+          <button id="closePreviewBtn" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div id="previewModalContent" class="p-4 overflow-y-auto">
+          <pre class="bg-gray-50 p-4 rounded-lg text-xs whitespace-pre-wrap font-mono"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ canApprove }}>
+    const loadingState = document.getElementById('loadingState');
+    const itemsContainer = document.getElementById('itemsContainer');
+    const emptyState = document.getElementById('emptyState');
+    const statusMsg = document.getElementById('statusMsg');
+    const rejectModal = document.getElementById('rejectModal');
+    const rejectModalTitle = document.getElementById('rejectModalTitle');
+    const rejectReason = document.getElementById('rejectReason');
+    const confirmRejectBtn = document.getElementById('confirmRejectBtn');
+    const cancelRejectBtn = document.getElementById('cancelRejectBtn');
+    const previewModal = document.getElementById('previewModal');
+    const previewModalContent = document.getElementById('previewModalContent');
+    const closePreviewBtn = document.getElementById('closePreviewBtn');
+
+    let pendingItems = [];
+    let rejectTarget = null;
+
+    function showStatus(message, isError) {
+      statusMsg.textContent = message;
+      statusMsg.className = 'text-sm text-center py-2 rounded-md mt-4 ' + (isError ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700');
+      statusMsg.classList.remove('hidden');
+      setTimeout(() => statusMsg.classList.add('hidden'), 5000);
+    }
+
+    function formatDate(iso) {
+      return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function statusBadge(status) {
+      if (status === 'pending') return '<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-700">Pending</span>';
+      if (status === 'rejected') return '<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700">Rejected</span>';
+      return '<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">Approved</span>';
+    }
+
+    function typeBadge(type) {
+      if (type === 'blog') return '<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">Blog Post</span>';
+      return '<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700">Page Edit</span>';
+    }
+
+    function renderItems(items) {
+      loadingState.classList.add('hidden');
+
+      const pending = items.filter(i => i.status === 'pending');
+      const rejected = items.filter(i => i.status === 'rejected');
+      const all = [...pending, ...rejected];
+
+      if (all.length === 0) {
+        emptyState.classList.remove('hidden');
+        itemsContainer.classList.add('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      itemsContainer.classList.remove('hidden');
+      itemsContainer.innerHTML = '';
+
+      all.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-sm border border-gray-200 p-6';
+        card.innerHTML = `
+          <div class="flex items-start justify-between flex-wrap gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                ${statusBadge(item.status)}
+                ${typeBadge(item.type)}
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900">${item.title}</h3>
+              <div class="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-500">
+                <span>${item.author}</span>
+                <span>${item.department}</span>
+                <span>${formatDate(item.timestamp)}</span>
+              </div>
+              ${item.status === 'rejected' && item.rejectionReason ? '<p class="mt-2 text-sm text-red-600">Feedback: ' + item.rejectionReason + '</p>' : ''}
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="preview-btn text-sm px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors" data-idx="${idx}">
+                Preview
+              </button>
+              ${canApprove && item.status === 'pending' ? `
+                <button class="approve-btn bg-afj-accent text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-afj-green transition-colors" data-idx="${idx}">
+                  Approve
+                </button>
+                <button class="reject-btn bg-red-500 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-red-600 transition-colors" data-idx="${idx}">
+                  Reject
+                </button>
+              ` : ''}
             </div>
           </div>
-          <div class="flex gap-2">
-            <button class="approve-btn bg-afj-accent text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-afj-green transition-colors" style="display: none;">
-              Approve
-            </button>
-            <button class="reject-btn bg-red-500 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-red-600 transition-colors" style="display: none;">
-              Reject
-            </button>
-          </div>
-        </div>
-        <div class="mt-3 pt-3 border-t border-gray-100">
-          <a href="#" class="text-afj-accent text-sm font-medium hover:underline preview-link">Preview content</a>
-        </div>
-      </div>
-    </template>
+        `;
+        itemsContainer.appendChild(card);
+      });
 
-    {canApprove && (
-      <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 class="text-sm font-semibold text-blue-900">Approval Workflow</h3>
-        <p class="text-sm text-blue-700 mt-1">
-          When team members submit blog posts or page changes, they will appear here for your review.
-          You can preview the content, then approve to publish or reject with feedback.
-          Approved content is automatically committed to GitHub and deployed via Railway.
-        </p>
-      </div>
-    )}
-  </div>
+      // Bind events
+      document.querySelectorAll('.preview-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const item = all[parseInt(btn.dataset.idx)];
+          previewModalContent.querySelector('pre').textContent = item.content;
+          previewModal.classList.remove('hidden');
+        });
+      });
+
+      document.querySelectorAll('.approve-btn').forEach(btn => {
+        btn.addEventListener('click', () => approveItem(all[parseInt(btn.dataset.idx)]));
+      });
+
+      document.querySelectorAll('.reject-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          rejectTarget = all[parseInt(btn.dataset.idx)];
+          rejectModalTitle.textContent = 'Reject "' + rejectTarget.title + '"?';
+          rejectReason.value = '';
+          rejectModal.classList.remove('hidden');
+        });
+      });
+    }
+
+    async function loadItems() {
+      try {
+        const res = await fetch('/api/admin/approval');
+        const data = await res.json();
+        if (data.success) {
+          pendingItems = data.items;
+          renderItems(pendingItems);
+        } else {
+          loadingState.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+        }
+      } catch (err) {
+        loadingState.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        showStatus('Failed to load pending items.', true);
+      }
+    }
+
+    async function approveItem(item) {
+      try {
+        const res = await fetch('/api/admin/approval', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'approve',
+            filePath: item._path,
+            fileSha: item._sha,
+            item,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          showStatus(data.message, false);
+          loadItems(); // Reload
+        } else {
+          throw new Error(data.error);
+        }
+      } catch (err) {
+        showStatus(err.message || 'Failed to approve.', true);
+      }
+    }
+
+    async function rejectItem(item, reason) {
+      try {
+        const res = await fetch('/api/admin/approval', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'reject',
+            filePath: item._path,
+            fileSha: item._sha,
+            item,
+            reason,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          showStatus(data.message, false);
+          loadItems(); // Reload
+        } else {
+          throw new Error(data.error);
+        }
+      } catch (err) {
+        showStatus(err.message || 'Failed to reject.', true);
+      }
+    }
+
+    // Modal events
+    closePreviewBtn.addEventListener('click', () => previewModal.classList.add('hidden'));
+    previewModal.addEventListener('click', (e) => { if (e.target === previewModal) previewModal.classList.add('hidden'); });
+    cancelRejectBtn.addEventListener('click', () => { rejectModal.classList.add('hidden'); rejectTarget = null; });
+    rejectModal.addEventListener('click', (e) => { if (e.target === rejectModal) { rejectModal.classList.add('hidden'); rejectTarget = null; } });
+    confirmRejectBtn.addEventListener('click', () => {
+      if (!rejectTarget) return;
+      rejectModal.classList.add('hidden');
+      rejectItem(rejectTarget, rejectReason.value.trim());
+      rejectTarget = null;
+    });
+
+    // Load on page ready
+    loadItems();
+  </script>
 </AdminLayout>
