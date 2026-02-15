@@ -1,11 +1,7 @@
 ---
-const apiKey = import.meta.env.WEB3FORMS_API_KEY || '';
 ---
 
 <form id="contact-form" class="space-y-5" novalidate>
-  <input type="hidden" name="access_key" value={apiKey} />
-  <input type="hidden" name="subject" value="New Contact Form Submission — AFJ Limited" />
-  <input type="hidden" name="from_name" value="AFJ Website Contact Form" />
   <input type="checkbox" name="botcheck" class="hidden" style="display:none" />
 
   <!-- Full Name -->
@@ -119,11 +115,21 @@ const apiKey = import.meta.env.WEB3FORMS_API_KEY || '';
       var originalText = submitBtn.textContent;
       submitBtn.textContent = 'Sending...';
 
-      var formData = new FormData(form);
+      // Check for bot
+      var botField = form.querySelector('[name="botcheck"]');
+      if (botField && botField.checked) return;
 
-      fetch('https://api.web3forms.com/submit', {
+      var payload = {
+        name: (form.querySelector('#full-name') || {}).value || '',
+        email: email.value,
+        phone: (form.querySelector('#phone') || {}).value || '',
+        message: message.value,
+      };
+
+      fetch('/api/contact/submit', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       })
         .then(function (res) { return res.json(); })
         .then(function (data) {
