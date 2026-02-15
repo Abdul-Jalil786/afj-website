@@ -6,156 +6,85 @@
  * - Groq (llama-3.3-70b-versatile) — swap-ready alternative
  *
  * Configuration via environment variables:
- *   LLM_PROVIDER  = 'anthropic' | 'groq'
- *   LLM_MODEL     = model identifier
- *   LLM_API_KEY   = API key for chosen provider
+ *   LLM_PROVIDER   = 'anthropic' | 'groq'
+ *   LLM_MODEL      = model identifier
+ *   LLM_API_KEY    = API key for chosen provider
  *   LLM_MAX_TOKENS = default max tokens (default: 2048)
  */
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export interface LLMConfig {
-  provider: 'anthropic' | 'groq';
-  model: string;
-  apiKey: string;
-  maxTokens: number;
-}
-
-export interface LLMMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-export interface LLMRequest {
-  system: string;
-  messages: LLMMessage[];
-  maxTokens?: number;
-}
-
-export interface LLMResponse {
-  success: boolean;
-  content?: string;
-  tokensUsed?: { input: number; output: number };
-  error?: string;
-}
-
-// ---------------------------------------------------------------------------
-// Config
-// ---------------------------------------------------------------------------
-
-export function getConfig(): LLMConfig {
-  const provider = (import.meta.env.LLM_PROVIDER || 'anthropic') as LLMConfig['provider'];
-  const model = import.meta.env.LLM_MODEL || 'claude-haiku-4-5-20251001';
-  const apiKey = import.meta.env.LLM_API_KEY || '';
-  const maxTokens = parseInt(import.meta.env.LLM_MAX_TOKENS || '2048', 10);
-
-  return { provider, model, apiKey, maxTokens };
-}
-
-// ---------------------------------------------------------------------------
-// Provider-specific request builders
-// ---------------------------------------------------------------------------
-
-function buildAnthropicRequest(config: LLMConfig, req: LLMRequest) {
-  return {
-    url: 'https://api.anthropic.com/v1/messages',
-    headers: {
-      'x-api-key': config.apiKey,
-      'anthropic-version': '2023-06-01',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: config.model,
-      max_tokens: req.maxTokens ?? config.maxTokens,
-      system: req.system,
-      messages: req.messages,
-    }),
-  };
-}
-
-function buildGroqRequest(config: LLMConfig, req: LLMRequest) {
-  // Groq uses OpenAI-compatible chat completions format
-  const messages = [
-    { role: 'system' as const, content: req.system },
-    ...req.messages,
-  ];
-
-  return {
-    url: 'https://api.groq.com/openai/v1/chat/completions',
-    headers: {
-      Authorization: `Bearer ${config.apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: config.model,
-      max_tokens: req.maxTokens ?? config.maxTokens,
-      messages,
-    }),
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Response parsers
-// ---------------------------------------------------------------------------
-
-function parseAnthropicResponse(data: any): LLMResponse {
-  const textBlock = data.content?.find((b: any) => b.type === 'text');
-  if (!textBlock) {
-    return { success: false, error: 'No text content in Anthropic response' };
-  }
-
-  return {
-    success: true,
-    content: textBlock.text,
-    tokensUsed: {
-      input: data.usage?.input_tokens ?? 0,
-      output: data.usage?.output_tokens ?? 0,
-    },
-  };
-}
-
-function parseGroqResponse(data: any): LLMResponse {
-  const message = data.choices?.[0]?.message;
-  if (!message) {
-    return { success: false, error: 'No message in Groq response' };
-  }
-
-  return {
-    success: true,
-    content: message.content,
-    tokensUsed: {
-      input: data.usage?.prompt_tokens ?? 0,
-      output: data.usage?.completion_tokens ?? 0,
-    },
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Core: generateText
-// ---------------------------------------------------------------------------
-
 const RETRY_DELAY_MS = 5000;
 
-export async function generateText(request: LLMRequest): Promise<LLMResponse> {
+function getConfig() {
+  return {
+    provider: (import.meta.env.LLM_PROVIDER || 'anthropic') as 'anthropic' | 'groq',
+    model: import.meta.env.LLM_MODEL || 'claude-haiku-4-5-20251001',
+    apiKey: import.meta.env.LLM_API_KEY || '',
+    maxTokens: parseInt(import.meta.env.LLM_MAX_TOKENS || '2048', 10),
+  };
+}
+
+/**
+ * Generate text from an LLM provider.
+ *
+ * @param system    - System prompt with instructions and context
+ * @param userMessage - The user's message / request
+ * @param maxTokens - Override default max tokens (optional)
+ * @returns The generated text string
+ * @throws Error if API key is missing or both attempts fail
+ */
+export async function generateText(
+  system: string,
+  userMessage: string,
+  maxTokens?: number,
+): Promise<string> {
   const config = getConfig();
 
   if (!config.apiKey) {
-    return { success: false, error: 'LLM_API_KEY not configured' };
+    throw new Error('LLM_API_KEY not configured');
   }
 
-  const build = config.provider === 'groq' ? buildGroqRequest : buildAnthropicRequest;
-  const parse = config.provider === 'groq' ? parseGroqResponse : parseAnthropicResponse;
-  const { url, headers, body } = build(config, request);
-
+  const tokens = maxTokens ?? config.maxTokens;
   let lastError = '';
 
-  // Attempt + 1 retry on timeout/5xx
   for (let attempt = 0; attempt < 2; attempt++) {
     const start = Date.now();
 
     try {
+      let url: string;
+      let headers: Record<string, string>;
+      let body: string;
+
+      if (config.provider === 'groq') {
+        // Groq uses OpenAI-compatible chat completions format
+        url = 'https://api.groq.com/openai/v1/chat/completions';
+        headers = {
+          Authorization: `Bearer ${config.apiKey}`,
+          'Content-Type': 'application/json',
+        };
+        body = JSON.stringify({
+          model: config.model,
+          max_tokens: tokens,
+          messages: [
+            { role: 'system', content: system },
+            { role: 'user', content: userMessage },
+          ],
+        });
+      } else {
+        // Anthropic Messages API
+        url = 'https://api.anthropic.com/v1/messages';
+        headers = {
+          'x-api-key': config.apiKey,
+          'anthropic-version': '2023-06-01',
+          'Content-Type': 'application/json',
+        };
+        body = JSON.stringify({
+          model: config.model,
+          max_tokens: tokens,
+          system,
+          messages: [{ role: 'user', content: userMessage }],
+        });
+      }
+
       const response = await fetch(url, { method: 'POST', headers, body });
       const latency = Date.now() - start;
 
@@ -182,48 +111,67 @@ export async function generateText(request: LLMRequest): Promise<LLMResponse> {
           continue;
         }
 
-        return { success: false, error: lastError };
+        throw new Error(lastError);
       }
 
       const data = await response.json();
-      const result = parse(data);
-      const latencyFinal = Date.now() - start;
+
+      // Parse response based on provider
+      let content: string;
+      let tokensIn = 0;
+      let tokensOut = 0;
+
+      if (config.provider === 'groq') {
+        content = data.choices?.[0]?.message?.content ?? '';
+        tokensIn = data.usage?.prompt_tokens ?? 0;
+        tokensOut = data.usage?.completion_tokens ?? 0;
+      } else {
+        const textBlock = data.content?.find((b: any) => b.type === 'text');
+        content = textBlock?.text ?? '';
+        tokensIn = data.usage?.input_tokens ?? 0;
+        tokensOut = data.usage?.output_tokens ?? 0;
+      }
 
       console.log(JSON.stringify({
         event: 'llm_call',
         provider: config.provider,
         model: config.model,
-        latencyMs: latencyFinal,
-        tokensIn: result.tokensUsed?.input ?? 0,
-        tokensOut: result.tokensUsed?.output ?? 0,
-        success: result.success,
+        latencyMs: Date.now() - start,
+        tokensIn,
+        tokensOut,
+        success: true,
         attempt: attempt + 1,
         timestamp: new Date().toISOString(),
       }));
 
-      return result;
+      return content;
     } catch (err) {
       const latency = Date.now() - start;
       lastError = err instanceof Error ? err.message : 'Unknown fetch error';
 
-      console.error(JSON.stringify({
-        event: 'llm_call',
-        provider: config.provider,
-        model: config.model,
-        latencyMs: latency,
-        success: false,
-        error: lastError,
-        attempt: attempt + 1,
-        timestamp: new Date().toISOString(),
-      }));
+      // Only log if not already logged above (avoid double-logging HTTP errors)
+      if (!lastError.includes('API error')) {
+        console.error(JSON.stringify({
+          event: 'llm_call',
+          provider: config.provider,
+          model: config.model,
+          latencyMs: latency,
+          success: false,
+          error: lastError,
+          attempt: attempt + 1,
+          timestamp: new Date().toISOString(),
+        }));
+      }
 
-      // Retry on network errors (timeout, DNS, etc.)
-      if (attempt === 0) {
+      // Retry on network errors (timeout, DNS, etc.) — but not on API-level errors already handled
+      if (attempt === 0 && !lastError.includes('API error')) {
         await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
         continue;
       }
+
+      throw new Error(lastError);
     }
   }
 
-  return { success: false, error: lastError };
+  throw new Error(lastError);
 }
