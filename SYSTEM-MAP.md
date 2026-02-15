@@ -1,7 +1,7 @@
 # SYSTEM-MAP.md — AFJ Limited Digital Platform
 
 > Living document. Updated every time a feature is built, modified, or planned.
-> Last updated: 2026-02-15
+> Last updated: 2026-02-16
 
 ---
 
@@ -104,6 +104,26 @@ Chronological record of every major feature, based on git history.
 - `.github/workflows/deploy-validate.yml` — Post-deploy validation (8 pages, sitemap, Resend alerts)
 - `scripts/image-audit.mjs` — Image optimization audit (scan >500KB, WebP conversion via sharp)
 - Accessibility fixes: skip-to-content link, ServiceCard alt text, Footer ARIA, CookieBanner focus management
+
+### Phase 9.1 — Quote Wizard Enhancements (2026-02-15/16) ← LATEST
+- **Postcode/city autocomplete** on quote form text inputs via Postcodes.io API
+  - Routing heuristic: `/^[A-Z]{1,2}\d/i` → postcode autocomplete endpoint; else → places search endpoint
+  - Debounced 300ms, keyboard navigation (arrows, Enter, Escape), up to 8 suggestions
+- **Real driving mileage** via Postcodes.io (lat/lng) + OSRM (road routing)
+  - Replaces hardcoded 12-area distance matrix as primary distance source
+  - Matrix retained as fallback when APIs fail
+- **Travel time display** on estimate screen — shows distance + approx. drive time
+  - Fallback: estimates time from distance at 40mph average when OSRM unavailable
+- **Driver hours pricing model** replacing flat 1.75× return multiplier for private hire:
+  - **Same-day return**: outbound + return mileage + waiting time at £13/hr + deadhead + DVSA break
+  - **Different-day return**: two one-way trips + double deadhead, asks for return date + return pickup time
+  - **One-way**: unchanged core formula + deadhead if applicable
+- **Driver deadhead from base**: calculates distance from nearest base (Birmingham B7 4JD or Manchester M35 0BR) to pickup; charges £13/hr × round trip if >30 miles
+- **DVSA compliance**: 45-min break surcharge for 9+ passengers when total driving >4.5 hours
+- **Conditional form fields** (`showWhen` system) — questions appear/hide based on other field values
+  - Pickup time changed from morning/afternoon/evening select to actual time input
+  - Return journey reveals: same-day toggle, return pickup time, return date (if different day)
+- **Enhanced estimate display**: shows distance, travel time, waiting hours, deadhead/DVSA notes alongside price range
 
 ### Phase 10 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
@@ -225,7 +245,9 @@ Social Impact (7):
 src/lib/
   llm.ts                        LLM provider abstraction (Anthropic ↔ Groq swappable)
   prompts.ts                    System prompts with brand voice (BLOG_DRAFT, PAGE_EDIT, TESTIMONIAL, SEO_PAGE)
-  quote-engine.ts               Rule-based quote estimation for 5 services
+  quote-engine.ts               Quote estimation engine — real driving distance (OSRM + Postcodes.io),
+                                  driver hours pricing (waiting time, deadhead, DVSA breaks),
+                                  fallback to hardcoded distance matrix
 ```
 
 ### Data Files
@@ -235,7 +257,9 @@ src/content/blog/*.md           16 published blog posts (Astro content collectio
 src/content/testimonials/       Testimonials JSON
 src/data/compliance.json        8 compliance items (CQC, DBS, MOT, insurance, certs, accessibility, safeguarding, carbon)
 src/data/departments.json       Department → page mapping for admin access control
-src/data/quote-rules.json       Quote estimation rules and price ranges per service
+src/data/quote-rules.json       Quote rules: pricing (baseFare, perMile, driver wage, deadhead threshold,
+                                  DVSA limits), distance matrix, airport rates, city lookup, base postcodes,
+                                  service questions with conditional showWhen fields
 src/data/area-data/areas.json   25 areas with metadata (slug, council, population, distance, region, services)
 src/data/area-data/schools.json 3-5 SEND schools per area with postcodes
 src/data/area-data/hospitals.json 2-3 hospitals/clinics per area with NHS trust names
@@ -264,10 +288,12 @@ Cloudflare Zero Trust → Authentication for /admin/* routes
 Facebook Graph API  → Social media auto-publishing (Python script)
 LinkedIn API        → Social media auto-publishing (Python script)
 
-ALWAYS ACTIVE:
+ALWAYS ACTIVE (no keys needed):
 Railway             → Auto-deploy on push to main
 Cloudflare          → DNS, SSL, domain management
 Google Fonts        → Inter font family
+Postcodes.io        → Postcode autocomplete, places search, lat/lng lookup (free, no key)
+OSRM                → Real driving distance and duration via router.project-osrm.org (free, no key)
 ```
 
 ---
@@ -288,7 +314,7 @@ Google Fonts        → Inter font family
 - Sitemap generation (excludes internal/admin pages)
 - Image library and content calendar internal tools
 - Admin dashboard with AI blog drafting, NL page editing, approval workflow
-- Intelligent quote wizard with instant estimates
+- Intelligent quote wizard with real driving mileage, driver hours pricing, postcode autocomplete
 - Public compliance dashboard
 - AI testimonial/case study generator
 - Social media publishing scripts (Facebook, LinkedIn)
@@ -348,9 +374,12 @@ Manager → /admin/pages → types "Add electric vehicle servicing to fleet main
 ### Quote Request (Current)
 ```
 Customer → /quote → selects service type
-  → Answers 3-5 service-specific questions
-  → POST /api/quote/estimate → rule-based calculation from quote-rules.json
-  → Returns estimated price range
+  → Answers service-specific questions (postcode autocomplete via Postcodes.io)
+  → POST /api/quote/estimate
+    → Postcodes.io (lat/lng) + OSRM (driving distance/duration) [fallback: hardcoded matrix]
+    → Calculates: mileage cost + passenger multiplier + waiting time + deadhead + DVSA breaks
+    → Returns price range + distance + travel time + breakdown flags
+  → Estimate screen shows: distance, time, waiting hours, DVSA/deadhead notes, price range
   → Customer can submit full quote request → Web3Forms → info@afjltd.co.uk
 ```
 
@@ -455,7 +484,7 @@ RAILWAY_TOKEN=
 
 | Feature | AFJ | Typical Competitor |
 |---------|-----|--------------------|
-| Quote response time | Instant estimate on website | "Call us" or generic form |
+| Quote response time | Instant estimate with real mileage, driver hours, DVSA compliance | "Call us" or generic form |
 | Content freshness | AI-assisted weekly blog posts | Rarely updated |
 | Local SEO coverage | 25-30 area-specific pages | 1 generic "areas" page |
 | Compliance transparency | Public real-time dashboard | PDF on request |
