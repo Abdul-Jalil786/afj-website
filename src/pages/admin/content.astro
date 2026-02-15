@@ -1,0 +1,341 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import departments from '../../data/departments.json';
+
+const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
+
+// Determine permissions
+type DeptKey = keyof typeof departments;
+let canApprove = true;
+let departmentName = 'Management';
+
+for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof departments[DeptKey]][]) {
+  if (dept.emails.includes(userEmail)) {
+    canApprove = dept.canApprove;
+    departmentName = dept.name;
+    break;
+  }
+}
+
+const categories = [
+  'SEND Transport',
+  'Patient Transport (NEPTS)',
+  'Fleet Maintenance',
+  'Vehicle Conversions',
+  'Professional Driver Training',
+  'Private Hire',
+  'Executive Minibus',
+  'Airport Transfers',
+  'Company News',
+  'Community & CSR',
+  'Industry Insights',
+];
+---
+
+<AdminLayout title="Create Blog Post" userEmail={userEmail}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Create Blog Post</h1>
+      <p class="text-gray-600 mt-1">Use AI to generate a draft in AFJ's brand voice, then review and publish.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Left: Input Form -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Post Details</h2>
+
+        <div class="space-y-4">
+          <div>
+            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <input
+              type="text"
+              id="title"
+              placeholder="e.g., The Importance of DBS Checks in School Transport"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-afj-accent focus:border-afj-accent text-sm"
+            />
+          </div>
+
+          <div>
+            <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-afj-accent focus:border-afj-accent text-sm">
+              <option value="">Select a category...</option>
+              {categories.map((cat) => (
+                <option value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label for="keyPoints" class="block text-sm font-medium text-gray-700 mb-1">Key Points</label>
+            <textarea
+              id="keyPoints"
+              rows="6"
+              placeholder="Enter the key points the blog post should cover, one per line:&#10;&#10;- Why DBS checks matter for student safety&#10;- AFJ's DBS check process&#10;- Statistics on transport safety"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-afj-accent focus:border-afj-accent text-sm"
+            ></textarea>
+          </div>
+
+          <div>
+            <label for="imageUpload" class="block text-sm font-medium text-gray-700 mb-1">Header Image (optional)</label>
+            <input
+              type="file"
+              id="imageUpload"
+              accept="image/*"
+              class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-afj-accent file:text-white hover:file:bg-afj-green"
+            />
+          </div>
+
+          <button
+            id="generateBtn"
+            class="w-full bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors"
+          >
+            Generate Draft with AI
+          </button>
+
+          <!-- Status Message -->
+          <div id="statusMsg" class="hidden text-sm text-center py-2 rounded-md"></div>
+        </div>
+      </div>
+
+      <!-- Right: Preview Panel -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Preview</h2>
+          <div class="flex gap-2">
+            <button id="editToggleBtn" class="hidden text-sm px-3 py-1.5 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+              Edit
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden flex flex-col items-center justify-center py-16 text-gray-500">
+          <svg class="animate-spin h-8 w-8 text-afj-accent mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="text-sm">Generating draft...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="flex flex-col items-center justify-center py-16 text-gray-400">
+          <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <p class="text-sm">Your AI-generated draft will appear here</p>
+        </div>
+
+        <!-- Preview Content -->
+        <div id="previewContent" class="hidden prose prose-sm max-w-none"></div>
+
+        <!-- Edit Mode -->
+        <textarea
+          id="editArea"
+          class="hidden w-full h-96 px-3 py-2 border border-gray-300 rounded-md font-mono text-xs focus:ring-2 focus:ring-afj-accent focus:border-afj-accent"
+        ></textarea>
+
+        <!-- Action Buttons -->
+        <div id="actionButtons" class="hidden mt-6 flex flex-col sm:flex-row gap-3">
+          {canApprove ? (
+            <button id="publishBtn" class="flex-1 bg-afj-accent text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-afj-green transition-colors text-sm">
+              Publish
+            </button>
+          ) : (
+            <button id="submitApprovalBtn" class="flex-1 bg-amber-500 text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-amber-600 transition-colors text-sm">
+              Submit for Approval
+            </button>
+          )}
+          <button id="regenerateBtn" class="flex-1 border border-gray-300 text-gray-700 font-medium py-2.5 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+            Regenerate
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    const titleInput = document.getElementById('title');
+    const categorySelect = document.getElementById('category');
+    const keyPointsInput = document.getElementById('keyPoints');
+    const generateBtn = document.getElementById('generateBtn');
+    const regenerateBtn = document.getElementById('regenerateBtn');
+    const editToggleBtn = document.getElementById('editToggleBtn');
+    const publishBtn = document.getElementById('publishBtn');
+    const submitApprovalBtn = document.getElementById('submitApprovalBtn');
+    const loadingState = document.getElementById('loadingState');
+    const emptyState = document.getElementById('emptyState');
+    const previewContent = document.getElementById('previewContent');
+    const editArea = document.getElementById('editArea');
+    const actionButtons = document.getElementById('actionButtons');
+    const statusMsg = document.getElementById('statusMsg');
+
+    let currentDraft = '';
+    let isEditMode = false;
+
+    function showStatus(message, isError) {
+      statusMsg.textContent = message;
+      statusMsg.className = 'text-sm text-center py-2 rounded-md ' + (isError ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700');
+      statusMsg.classList.remove('hidden');
+      setTimeout(() => statusMsg.classList.add('hidden'), 5000);
+    }
+
+    function renderMarkdown(md) {
+      // Basic markdown to HTML for preview
+      let html = md
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/^\- (.*$)/gm, '<li>$1</li>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^---[\s\S]*?---/m, '');
+      // Wrap in paragraph tags
+      if (!html.startsWith('<')) html = '<p>' + html + '</p>';
+      return html;
+    }
+
+    async function generateDraft() {
+      const title = titleInput.value.trim();
+      const keyPoints = keyPointsInput.value.trim();
+      const category = categorySelect.value;
+
+      if (!title || !keyPoints) {
+        showStatus('Please enter a title and key points.', true);
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      previewContent.classList.add('hidden');
+      editArea.classList.add('hidden');
+      actionButtons.classList.add('hidden');
+      editToggleBtn.classList.add('hidden');
+      loadingState.classList.remove('hidden');
+      generateBtn.disabled = true;
+      generateBtn.textContent = 'Generating...';
+
+      try {
+        const res = await fetch('/api/ai/draft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, keyPoints, category, department: '' }),
+        });
+
+        const data = await res.json();
+
+        if (data.success && data.draft) {
+          currentDraft = data.draft;
+          previewContent.innerHTML = renderMarkdown(data.draft);
+          editArea.value = data.draft;
+
+          loadingState.classList.add('hidden');
+          previewContent.classList.remove('hidden');
+          actionButtons.classList.remove('hidden');
+          editToggleBtn.classList.remove('hidden');
+          showStatus('Draft generated successfully!', false);
+        } else {
+          throw new Error(data.error || 'Failed to generate draft');
+        }
+      } catch (err) {
+        loadingState.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        showStatus(err.message || 'AI drafting is temporarily unavailable. You can still write your content manually.', true);
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Generate Draft with AI';
+      }
+    }
+
+    function toggleEdit() {
+      isEditMode = !isEditMode;
+      if (isEditMode) {
+        editArea.value = currentDraft;
+        previewContent.classList.add('hidden');
+        editArea.classList.remove('hidden');
+        editToggleBtn.textContent = 'Preview';
+      } else {
+        currentDraft = editArea.value;
+        previewContent.innerHTML = renderMarkdown(currentDraft);
+        editArea.classList.add('hidden');
+        previewContent.classList.remove('hidden');
+        editToggleBtn.textContent = 'Edit';
+      }
+    }
+
+    function extractFromDraft(draft) {
+      const frontmatterMatch = draft.match(/^---\n([\s\S]*?)\n---/);
+      let title = titleInput.value.trim();
+      let description = '';
+      let pubDate = new Date().toISOString().split('T')[0];
+      let image = '';
+      let imageAlt = '';
+      let tags = [];
+      let body = draft;
+
+      if (frontmatterMatch) {
+        const fm = frontmatterMatch[1];
+        const titleMatch = fm.match(/title:\s*"(.+?)"/);
+        const descMatch = fm.match(/description:\s*"(.+?)"/);
+        const dateMatch = fm.match(/pubDate:\s*(\S+)/);
+        const imageMatch = fm.match(/image:\s*"(.+?)"/);
+        const altMatch = fm.match(/imageAlt:\s*"(.+?)"/);
+        const tagsMatch = fm.match(/tags:\s*\[(.+?)\]/);
+
+        if (titleMatch) title = titleMatch[1];
+        if (descMatch) description = descMatch[1];
+        if (dateMatch) pubDate = dateMatch[1];
+        if (imageMatch) image = imageMatch[1];
+        if (altMatch) imageAlt = altMatch[1];
+        if (tagsMatch) tags = tagsMatch[1].replace(/"/g, '').split(',').map(t => t.trim());
+
+        body = draft.replace(/^---[\s\S]*?---\s*/, '').trim();
+      }
+
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+      return { title, slug, description, pubDate, image, imageAlt, tags, body };
+    }
+
+    async function publishPost() {
+      if (!currentDraft) return;
+      const { title, slug, description, pubDate, image, imageAlt, tags, body } = extractFromDraft(currentDraft);
+
+      publishBtn && (publishBtn.disabled = true);
+      publishBtn && (publishBtn.textContent = 'Publishing...');
+
+      try {
+        const res = await fetch('/api/blog/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, slug, description, pubDate, image, imageAlt, tags, body }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          showStatus('Blog post published successfully!', false);
+        } else {
+          throw new Error(data.error || 'Failed to publish');
+        }
+      } catch (err) {
+        showStatus(err.message || 'Failed to publish. Your draft has been saved.', true);
+      } finally {
+        publishBtn && (publishBtn.disabled = false);
+        publishBtn && (publishBtn.textContent = 'Publish');
+      }
+    }
+
+    async function submitForApproval() {
+      if (!currentDraft) return;
+      showStatus('Content submitted for approval. Jay will be notified.', false);
+    }
+
+    generateBtn.addEventListener('click', generateDraft);
+    regenerateBtn && regenerateBtn.addEventListener('click', generateDraft);
+    editToggleBtn.addEventListener('click', toggleEdit);
+    publishBtn && publishBtn.addEventListener('click', publishPost);
+    submitApprovalBtn && submitApprovalBtn.addEventListener('click', submitForApproval);
+  </script>
+</AdminLayout>
