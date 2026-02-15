@@ -98,6 +98,21 @@ All code committed and pushed. Environment variables need setting on Railway bef
 
 **All Tiers 1-5 complete. Monitoring and content production phase. Tier 6 pending Telemex readiness.**
 
+**Quote Wizard Overhaul — COMPLETE (2026-02-16)**
+- Enterprise portal badge "Enterprise / Contract" with e-portal CTA and per-service descriptions
+- Real driving distance via Postcodes.io + OSRM with hardcoded matrix fallback
+- Driver hours pricing model replacing flat 1.75x return multiplier
+- Same-day return: waiting time at £13/hr, DVSA break (9+ pax, 4.5h+ driving)
+- Different-day return: two one-way trips, double deadhead, return date + pickup time
+- Deadhead from nearest base (Birmingham B7 4JD / Manchester M35 0BR) at £13/hr when >30mi
+- Luggage dropdown, wheelchair toggle, peak surcharges (time/day/bank holiday stacking)
+- Multi-stop support (up to 2 stops with autocomplete), regular booking 10% discount
+- Airport: arrival/departure toggle with 45-min arrival waiting, executive tier (+30%), vehicle class
+- Minimum booking floors (private-hire £35, airport £45)
+- Itemised quote breakdown: base journey, return, deadhead, waiting, DVSA break, stops, meet & greet, arrival, subtotal, surcharges, discounts, total — all displayed as individual line items
+- Custom toggle labels (toggleLabels), conditional field visibility (showWhen)
+- Flags: heavy luggage, wheelchair accessible, executive vehicle badges on estimate
+
 **Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable)
 
 ---
