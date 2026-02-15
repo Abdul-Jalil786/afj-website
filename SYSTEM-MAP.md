@@ -98,11 +98,12 @@ Chronological record of every major feature, based on git history.
 - **Email auto-responses** — `POST /api/contact/submit` handles Web3Forms + Resend notification + customer auto-response
 - ContactForm.astro updated to use new endpoint
 
-### Phase 9 — CI/CD & Quality (PLANNED)
-- GitHub Actions: Lighthouse audits, broken link checks, deploy validation
-- WebP image conversion audit
-- WCAG 2.1 AA accessibility audit
-- Core Web Vitals monitoring
+### Phase 9 — CI/CD & Quality (COMPLETE)
+- `.github/workflows/lighthouse.yml` — Lighthouse CI on PR (4 pages, score thresholds, PR comment)
+- `.github/workflows/broken-links.yml` — Weekly broken link checker (linkinator, GitHub issue)
+- `.github/workflows/deploy-validate.yml` — Post-deploy validation (8 pages, sitemap, Resend alerts)
+- `scripts/image-audit.mjs` — Image optimization audit (scan >500KB, WebP conversion via sharp)
+- Accessibility fixes: skip-to-content link, ServiceCard alt text, Footer ARIA, CookieBanner focus management
 
 ### Phase 10 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data

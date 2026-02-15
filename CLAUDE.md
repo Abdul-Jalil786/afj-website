@@ -89,12 +89,16 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - ContactForm.astro updated to POST JSON to `/api/contact/submit` instead of direct Web3Forms submission
 - Auto-response includes 24h response promise, link to quote wizard, contact details
 
-**NEXT SESSION: Tier 5 — CI/CD & Quality**
-- GitHub Actions: Lighthouse audits, broken link checks, deploy validation
-- WebP image conversion audit
-- WCAG 2.1 AA accessibility audit
+**Tier 5 — COMPLETE (2026-02-15): CI/CD & Quality**
+- `.github/workflows/lighthouse.yml` — Lighthouse CI on PR: audits 4 pages (homepage, SEND transport, blog post, quote), posts results table as PR comment, fails if below thresholds (perf 85, a11y 90, bp 85, seo 90)
+- `.github/workflows/broken-links.yml` — Weekly broken link checker using linkinator, creates/updates GitHub issue with `broken-links` label
+- `.github/workflows/deploy-validate.yml` — Post-deploy validation: checks 8 key pages return HTTP 200, validates sitemap-index.xml, sends Resend email alert on failure
+- `scripts/image-audit.mjs` — Image optimization audit: scans `public/images/` for files > 500 KB, reports critical/large/moderate, optional `--convert` flag creates WebP versions via sharp
+- Accessibility fixes: skip-to-content link in BaseLayout, alt text on ServiceCard images, aria-hidden on Footer decorative SVGs, focus management on CookieBanner, main-content id on AdminLayout
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable)
+**All Tiers 1-5 complete. Monitoring and content production phase. Tier 6 pending Telemex readiness.**
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable)
 
 ---
 
