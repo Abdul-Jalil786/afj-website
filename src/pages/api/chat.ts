@@ -4,6 +4,7 @@ import type { APIRoute } from 'astro';
 import { generateChat } from '../../lib/llm';
 import { CHAT_ASSISTANT_SYSTEM_PROMPT } from '../../lib/prompts';
 import { getJamesKnowledge } from '../../lib/james-knowledge';
+import { estimateQuote } from '../../lib/quote-engine';
 import { checkRateLimit, RATE_LIMITS } from '../../lib/rate-limit';
 import { validateBodySize } from '../../lib/validate-body';
 import { logChatMessage } from '../../lib/chat-log';
@@ -32,6 +33,111 @@ function checkGlobalLimit(): boolean {
 function stripHtml(str: string): string {
   return str.replace(/<[^>]*>/g, '');
 }
+
+// ---------------------------------------------------------------------------
+// Quote-via-chat: detect [QUOTE_REQUEST:{...}] in LLM output, call quote engine
+// ---------------------------------------------------------------------------
+
+const QUOTE_RE = /\[QUOTE_REQUEST:(\{[^}]+\})\]/;
+
+/** Map James's QUOTE_REQUEST JSON to the quote engine's expected format */
+function mapQuoteRequest(data: any): { service: string; answers: Record<string, string> } {
+  const serviceMap: Record<string, string> = {
+    'private_hire': 'private-hire',
+    'airport': 'airport',
+    'airport_transfer': 'airport',
+    'executive': 'executive',
+    'executive_minibus': 'executive',
+  };
+  const service = serviceMap[data.service] || data.service;
+  const answers: Record<string, string> = {};
+
+  if (data.pickup) answers.pickupPostcode = String(data.pickup);
+  if (data.destination) answers.destinationPostcode = String(data.destination);
+  if (data.date) answers.date = String(data.date);
+  if (data.time) answers.time = String(data.time);
+
+  // Map passenger count to range key used by quote engine
+  if (data.passengers != null) {
+    const count = Number(data.passengers) || 1;
+    if (count <= 8) answers.passengers = '1-8';
+    else if (count <= 16) answers.passengers = '9-16';
+    else answers.passengers = '17-24';
+  }
+
+  // Return journey
+  if (data.return === true || data.return === 'yes') {
+    answers.returnJourney = 'yes';
+    if (data.returnDate && data.date && data.returnDate !== data.date) {
+      answers.returnType = 'no'; // different-day
+      answers.returnDate = String(data.returnDate);
+    } else {
+      answers.returnType = 'yes'; // same-day
+    }
+    if (data.returnTime) answers.returnPickupTime = String(data.returnTime);
+  } else {
+    answers.returnJourney = 'no';
+  }
+
+  // Airport-specific
+  if (data.airport) answers.airport = String(data.airport);
+
+  return { service, answers };
+}
+
+/** Scan LLM reply for QUOTE_REQUEST, call quote engine, replace with friendly result */
+async function processQuoteRequest(reply: string): Promise<string> {
+  const match = reply.match(QUOTE_RE);
+  if (!match) return reply;
+
+  try {
+    const quoteData = JSON.parse(match[1]);
+    const { service, answers } = mapQuoteRequest(quoteData);
+    const estimate = await estimateQuote(service, answers);
+
+    // Only expose the price range — never internal cost breakdowns
+    const quoteReply = `Based on your journey details, the estimated cost would be around £${estimate.low} to £${estimate.high}. This is an estimate and the final price may vary. Would you like to proceed? You can contact us at info@afjltd.co.uk or call 0121 689 1000, or use our full quote wizard at /quote for more options!`;
+    return reply.replace(QUOTE_RE, quoteReply);
+  } catch (err) {
+    console.error(JSON.stringify({
+      event: 'chat_quote_error',
+      error: err instanceof Error ? err.message : 'Unknown',
+      timestamp: new Date().toISOString(),
+    }));
+    return reply.replace(
+      QUOTE_RE,
+      "I wasn't able to calculate an estimate for that journey. Please try our quote wizard at /quote or contact us directly at info@afjltd.co.uk.",
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Quote assistance instructions — appended to system prompt
+// ---------------------------------------------------------------------------
+
+const QUOTE_INSTRUCTIONS = `
+
+QUOTE ASSISTANCE:
+When a customer asks about prices or wants a quote, collect these details through conversation:
+- Service type (private hire, airport transfer, executive minibus)
+- Pickup location/postcode
+- Destination location/postcode
+- Date of travel
+- Approximate time
+- Number of passengers
+- Return journey? (yes/no, same day or different day)
+- If return: return time
+
+Ask for these naturally in conversation — don't list them all at once. Start with "I can help you get an estimate! Where would you be travelling from and to?" then follow up with what's missing.
+
+Once you have enough details, respond with EXACTLY this format on its own line:
+[QUOTE_REQUEST:{"service":"private_hire","pickup":"B7 4QS","destination":"M1 1AD","date":"2026-03-01","time":"09:00","passengers":4,"return":true,"returnDate":"2026-03-01","returnTime":"17:00"}]
+
+Do NOT make up prices. Do NOT estimate prices yourself. Always use the QUOTE_REQUEST format and wait for the system to provide the actual quote.
+
+For SEND transport or NEPTS, do NOT offer quotes — these are contract-based. Say "SEND and patient transport are priced on a contract basis. Please contact us at info@afjltd.co.uk or fill in our contact form and our team will put together a proposal for you."
+
+For fleet maintenance, vehicle conversions, or driver training, say "These are bespoke services — contact us directly for a tailored quote."`;
 
 const RATE_LIMIT_REPLY = "I'm quite busy right now. Please try again in a moment, or contact us directly at info@afjltd.co.uk";
 const ERROR_REPLY = "I'm having a bit of trouble right now. Please try again in a moment, or contact us at info@afjltd.co.uk";
@@ -132,8 +238,8 @@ export const POST: APIRoute = async ({ request }) => {
       logChatMessage(cleanMessage).catch(() => {});
     }
 
-    // Call LLM — append auto-built knowledge to system prompt
-    const systemPrompt = `${CHAT_ASSISTANT_SYSTEM_PROMPT}
+    // Call LLM — append quote instructions + auto-built knowledge to system prompt
+    const systemPrompt = `${CHAT_ASSISTANT_SYSTEM_PROMPT}${QUOTE_INSTRUCTIONS}
 
 YOUR KNOWLEDGE — This is everything on the AFJ website. Only use this information to answer questions. If something isn't covered here, say "I don't have that information, but our team can help — contact us at info@afjltd.co.uk":
 
@@ -145,8 +251,11 @@ ${getJamesKnowledge()}`;
       MAX_RESPONSE_TOKENS,
     );
 
+    // Process any QUOTE_REQUEST tag — call quote engine, replace with result
+    const finalReply = await processQuoteRequest(reply || ERROR_REPLY);
+
     return new Response(
-      JSON.stringify({ reply: reply || ERROR_REPLY }),
+      JSON.stringify({ reply: finalReply }),
       { status: 200, headers: JSON_HEADERS },
     );
   } catch (err) {
