@@ -105,7 +105,13 @@ Chronological record of every major feature, based on git history.
 - `scripts/image-audit.mjs` — Image optimization audit (scan >500KB, WebP conversion via sharp)
 - Accessibility fixes: skip-to-content link, ServiceCard alt text, Footer ARIA, CookieBanner focus management
 
-### Phase 9.3 — Pricing Bug Fixes (2026-02-16) ← LATEST
+### Phase 9.4 — Security Hardening (2026-02-16) ← LATEST
+- **Auth bypass fixes** — `/api/ai/test` and `/api/blog/create` now accept Cloudflare Access JWT (`Cf-Access-Jwt-Assertion`) alongside `x-dashboard-secret`, matching the dual-auth pattern used by other protected endpoints
+- **XSS escaping in email templates** — `escapeHtml()` applied to all user-provided values (title, reason, name, email, phone, message) before embedding in HTML email bodies in `/api/admin/approval` and `/api/contact/submit`
+- **Role-based permission on page-edit** — `/api/ai/page-edit` now checks department from CF JWT; only `management` and `marketing` roles can use the endpoint (returns 403 for others)
+- **File path exposure removed** — `/api/ai/page-edit` error responses use generic message instead of exposing server file paths
+
+### Phase 9.3 — Pricing Bug Fixes (2026-02-16)
 - **WAIT return deadhead fix** — return leg now uses base→destination distance (`destDeadhead`) instead of base→pickup; total WAIT miles use `deadhead + destDeadhead` instead of `deadhead × 2`
 - **Airport arrival waiting rate fix** — uses charge-out rate (£17/hr) instead of driver wage (£13/hr), consistent with all other waiting time calculations
 - **Per-leg minimum floor for different-day returns** — minimum fare (£35 private hire / £45 airport) now applies independently to each leg of a `separate` return, not to the combined total

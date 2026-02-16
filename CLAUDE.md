@@ -126,6 +126,12 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - DVSA passenger parsing: extracts max from ranges like "9-16" → 16 (was stopping at hyphen → 9)
 - DVSA break on one-way trips: 45-min break surcharge for 9+ passengers now applies to one-way trips too
 
+**Security Hardening — COMPLETE (2026-02-16)**
+- Auth bypass: `/api/ai/test` and `/api/blog/create` now accept CF JWT alongside `x-dashboard-secret`
+- XSS: `escapeHtml()` on all user values in email templates (`/api/admin/approval`, `/api/contact/submit`)
+- Permission: `/api/ai/page-edit` restricted to management + marketing roles via CF JWT (403 for others)
+- Path exposure: `/api/ai/page-edit` error responses no longer expose server file paths
+
 **Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable)
 
 ---
