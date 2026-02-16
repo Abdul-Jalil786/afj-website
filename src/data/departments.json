@@ -1,5 +1,4 @@
 {
-  "_comment": "Department emails: only management (Super Admin) is configured. Other departments need emails added when staff are onboarded to Cloudflare Zero Trust. Until then, only jay@afjltd.co.uk has admin access.",
   "management": {
     "name": "Management",
     "emails": ["jay@afjltd.co.uk"],

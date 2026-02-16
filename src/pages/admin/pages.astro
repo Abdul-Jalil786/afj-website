@@ -3,8 +3,12 @@ export const prerender = false;
 
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import departments from '../../data/departments.json';
+import { authenticateRequest } from '../../lib/cf-auth';
 
-const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'unknown';
+const userEmail = await authenticateRequest(Astro.request);
+if (!userEmail) {
+  return new Response('<h1>Access Denied</h1><p>You must be authenticated via Cloudflare Zero Trust to access the admin dashboard.</p><p><a href="/">Return to website</a></p>', { status: 403, headers: { 'Content-Type': 'text/html' } });
+}
 
 // Determine department and allowed pages
 type DeptKey = keyof typeof departments;
@@ -13,7 +17,7 @@ let departmentName = 'Management';
 let canApprove = true;
 
 for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof departments[DeptKey]][]) {
-  if (dept.emails.includes(userEmail)) {
+  if (dept && typeof dept === 'object' && Array.isArray(dept.emails) && dept.emails.includes(userEmail)) {
     allowedPages = dept.pages;
     departmentName = dept.name;
     canApprove = dept.canApprove;
