@@ -171,8 +171,14 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - `src/lib/tts-usage.ts` — Daily character usage tracker (falls back to browser TTS when exceeded)
 - Audio caching in sessionStorage, replay buttons on James messages, browser TTS fallback
 - OPENAI_API_KEY env var needed for TTS (chat LLM stays on Anthropic/Haiku)
+- `src/lib/james-knowledge.ts` — Auto-builds knowledge base from website content at Vite bundle time
+- Uses `import.meta.glob(?raw)` to read all public .astro pages and blog .md files
+- Imports areas.json, compliance.json, quote-rules.json for structured data
+- Extracts: services, FAQ Q&A, compliance, areas served, careers, vehicles, blog titles, quote wizard info
+- `CHAT_ASSISTANT_SYSTEM_PROMPT` now uses `SITE_KNOWLEDGE` instead of hardcoded content
+- James only knows what is on the website — nothing more, nothing less
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable), Component subdirectory structure (stable), github.ts shared utility (stable)
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable), Component subdirectory structure (stable), github.ts shared utility (stable), James knowledge base (stable)
 
 ---
 
