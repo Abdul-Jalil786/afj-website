@@ -186,7 +186,7 @@ Chronological record of every major feature, based on git history.
 - **Competitive protection** — school names removed from area pages; replaced with regional SEND capability statements (e.g. "specialist SEND transport across the West Midlands"). Company-wide stats only (700+ students, 18+ years). Hospital names kept (public knowledge).
 - **Contact form service pre-fill** — enterprise portal CTA links to `/contact?service=Service+Name`; ContactForm.astro reads the `service` URL parameter and pre-fills the message textarea with "I would like to request a consultation for [Service Name]."
 
-### Phase 10 — Full Codebase Audit & Cleanup (2026-02-16) ← LATEST
+### Phase 10 — Full Codebase Audit & Cleanup (2026-02-16/17) ← LATEST
 Systematic audit of the entire codebase covering pricing, security, admin, accessibility, SEO, and project structure.
 
 **Pricing fixes (12 issues):**
@@ -197,43 +197,56 @@ Systematic audit of the entire codebase covering pricing, security, admin, acces
 - Airport rates verified proportional to distance
 - Zero passenger edge case validation
 - Return time validation (30-min minimum gap for same-day)
-- 2027 bank holidays added
+- 2027 bank holidays added and verified against gov.uk
 - Distance matrix fallback logging
 - Airport direction toggle label clarified
 - Rounding consistency: `round2()` helper on all cost components
 - Regular discount label clarified for SEPARATE returns
 
-**Security fixes (4 issues):**
-- Auth bypass: `/api/ai/test` and `/api/blog/create` accept CF JWT
-- XSS: `escapeHtml()` on all user values in email templates
-- Permission: `/api/ai/page-edit` restricted to management + marketing
-- Path exposure: error responses no longer leak server file paths
+**Security fixes (6 issues):**
+- Cloudflare JWT verification via jose library (`src/lib/cf-auth.ts`)
+- `authenticateRequest()` replaces inline auth in all 13 API endpoints
+- In-memory rate limiting (`src/lib/rate-limit.ts`) — contact: 5/15min, quote: 30/15min
+- Request body size validation (`src/lib/validate-body.ts`) — 50KB default, 200KB for large content
+- XSS: shared `escapeHtml()` from `src/lib/utils.ts` in all email templates
+- GitHub error messages no longer leak to client in blog/create.ts
 
-**Admin fixes (3 issues):**
-- Apply Change button functional via new `/api/admin/page-apply` endpoint
-- Department config hardened (unknown email → no privileges)
-- Audit logging via `src/lib/audit-log.ts`
+**Admin fixes (7 issues):**
+- Management-only role check on POST /api/admin/pricing
+- Management + operations role check on POST /api/admin/compliance
+- `<script>` tag rejection in page-apply.ts content validation
+- Audit log refactored to JSON lines (.jsonl) with 5MB rotation
+- Hardcoded fallback email `admin@afjltd.co.uk` → `unknown` in 7 admin pages
+- Pricing preview UX: changed fields highlighted in amber
+- Apply Change button functional via `/api/admin/page-apply`
 
-**Accessibility fixes (8 issues):**
+**Accessibility fixes (10 issues):**
+- FleetGallery lightbox: full focus trap, prev/next nav, keyboard controls, focus restoration
+- FAQ accordion: proper ARIA (aria-labelledby, aria-controls, aria-hidden on icons)
+- CookieBanner: sr-only heading, focus-visible on all 4 buttons
+- ContactForm: `aria-atomic="true"` on all aria-live regions
+- Quote wizard: `aria-atomic="true"` on validation messages
+- ServiceCard: `aria-hidden="true"` on decorative SVGs
+- Hero: `aria-hidden="true"` on placeholder SVG and nav arrow SVGs
+- Header desktop dropdown: focus-visible outlines on links
+- AdminLayout: focus-visible outlines on all nav links (desktop + mobile)
 - Desktop dropdown keyboard navigation (Enter/Space/Arrow/Escape)
-- Mobile menu Escape handler
-- Footer contrast (WCAG AA)
-- Form aria-live on validation errors
-- FleetGallery lightbox ARIA (dialog, modal)
-- FAQ focus-visible styles
-- Decorative SVGs marked aria-hidden
-- AdminLayout nav ARIA labels
 
-**SEO & structure fixes (9 issues):**
-- BlogLayout SEOHead: now renders OG/Twitter meta tags on all blog posts
-- Manchester postcode (M35 0BR) added to LocalBusiness schema
-- `src/lib/github.ts`: shared GitHub API utility, 6 API files refactored
-- `src/pages/api/ai/seo-generate.ts`: new SEO meta generation endpoint
-- Component subdirectories: 20 components → `layout/`, `ui/`, `sections/`, `admin/`
-- Blog index schema: `Blog` → `CollectionPage` with `ItemList`
-- Social sidebar: removed 3 placeholder links
-- Content collections migrated to Astro v5 API (`src/content.config.ts`)
-- Testimonials collection added
+**Quote engine fixes (4 issues):**
+- Empty `destDeadhead` guard (skip API call when destinationPostcode is empty)
+- Field validation on `/api/quote/estimate` (service key whitelist, string type, length limits)
+- Distance matrix expanded: Sheffield (S), Leeds (LS), London (LDN) with full rows/columns
+- London postcode areas (E, EC, N, NW, SE, SW, W, WC) mapped to LDN key
+- Airport rates added for S, LS, LDN areas
+- City lookup updated: sheffield→S, leeds→LS, london→LDN
+
+**SEO fixes (4 issues):**
+- Blog route: `[...slug].astro` → `[slug].astro` (prevents nested path matches)
+- Blog post rendering: `post.render()` → `render(post)` (Astro v5 API)
+- Blog slug resolution: `post.slug || post.id` (Astro v5 glob loader compat)
+- Admin pages: `noindex, nofollow` meta tag via AdminLayout
+- Blog index schema: `CollectionPage` with `ItemList` (done in prior session)
+- Manchester postcode M35 0BR (done in prior session)
 
 **Dependency audit:**
 - 5 moderate lodash vulnerabilities (dev-only, @astrojs/check chain) — accepted risk
@@ -370,12 +383,16 @@ src/lib/
   prompts.ts                    System prompts with brand voice (BLOG_DRAFT, PAGE_EDIT, TESTIMONIAL, SEO_PAGE)
   github.ts                     Shared GitHub API utility (getFileContent, createOrUpdateFile, deleteFile,
                                   listDirectory, updateFileContent, encodeBase64, decodeBase64)
-  audit-log.ts                  Append-only audit log for admin actions (data/audit-log.json)
+  audit-log.ts                  Append-only JSON lines audit log (data/audit-log.jsonl, 5MB rotation)
   quote-engine.ts               Quote estimation engine — cost-per-mile + charge-out-rate model,
                                   three-tier return pricing (split/wait/separate), OSRM + Postcodes.io,
                                   deadhead rolled into journey, DVSA breaks, multi-stop chaining,
                                   per-leg surcharges for different-day, regular discount, minimum floors,
                                   airport fixed-rate unchanged, full itemised breakdown
+  cf-auth.ts                    Cloudflare Access JWT verification via jose (JWKS cache, dev-mode fallback)
+  rate-limit.ts                 In-memory rate limiter (per-IP, auto-cleanup, configurable per endpoint)
+  validate-body.ts              Request body size validation (50KB default, 200KB large)
+  utils.ts                      Shared utilities (escapeHtml)
 ```
 
 ### Data Files
@@ -388,8 +405,9 @@ src/data/departments.json       Department → page mapping for admin access con
 src/data/quote-rules.json       Quote rules: cost-per-mile (£0.45), charge-out rate (£17/hr),
                                   driver wage (£13/hr), deadhead threshold (30mi), split return gap (5hr),
                                   DVSA config, passenger multipliers, surcharges (time/day/bank holiday),
-                                  minimum booking, distance matrix, airport rates, city lookup,
-                                  base postcodes with lat/lng, bank holidays 2026,
+                                  minimum booking, 16-area distance matrix (incl. S, LS, LDN),
+                                  airport rates (15 areas × 9 airports), city lookup,
+                                  base postcodes with lat/lng, bank holidays 2026-2027,
                                   service questions with showWhen, toggleLabels, luggage, wheelchair
 src/data/area-data/areas.json   25 areas with metadata (slug, council, population, distance, region, services)
 src/data/area-data/schools.json 3-5 SEND schools per area with postcodes (not imported by area pages — competitive protection)
@@ -546,11 +564,16 @@ Customer → /contact → fills form (name, email, phone, message)
 | Route Pattern | Auth Method | Who |
 |---------------|------------|-----|
 | `/admin/*` | Cloudflare Zero Trust (email-based) | AFJ managers by department |
-| `/api/*` (from admin) | Cloudflare Access JWT header | Authenticated managers |
+| `/api/*` (from admin) | Cloudflare Access JWT (verified via jose JWKS) | Authenticated managers |
 | `/api/*` (programmatic) | `DASHBOARD_SECRET` header | Automated scripts, Claude Code |
+| `/api/contact/submit` | Rate limited (5/15min per IP) | Public |
+| `/api/quote/estimate` | Rate limited (30/15min per IP) + field validation | Public |
 | `/image-library` | Cloudflare Zero Trust | Jay only |
 | `/content-calendar` | Cloudflare Zero Trust | Jay only |
 | All other routes | Public | Everyone |
+
+All API endpoints validate request body size (50KB default, 200KB for large content).
+All admin API endpoints use `authenticateRequest()` from `src/lib/cf-auth.ts`.
 
 ### Secret Management
 - All secrets stored as Railway environment variables (never committed to repo)
@@ -614,7 +637,7 @@ RAILWAY_TOKEN=
 | Internal tools | 2 + admin dashboard (6 routes) | — |
 | API endpoints | 11 | — |
 | Components | 27 | — |
-| Library modules | 5 | — |
+| Library modules | 9 | — |
 | Data files | 12 | — |
 | Blog posts (published) | 16 | 40+ |
 | Blog posts (planned) | 24 | 24 (in content calendar) |
