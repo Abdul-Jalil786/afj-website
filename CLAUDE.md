@@ -178,6 +178,20 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - `CHAT_ASSISTANT_SYSTEM_PROMPT` now uses `SITE_KNOWLEDGE` instead of hardcoded content
 - James only knows what is on the website — nothing more, nothing less
 
+**Quote via Chat — COMPLETE (2026-02-16)**
+- James can now help customers get instant price estimates through conversation
+- QUOTE ASSISTANCE instructions appended to system prompt in `src/pages/api/chat.ts`
+- James collects journey details naturally (pickup, destination, date, time, passengers, return)
+- LLM outputs `[QUOTE_REQUEST:{...}]` tag → chat.ts detects it via regex
+- `estimateQuote()` called directly server-side (no HTTP round-trip to `/api/quote/estimate`)
+- `mapQuoteRequest()` converts James's JSON to quote engine format (service names, passenger range keys, return type)
+- Only `estimate.low` and `estimate.high` exposed to customer — James NEVER sees cost-per-mile, driver wages, charge-out rates, or internal breakdowns
+- Quotable services: private hire, airport transfers, executive minibus
+- SEND/NEPTS → redirected to contact (contract-based)
+- Fleet maintenance, vehicle conversions, driver training → redirected to contact (bespoke)
+- Error handling: if quote engine fails, friendly fallback directs to `/quote` or contact
+- Uses existing rate limits — no extra limits needed
+
 **Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable), Component subdirectory structure (stable), github.ts shared utility (stable), James knowledge base (stable)
 
 ---
