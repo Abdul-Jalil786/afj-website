@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import departments from '../../../data/departments.json';
+import { auditLog } from '../../../lib/audit-log';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -20,7 +21,9 @@ function getDepartment(email: string) {
       return { key, name: (dept as any).name, canApprove: (dept as any).canApprove };
     }
   }
-  return { key: 'management', name: 'Management', canApprove: true };
+  // Unrecognised email — no department match, no approval rights
+  // Only explicitly listed emails get department privileges
+  return { key: 'unknown', name: 'Unknown', canApprove: false };
 }
 
 function authCheck(request: Request): string | null {
@@ -201,6 +204,8 @@ export const POST: APIRoute = async ({ request }) => {
       `),
     );
 
+    await auditLog(userEmail, 'approval-submit', { id, type, title });
+
     return new Response(
       JSON.stringify({ success: true, message: 'Content submitted for approval', id }),
       { status: 201, headers: JSON_HEADERS },
@@ -335,6 +340,8 @@ export const PUT: APIRoute = async ({ request }) => {
         );
       }
 
+      await auditLog(userEmail, 'approval-approve', { title: item.title, type: item.type, author: item.author });
+
       return new Response(
         JSON.stringify({ success: true, message: `Approved and published: ${item.title}` }),
         { status: 200, headers: JSON_HEADERS },
@@ -370,6 +377,8 @@ export const PUT: APIRoute = async ({ request }) => {
           `),
         );
       }
+
+      await auditLog(userEmail, 'approval-reject', { title: item.title, type: item.type, author: item.author, reason: reason || '' });
 
       return new Response(
         JSON.stringify({ success: true, message: `Rejected: ${item.title}` }),

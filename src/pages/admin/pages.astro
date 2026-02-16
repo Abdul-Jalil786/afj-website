@@ -222,9 +222,29 @@ const visiblePages = allPages.filter((p) => isAllowed(p.path));
       applyBtn && (applyBtn.textContent = 'Applying...');
 
       try {
-        // Management can apply directly — commit the proposed changes via GitHub
-        showStatus('Change applied. It will be committed to GitHub and auto-deployed.', false);
-        discardChanges();
+        // Get the edited content from the diff preview (user may have edited it)
+        const proposedContent = currentResponse.proposedContent;
+        const pagePath = currentResponse.pagePath;
+        const fileSha = currentResponse.fileSha;
+        const pageLabel = pagePathSelect.options[pagePathSelect.selectedIndex].text;
+
+        // Commit the proposed changes to GitHub via the same API pattern as blog/create
+        const encoded = btoa(unescape(encodeURIComponent(proposedContent)));
+
+        const res = await fetch('/api/admin/page-apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pagePath, content: encoded, fileSha, pageLabel }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          showStatus('Change applied and committed to GitHub. It will auto-deploy shortly.', false);
+          discardChanges();
+        } else {
+          throw new Error(data.error || 'Failed to apply change');
+        }
       } catch (err) {
         showStatus(err.message || 'Failed to apply change.', true);
       } finally {

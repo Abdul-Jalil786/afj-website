@@ -4,6 +4,7 @@ import type { APIRoute } from 'astro';
 import { generateText } from '../../../lib/llm';
 import { PAGE_EDIT_SYSTEM_PROMPT } from '../../../lib/prompts';
 import departments from '../../../data/departments.json';
+import { auditLog } from '../../../lib/audit-log';
 
 const ALLOWED_DEPARTMENTS = ['management', 'marketing'];
 
@@ -11,7 +12,7 @@ function getUserDepartment(email: string): string {
   for (const [key, dept] of Object.entries(departments)) {
     if ((dept as any).emails.includes(email)) return key;
   }
-  return 'management'; // fallback for unknown CF emails (admin)
+  return 'unknown'; // unrecognised email — no department privileges
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -86,6 +87,9 @@ export const POST: APIRoute = async ({ request }) => {
     ].join('\n');
 
     const proposedChanges = await generateText(PAGE_EDIT_SYSTEM_PROMPT, userMessage, 4096);
+
+    const editUserEmail = request.headers.get('Cf-Access-Authenticated-User-Email') || 'api-client';
+    await auditLog(editUserEmail, 'page-edit-preview', { pagePath, instruction });
 
     return new Response(
       JSON.stringify({

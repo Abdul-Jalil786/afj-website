@@ -18,6 +18,8 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
+  const userEmail = request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
+
   if (!githubToken || !githubRepo) {
     return new Response(
       JSON.stringify({ error: 'GitHub credentials not configured' }),
@@ -27,37 +29,18 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const body = await request.json();
-    const { title, slug, description, pubDate, tags, image, imageAlt, body: content } = body;
+    const { pagePath, content, fileSha, pageLabel } = body;
 
-    if (!title || !slug || !description || !pubDate || !content) {
+    if (!pagePath || !content || !fileSha) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: title, slug, description, pubDate, body' }),
+        JSON.stringify({ error: 'Missing required fields: pagePath, content, fileSha' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } },
       );
     }
 
-    // Build frontmatter
-    const tagsArray = Array.isArray(tags) ? tags : (tags || '').split(',').map((t: string) => t.trim()).filter(Boolean);
-    const frontmatter = [
-      '---',
-      `title: "${title.replace(/"/g, '\\"')}"`,
-      `description: "${description.replace(/"/g, '\\"')}"`,
-      `pubDate: ${pubDate}`,
-      `author: "AFJ Limited"`,
-      image ? `image: "${image}"` : null,
-      imageAlt ? `imageAlt: "${imageAlt}"` : null,
-      `tags: [${tagsArray.map((t: string) => `"${t}"`).join(', ')}]`,
-      `draft: true`,
-      '---',
-    ].filter(Boolean).join('\n');
-
-    const fileContent = `${frontmatter}\n\n${content}\n`;
-    const filePath = `src/content/blog/${slug}.md`;
-    const encoded = Buffer.from(fileContent).toString('base64');
-
-    // Create file via GitHub API
+    // Commit the file to GitHub
     const response = await fetch(
-      `https://api.github.com/repos/${githubRepo}/contents/${filePath}`,
+      `https://api.github.com/repos/${githubRepo}/contents/${pagePath}`,
       {
         method: 'PUT',
         headers: {
@@ -66,8 +49,9 @@ export const POST: APIRoute = async ({ request }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: `blog: add ${title}`,
-          content: encoded,
+          message: `page: update ${pageLabel || pagePath} (via admin dashboard)`,
+          content,
+          sha: fileSha,
           branch: 'main',
         }),
       },
@@ -76,29 +60,22 @@ export const POST: APIRoute = async ({ request }) => {
     if (!response.ok) {
       const errorData = await response.json();
       return new Response(
-        JSON.stringify({ error: 'GitHub API error', details: errorData.message }),
+        JSON.stringify({ error: 'GitHub API error', details: (errorData as any).message }),
         { status: response.status, headers: { 'Content-Type': 'application/json' } },
       );
     }
 
-    const data = await response.json();
-
-    const userEmail = request.headers.get('Cf-Access-Authenticated-User-Email') || 'api-client';
-    await auditLog(userEmail, 'blog-create', { title, slug, path: filePath });
+    await auditLog(userEmail, 'page-apply', { pagePath, pageLabel });
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        message: `Blog post "${title}" created successfully`,
-        url: data.content?.html_url,
-        path: filePath,
-      }),
-      { status: 201, headers: { 'Content-Type': 'application/json' } },
+      JSON.stringify({ success: true, message: `Page updated: ${pageLabel || pagePath}` }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('Page apply error:', message);
     return new Response(
-      JSON.stringify({ error: 'Failed to create blog post', details: message }),
+      JSON.stringify({ error: 'Failed to apply page change. Please try again.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } },
     );
   }
