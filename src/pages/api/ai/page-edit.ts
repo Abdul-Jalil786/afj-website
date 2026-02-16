@@ -3,6 +3,16 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { generateText } from '../../../lib/llm';
 import { PAGE_EDIT_SYSTEM_PROMPT } from '../../../lib/prompts';
+import departments from '../../../data/departments.json';
+
+const ALLOWED_DEPARTMENTS = ['management', 'marketing'];
+
+function getUserDepartment(email: string): string {
+  for (const [key, dept] of Object.entries(departments)) {
+    if ((dept as any).emails.includes(email)) return key;
+  }
+  return 'management'; // fallback for unknown CF emails (admin)
+}
 
 export const POST: APIRoute = async ({ request }) => {
   const secret = import.meta.env.DASHBOARD_SECRET;
@@ -17,6 +27,18 @@ export const POST: APIRoute = async ({ request }) => {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
     });
+  }
+
+  // Role-based permission: only management and marketing can edit pages
+  if (cfJwt) {
+    const userEmail = request.headers.get('Cf-Access-Authenticated-User-Email') || '';
+    const dept = getUserDepartment(userEmail);
+    if (!ALLOWED_DEPARTMENTS.includes(dept)) {
+      return new Response(
+        JSON.stringify({ error: 'You do not have permission to edit pages' }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
   }
 
   if (!githubToken || !githubRepo) {
@@ -48,7 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!ghResponse.ok) {
       return new Response(
-        JSON.stringify({ error: `Could not read file: ${pagePath}` }),
+        JSON.stringify({ error: 'The requested page could not be found or accessed' }),
         { status: 404, headers: { 'Content-Type': 'application/json' } },
       );
     }

@@ -7,9 +7,10 @@ export const POST: APIRoute = async ({ request }) => {
   const githubToken = import.meta.env.GITHUB_TOKEN;
   const githubRepo = import.meta.env.GITHUB_REPO;
 
-  // Auth check
+  // Auth: accept either DASHBOARD_SECRET header or Cloudflare Access JWT
   const authHeader = request.headers.get('x-dashboard-secret');
-  if (!secret || authHeader !== secret) {
+  const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
+  if ((!secret || authHeader !== secret) && !cfJwt) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },

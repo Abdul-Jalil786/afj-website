@@ -2,6 +2,15 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export const POST: APIRoute = async ({ request }) => {
   const web3formsKey = import.meta.env.WEB3FORMS_API_KEY;
   const resendKey = import.meta.env.RESEND_API_KEY;
@@ -55,13 +64,13 @@ export const POST: APIRoute = async ({ request }) => {
           </div>
           <div style="padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
             <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-              <tr><td style="padding: 8px 0; color: #718096; width: 100px;">Name</td><td style="padding: 8px 0; color: #2D3748; font-weight: 600;">${name || 'Not provided'}</td></tr>
-              <tr><td style="padding: 8px 0; color: #718096;">Email</td><td style="padding: 8px 0; color: #2D3748; font-weight: 600;">${email}</td></tr>
-              <tr><td style="padding: 8px 0; color: #718096;">Phone</td><td style="padding: 8px 0; color: #2D3748; font-weight: 600;">${phone || 'Not provided'}</td></tr>
+              <tr><td style="padding: 8px 0; color: #718096; width: 100px;">Name</td><td style="padding: 8px 0; color: #2D3748; font-weight: 600;">${escapeHtml(name || 'Not provided')}</td></tr>
+              <tr><td style="padding: 8px 0; color: #718096;">Email</td><td style="padding: 8px 0; color: #2D3748; font-weight: 600;">${escapeHtml(email)}</td></tr>
+              <tr><td style="padding: 8px 0; color: #718096;">Phone</td><td style="padding: 8px 0; color: #2D3748; font-weight: 600;">${escapeHtml(phone || 'Not provided')}</td></tr>
             </table>
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
             <p style="font-size: 14px; color: #718096; margin-bottom: 4px;">Message:</p>
-            <p style="font-size: 14px; color: #2D3748; white-space: pre-wrap;">${message}</p>
+            <p style="font-size: 14px; color: #2D3748; white-space: pre-wrap;">${escapeHtml(message)}</p>
           </div>
         </div>
       `.trim();
@@ -75,7 +84,7 @@ export const POST: APIRoute = async ({ request }) => {
         body: JSON.stringify({
           from: 'AFJ Website <onboarding@resend.dev>',
           to: [notificationEmail],
-          subject: `New Enquiry from ${name || email}`,
+          subject: `New Enquiry from ${escapeHtml(name || email)}`,
           html: notifyHtml,
         }),
       }).catch((err) => {
@@ -94,7 +103,7 @@ export const POST: APIRoute = async ({ request }) => {
             <h1 style="margin: 0; font-size: 20px;">Thank You for Your Enquiry</h1>
           </div>
           <div style="padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
-            <p style="font-size: 16px; color: #2D3748;">Hi ${firstName},</p>
+            <p style="font-size: 16px; color: #2D3748;">Hi ${escapeHtml(firstName)},</p>
             <p style="font-size: 14px; color: #4A5568; line-height: 1.6;">
               Thank you for contacting AFJ Limited. We have received your enquiry and a member of our team will respond within <strong>24 hours</strong> during working days.
             </p>

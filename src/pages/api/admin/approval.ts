@@ -5,6 +5,15 @@ import departments from '../../../data/departments.json';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function getDepartment(email: string) {
   for (const [key, dept] of Object.entries(departments)) {
     if ((dept as any).emails.includes(email)) {
@@ -182,10 +191,10 @@ export const POST: APIRoute = async ({ request }) => {
     const notificationEmail = import.meta.env.NOTIFICATION_EMAIL || 'info@afjltd.co.uk';
     await sendEmail(
       notificationEmail,
-      `New content pending approval: ${title}`,
+      `New content pending approval: ${escapeHtml(title)}`,
       emailTemplate('New Content Pending Approval', `
-        <p style="font-size: 16px; color: #2D3748;">New content pending approval from <strong>${userEmail}</strong> in <strong>${departmentName}</strong>:</p>
-        <p style="font-size: 18px; color: #1A365D; font-weight: bold;">${title}</p>
+        <p style="font-size: 16px; color: #2D3748;">New content pending approval from <strong>${escapeHtml(userEmail)}</strong> in <strong>${escapeHtml(departmentName)}</strong>:</p>
+        <p style="font-size: 18px; color: #1A365D; font-weight: bold;">${escapeHtml(title)}</p>
         <p style="font-size: 14px; color: #718096;">Type: ${type === 'blog' ? 'Blog Post' : 'Page Edit'}</p>
         <p style="font-size: 14px; color: #718096;">Submitted: ${new Date(timestamp).toLocaleString('en-GB')}</p>
         <p style="margin-top: 16px;"><a href="https://www.afjltd.co.uk/admin/approvals" style="background: #38A169; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">Review Now</a></p>
@@ -318,10 +327,10 @@ export const PUT: APIRoute = async ({ request }) => {
       if (item.author && item.author !== userEmail) {
         await sendEmail(
           item.author,
-          `Your content has been approved: ${item.title}`,
+          `Your content has been approved: ${escapeHtml(item.title)}`,
           emailTemplate('Content Approved', `
-            <p style="font-size: 16px; color: #2D3748;">Your content <strong>"${item.title}"</strong> has been approved and published.</p>
-            <p style="font-size: 14px; color: #718096;">Approved by: ${userEmail}</p>
+            <p style="font-size: 16px; color: #2D3748;">Your content <strong>"${escapeHtml(item.title)}"</strong> has been approved and published.</p>
+            <p style="font-size: 14px; color: #718096;">Approved by: ${escapeHtml(userEmail)}</p>
           `),
         );
       }
@@ -349,14 +358,14 @@ export const PUT: APIRoute = async ({ request }) => {
 
       // Notify the author
       if (item.author && item.author !== userEmail) {
-        const reasonText = reason ? `<p style="font-size: 14px; color: #E53E3E; margin-top: 8px;">Feedback: ${reason}</p>` : '';
+        const reasonText = reason ? `<p style="font-size: 14px; color: #E53E3E; margin-top: 8px;">Feedback: ${escapeHtml(reason)}</p>` : '';
         await sendEmail(
           item.author,
-          `Your content needs revision: ${item.title}`,
+          `Your content needs revision: ${escapeHtml(item.title)}`,
           emailTemplate('Content Needs Revision', `
-            <p style="font-size: 16px; color: #2D3748;">Your content <strong>"${item.title}"</strong> needs revision.</p>
+            <p style="font-size: 16px; color: #2D3748;">Your content <strong>"${escapeHtml(item.title)}"</strong> needs revision.</p>
             ${reasonText}
-            <p style="font-size: 14px; color: #718096;">Reviewed by: ${userEmail}</p>
+            <p style="font-size: 14px; color: #718096;">Reviewed by: ${escapeHtml(userEmail)}</p>
             <p style="margin-top: 16px;"><a href="https://www.afjltd.co.uk/admin/content" style="background: #1A365D; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">Edit in Dashboard</a></p>
           `),
         );
