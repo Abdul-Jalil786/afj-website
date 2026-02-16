@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { generateChat } from '../../lib/llm';
 import { CHAT_ASSISTANT_SYSTEM_PROMPT } from '../../lib/prompts';
+import { getJamesKnowledge } from '../../lib/james-knowledge';
 import { checkRateLimit, RATE_LIMITS } from '../../lib/rate-limit';
 import { validateBodySize } from '../../lib/validate-body';
 import { logChatMessage } from '../../lib/chat-log';
@@ -131,9 +132,15 @@ export const POST: APIRoute = async ({ request }) => {
       logChatMessage(cleanMessage).catch(() => {});
     }
 
-    // Call LLM
+    // Call LLM — append auto-built knowledge to system prompt
+    const systemPrompt = `${CHAT_ASSISTANT_SYSTEM_PROMPT}
+
+YOUR KNOWLEDGE — This is everything on the AFJ website. Only use this information to answer questions. If something isn't covered here, say "I don't have that information, but our team can help — contact us at info@afjltd.co.uk":
+
+${getJamesKnowledge()}`;
+
     const reply = await generateChat(
-      CHAT_ASSISTANT_SYSTEM_PROMPT,
+      systemPrompt,
       conversationHistory,
       MAX_RESPONSE_TOKENS,
     );

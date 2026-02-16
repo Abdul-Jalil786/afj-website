@@ -1,13 +1,15 @@
 /**
  * Auto-builds James's knowledge base from website content.
  * Uses import.meta.glob(?raw) to read source files at Vite bundle time.
- * The SITE_KNOWLEDGE constant is baked into the server bundle.
+ * The knowledge string is baked into the server bundle — no runtime file reads.
+ *
+ * Exclusions: admin pages, pricing, internal tools, env vars, API details, departments.json
+ * Target: under 6000 tokens of clean, readable text.
  */
 
 // ── JSON data imports ──
 import areasRaw from '../data/area-data/areas.json';
 import complianceRaw from '../data/compliance.json';
-import quoteRulesRaw from '../data/quote-rules.json';
 
 interface Area {
   name: string;
@@ -43,7 +45,7 @@ const blogFiles = import.meta.glob(
 
 // ── Helpers ──
 
-/** Strip HTML, SVG, Astro expressions -> plain text */
+/** Strip HTML, SVG, Astro expressions, imports, script/style blocks -> plain text */
 function strip(html: string): string {
   return html
     .replace(/<!--[\s\S]*?-->/g, '')
@@ -53,9 +55,15 @@ function strip(html: string): string {
     .replace(/<[^>]+>/g, ' ')
     .replace(/\{[\s\S]*?\}/g, ' ')
     .replace(/&\w+;/g, ' ')
+    .replace(/import\s+.*?from\s+['"].*?['"]/g, '')
+    .replace(/export\s+(const|let|var|function)\b/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
+
+/** Filter out pricing-related lines */
+const PRICING_RE =
+  /£\d|costPerMile|chargeOutRate|driverWage|perMileRate|baseFare|priceMultiplier|surcharge|margin|airportRates|minimumFare|deadhead/i;
 
 const SKIP_RE =
   /^[\/\.@#]|^https?:|^mailto:|^tel:|schema\.org|stroke|viewBox|svg |path d|aria-|d="M|M\d+[\s,]|fill=|role=/;
@@ -72,10 +80,10 @@ function pageText(path: string, maxLen = 400): string {
   // String literals > 15 chars from frontmatter
   const strs: string[] = [];
   for (const m of fm.matchAll(/"([^"]{15,})"/g)) {
-    if (!SKIP_RE.test(m[1])) strs.push(m[1]);
+    if (!SKIP_RE.test(m[1]) && !PRICING_RE.test(m[1])) strs.push(m[1]);
   }
   for (const m of fm.matchAll(/'([^']{15,})'/g)) {
-    if (!SKIP_RE.test(m[1])) strs.push(m[1]);
+    if (!SKIP_RE.test(m[1]) && !PRICING_RE.test(m[1])) strs.push(m[1]);
   }
 
   const tplText = strip(tpl);
@@ -179,14 +187,10 @@ function build(): string {
   s.push('\n=== VEHICLES FOR SALE ===');
   s.push(pageText('/src/pages/vehicles-for-sale.astro', 300));
 
-  // QUOTE WIZARD
+  // QUOTE WIZARD (no pricing details — just tell James what's available)
   s.push('\n=== QUOTE WIZARD ===');
   s.push('Instant quotes at /quote for: Private Minibus Hire, Airport Transfers.');
   s.push('Enterprise services (SEND, NEPTS, Executive, Fleet) — contact for quote.');
-  const airports = ((quoteRulesRaw as any).services?.airport?.questions || [])
-    .find((q: any) => q.id === 'airport')
-    ?.options?.map((o: any) => o.label) || [];
-  if (airports.length) s.push(`Airports: ${airports.join(', ')}`);
 
   // BLOG
   s.push('\n=== BLOG ===');
@@ -195,7 +199,21 @@ function build(): string {
     if (t) s.push(`- ${t[1]}`);
   }
 
-  return s.join('\n');
+  // Final cleanup: remove any lines that leaked pricing data
+  const lines = s.join('\n').split('\n');
+  const clean = lines.filter((line) => !PRICING_RE.test(line));
+
+  return clean.join('\n');
 }
 
-export const SITE_KNOWLEDGE = build();
+// ── Cached export ──
+
+let _cache: string | null = null;
+
+/** Returns the auto-built knowledge base string. Cached after first call. */
+export function getJamesKnowledge(): string {
+  if (_cache === null) {
+    _cache = build();
+  }
+  return _cache;
+}
