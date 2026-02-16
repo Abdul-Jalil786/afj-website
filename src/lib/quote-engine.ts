@@ -440,8 +440,8 @@ export async function estimateQuote(
           let totalDrivingMinutes = coreDistance.minutes * 2;
 
           if (deadheadApplies) {
-            totalMiles += deadhead.miles + deadhead.miles; // base→pickup + pickup→base
-            totalDrivingMinutes += deadhead.minutes + deadhead.minutes;
+            totalMiles += deadhead.miles + destDeadhead.miles; // base→pickup + destination→base
+            totalDrivingMinutes += deadhead.minutes + destDeadhead.minutes;
           }
 
           journeyCost = calculateLegCost(
@@ -451,8 +451,8 @@ export async function estimateQuote(
           journeyMiles = coreDistance.miles + (deadheadApplies ? deadhead.miles : 0);
           journeyMinutes = coreDistance.minutes + (deadheadApplies ? deadhead.minutes : 0);
 
-          const returnCoreMiles = coreDistance.miles + (deadheadApplies ? deadhead.miles : 0);
-          const returnCoreMin = coreDistance.minutes + (deadheadApplies ? deadhead.minutes : 0);
+          const returnCoreMiles = coreDistance.miles + (deadheadApplies ? destDeadhead.miles : 0);
+          const returnCoreMin = coreDistance.minutes + (deadheadApplies ? destDeadhead.minutes : 0);
           returnJourneyCost = calculateLegCost(returnCoreMiles, returnCoreMin) * passengerMult;
           returnMilesVal = returnCoreMiles;
           returnMinutesVal = returnCoreMin;
@@ -464,7 +464,9 @@ export async function estimateQuote(
           }
 
           // DVSA break
-          const passengerNum = parseInt(passengerKey) || 1;
+          const passengerNum = passengerKey.includes('-')
+            ? parseInt(passengerKey.split('-').pop()!) || 1
+            : parseInt(passengerKey) || 1;
           const dvsaThresholdHrs = dvsa.breakThresholdHours ?? 4.5;
           const dvsaBreakMin = dvsa.breakDurationMinutes ?? 45;
           const dvsaMinPax = dvsa.minimumPassengers ?? 9;
@@ -494,6 +496,18 @@ export async function estimateQuote(
       journeyMinutes = totalMinutes;
       distanceMiles = totalMiles;
       durationMinutes = totalMinutes;
+
+      // DVSA break for one-way trips
+      const passengerNum = passengerKey.includes('-')
+        ? parseInt(passengerKey.split('-').pop()!) || 1
+        : parseInt(passengerKey) || 1;
+      const dvsaThresholdHrs = dvsa.breakThresholdHours ?? 4.5;
+      const dvsaBreakMin = dvsa.breakDurationMinutes ?? 45;
+      const dvsaMinPax = dvsa.minimumPassengers ?? 9;
+      if (passengerNum >= dvsaMinPax && (totalMinutes / 60) > dvsaThresholdHrs) {
+        dvsaBreakCostVal = (dvsaBreakMin / 60) * chargeOutRate;
+        dvsaBreakApplied = true;
+      }
     }
 
     // Stop waiting cost
@@ -534,8 +548,8 @@ export async function estimateQuote(
 
     // Arrival waiting cost
     if (answers.direction === 'yes') {
-      const wage = pricing.driverWagePerHour ?? 13;
-      airportArrivalCostVal = ((pricing.arrivalWaitingMinutes ?? 45) / 60) * wage;
+      const airportChargeOutRate = (quoteRules as any).chargeOutRatePerHour ?? 17;
+      airportArrivalCostVal = ((pricing.arrivalWaitingMinutes ?? 45) / 60) * airportChargeOutRate;
     }
   } else {
     throw new Error(`Unknown instant service: ${service}`);
@@ -601,9 +615,23 @@ export async function estimateQuote(
   // Minimum booking floor
   let minimumApplied = false;
   const minimum = minimums[service];
-  if (minimum && total < minimum) {
-    total = minimum;
-    minimumApplied = true;
+  if (minimum) {
+    if (returnTypeVal === 'separate' && returnJourneyCost != null) {
+      // Different-day: apply minimum floor per-leg, not combined
+      let adjustment = 0;
+      if (journeyCost < minimum) {
+        adjustment += minimum - journeyCost;
+        minimumApplied = true;
+      }
+      if (returnJourneyCost < minimum) {
+        adjustment += minimum - returnJourneyCost;
+        minimumApplied = true;
+      }
+      total += adjustment;
+    } else if (total < minimum) {
+      total = minimum;
+      minimumApplied = true;
+    }
   }
 
   const spread = pricing.rangeSpread;
