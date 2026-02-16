@@ -2,7 +2,7 @@
 
 > This is the primary instruction file for Claude Code working on the AFJ website.
 > Read this ENTIRE file before making any changes. Follow all rules strictly.
-> Last updated: 2026-02-15
+> Last updated: 2026-02-16
 
 ---
 
@@ -118,6 +118,13 @@ All code committed and pushed. Environment variables need setting on Railway bef
   - Quote preview panel for testing changes before saving
 - `GET /api/admin/pricing` and `POST /api/admin/pricing` endpoints (GitHub API commit)
 - Flags: heavy luggage, wheelchair accessible, executive vehicle badges on estimate
+
+**Pricing Bug Fixes — COMPLETE (2026-02-16)**
+- WAIT return deadhead: return leg now uses base→destination distance (`destDeadhead`) instead of base→pickup
+- Airport arrival waiting: uses charge-out rate (£17/hr) instead of driver wage (£13/hr)
+- Per-leg minimum floor: different-day returns apply minimum (£35/£45) per-leg, not combined total
+- DVSA passenger parsing: extracts max from ranges like "9-16" → 16 (was stopping at hyphen → 9)
+- DVSA break on one-way trips: 45-min break surcharge for 9+ passengers now applies to one-way trips too
 
 **Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable)
 
