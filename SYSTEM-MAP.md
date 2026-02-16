@@ -105,7 +105,12 @@ Chronological record of every major feature, based on git history.
 - `scripts/image-audit.mjs` — Image optimization audit (scan >500KB, WebP conversion via sharp)
 - Accessibility fixes: skip-to-content link, ServiceCard alt text, Footer ARIA, CookieBanner focus management
 
-### Phase 9.4 — Security Hardening (2026-02-16) ← LATEST
+### Phase 9.5 — Admin Fixes (2026-02-16) ← LATEST
+- **Apply Change button functional** — `/admin/pages` Apply Change now commits to GitHub via new `POST /api/admin/page-apply` endpoint (was showing fake success message)
+- **Department config hardened** — `getDepartment()` fallback returns `unknown` role with no privileges (was incorrectly granting management access to unrecognised emails); `_comment` added to `departments.json` explaining empty email arrays need populating on staff onboarding
+- **Audit logging** — new `src/lib/audit-log.ts` utility, append-only JSON log at `data/audit-log.json` (gitignored); hooked into `blog/create`, `page-edit` (preview), `page-apply`, and `approval` (submit/approve/reject)
+
+### Phase 9.4 — Security Hardening (2026-02-16)
 - **Auth bypass fixes** — `/api/ai/test` and `/api/blog/create` now accept Cloudflare Access JWT (`Cf-Access-Jwt-Assertion`) alongside `x-dashboard-secret`, matching the dual-auth pattern used by other protected endpoints
 - **XSS escaping in email templates** — `escapeHtml()` applied to all user-provided values (title, reason, name, email, phone, message) before embedding in HTML email bodies in `/api/admin/approval` and `/api/contact/submit`
 - **Role-based permission on page-edit** — `/api/ai/page-edit` now checks department from CF JWT; only `management` and `marketing` roles can use the endpoint (returns 403 for others)

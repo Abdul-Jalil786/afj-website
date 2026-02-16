@@ -132,6 +132,11 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - Permission: `/api/ai/page-edit` restricted to management + marketing roles via CF JWT (403 for others)
 - Path exposure: `/api/ai/page-edit` error responses no longer expose server file paths
 
+**Admin Fixes — COMPLETE (2026-02-16)**
+- Apply Change button: now commits to GitHub via new `/api/admin/page-apply` endpoint (was a no-op)
+- Department config: `getDepartment()` fallback returns `unknown` with no privileges (was granting management)
+- Audit logging: `src/lib/audit-log.ts` logs admin actions to `data/audit-log.json` (gitignored); hooked into blog/create, page-edit, page-apply, approval (submit/approve/reject)
+
 **Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable)
 
 ---
