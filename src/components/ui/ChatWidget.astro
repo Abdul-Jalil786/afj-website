@@ -104,6 +104,23 @@ import ChatCharacter from './ChatCharacter.astro';
           aria-label="Type a message to James"
           class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
         />
+        <!-- Mic button (hidden if browser doesn't support SpeechRecognition) -->
+        <button
+          id="james-mic-btn"
+          style="display:none"
+          class="w-11 h-11 flex items-center justify-center rounded-full border border-gray-300 text-gray-500 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+          aria-label="Start voice input"
+          title="Speak to James"
+        >
+          <!-- Mic icon (idle) -->
+          <svg id="james-mic-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M12 15a3 3 0 003-3V5a3 3 0 00-6 0v7a3 3 0 003 3z" />
+          </svg>
+          <!-- Mic recording icon (red, pulsing) -->
+          <svg id="james-mic-icon-rec" class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M12 15a3 3 0 003-3V5a3 3 0 00-6 0v7a3 3 0 003 3z" />
+          </svg>
+        </button>
         <button
           id="james-send-btn"
           class="w-9 h-9 flex items-center justify-center rounded-full bg-emerald-700 text-white hover:bg-emerald-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
@@ -115,7 +132,10 @@ import ChatCharacter from './ChatCharacter.astro';
           </svg>
         </button>
       </div>
-      <div id="james-char-count" class="text-right text-[10px] text-gray-400 mt-1 pr-12" aria-hidden="true"></div>
+      <div class="flex items-center justify-between mt-1">
+        <div id="james-listening-indicator" class="text-[11px] text-red-500 font-medium pl-1" style="display:none" aria-live="polite"></div>
+        <div id="james-char-count" class="text-right text-[10px] text-gray-400 ml-auto pr-12" aria-hidden="true"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -142,11 +162,16 @@ import ChatCharacter from './ChatCharacter.astro';
   var charCount = document.getElementById('james-char-count');
   var bubbleChar = document.getElementById('james-bubble-char');
   var headerChar = document.getElementById('james-header-char');
+  var micBtn = document.getElementById('james-mic-btn');
+  var micIcon = document.getElementById('james-mic-icon');
+  var micIconRec = document.getElementById('james-mic-icon-rec');
+  var listeningIndicator = document.getElementById('james-listening-indicator');
 
   // State
   var isOpen = false;
   var isMuted = false;
   var isSending = false;
+  var isRecording = false;
   var history = [];
   var messageCount = 0;
   var MAX_MESSAGES = 20;
@@ -199,6 +224,150 @@ import ChatCharacter from './ChatCharacter.astro';
     setMood('idle');
   }
 
+  // ===== VOICE INPUT (SPEECH-TO-TEXT) =====
+  var SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var recognition = null;
+  var silenceTimer = null;
+  var autoSendTimer = null;
+
+  if (SpeechRecognitionAPI) {
+    micBtn.style.display = '';
+
+    recognition = new SpeechRecognitionAPI();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'en-GB';
+
+    recognition.onresult = function (event) {
+      clearTimeout(silenceTimer);
+      var transcript = '';
+      var isFinal = false;
+      for (var i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+        if (event.results[i].isFinal) isFinal = true;
+      }
+      inputEl.value = transcript;
+      updateSendBtn();
+
+      // Update char count
+      var len = transcript.length;
+      if (len > 400) {
+        charCount.textContent = len + '/' + MAX_CHARS;
+      } else {
+        charCount.textContent = '';
+      }
+
+      if (isFinal) {
+        stopRecording();
+        // Auto-send after 500ms
+        clearTimeout(autoSendTimer);
+        autoSendTimer = setTimeout(function () {
+          if (inputEl.value.trim()) sendMessage();
+        }, 500);
+      } else {
+        listeningIndicator.textContent = 'Listening...';
+        // Reset silence timeout (5s of no new results)
+        silenceTimer = setTimeout(function () {
+          if (isRecording) {
+            recognition.stop();
+          }
+        }, 5000);
+      }
+    };
+
+    recognition.onerror = function (event) {
+      stopRecording();
+      if (event.error === 'not-allowed') {
+        listeningIndicator.textContent = 'Please allow microphone access to use voice';
+        listeningIndicator.style.display = '';
+        setTimeout(function () {
+          listeningIndicator.style.display = 'none';
+        }, 4000);
+      } else if (event.error === 'no-speech') {
+        listeningIndicator.textContent = "Didn't catch that — try again or type your message";
+        listeningIndicator.style.display = '';
+        setTimeout(function () {
+          listeningIndicator.style.display = 'none';
+        }, 3000);
+      }
+    };
+
+    recognition.onend = function () {
+      if (isRecording) {
+        // Ended without a final result (silence timeout)
+        stopRecording();
+        if (!inputEl.value.trim()) {
+          listeningIndicator.textContent = "Didn't catch that — try again or type your message";
+          listeningIndicator.style.display = '';
+          setTimeout(function () {
+            listeningIndicator.style.display = 'none';
+          }, 3000);
+        } else {
+          // Got partial text, auto-send it
+          clearTimeout(autoSendTimer);
+          autoSendTimer = setTimeout(function () {
+            if (inputEl.value.trim()) sendMessage();
+          }, 500);
+        }
+      }
+    };
+
+    micBtn.addEventListener('click', function () {
+      if (isSending) return;
+      if (isRecording) {
+        recognition.stop();
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    });
+  }
+
+  function startRecording() {
+    if (!recognition || isRecording || isSending) return;
+    isRecording = true;
+    stopSpeech(); // Stop any TTS playing
+    inputEl.value = '';
+    charCount.textContent = '';
+    updateSendBtn();
+
+    // Visual feedback
+    micIcon.style.display = 'none';
+    micIconRec.style.display = '';
+    micBtn.classList.add('animate-pulse');
+    micBtn.classList.remove('border-gray-300', 'text-gray-500');
+    micBtn.classList.add('border-red-400', 'text-red-500');
+    micBtn.setAttribute('aria-label', 'Stop voice input');
+    listeningIndicator.textContent = 'Listening...';
+    listeningIndicator.style.display = '';
+    setMood('thinking');
+
+    // Start silence timer (5s max wait for first speech)
+    silenceTimer = setTimeout(function () {
+      if (isRecording) recognition.stop();
+    }, 5000);
+
+    try {
+      recognition.start();
+    } catch (e) {
+      stopRecording();
+    }
+  }
+
+  function stopRecording() {
+    isRecording = false;
+    clearTimeout(silenceTimer);
+
+    // Reset visual state
+    micIcon.style.display = '';
+    micIconRec.style.display = 'none';
+    micBtn.classList.remove('animate-pulse', 'border-red-400', 'text-red-500');
+    micBtn.classList.add('border-gray-300', 'text-gray-500');
+    micBtn.setAttribute('aria-label', 'Start voice input');
+    listeningIndicator.style.display = 'none';
+    if (!isSending) setMood('idle');
+  }
+
   // ===== MOOD CONTROL =====
   function setMood(mood) {
     var chars = widget.querySelectorAll('.james-character');
@@ -237,6 +406,10 @@ import ChatCharacter from './ChatCharacter.astro';
     toggleBtn.setAttribute('aria-expanded', 'false');
     toggleBtn.focus();
     stopSpeech();
+    if (isRecording && recognition) {
+      recognition.stop();
+      stopRecording();
+    }
   }
 
   toggleBtn.addEventListener('click', openChat);
@@ -372,6 +545,7 @@ import ChatCharacter from './ChatCharacter.astro';
     isSending = true;
     inputEl.disabled = true;
     sendBtn.disabled = true;
+    if (micBtn) micBtn.disabled = true;
     setMood('thinking');
     showTyping();
 
@@ -399,6 +573,7 @@ import ChatCharacter from './ChatCharacter.astro';
         isSending = false;
         if (messageCount <= MAX_MESSAGES) {
           inputEl.disabled = false;
+          if (micBtn) micBtn.disabled = false;
           inputEl.focus();
         }
         updateSendBtn();
@@ -412,6 +587,12 @@ import ChatCharacter from './ChatCharacter.astro';
   }
 
   inputEl.addEventListener('input', function () {
+    // Stop recording if user starts typing manually
+    if (isRecording && recognition) {
+      recognition.stop();
+      stopRecording();
+      clearTimeout(autoSendTimer);
+    }
     var len = inputEl.value.length;
     if (len > 400) {
       charCount.textContent = len + '/' + MAX_CHARS;
