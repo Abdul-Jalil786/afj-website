@@ -2,6 +2,8 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { generateText } from '../../../lib/llm';
+import { authenticateRequest } from '../../../lib/cf-auth';
+import { validateBodySize } from '../../../lib/validate-body';
 
 const SEO_META_SYSTEM_PROMPT = `You are an SEO specialist for AFJ Limited, a UK transport company (SEND school transport, non-emergency patient transport, private hire, fleet services). Generate optimised meta titles and descriptions.
 
@@ -17,12 +19,11 @@ Return ONLY valid JSON in this exact format (no markdown fences):
 {"title":"...","description":"...","keywords":["...",  "..."]}`;
 
 export const POST: APIRoute = async ({ request }) => {
-  const secret = import.meta.env.DASHBOARD_SECRET;
+  const sizeError = await validateBodySize(request);
+  if (sizeError) return sizeError;
 
-  // Auth: accept either DASHBOARD_SECRET header or Cloudflare Access JWT
-  const authHeader = request.headers.get('x-dashboard-secret');
-  const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
-  if ((!secret || authHeader !== secret) && !cfJwt) {
+  const userEmail = await authenticateRequest(request);
+  if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },

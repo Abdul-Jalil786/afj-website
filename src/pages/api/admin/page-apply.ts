@@ -2,22 +2,21 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { auditLog } from '../../../lib/audit-log';
+import { authenticateRequest } from '../../../lib/cf-auth';
 import { createOrUpdateFile } from '../../../lib/github';
+import { validateBodySize, LARGE_MAX_BYTES } from '../../../lib/validate-body';
 
 export const POST: APIRoute = async ({ request }) => {
-  const secret = import.meta.env.DASHBOARD_SECRET;
+  const sizeError = await validateBodySize(request, LARGE_MAX_BYTES);
+  if (sizeError) return sizeError;
 
-  // Auth: accept either DASHBOARD_SECRET header or Cloudflare Access JWT
-  const authHeader = request.headers.get('x-dashboard-secret');
-  const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
-  if ((!secret || authHeader !== secret) && !cfJwt) {
+  const userEmail = await authenticateRequest(request);
+  if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
     });
   }
-
-  const userEmail = request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
 
   try {
     const body = await request.json();
@@ -30,8 +29,15 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Content is already base64-encoded from the client; decode for the shared helper
+    // Validate content: reject if it contains <script> tags
     const decoded = Buffer.from(content, 'base64').toString('utf-8');
+    if (/<script[\s>]/i.test(decoded)) {
+      return new Response(
+        JSON.stringify({ error: 'Content contains disallowed script tags' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
+
     await createOrUpdateFile(pagePath, {
       content: decoded,
       message: `page: update ${pageLabel || pagePath} (via admin dashboard)`,

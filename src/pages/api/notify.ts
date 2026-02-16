@@ -1,13 +1,18 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
+import { escapeHtml } from '../../lib/utils';
+import { validateBodySize } from '../../lib/validate-body';
 
 export const POST: APIRoute = async ({ request }) => {
+  const sizeError = await validateBodySize(request);
+  if (sizeError) return sizeError;
+
   const secret = import.meta.env.DASHBOARD_SECRET;
   const resendKey = import.meta.env.RESEND_API_KEY;
   const notificationEmail = import.meta.env.NOTIFICATION_EMAIL || 'info@afjltd.co.uk';
 
-  // Auth check
+  // Auth check — notify is only called by internal scripts, DASHBOARD_SECRET only
   const authHeader = request.headers.get('x-dashboard-secret');
   if (!secret || authHeader !== secret) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), {
@@ -40,8 +45,8 @@ export const POST: APIRoute = async ({ request }) => {
           <h1 style="margin: 0; font-size: 20px;">AFJ Content Reminder</h1>
         </div>
         <div style="padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
-          <p style="font-size: 16px; color: #2D3748;">A <strong>${type}</strong> post for <strong>${platform}</strong> is due on <strong>${dueDate}</strong>:</p>
-          <p style="font-size: 18px; color: #1A365D; font-weight: bold;">${title}</p>
+          <p style="font-size: 16px; color: #2D3748;">A <strong>${escapeHtml(type)}</strong> post for <strong>${escapeHtml(platform)}</strong> is due on <strong>${escapeHtml(dueDate)}</strong>:</p>
+          <p style="font-size: 18px; color: #1A365D; font-weight: bold;">${escapeHtml(title)}</p>
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
           <p style="font-size: 14px; color: #718096;">This is an automated reminder from the AFJ Content Calendar Dashboard.</p>
         </div>
@@ -57,7 +62,7 @@ export const POST: APIRoute = async ({ request }) => {
       body: JSON.stringify({
         from: 'AFJ Content Calendar <onboarding@resend.dev>',
         to: [notificationEmail],
-        subject: `AFJ Content Due: ${title}`,
+        subject: `AFJ Content Due: ${escapeHtml(title)}`,
         html: emailBody,
       }),
     });
@@ -65,7 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (!response.ok) {
       const errorData = await response.json();
       return new Response(
-        JSON.stringify({ error: 'Resend API error', details: errorData.message }),
+        JSON.stringify({ error: 'Failed to send notification' }),
         { status: response.status, headers: { 'Content-Type': 'application/json' } },
       );
     }
@@ -75,15 +80,16 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Reminder sent for "${title}" (${platform})`,
+        message: `Reminder sent for "${escapeHtml(title)}" (${escapeHtml(platform)})`,
         emailId: data.id,
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('Notification send error:', message);
     return new Response(
-      JSON.stringify({ error: 'Failed to send notification', details: message }),
+      JSON.stringify({ error: 'Failed to send notification. Please try again.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } },
     );
   }

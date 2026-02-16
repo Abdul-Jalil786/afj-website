@@ -3,6 +3,8 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import quoteRules from '../../../data/quote-rules.json';
 import { updateFileContent } from '../../../lib/github';
+import { authenticateRequest } from '../../../lib/cf-auth';
+import { validateBodySize } from '../../../lib/validate-body';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -10,10 +12,8 @@ const JSON_HEADERS = { 'Content-Type': 'application/json' };
  * GET /api/admin/pricing — returns current pricing config from quote-rules.json.
  */
 export const GET: APIRoute = async ({ request }) => {
-  const secret = import.meta.env.DASHBOARD_SECRET;
-  const authHeader = request.headers.get('x-dashboard-secret');
-  const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
-  if ((!secret || authHeader !== secret) && !cfJwt) {
+  const userEmail = await authenticateRequest(request);
+  if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), { status: 401, headers: JSON_HEADERS });
   }
 
@@ -28,10 +28,11 @@ export const GET: APIRoute = async ({ request }) => {
  * Expects a JSON body with the fields to merge into the existing config.
  */
 export const POST: APIRoute = async ({ request }) => {
-  const secret = import.meta.env.DASHBOARD_SECRET;
-  const authHeader = request.headers.get('x-dashboard-secret');
-  const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
-  if ((!secret || authHeader !== secret) && !cfJwt) {
+  const sizeError = await validateBodySize(request);
+  if (sizeError) return sizeError;
+
+  const userEmail = await authenticateRequest(request);
+  if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), { status: 401, headers: JSON_HEADERS });
   }
 

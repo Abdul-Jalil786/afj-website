@@ -3,25 +3,17 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import departments from '../../../data/departments.json';
 import { auditLog } from '../../../lib/audit-log';
+import { authenticateRequest } from '../../../lib/cf-auth';
+import { escapeHtml } from '../../../lib/utils';
+import { validateBodySize } from '../../../lib/validate-body';
 import {
   listDirectory,
   getFileContent,
   createOrUpdateFile,
   deleteFile,
-  encodeBase64,
-  decodeBase64,
 } from '../../../lib/github';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 function getDepartment(email: string) {
   for (const [key, dept] of Object.entries(departments)) {
@@ -30,16 +22,7 @@ function getDepartment(email: string) {
     }
   }
   // Unrecognised email — no department match, no approval rights
-  // Only explicitly listed emails get department privileges
   return { key: 'unknown', name: 'Unknown', canApprove: false };
-}
-
-function authCheck(request: Request): string | null {
-  const secret = import.meta.env.DASHBOARD_SECRET;
-  const authHeader = request.headers.get('x-dashboard-secret');
-  const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
-  if ((!secret || authHeader !== secret) && !cfJwt) return null;
-  return request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
 }
 
 async function sendEmail(to: string, subject: string, bodyHtml: string) {
@@ -79,7 +62,7 @@ function emailTemplate(heading: string, message: string): string {
 // GET — list pending items
 // ---------------------------------------------------------------------------
 export const GET: APIRoute = async ({ request }) => {
-  const userEmail = authCheck(request);
+  const userEmail = await authenticateRequest(request);
   if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), { status: 401, headers: JSON_HEADERS });
   }
@@ -116,7 +99,10 @@ export const GET: APIRoute = async ({ request }) => {
 // POST — submit content for approval
 // ---------------------------------------------------------------------------
 export const POST: APIRoute = async ({ request }) => {
-  const userEmail = authCheck(request);
+  const sizeError = await validateBodySize(request);
+  if (sizeError) return sizeError;
+
+  const userEmail = await authenticateRequest(request);
   if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), { status: 401, headers: JSON_HEADERS });
   }
@@ -184,7 +170,10 @@ export const POST: APIRoute = async ({ request }) => {
 // PUT — approve or reject
 // ---------------------------------------------------------------------------
 export const PUT: APIRoute = async ({ request }) => {
-  const userEmail = authCheck(request);
+  const sizeError = await validateBodySize(request);
+  if (sizeError) return sizeError;
+
+  const userEmail = await authenticateRequest(request);
   if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), { status: 401, headers: JSON_HEADERS });
   }
@@ -208,7 +197,6 @@ export const PUT: APIRoute = async ({ request }) => {
     if (action === 'approve') {
       // Publish the content
       if (item.type === 'blog') {
-        // Extract blog data and publish via blog/create pattern
         const draft = item.content;
         const frontmatterMatch = draft.match(/^---\n([\s\S]*?)\n---/);
         let title = item.title;
@@ -259,10 +247,6 @@ export const PUT: APIRoute = async ({ request }) => {
           content: fileContent,
           message: `blog: publish ${title} (approved by ${userEmail})`,
         });
-      } else if (item.type === 'page-edit') {
-        // Apply page edit — the content contains the proposed changes
-        // For now, store as a note; full apply requires more complex merge logic
-        // This is handled client-side with a direct GitHub commit
       }
 
       // Delete the pending file
@@ -292,7 +276,6 @@ export const PUT: APIRoute = async ({ request }) => {
     }
 
     if (action === 'reject') {
-      // Update the pending file with rejected status
       const rejectedItem = { ...item, status: 'rejected', rejectedBy: userEmail, rejectionReason: reason || '', rejectedAt: new Date().toISOString() };
 
       await createOrUpdateFile(filePath, {

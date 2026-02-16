@@ -2,10 +2,19 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { estimateQuote } from '../../../lib/quote-engine';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '../../../lib/rate-limit';
+import { validateBodySize } from '../../../lib/validate-body';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
 export const POST: APIRoute = async ({ request }) => {
+  // Rate limit: 30 requests per IP per 15 minutes
+  const rateCheck = checkRateLimit(request, 'quote', RATE_LIMITS.quote);
+  if (!rateCheck.allowed) return rateLimitResponse(rateCheck.resetAt);
+
+  const sizeError = await validateBodySize(request);
+  if (sizeError) return sizeError;
+
   try {
     const body = await request.json();
     const { service, answers } = body;

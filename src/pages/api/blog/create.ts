@@ -2,15 +2,17 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { auditLog } from '../../../lib/audit-log';
-import { createOrUpdateFile, encodeBase64 } from '../../../lib/github';
+import { authenticateRequest } from '../../../lib/cf-auth';
+import { createOrUpdateFile } from '../../../lib/github';
+import { validateBodySize, LARGE_MAX_BYTES } from '../../../lib/validate-body';
 
 export const POST: APIRoute = async ({ request }) => {
-  const secret = import.meta.env.DASHBOARD_SECRET;
+  // Input size validation (allow up to 200KB for blog content)
+  const sizeError = await validateBodySize(request, LARGE_MAX_BYTES);
+  if (sizeError) return sizeError;
 
-  // Auth: accept either DASHBOARD_SECRET header or Cloudflare Access JWT
-  const authHeader = request.headers.get('x-dashboard-secret');
-  const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
-  if ((!secret || authHeader !== secret) && !cfJwt) {
+  const userEmail = await authenticateRequest(request);
+  if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
@@ -51,7 +53,6 @@ export const POST: APIRoute = async ({ request }) => {
       message: `blog: add ${title}`,
     });
 
-    const userEmail = request.headers.get('Cf-Access-Authenticated-User-Email') || 'api-client';
     await auditLog(userEmail, 'blog-create', { title, slug, path: filePath });
 
     return new Response(
@@ -65,8 +66,9 @@ export const POST: APIRoute = async ({ request }) => {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('Blog create error:', message);
     return new Response(
-      JSON.stringify({ error: 'Failed to create blog post', details: message }),
+      JSON.stringify({ error: 'Failed to create blog post. Please try again.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } },
     );
   }

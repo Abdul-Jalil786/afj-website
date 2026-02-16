@@ -1,17 +1,18 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+import { escapeHtml } from '../../../lib/utils';
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '../../../lib/rate-limit';
+import { validateBodySize } from '../../../lib/validate-body';
 
 export const POST: APIRoute = async ({ request }) => {
+  // Rate limit: 5 requests per IP per 15 minutes
+  const rateCheck = checkRateLimit(request, 'contact', RATE_LIMITS.contact);
+  if (!rateCheck.allowed) return rateLimitResponse(rateCheck.resetAt);
+
+  const sizeError = await validateBodySize(request);
+  if (sizeError) return sizeError;
+
   const web3formsKey = import.meta.env.WEB3FORMS_API_KEY;
   const resendKey = import.meta.env.RESEND_API_KEY;
   const notificationEmail = import.meta.env.NOTIFICATION_EMAIL || 'info@afjltd.co.uk';

@@ -6,6 +6,8 @@ import { PAGE_EDIT_SYSTEM_PROMPT } from '../../../lib/prompts';
 import departments from '../../../data/departments.json';
 import { auditLog } from '../../../lib/audit-log';
 import { getFileContent } from '../../../lib/github';
+import { authenticateRequest } from '../../../lib/cf-auth';
+import { validateBodySize, LARGE_MAX_BYTES } from '../../../lib/validate-body';
 
 const ALLOWED_DEPARTMENTS = ['management', 'marketing'];
 
@@ -17,12 +19,11 @@ function getUserDepartment(email: string): string {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  const secret = import.meta.env.DASHBOARD_SECRET;
+  const sizeError = await validateBodySize(request, LARGE_MAX_BYTES);
+  if (sizeError) return sizeError;
 
-  // Auth: accept either DASHBOARD_SECRET header or Cloudflare Access JWT
-  const authHeader = request.headers.get('x-dashboard-secret');
-  const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
-  if ((!secret || authHeader !== secret) && !cfJwt) {
+  const userEmail = await authenticateRequest(request);
+  if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
@@ -30,8 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // Role-based permission: only management and marketing can edit pages
-  if (cfJwt) {
-    const userEmail = request.headers.get('Cf-Access-Authenticated-User-Email') || '';
+  if (userEmail !== 'api-client') {
     const dept = getUserDepartment(userEmail);
     if (!ALLOWED_DEPARTMENTS.includes(dept)) {
       return new Response(
@@ -75,8 +75,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const proposedChanges = await generateText(PAGE_EDIT_SYSTEM_PROMPT, userMessage, 4096);
 
-    const editUserEmail = request.headers.get('Cf-Access-Authenticated-User-Email') || 'api-client';
-    await auditLog(editUserEmail, 'page-edit-preview', { pagePath, instruction });
+    await auditLog(userEmail, 'page-edit-preview', { pagePath, instruction });
 
     return new Response(
       JSON.stringify({
