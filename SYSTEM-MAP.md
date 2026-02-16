@@ -105,7 +105,14 @@ Chronological record of every major feature, based on git history.
 - `scripts/image-audit.mjs` — Image optimization audit (scan >500KB, WebP conversion via sharp)
 - Accessibility fixes: skip-to-content link, ServiceCard alt text, Footer ARIA, CookieBanner focus management
 
-### Phase 9.2 — Pricing Refactor + Admin Cost Portal (2026-02-16) ← LATEST
+### Phase 9.3 — Pricing Bug Fixes (2026-02-16) ← LATEST
+- **WAIT return deadhead fix** — return leg now uses base→destination distance (`destDeadhead`) instead of base→pickup; total WAIT miles use `deadhead + destDeadhead` instead of `deadhead × 2`
+- **Airport arrival waiting rate fix** — uses charge-out rate (£17/hr) instead of driver wage (£13/hr), consistent with all other waiting time calculations
+- **Per-leg minimum floor for different-day returns** — minimum fare (£35 private hire / £45 airport) now applies independently to each leg of a `separate` return, not to the combined total
+- **DVSA passenger range parsing fix** — `parseInt("9-16")` was returning 9; now extracts maximum value from hyphenated ranges (e.g. "9-16" → 16)
+- **DVSA break on one-way trips** — 45-minute break surcharge for 9+ passengers now applies to one-way trips too, not just WAIT returns
+
+### Phase 9.2 — Pricing Refactor + Admin Cost Portal (2026-02-16)
 - **Cost-based pricing model** for private hire — replaces baseFare + perMileRate with two admin-configurable inputs:
   - `costPerMile` (£0.45) — combined fuel + wear + insurance + depreciation + compliance
   - `chargeOutRatePerHour` (£17) — what we charge clients per driver hour (vs £13 driver wage)
