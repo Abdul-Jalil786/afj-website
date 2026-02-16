@@ -158,6 +158,20 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - Content collections migrated to Astro v5 API: `src/content.config.ts` with `glob()` and `file()` loaders (replaces old `src/content/config.ts`); testimonials collection added
 - `npm audit`: 5 moderate vulnerabilities in lodash chain (lodash → yaml-language-server → @astrojs/check). Dev-only dependency, no runtime exposure. `npm audit fix --force` would downgrade @astrojs/check — accepted risk.
 
+**James AI Chat Assistant — COMPLETE (2026-02-16)**
+- `src/components/ui/ChatCharacter.astro` — SVG chauffeur character with 4 animated moods (idle, talking, thinking, waving)
+- `src/components/ui/ChatWidget.astro` — Full chat UI with vanilla JS, floating bubble, 20-message cap, 500-char input
+- `src/pages/api/chat.ts` — Chat POST endpoint with 3-layer rate limiting (per-IP/min, per-IP/hr, global/hr)
+- `src/lib/chat-log.ts` — Append-only JSONL analytics (first message only, no IPs)
+- `src/lib/prompts.ts` — Added CHAT_ASSISTANT_SYSTEM_PROMPT (James persona)
+- `src/lib/llm.ts` — Added generateChat() multi-turn function with callLLM() refactor
+- Voice input (speech-to-text) via Web Speech API with en-GB, interim results, auto-send
+- OpenAI TTS natural voice output (model: tts-1, voice: ash) via `/api/tts` proxy endpoint
+- `src/pages/api/tts.ts` — TTS endpoint with rate limiting + daily 50,000-char usage cap
+- `src/lib/tts-usage.ts` — Daily character usage tracker (falls back to browser TTS when exceeded)
+- Audio caching in sessionStorage, replay buttons on James messages, browser TTS fallback
+- OPENAI_API_KEY env var needed for TTS (chat LLM stays on Anthropic/Haiku)
+
 **Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable), Component subdirectory structure (stable), github.ts shared utility (stable)
 
 ---
@@ -653,6 +667,9 @@ LLM_PROVIDER=anthropic                      # 'anthropic' or 'groq'
 LLM_MODEL=claude-haiku-4-5-20251001         # Model identifier
 LLM_API_KEY=                                # API key for chosen provider
 LLM_MAX_TOKENS=2048                         # Default max tokens per request
+
+# === TTS (James chat voice) ===
+OPENAI_API_KEY=                             # OpenAI API key (TTS only, not for chat LLM)
 
 # === EMAIL ===
 RESEND_API_KEY=                             # Resend.com API key

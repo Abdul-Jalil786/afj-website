@@ -179,7 +179,23 @@ import ChatCharacter from './ChatCharacter.astro';
   var selectedVoice = null;
   var currentUtterance = null;
 
-  // ===== VOICE SETUP =====
+  // ===== VOICE OUTPUT (OpenAI TTS with browser fallback) =====
+  var currentAudio = null;
+  var audioCache = {}; // text → base64 data URL (session cache)
+
+  // Restore cache from sessionStorage
+  try {
+    var stored = sessionStorage.getItem('james-tts-cache');
+    if (stored) audioCache = JSON.parse(stored);
+  } catch (e) {}
+
+  function saveCacheToSession() {
+    try {
+      sessionStorage.setItem('james-tts-cache', JSON.stringify(audioCache));
+    } catch (e) {}
+  }
+
+  // Browser TTS fallback
   function pickVoice() {
     if (typeof speechSynthesis === 'undefined') return null;
     var voices = speechSynthesis.getVoices();
@@ -189,7 +205,6 @@ import ChatCharacter from './ChatCharacter.astro';
         if (voices[j].name === priorities[i]) return voices[j];
       }
     }
-    // Fallback: any en-GB voice
     for (var k = 0; k < voices.length; k++) {
       if (voices[k].lang === 'en-GB') return voices[k];
     }
@@ -203,8 +218,8 @@ import ChatCharacter from './ChatCharacter.astro';
     });
   }
 
-  function speak(text) {
-    if (isMuted || typeof speechSynthesis === 'undefined') return;
+  function speakBrowserFallback(text) {
+    if (typeof speechSynthesis === 'undefined') return;
     speechSynthesis.cancel();
     var utter = new SpeechSynthesisUtterance(text);
     if (selectedVoice) utter.voice = selectedVoice;
@@ -218,7 +233,85 @@ import ChatCharacter from './ChatCharacter.astro';
     speechSynthesis.speak(utter);
   }
 
+  function playAudioBlob(dataUrl, text) {
+    stopSpeech();
+    var audio = new Audio(dataUrl);
+    currentAudio = audio;
+    audio.onplay = function () { setMood('talking'); };
+    audio.onended = function () { setMood('idle'); currentAudio = null; };
+    audio.onerror = function () {
+      currentAudio = null;
+      // Fallback to browser TTS if audio playback fails
+      speakBrowserFallback(text);
+    };
+    audio.play().catch(function () {
+      currentAudio = null;
+      speakBrowserFallback(text);
+    });
+  }
+
+  function blobToDataUrl(blob) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onloadend = function () { resolve(reader.result); };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function speak(text) {
+    if (isMuted) return;
+    stopSpeech();
+
+    var cacheKey = text.substring(0, 200);
+
+    // Check cache first
+    if (audioCache[cacheKey]) {
+      playAudioBlob(audioCache[cacheKey], text);
+      return;
+    }
+
+    // Call OpenAI TTS via our proxy
+    fetch('/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text.substring(0, 1000) }),
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error('TTS API error ' + res.status);
+        return res.blob();
+      })
+      .then(function (blob) {
+        return blobToDataUrl(blob);
+      })
+      .then(function (dataUrl) {
+        // Cache for session
+        audioCache[cacheKey] = dataUrl;
+        saveCacheToSession();
+        // Only play if still unmuted
+        if (!isMuted) {
+          playAudioBlob(dataUrl, text);
+        }
+      })
+      .catch(function () {
+        // Fallback to browser TTS
+        if (!isMuted) {
+          speakBrowserFallback(text);
+        }
+      });
+  }
+
+  function replayMessage(text) {
+    if (isMuted) return;
+    speak(text);
+  }
+
   function stopSpeech() {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+    }
     if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
     currentUtterance = null;
     setMood('idle');
@@ -394,7 +487,7 @@ import ChatCharacter from './ChatCharacter.astro';
         }
       }, 600);
       setTimeout(function () {
-        if (!currentUtterance) setMood('idle');
+        if (!currentAudio && !currentUtterance) setMood('idle');
       }, 2400);
     }
   }
@@ -485,10 +578,21 @@ import ChatCharacter from './ChatCharacter.astro';
     var row = document.createElement('div');
     row.className = 'flex items-start gap-2';
     row.innerHTML = jamesSvgSmall();
+    var wrapper = document.createElement('div');
+    wrapper.className = 'max-w-[80%] flex flex-col';
     var bubble = document.createElement('div');
-    bubble.className = 'max-w-[80%] px-3 py-2 rounded-2xl rounded-bl-sm bg-white border border-gray-200 text-gray-800 text-sm leading-relaxed';
+    bubble.className = 'px-3 py-2 rounded-2xl rounded-bl-sm bg-white border border-gray-200 text-gray-800 text-sm leading-relaxed';
     bubble.textContent = text;
-    row.appendChild(bubble);
+    wrapper.appendChild(bubble);
+    // Replay button
+    var replayBtn = document.createElement('button');
+    replayBtn.className = 'flex items-center gap-1 mt-0.5 ml-1 text-[10px] text-gray-400 hover:text-emerald-600 transition-colors';
+    replayBtn.setAttribute('aria-label', 'Replay this message');
+    replayBtn.title = 'Replay';
+    replayBtn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/></svg><span>Replay</span>';
+    replayBtn.addEventListener('click', function () { replayMessage(text); });
+    wrapper.appendChild(replayBtn);
+    row.appendChild(wrapper);
     messagesEl.appendChild(row);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }

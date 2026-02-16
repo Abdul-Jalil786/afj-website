@@ -38,3 +38,4 @@ data/audit-log.jsonl
 data/audit-log.old.jsonl
 data/chat-log.jsonl
 data/chat-log.old.jsonl
+data/tts-usage.json
