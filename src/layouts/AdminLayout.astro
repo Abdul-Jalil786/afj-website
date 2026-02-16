@@ -22,6 +22,7 @@ const currentPath = Astro.url.pathname;
 ---
 
 <BaseLayout title={`${title} | AFJ Admin`}>
+  <meta slot="head" name="robots" content="noindex, nofollow" />
   <!-- Admin Header -->
   <header class="bg-afj-dark-blue text-white shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
