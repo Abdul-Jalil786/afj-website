@@ -101,7 +101,7 @@ const currentPath = Astro.url.pathname;
                   {item.children.map((child) => (
                     <a
                       href={child.href}
-                      class="block px-4 py-2 text-sm text-afj-text hover:bg-afj-light-white hover:text-afj-accent transition-colors"
+                      class="block px-4 py-2 text-sm text-afj-text hover:bg-afj-light-white hover:text-afj-accent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-afj-accent"
                     >
                       {child.name}
                     </a>

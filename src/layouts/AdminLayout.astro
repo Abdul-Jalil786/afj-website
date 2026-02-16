@@ -41,7 +41,7 @@ const currentPath = Astro.url.pathname;
               <a
                 href={item.href}
                 class:list={[
-                  'px-3 py-2 text-sm font-medium rounded-md transition-colors',
+                  'px-3 py-2 text-sm font-medium rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-afj-accent',
                   currentPath === item.href
                     ? 'bg-white/10 text-afj-accent'
                     : 'text-gray-300 hover:text-white hover:bg-white/5',
@@ -64,7 +64,7 @@ const currentPath = Astro.url.pathname;
         <a
           href={item.href}
           class:list={[
-            'px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap',
+            'px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-afj-accent',
             currentPath === item.href
               ? 'bg-white/10 text-afj-accent'
               : 'text-gray-300 hover:text-white',

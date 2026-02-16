@@ -269,7 +269,7 @@ const jsonLD = {
                 placeholder="your.email@example.com"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
               />
-              <p class="form-error text-afj-red text-xs mt-1 hidden" aria-live="polite" data-for="quote-email">Please enter a valid email address.</p>
+              <p class="form-error text-afj-red text-xs mt-1 hidden" aria-live="polite" aria-atomic="true" data-for="quote-email">Please enter a valid email address.</p>
             </div>
 
             <div>
@@ -842,6 +842,7 @@ const jsonLD = {
           msg.id = msgId;
           msg.className = 'text-afj-red text-xs mt-1';
           msg.setAttribute('aria-live', 'polite');
+          msg.setAttribute('aria-atomic', 'true');
           msg.textContent = 'Return pickup must be at least 30 minutes after the outbound time.';
           var rptWrap = rptEl.closest('.autocomplete-wrap') || rptEl;
           rptWrap.parentNode.appendChild(msg);
