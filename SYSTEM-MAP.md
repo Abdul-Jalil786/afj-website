@@ -105,7 +105,17 @@ Chronological record of every major feature, based on git history.
 - `scripts/image-audit.mjs` — Image optimization audit (scan >500KB, WebP conversion via sharp)
 - Accessibility fixes: skip-to-content link, ServiceCard alt text, Footer ARIA, CookieBanner focus management
 
-### Phase 9.5 — Admin Fixes (2026-02-16) ← LATEST
+### Phase 9.6 — Accessibility Hardening (2026-02-16) ← LATEST
+- **Desktop dropdown keyboard support** — Header.astro Services dropdown now opens with Enter/Space/ArrowDown, navigates with ArrowUp/ArrowDown, closes with Escape; `aria-haspopup` and `aria-expanded` attributes added to trigger link; focus traps within dropdown, focusout closes it
+- **Mobile menu Escape handler** — pressing Escape closes mobile menu and restores focus to hamburger button
+- **Color contrast fix** — Footer bottom bar changed from `text-gray-400` to `text-gray-300` for WCAG AA compliance on dark background
+- **Form validation aria-live** — field-level error messages in ContactForm.astro and quote wizard now have `aria-live="polite"` for screen reader announcements
+- **FleetGallery lightbox ARIA** — lightbox overlay now has `role="dialog"`, `aria-modal="true"`, `aria-label="Image lightbox"`
+- **FAQ focus-visible styles** — toggle buttons now show `focus-visible:outline-2 focus-visible:outline-afj-accent` for keyboard users
+- **Hero decorative SVG** — arrow icon in "Read More" link marked `aria-hidden="true"`; chevron in desktop nav dropdown also marked `aria-hidden="true"`
+- **Admin navigation ARIA** — desktop nav gets `aria-label="Admin navigation"`, mobile nav changed from `<div>` to `<nav>` with `aria-label="Admin navigation mobile"`
+
+### Phase 9.5 — Admin Fixes (2026-02-16)
 - **Apply Change button functional** — `/admin/pages` Apply Change now commits to GitHub via new `POST /api/admin/page-apply` endpoint (was showing fake success message)
 - **Department config hardened** — `getDepartment()` fallback returns `unknown` role with no privileges (was incorrectly granting management access to unrecognised emails); `_comment` added to `departments.json` explaining empty email arrays need populating on staff onboarding
 - **Audit logging** — new `src/lib/audit-log.ts` utility, append-only JSON log at `data/audit-log.json` (gitignored); hooked into `blog/create`, `page-edit` (preview), `page-apply`, and `approval` (submit/approve/reject)

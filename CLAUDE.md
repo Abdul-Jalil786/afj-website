@@ -137,6 +137,16 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - Department config: `getDepartment()` fallback returns `unknown` with no privileges (was granting management)
 - Audit logging: `src/lib/audit-log.ts` logs admin actions to `data/audit-log.json` (gitignored); hooked into blog/create, page-edit, page-apply, approval (submit/approve/reject)
 
+**Accessibility Hardening — COMPLETE (2026-02-16)**
+- Desktop dropdown keyboard: Enter/Space/ArrowDown opens, ArrowUp/ArrowDown navigates, Escape closes; `aria-haspopup` + `aria-expanded` on trigger
+- Mobile menu Escape: closes menu + restores focus to hamburger button
+- Footer contrast: bottom bar `text-gray-400` → `text-gray-300` (WCAG AA)
+- Form aria-live: field-level error messages in ContactForm + quote wizard have `aria-live="polite"`
+- FleetGallery lightbox: `role="dialog"`, `aria-modal="true"`, `aria-label="Image lightbox"`
+- FAQ focus-visible: toggle buttons show `focus-visible:outline-2 focus-visible:outline-afj-accent`
+- Hero + nav decorative SVGs: arrow/chevron icons marked `aria-hidden="true"`
+- AdminLayout nav: desktop `aria-label="Admin navigation"`, mobile changed `<div>` → `<nav>` with `aria-label`
+
 **Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable)
 
 ---
