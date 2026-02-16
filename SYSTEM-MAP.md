@@ -1,7 +1,7 @@
 # SYSTEM-MAP.md — AFJ Limited Digital Platform
 
 > Living document. Updated every time a feature is built, modified, or planned.
-> Last updated: 2026-02-16
+> Last updated: 2026-02-17
 
 ---
 
@@ -18,7 +18,7 @@
 | **Domain/DNS** | Cloudflare (DNS, SSL, Zero Trust auth) |
 | **AI Provider** | Anthropic Haiku 4.5 (swappable to Groq + Llama) |
 | **Repo** | `afj-website` on `main` branch |
-| **Node** | v20.x LTS |
+| **Node** | v20.x LTS (Railway) / v24 (local dev) |
 | **Package Manager** | npm |
 
 ---
@@ -186,7 +186,59 @@ Chronological record of every major feature, based on git history.
 - **Competitive protection** — school names removed from area pages; replaced with regional SEND capability statements (e.g. "specialist SEND transport across the West Midlands"). Company-wide stats only (700+ students, 18+ years). Hospital names kept (public knowledge).
 - **Contact form service pre-fill** — enterprise portal CTA links to `/contact?service=Service+Name`; ContactForm.astro reads the `service` URL parameter and pre-fills the message textarea with "I would like to request a consultation for [Service Name]."
 
-### Phase 10 — Future Integration (PLANNED, pending Telemex)
+### Phase 10 — Full Codebase Audit & Cleanup (2026-02-16) ← LATEST
+Systematic audit of the entire codebase covering pricing, security, admin, accessibility, SEO, and project structure.
+
+**Pricing fixes (12 issues):**
+- Different-day return surcharge double-counting fixed
+- Empty multi-stop locations filtered
+- Negative quote protection (clamp to 0)
+- Return date validation (must be after outbound)
+- Airport rates verified proportional to distance
+- Zero passenger edge case validation
+- Return time validation (30-min minimum gap for same-day)
+- 2027 bank holidays added
+- Distance matrix fallback logging
+- Airport direction toggle label clarified
+- Rounding consistency: `round2()` helper on all cost components
+- Regular discount label clarified for SEPARATE returns
+
+**Security fixes (4 issues):**
+- Auth bypass: `/api/ai/test` and `/api/blog/create` accept CF JWT
+- XSS: `escapeHtml()` on all user values in email templates
+- Permission: `/api/ai/page-edit` restricted to management + marketing
+- Path exposure: error responses no longer leak server file paths
+
+**Admin fixes (3 issues):**
+- Apply Change button functional via new `/api/admin/page-apply` endpoint
+- Department config hardened (unknown email → no privileges)
+- Audit logging via `src/lib/audit-log.ts`
+
+**Accessibility fixes (8 issues):**
+- Desktop dropdown keyboard navigation (Enter/Space/Arrow/Escape)
+- Mobile menu Escape handler
+- Footer contrast (WCAG AA)
+- Form aria-live on validation errors
+- FleetGallery lightbox ARIA (dialog, modal)
+- FAQ focus-visible styles
+- Decorative SVGs marked aria-hidden
+- AdminLayout nav ARIA labels
+
+**SEO & structure fixes (9 issues):**
+- BlogLayout SEOHead: now renders OG/Twitter meta tags on all blog posts
+- Manchester postcode (M35 0BR) added to LocalBusiness schema
+- `src/lib/github.ts`: shared GitHub API utility, 6 API files refactored
+- `src/pages/api/ai/seo-generate.ts`: new SEO meta generation endpoint
+- Component subdirectories: 20 components → `layout/`, `ui/`, `sections/`, `admin/`
+- Blog index schema: `Blog` → `CollectionPage` with `ItemList`
+- Social sidebar: removed 3 placeholder links
+- Content collections migrated to Astro v5 API (`src/content.config.ts`)
+- Testimonials collection added
+
+**Dependency audit:**
+- 5 moderate lodash vulnerabilities (dev-only, @astrojs/check chain) — accepted risk
+
+### Phase 11 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
 - Parent notification system (real-time transport updates)
 - Fleet performance dashboard with live data
@@ -250,6 +302,7 @@ POST /api/contact/submit        Contact form: Web3Forms + Resend notification + 
 POST /api/ai/draft              AI blog draft generation (Haiku/Groq)
 POST /api/ai/page-edit          AI page content update (NL → diff)
 POST /api/ai/testimonial        AI testimonial/case study from raw feedback
+POST /api/ai/seo-generate       AI SEO meta title, description, keywords generation
 POST /api/quote/estimate        Intelligent quote estimation (rule-based, public)
 GET  /api/compliance/status     Compliance dashboard data (public, cached)
 POST /api/admin/approval        Approval workflow (GET list, POST submit, PUT approve/reject)
@@ -261,19 +314,20 @@ POST /api/admin/compliance      Update compliance data via GitHub API
 ### Components (27)
 
 ```
-Layouts:
-  BaseLayout.astro              HTML shell, fonts, meta, GA4
+src/components/layout/ (4):
   Header.astro                  Navigation bar (dark navy)
   Footer.astro                  Footer with offices, services, social links
+  SEOHead.astro                 Meta tags, Open Graph, JSON-LD schema
   Breadcrumbs.astro             SEO breadcrumb navigation
 
-Core:
-  Hero.astro                    Hero banner with image slider
-  SEOHead.astro                 Meta tags, Open Graph, JSON-LD schema
+src/components/ui/ (4):
   CookieBanner.astro            GDPR cookie consent
-  SocialSidebar.astro           Floating social media icons
+  BookingButton.astro           "Book Now!" red CTA
+  SocialSidebar.astro           Floating social media icons (Facebook, LinkedIn)
+  CTABanner.astro               Call-to-action sections
 
-Content:
+src/components/sections/ (12):
+  Hero.astro                    Hero banner with image slider
   ServiceCard.astro             Service overview card
   BlogCard.astro                Blog post preview card
   TestimonialSlider.astro       Testimonials carousel
@@ -283,12 +337,10 @@ Content:
   TeamSection.astro             Team/about section
   FleetGallery.astro            Vehicle photo gallery
   AccreditationBadges.astro     CQC, council logos
-  CTABanner.astro               Call-to-action sections
-  BookingButton.astro           "Book Now!" red CTA
   BookingForm.astro             Booking form
   ContactForm.astro             Contact form → /api/contact/submit
 
-Social Impact (7):
+src/components/social-impact/ (7):
   SocialImpactHero.astro
   ImpactDashboard.astro
   LeadershipMessages.astro
@@ -297,6 +349,13 @@ Social Impact (7):
   PartnerCharities.astro
   SDGAlignment.astro
 
+src/components/admin/ (empty — reserved for future admin components)
+
+Layouts (src/layouts/):
+  BaseLayout.astro              HTML shell, fonts, meta, GA4
+  PageLayout.astro              Standard page wrapper (SEOHead, Breadcrumbs)
+  BlogLayout.astro              Blog post wrapper (SEOHead, sidebar)
+  AdminLayout.astro             Admin dashboard wrapper
 ```
 
 > **Note:** Admin and quote wizard functionality is built inline in page files
@@ -309,6 +368,9 @@ Social Impact (7):
 src/lib/
   llm.ts                        LLM provider abstraction (Anthropic ↔ Groq swappable)
   prompts.ts                    System prompts with brand voice (BLOG_DRAFT, PAGE_EDIT, TESTIMONIAL, SEO_PAGE)
+  github.ts                     Shared GitHub API utility (getFileContent, createOrUpdateFile, deleteFile,
+                                  listDirectory, updateFileContent, encodeBase64, decodeBase64)
+  audit-log.ts                  Append-only audit log for admin actions (data/audit-log.json)
   quote-engine.ts               Quote estimation engine — cost-per-mile + charge-out-rate model,
                                   three-tier return pricing (split/wait/separate), OSRM + Postcodes.io,
                                   deadhead rolled into journey, DVSA breaks, multi-stop chaining,
@@ -550,9 +612,9 @@ RAILWAY_TOKEN=
 |----------|---------|---------|
 | Public pages | 55+ routes | — |
 | Internal tools | 2 + admin dashboard (6 routes) | — |
-| API endpoints | 10 | — |
+| API endpoints | 11 | — |
 | Components | 27 | — |
-| Library modules | 3 | — |
+| Library modules | 5 | — |
 | Data files | 12 | — |
 | Blog posts (published) | 16 | 40+ |
 | Blog posts (planned) | 24 | 24 (in content calendar) |

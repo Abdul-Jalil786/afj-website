@@ -147,7 +147,18 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - Hero + nav decorative SVGs: arrow/chevron icons marked `aria-hidden="true"`
 - AdminLayout nav: desktop `aria-label="Admin navigation"`, mobile changed `<div>` → `<nav>` with `aria-label`
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable)
+**SEO & Project Structure Cleanup — COMPLETE (2026-02-16)**
+- BlogLayout now renders `<SEOHead>` in head slot (was imported but unused — blog posts had no OG/Twitter meta)
+- Manchester office postcode (M35 0BR) added to LocalBusiness schema in SEOHead.astro + local-business.json
+- `src/lib/github.ts` — shared GitHub API utility (getFileContent, createOrUpdateFile, deleteFile, listDirectory, updateFileContent); 6 API files refactored to use it
+- `src/pages/api/ai/seo-generate.ts` — new endpoint: generates SEO meta title, description, keywords via LLM
+- Component subdirectories: 20 flat components reorganised into `layout/` (4), `ui/` (4), `sections/` (12), `admin/` (empty); ~86 import paths updated across 29 files
+- Blog index schema changed from `Blog` to `CollectionPage` with `ItemList` of posts
+- Social sidebar: removed 3 placeholder links (Instagram, X, YouTube); kept Facebook + LinkedIn
+- Content collections migrated to Astro v5 API: `src/content.config.ts` with `glob()` and `file()` loaders (replaces old `src/content/config.ts`); testimonials collection added
+- `npm audit`: 5 moderate vulnerabilities in lodash chain (lodash → yaml-language-server → @astrojs/check). Dev-only dependency, no runtime exposure. `npm audit fix --force` would downgrade @astrojs/check — accepted risk.
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable), Component subdirectory structure (stable), github.ts shared utility (stable)
 
 ---
 
@@ -167,7 +178,7 @@ All code committed and pushed. Environment variables need setting on Railway bef
 
 | Layer | Technology | Notes |
 |-------|------------|-------|
-| **Framework** | Astro (v4.x) | Static pages + server-rendered API endpoints |
+| **Framework** | Astro (v5.17.x) | Static pages + server-rendered API endpoints |
 | **Styling** | Tailwind CSS | Utility-first, no custom CSS files unless absolutely necessary |
 | **Hosting** | Railway | Auto-deploys on push to `main` branch |
 | **Adapter** | `@astrojs/node` | Standalone mode for Railway |
@@ -177,7 +188,7 @@ All code committed and pushed. Environment variables need setting on Railway bef
 | **Email** | Resend API | Notifications, reminders |
 | **Forms** | Web3Forms | Contact form submissions |
 | **Repo** | `afj-website` on `main` branch | Feature branches for development |
-| **Node** | v20.x LTS | Pin this version |
+| **Node** | v20.x LTS (Railway target) | Local dev runs v24; Railway deploys with v20 LTS |
 | **Package Manager** | npm | Use `package-lock.json`, no yarn/pnpm |
 
 ---
