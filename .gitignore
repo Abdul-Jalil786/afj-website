@@ -32,5 +32,9 @@ nul
 # WordPress backup archives
 *.zip
 
-# Audit log (runtime data)
+# Runtime data logs
 data/audit-log.json
+data/audit-log.jsonl
+data/audit-log.old.jsonl
+data/chat-log.jsonl
+data/chat-log.old.jsonl

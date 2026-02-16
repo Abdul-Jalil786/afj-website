@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ChatWidget from '../components/ui/ChatWidget.astro';
 
 interface Props {
   title: string;
@@ -40,5 +41,6 @@ const ga4Id = import.meta.env.GA4_MEASUREMENT_ID;
       Skip to main content
     </a>
     <slot />
+    <ChatWidget />
   </body>
 </html>

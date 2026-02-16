@@ -14,7 +14,14 @@
 
 const RETRY_DELAY_MS = 5000;
 
-function getConfig() {
+interface LLMProviderConfig {
+  provider: 'anthropic' | 'groq';
+  model: string;
+  apiKey: string;
+  maxTokens: number;
+}
+
+function getConfig(): LLMProviderConfig {
   return {
     provider: (import.meta.env.LLM_PROVIDER || 'anthropic') as 'anthropic' | 'groq',
     model: import.meta.env.LLM_MODEL || 'claude-haiku-4-5-20251001',
@@ -24,26 +31,15 @@ function getConfig() {
 }
 
 /**
- * Generate text from an LLM provider.
- *
- * @param system    - System prompt with instructions and context
- * @param userMessage - The user's message / request
- * @param maxTokens - Override default max tokens (optional)
- * @returns The generated text string
- * @throws Error if API key is missing or both attempts fail
+ * Internal helper — sends a request to the configured LLM provider and returns
+ * the text content. Handles retries, logging, and provider-specific formatting.
  */
-export async function generateText(
+async function callLLM(
   system: string,
-  userMessage: string,
-  maxTokens?: number,
+  messages: Array<{ role: 'user' | 'assistant'; content: string }>,
+  maxTokens: number,
+  config: LLMProviderConfig,
 ): Promise<string> {
-  const config = getConfig();
-
-  if (!config.apiKey) {
-    throw new Error('LLM_API_KEY not configured');
-  }
-
-  const tokens = maxTokens ?? config.maxTokens;
   let lastError = '';
 
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -63,10 +59,10 @@ export async function generateText(
         };
         body = JSON.stringify({
           model: config.model,
-          max_tokens: tokens,
+          max_tokens: maxTokens,
           messages: [
             { role: 'system', content: system },
-            { role: 'user', content: userMessage },
+            ...messages,
           ],
         });
       } else {
@@ -79,9 +75,9 @@ export async function generateText(
         };
         body = JSON.stringify({
           model: config.model,
-          max_tokens: tokens,
+          max_tokens: maxTokens,
           system,
-          messages: [{ role: 'user', content: userMessage }],
+          messages,
         });
       }
 
@@ -174,4 +170,54 @@ export async function generateText(
   }
 
   throw new Error(lastError);
+}
+
+/**
+ * Generate text from an LLM provider (single-turn).
+ *
+ * @param system    - System prompt with instructions and context
+ * @param userMessage - The user's message / request
+ * @param maxTokens - Override default max tokens (optional)
+ * @returns The generated text string
+ * @throws Error if API key is missing or both attempts fail
+ */
+export async function generateText(
+  system: string,
+  userMessage: string,
+  maxTokens?: number,
+): Promise<string> {
+  const config = getConfig();
+  if (!config.apiKey) throw new Error('LLM_API_KEY not configured');
+
+  return callLLM(
+    system,
+    [{ role: 'user', content: userMessage }],
+    maxTokens ?? config.maxTokens,
+    config,
+  );
+}
+
+/**
+ * Generate a chat response with full conversation history (multi-turn).
+ *
+ * @param system   - System prompt with instructions and context
+ * @param messages - Conversation history (alternating user/assistant messages)
+ * @param maxTokens - Override default max tokens (optional)
+ * @returns The generated text string
+ * @throws Error if API key is missing or both attempts fail
+ */
+export async function generateChat(
+  system: string,
+  messages: Array<{ role: 'user' | 'assistant'; content: string }>,
+  maxTokens?: number,
+): Promise<string> {
+  const config = getConfig();
+  if (!config.apiKey) throw new Error('LLM_API_KEY not configured');
+
+  return callLLM(
+    system,
+    messages,
+    maxTokens ?? config.maxTokens,
+    config,
+  );
 }

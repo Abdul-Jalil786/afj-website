@@ -1,0 +1,433 @@
+---
+/**
+ * ChatWidget — James AI chat assistant.
+ * Floating bubble + chat panel with TTS.
+ * Appears on all public pages, hidden on /admin/*.
+ * Pure vanilla JS — no framework dependencies.
+ */
+import ChatCharacter from './ChatCharacter.astro';
+---
+
+<!-- Chat Widget Container (hidden by default, shown via JS on non-admin pages) -->
+<div id="james-chat-widget" style="display:none">
+  <!-- ===== FLOATING BUBBLE ===== -->
+  <button
+    id="james-chat-toggle"
+    class="fixed bottom-6 right-6 z-[45] w-[76px] h-[76px] rounded-full bg-white border-2 border-emerald-700 shadow-lg hover:shadow-xl transition-shadow cursor-pointer group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+    aria-label="Open chat with James"
+    aria-expanded="false"
+    aria-controls="james-chat-panel"
+    title="Chat with James!"
+  >
+    <div class="flex items-center justify-center w-full h-full rounded-full overflow-hidden">
+      <div id="james-bubble-char">
+        <ChatCharacter size={64} mood="idle" />
+      </div>
+    </div>
+    <!-- Online indicator -->
+    <span class="absolute bottom-1 right-1 flex h-4 w-4">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white"></span>
+    </span>
+  </button>
+
+  <!-- ===== CHAT PANEL ===== -->
+  <div
+    id="james-chat-panel"
+    class="fixed bottom-24 right-6 z-[45] w-[380px] max-sm:bottom-0 max-sm:right-0 max-sm:left-0 max-sm:top-0 max-sm:w-full max-sm:h-full flex flex-col bg-white rounded-2xl max-sm:rounded-none shadow-2xl border border-gray-200 overflow-hidden"
+    style="display:none;height:550px;max-sm:height:100%"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Chat with James, AFJ Transport Assistant"
+  >
+    <!-- Header -->
+    <div class="flex items-center gap-3 px-4 py-3 bg-emerald-900 text-white flex-shrink-0">
+      <div id="james-header-char">
+        <ChatCharacter size={44} mood="idle" />
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold text-sm leading-tight">James</div>
+        <div class="text-emerald-300 text-xs">AFJ Transport Assistant</div>
+      </div>
+      <button
+        id="james-mute-btn"
+        class="p-1.5 rounded-lg hover:bg-emerald-800 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+        aria-label="Mute James"
+        title="Mute voice"
+      >
+        <!-- Speaker icon (unmuted) -->
+        <svg id="james-mute-icon-on" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z" />
+        </svg>
+        <!-- Speaker muted icon -->
+        <svg id="james-mute-icon-off" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+        </svg>
+      </button>
+      <button
+        id="james-close-btn"
+        class="p-1.5 rounded-lg hover:bg-emerald-800 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+        aria-label="Close chat"
+        title="Close"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Messages area -->
+    <div
+      id="james-messages"
+      class="flex-1 overflow-y-auto px-4 py-3 bg-gray-50 space-y-3"
+      role="log"
+      aria-live="polite"
+      aria-label="Chat messages"
+    >
+      <!-- Messages injected by JS -->
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="px-4 py-1.5 bg-amber-50 border-t border-amber-200 text-amber-700 text-[11px] text-center flex-shrink-0">
+      AI assistant — responses may not be 100% accurate
+    </div>
+
+    <!-- Input area -->
+    <div class="px-3 py-3 bg-white border-t border-gray-200 flex-shrink-0">
+      <div class="flex items-center gap-2">
+        <input
+          id="james-input"
+          type="text"
+          maxlength="500"
+          placeholder="Type a message..."
+          aria-label="Type a message to James"
+          class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        />
+        <button
+          id="james-send-btn"
+          class="w-9 h-9 flex items-center justify-center rounded-full bg-emerald-700 text-white hover:bg-emerald-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+          aria-label="Send message"
+          disabled
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+        </button>
+      </div>
+      <div id="james-char-count" class="text-right text-[10px] text-gray-400 mt-1 pr-12" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+(function () {
+  // Admin exclusion
+  if (window.location.pathname.startsWith('/admin')) return;
+
+  var widget = document.getElementById('james-chat-widget');
+  if (!widget) return;
+  widget.style.display = '';
+
+  // DOM references
+  var toggleBtn = document.getElementById('james-chat-toggle');
+  var panel = document.getElementById('james-chat-panel');
+  var closeBtn = document.getElementById('james-close-btn');
+  var muteBtn = document.getElementById('james-mute-btn');
+  var muteIconOn = document.getElementById('james-mute-icon-on');
+  var muteIconOff = document.getElementById('james-mute-icon-off');
+  var messagesEl = document.getElementById('james-messages');
+  var inputEl = document.getElementById('james-input');
+  var sendBtn = document.getElementById('james-send-btn');
+  var charCount = document.getElementById('james-char-count');
+  var bubbleChar = document.getElementById('james-bubble-char');
+  var headerChar = document.getElementById('james-header-char');
+
+  // State
+  var isOpen = false;
+  var isMuted = false;
+  var isSending = false;
+  var history = [];
+  var messageCount = 0;
+  var MAX_MESSAGES = 20;
+  var MAX_CHARS = 500;
+  var selectedVoice = null;
+  var currentUtterance = null;
+
+  // ===== VOICE SETUP =====
+  function pickVoice() {
+    if (typeof speechSynthesis === 'undefined') return null;
+    var voices = speechSynthesis.getVoices();
+    var priorities = ['Google UK English Male', 'Daniel'];
+    for (var i = 0; i < priorities.length; i++) {
+      for (var j = 0; j < voices.length; j++) {
+        if (voices[j].name === priorities[i]) return voices[j];
+      }
+    }
+    // Fallback: any en-GB voice
+    for (var k = 0; k < voices.length; k++) {
+      if (voices[k].lang === 'en-GB') return voices[k];
+    }
+    return voices[0] || null;
+  }
+
+  if (typeof speechSynthesis !== 'undefined') {
+    selectedVoice = pickVoice();
+    speechSynthesis.addEventListener('voiceschanged', function () {
+      selectedVoice = pickVoice();
+    });
+  }
+
+  function speak(text) {
+    if (isMuted || typeof speechSynthesis === 'undefined') return;
+    speechSynthesis.cancel();
+    var utter = new SpeechSynthesisUtterance(text);
+    if (selectedVoice) utter.voice = selectedVoice;
+    utter.rate = 1.0;
+    utter.pitch = 0.9;
+    utter.lang = 'en-GB';
+    currentUtterance = utter;
+    utter.onstart = function () { setMood('talking'); };
+    utter.onend = function () { setMood('idle'); currentUtterance = null; };
+    utter.onerror = function () { setMood('idle'); currentUtterance = null; };
+    speechSynthesis.speak(utter);
+  }
+
+  function stopSpeech() {
+    if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+    currentUtterance = null;
+    setMood('idle');
+  }
+
+  // ===== MOOD CONTROL =====
+  function setMood(mood) {
+    var chars = widget.querySelectorAll('.james-character');
+    for (var i = 0; i < chars.length; i++) {
+      chars[i].setAttribute('data-mood', mood);
+    }
+  }
+
+  // ===== CHAT OPEN / CLOSE =====
+  function openChat() {
+    isOpen = true;
+    panel.style.display = 'flex';
+    toggleBtn.style.display = 'none';
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    inputEl.focus();
+
+    // Greeting on open
+    if (history.length === 0) {
+      setMood('waving');
+      setTimeout(function () {
+        if (history.length === 0) {
+          addJamesMessage("Hello! I'm James, your AFJ transport assistant. How can I help you today?");
+          speak("Hello! I'm James, your AFJ transport assistant. How can I help you today?");
+        }
+      }, 600);
+      setTimeout(function () {
+        if (!currentUtterance) setMood('idle');
+      }, 2400);
+    }
+  }
+
+  function closeChat() {
+    isOpen = false;
+    panel.style.display = 'none';
+    toggleBtn.style.display = '';
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    toggleBtn.focus();
+    stopSpeech();
+  }
+
+  toggleBtn.addEventListener('click', openChat);
+  closeBtn.addEventListener('click', closeChat);
+
+  // Escape to close
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen) {
+      e.preventDefault();
+      closeChat();
+    }
+  });
+
+  // ===== MUTE =====
+  muteBtn.addEventListener('click', function () {
+    isMuted = !isMuted;
+    if (isMuted) {
+      stopSpeech();
+      muteIconOn.style.display = 'none';
+      muteIconOff.style.display = '';
+      muteBtn.setAttribute('aria-label', 'Unmute James');
+      muteBtn.title = 'Unmute voice';
+    } else {
+      muteIconOn.style.display = '';
+      muteIconOff.style.display = 'none';
+      muteBtn.setAttribute('aria-label', 'Mute James');
+      muteBtn.title = 'Mute voice';
+    }
+  });
+
+  // ===== MESSAGE RENDERING =====
+  function jamesSvgSmall() {
+    return '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="28" height="28" aria-hidden="true" style="flex-shrink:0">'
+      + '<ellipse cx="60" cy="112" rx="42" ry="18" fill="#1B4D3E"/>'
+      + '<rect x="30" y="88" width="60" height="26" rx="4" fill="#1B4D3E"/>'
+      + '<polygon points="42,88 56,88 48,104" fill="#15403A"/>'
+      + '<polygon points="78,88 64,88 72,104" fill="#15403A"/>'
+      + '<rect x="52" y="88" width="16" height="22" fill="#FFF"/>'
+      + '<polygon points="60,89 56,96 60,108 64,96" fill="#F59E0B"/>'
+      + '<rect x="52" y="82" width="16" height="10" rx="3" fill="#D4A574"/>'
+      + '<ellipse cx="60" cy="62" rx="26" ry="28" fill="#D4A574"/>'
+      + '<ellipse cx="36" cy="52" rx="6" ry="12" fill="#3D2B1F"/>'
+      + '<ellipse cx="84" cy="52" rx="6" ry="12" fill="#3D2B1F"/>'
+      + '<ellipse cx="34" cy="62" rx="5" ry="7" fill="#C4956A"/>'
+      + '<ellipse cx="86" cy="62" rx="5" ry="7" fill="#C4956A"/>'
+      + '<ellipse cx="48" cy="58" rx="7" ry="6" fill="#FFF"/>'
+      + '<ellipse cx="72" cy="58" rx="7" ry="6" fill="#FFF"/>'
+      + '<circle cx="49" cy="59" r="3.5" fill="#2C1810"/>'
+      + '<circle cx="73" cy="59" r="3.5" fill="#2C1810"/>'
+      + '<circle cx="50.5" cy="57.5" r="1.2" fill="#FFF"/>'
+      + '<circle cx="74.5" cy="57.5" r="1.2" fill="#FFF"/>'
+      + '<path d="M50 73 Q60 80 70 73" stroke="#8B4513" stroke-width="2" fill="none" stroke-linecap="round"/>'
+      + '<ellipse cx="60" cy="40" rx="32" ry="6" fill="#1B4D3E"/>'
+      + '<rect x="36" y="16" width="48" height="26" rx="6" fill="#1B4D3E"/>'
+      + '<rect x="36" y="36" width="48" height="5" fill="#15403A"/>'
+      + '<rect x="50" y="37" width="20" height="3.5" rx="1" fill="#F59E0B"/>'
+      + '<text x="60" y="40" text-anchor="middle" font-size="3" font-weight="bold" fill="#1B4D3E" font-family="sans-serif">AFJ</text>'
+      + '</svg>';
+  }
+
+  function addUserMessage(text) {
+    var row = document.createElement('div');
+    row.className = 'flex justify-end';
+    var bubble = document.createElement('div');
+    bubble.className = 'max-w-[80%] px-3 py-2 rounded-2xl rounded-br-sm bg-emerald-800 text-white text-sm leading-relaxed';
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function addJamesMessage(text) {
+    var row = document.createElement('div');
+    row.className = 'flex items-start gap-2';
+    row.innerHTML = jamesSvgSmall();
+    var bubble = document.createElement('div');
+    bubble.className = 'max-w-[80%] px-3 py-2 rounded-2xl rounded-bl-sm bg-white border border-gray-200 text-gray-800 text-sm leading-relaxed';
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function addSystemMessage(html) {
+    var row = document.createElement('div');
+    row.className = 'text-center text-xs text-gray-500 py-2';
+    row.innerHTML = html;
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function showTyping() {
+    var el = document.createElement('div');
+    el.id = 'james-typing';
+    el.className = 'flex items-start gap-2';
+    el.innerHTML = jamesSvgSmall()
+      + '<div class="px-3 py-2 rounded-2xl rounded-bl-sm bg-white border border-gray-200 flex items-center gap-1">'
+      + '<span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:0ms"></span>'
+      + '<span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:150ms"></span>'
+      + '<span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:300ms"></span>'
+      + '</div>';
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function hideTyping() {
+    var el = document.getElementById('james-typing');
+    if (el) el.remove();
+  }
+
+  // ===== SEND MESSAGE =====
+  function sendMessage() {
+    var text = inputEl.value.trim();
+    if (!text || isSending) return;
+
+    // Check message cap
+    messageCount++;
+    if (messageCount > MAX_MESSAGES) {
+      addSystemMessage(
+        'For more help, please <a href="/contact" class="text-emerald-700 underline font-medium">contact us directly</a>.'
+      );
+      inputEl.disabled = true;
+      sendBtn.disabled = true;
+      return;
+    }
+
+    addUserMessage(text);
+    history.push({ role: 'user', content: text });
+    inputEl.value = '';
+    charCount.textContent = '';
+    updateSendBtn();
+
+    isSending = true;
+    inputEl.disabled = true;
+    sendBtn.disabled = true;
+    setMood('thinking');
+    showTyping();
+
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        hideTyping();
+        var reply = data.reply || "Sorry, I couldn't process that. Please try again.";
+        addJamesMessage(reply);
+        history.push({ role: 'assistant', content: reply });
+        messageCount++;
+        speak(reply);
+      })
+      .catch(function () {
+        hideTyping();
+        var fallback = "I'm having a bit of trouble right now. Please try again in a moment, or contact us at info@afjltd.co.uk";
+        addJamesMessage(fallback);
+        setMood('idle');
+      })
+      .finally(function () {
+        isSending = false;
+        if (messageCount <= MAX_MESSAGES) {
+          inputEl.disabled = false;
+          inputEl.focus();
+        }
+        updateSendBtn();
+      });
+  }
+
+  // ===== INPUT HANDLING =====
+  function updateSendBtn() {
+    var hasText = inputEl.value.trim().length > 0;
+    sendBtn.disabled = !hasText || isSending;
+  }
+
+  inputEl.addEventListener('input', function () {
+    var len = inputEl.value.length;
+    if (len > 400) {
+      charCount.textContent = len + '/' + MAX_CHARS;
+    } else {
+      charCount.textContent = '';
+    }
+    updateSendBtn();
+  });
+
+  inputEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  sendBtn.addEventListener('click', sendMessage);
+})();
+</script>
