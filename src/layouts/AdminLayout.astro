@@ -36,7 +36,7 @@ const currentPath = Astro.url.pathname;
           </a>
         </div>
         <div class="flex items-center gap-6">
-          <nav class="hidden md:flex items-center gap-1">
+          <nav class="hidden md:flex items-center gap-1" aria-label="Admin navigation">
             {adminNav.map((item) => (
               <a
                 href={item.href}
@@ -59,7 +59,7 @@ const currentPath = Astro.url.pathname;
       </div>
     </div>
     <!-- Mobile Admin Nav -->
-    <div class="md:hidden border-t border-white/10 px-4 py-2 flex gap-2 overflow-x-auto">
+    <nav class="md:hidden border-t border-white/10 px-4 py-2 flex gap-2 overflow-x-auto" aria-label="Admin navigation mobile">
       {adminNav.map((item) => (
         <a
           href={item.href}
@@ -73,7 +73,7 @@ const currentPath = Astro.url.pathname;
           {item.name}
         </a>
       ))}
-    </div>
+    </nav>
   </header>
 
   <main id="main-content" class="min-h-screen bg-gray-50">

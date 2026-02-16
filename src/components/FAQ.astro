@@ -22,7 +22,7 @@ const { items, heading } = Astro.props;
       {items.map((item, index) => (
         <div class="faq-item border border-gray-200 rounded-lg overflow-hidden" role="listitem">
           <button
-            class="faq-toggle w-full flex items-center justify-between px-5 py-4 text-left font-semibold text-afj-text hover:bg-afj-light-white transition-colors"
+            class="faq-toggle w-full flex items-center justify-between px-5 py-4 text-left font-semibold text-afj-text hover:bg-afj-light-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-afj-accent"
             aria-expanded="false"
             aria-controls={`faq-answer-${index}`}
           >
