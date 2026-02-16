@@ -4,7 +4,7 @@ export const prerender = false;
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import departments from '../../data/departments.json';
 
-const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
+const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'unknown';
 
 // Determine department and allowed pages
 type DeptKey = keyof typeof departments;

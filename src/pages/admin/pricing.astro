@@ -5,7 +5,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 import departments from '../../data/departments.json';
 import quoteRules from '../../data/quote-rules.json';
 
-const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
+const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'unknown';
 
 type DeptKey = keyof typeof departments;
 let userDepartment: DeptKey = 'management';
@@ -270,6 +270,35 @@ const canEdit = userDepartment === 'management';
     var saveBtn = document.getElementById('saveBtn');
     var saveStatus = document.getElementById('saveStatus');
 
+    // Store initial values on page load for change detection
+    var initialValues = {};
+    document.querySelectorAll('input[type="number"], input[type="date"], input[type="time"]').forEach(function (inp) {
+      if (inp.id) initialValues[inp.id] = inp.value;
+    });
+    document.querySelectorAll('.pax-mult').forEach(function (inp) {
+      initialValues['pax-' + inp.dataset.paxBand] = inp.value;
+    });
+
+    // Highlight changed fields
+    function highlightChanges() {
+      document.querySelectorAll('input[type="number"]').forEach(function (inp) {
+        var key = inp.id || ('pax-' + (inp.dataset.paxBand || ''));
+        var initial = initialValues[key];
+        if (initial !== undefined && inp.value !== initial) {
+          inp.classList.add('border-amber-400', 'bg-amber-50');
+          inp.classList.remove('border-gray-300');
+        } else {
+          inp.classList.remove('border-amber-400', 'bg-amber-50');
+          inp.classList.add('border-gray-300');
+        }
+      });
+    }
+
+    // Bind change detection to all inputs
+    document.querySelectorAll('input[type="number"]').forEach(function (inp) {
+      inp.addEventListener('input', highlightChanges);
+    });
+
     // Margin display
     function updateMargin() {
       var chargeOut = parseFloat(document.getElementById('chargeOutRatePerHour').value) || 0;
@@ -364,6 +393,12 @@ const canEdit = userDepartment === 'management';
           .then(function (data) {
             if (data.success) {
               showStatus('Changes saved. Deployment will complete in ~2 minutes.', false);
+              // Reset initial values to current so highlights clear
+              document.querySelectorAll('input[type="number"]').forEach(function (inp) {
+                var key = inp.id || ('pax-' + (inp.dataset.paxBand || ''));
+                initialValues[key] = inp.value;
+              });
+              highlightChanges();
             } else {
               throw new Error(data.error || 'Failed to save');
             }

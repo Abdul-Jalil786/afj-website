@@ -2,9 +2,19 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import complianceData from '../../../data/compliance.json';
+import departments from '../../../data/departments.json';
 import { updateFileContent } from '../../../lib/github';
 import { authenticateRequest } from '../../../lib/cf-auth';
 import { validateBodySize } from '../../../lib/validate-body';
+
+const COMPLIANCE_ROLES = ['management', 'operations'];
+
+function getUserDepartment(email: string): string {
+  for (const [key, dept] of Object.entries(departments)) {
+    if ((dept as any).emails.includes(email)) return key;
+  }
+  return 'unknown';
+}
 
 export const POST: APIRoute = async ({ request }) => {
   const sizeError = await validateBodySize(request);
@@ -16,6 +26,17 @@ export const POST: APIRoute = async ({ request }) => {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
     });
+  }
+
+  // Role check: only management and operations can update compliance
+  if (userEmail !== 'api-client') {
+    const dept = getUserDepartment(userEmail);
+    if (!COMPLIANCE_ROLES.includes(dept)) {
+      return new Response(
+        JSON.stringify({ error: 'You do not have permission to update compliance data' }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
   }
 
   try {

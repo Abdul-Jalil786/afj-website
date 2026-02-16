@@ -1,10 +1,10 @@
 /**
- * Simple append-only audit log for admin actions.
- * Logs to data/audit-log.json as JSON lines (one object per line).
- * Each entry records who performed the action, what they did, and when.
+ * Append-only audit log for admin actions.
+ * Logs to data/audit-log.jsonl as JSON lines (one JSON object per line).
+ * When file exceeds 5MB, rotates to audit-log.old.jsonl.
  */
 
-import { writeFile, readFile, mkdir } from 'node:fs/promises';
+import { appendFile, stat, rename, mkdir, readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 
 interface AuditEntry {
@@ -14,7 +14,10 @@ interface AuditEntry {
   details: Record<string, unknown>;
 }
 
-const LOG_PATH = join(process.cwd(), 'data', 'audit-log.json');
+const LOG_DIR = join(process.cwd(), 'data');
+const LOG_PATH = join(LOG_DIR, 'audit-log.jsonl');
+const OLD_LOG_PATH = join(LOG_DIR, 'audit-log.old.jsonl');
+const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 export async function auditLog(
   user: string,
@@ -30,24 +33,43 @@ export async function auditLog(
 
   try {
     // Ensure data/ directory exists
-    await mkdir(dirname(LOG_PATH), { recursive: true });
+    await mkdir(LOG_DIR, { recursive: true });
 
-    // Read existing entries (or start fresh)
-    let entries: AuditEntry[] = [];
+    // Check file size for rotation
     try {
-      const raw = await readFile(LOG_PATH, 'utf-8');
-      entries = JSON.parse(raw);
-      if (!Array.isArray(entries)) entries = [];
+      const stats = await stat(LOG_PATH);
+      if (stats.size > MAX_SIZE_BYTES) {
+        await rename(LOG_PATH, OLD_LOG_PATH).catch(() => {});
+      }
     } catch {
-      // File doesn't exist or is invalid — start fresh
-      entries = [];
+      // File doesn't exist yet — that's fine
     }
 
-    entries.push(entry);
-
-    await writeFile(LOG_PATH, JSON.stringify(entries, null, 2), 'utf-8');
+    // Append as a single JSON line
+    await appendFile(LOG_PATH, JSON.stringify(entry) + '\n', 'utf-8');
   } catch (err) {
     // Audit logging should never break the main operation
     console.error('Audit log write failed:', err instanceof Error ? err.message : err);
+  }
+}
+
+/**
+ * Read the last N audit log entries (default 100).
+ */
+export async function readAuditLog(limit: number = 100): Promise<AuditEntry[]> {
+  try {
+    const raw = await readFile(LOG_PATH, 'utf-8');
+    const lines = raw.trim().split('\n').filter(Boolean);
+    const entries = lines
+      .map((line) => {
+        try { return JSON.parse(line) as AuditEntry; }
+        catch { return null; }
+      })
+      .filter(Boolean) as AuditEntry[];
+
+    // Return the last N entries (most recent last)
+    return entries.slice(-limit);
+  } catch {
+    return [];
   }
 }

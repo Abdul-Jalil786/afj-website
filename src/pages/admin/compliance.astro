@@ -5,7 +5,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 import departments from '../../data/departments.json';
 import complianceData from '../../data/compliance.json';
 
-const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
+const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'unknown';
 
 // Determine permissions — only operations and management can edit compliance
 type DeptKey = keyof typeof departments;

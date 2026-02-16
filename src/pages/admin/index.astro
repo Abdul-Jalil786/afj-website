@@ -6,7 +6,7 @@ import departments from '../../data/departments.json';
 
 // Read Cloudflare Zero Trust JWT to identify logged-in user
 const cfJwt = Astro.request.headers.get('Cf-Access-Jwt-Assertion') || '';
-const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
+const userEmail = Astro.request.headers.get('Cf-Access-Authenticated-User-Email') || 'unknown';
 
 // Determine user's department
 type DeptKey = keyof typeof departments;

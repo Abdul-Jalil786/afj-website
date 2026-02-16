@@ -2,9 +2,19 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import quoteRules from '../../../data/quote-rules.json';
+import departments from '../../../data/departments.json';
 import { updateFileContent } from '../../../lib/github';
 import { authenticateRequest } from '../../../lib/cf-auth';
 import { validateBodySize } from '../../../lib/validate-body';
+
+const PRICING_ROLES = ['management'];
+
+function getUserDepartment(email: string): string {
+  for (const [key, dept] of Object.entries(departments)) {
+    if ((dept as any).emails.includes(email)) return key;
+  }
+  return 'unknown';
+}
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -34,6 +44,17 @@ export const POST: APIRoute = async ({ request }) => {
   const userEmail = await authenticateRequest(request);
   if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), { status: 401, headers: JSON_HEADERS });
+  }
+
+  // Role check: only management can update pricing
+  if (userEmail !== 'api-client') {
+    const dept = getUserDepartment(userEmail);
+    if (!PRICING_ROLES.includes(dept)) {
+      return new Response(
+        JSON.stringify({ error: 'You do not have permission to update pricing' }),
+        { status: 403, headers: JSON_HEADERS },
+      );
+    }
   }
 
   try {
