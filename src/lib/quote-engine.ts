@@ -70,7 +70,12 @@ function extractArea(input: string): string {
 function lookupDistance(fromArea: string, toArea: string): number {
   const matrix = quoteRules.distanceMatrix as Record<string, Record<string, number>>;
   const fromRow = matrix[fromArea] || matrix['default'];
-  return fromRow[toArea] ?? fromRow['default'] ?? 50;
+  const distance = fromRow[toArea] ?? fromRow['default'] ?? 50;
+  // 50-mile fallback for unknown postcode areas — log so we can identify missing mappings
+  if (fromRow[toArea] == null && (matrix['default'] as any)?.[toArea] == null) {
+    console.warn(`[quote-engine] Distance fallback used: ${fromArea}\u2192${toArea}, defaulting to ${distance}mi`);
+  }
+  return distance;
 }
 
 /**
@@ -254,6 +259,11 @@ function lookupAirportRate(area: string, airportCode: string): number {
   return areaRates[airportCode] ?? rates['default'][airportCode] ?? 200;
 }
 
+/** Round to 2 decimal places. */
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
 /**
  * Calculate a cost-based price for a leg using costPerMile + chargeOutRatePerHour.
  */
@@ -282,6 +292,10 @@ export async function estimateQuote(
     throw new Error(`No pricing available for service: ${service}`);
   }
 
+  if (!answers.passengers) {
+    throw new Error('Number of passengers is required');
+  }
+
   let journeyCost: number;
   let journeyMiles: number;
   let journeyMinutes: number;
@@ -308,10 +322,10 @@ export async function estimateQuote(
     const minGapForSplit = (quoteRules as any).minGapForSplitReturnHours ?? 5;
     const dvsa = (quoteRules as any).dvsa || {};
 
-    // Collect intermediate stops
+    // Collect intermediate stops (filter out empty/blank values)
     const stops: string[] = [];
-    if (answers.stop1) stops.push(answers.stop1);
-    if (answers.stop2) stops.push(answers.stop2);
+    if (answers.stop1 && answers.stop1.trim()) stops.push(answers.stop1.trim());
+    if (answers.stop2 && answers.stop2.trim()) stops.push(answers.stop2.trim());
     numberOfStops = stops.length;
 
     // Calculate core journey distance (pickup → stops → destination)
@@ -349,6 +363,10 @@ export async function estimateQuote(
 
       if (!isSameDay) {
         // ── SCENARIO 1: Different-day return ──
+        // Validate return date is after outbound date
+        if (answers.returnDate && answers.date && answers.returnDate <= answers.date) {
+          throw new Error('Return date must be after the outbound date');
+        }
         // Two completely separate bookings priced independently
         returnTypeVal = 'separate';
 
@@ -555,14 +573,25 @@ export async function estimateQuote(
     throw new Error(`Unknown instant service: ${service}`);
   }
 
-  // Subtotal: sum of all components
-  const subtotal = journeyCost
+  // Round all individual cost components to 2dp before summing
+  journeyCost = round2(journeyCost);
+  if (returnJourneyCost != null) returnJourneyCost = round2(returnJourneyCost);
+  if (waitingCostVal != null) waitingCostVal = round2(waitingCostVal);
+  if (dvsaBreakCostVal != null) dvsaBreakCostVal = round2(dvsaBreakCostVal);
+  if (additionalStopsCostVal != null) additionalStopsCostVal = round2(additionalStopsCostVal);
+  if (meetGreetCostVal != null) meetGreetCostVal = round2(meetGreetCostVal);
+  if (airportArrivalCostVal != null) airportArrivalCostVal = round2(airportArrivalCostVal);
+
+  // Subtotal: sum of all rounded components
+  const subtotal = round2(
+    journeyCost
     + (returnJourneyCost || 0)
     + (waitingCostVal || 0)
     + (dvsaBreakCostVal || 0)
     + (additionalStopsCostVal || 0)
     + (meetGreetCostVal || 0)
-    + (airportArrivalCostVal || 0);
+    + (airportArrivalCostVal || 0),
+  );
 
   // Surcharges — for different-day returns, combine surcharges from both legs
   let surchargeCostVal: number | undefined;
@@ -572,7 +601,11 @@ export async function estimateQuote(
   if (service === 'private-hire' && returnTypeVal === 'separate') {
     // Apply surcharges independently to each leg
     const outSurcharge = calculateSurcharges(answers.date || '', answers.time || '');
-    const retSurcharge = calculateSurcharges(answers.returnDate || answers.date || '', answers.returnPickupTime || answers.time || '');
+    // Only apply return-leg surcharges when an explicit return date is provided;
+    // falling back to the outbound date would double-count the same surcharges.
+    const retSurcharge = answers.returnDate
+      ? calculateSurcharges(answers.returnDate, answers.returnPickupTime || '')
+      : { percent: 0, labels: [] as string[] };
 
     let totalSurchargeCost = 0;
     if (outSurcharge.percent > 0) {
@@ -583,34 +616,34 @@ export async function estimateQuote(
     }
 
     if (totalSurchargeCost > 0) {
-      surchargeCostVal = totalSurchargeCost;
+      surchargeCostVal = round2(totalSurchargeCost);
       // Combine unique labels
       const seen = new Set<string>();
       [...outSurcharge.labels, ...retSurcharge.labels].forEach((l) => {
         if (!seen.has(l)) { seen.add(l); allSurchargeLabels.push(l); }
       });
-      totalSurchargePercent = Math.round((totalSurchargeCost / subtotal) * 100);
+      totalSurchargePercent = Math.round((surchargeCostVal / subtotal) * 100);
     }
   } else {
     const surchargeResult = calculateSurcharges(answers.date || '', answers.time || '');
     if (surchargeResult.percent > 0) {
-      surchargeCostVal = subtotal * surchargeResult.percent / 100;
+      surchargeCostVal = round2(subtotal * surchargeResult.percent / 100);
       allSurchargeLabels.push(...surchargeResult.labels);
       totalSurchargePercent = surchargeResult.percent;
     }
   }
 
-  const afterSurcharge = subtotal + (surchargeCostVal || 0);
+  const afterSurcharge = round2(subtotal + (surchargeCostVal || 0));
 
   // Regular discount (private-hire only)
   let regularDiscountPct: number | undefined;
   let regularDiscountAmt: number | undefined;
   if (service === 'private-hire' && answers.regularBooking === 'yes') {
     regularDiscountPct = pricing.regularDiscountPercent ?? 10;
-    regularDiscountAmt = afterSurcharge * regularDiscountPct / 100;
+    regularDiscountAmt = round2(afterSurcharge * regularDiscountPct / 100);
   }
 
-  let total = afterSurcharge - (regularDiscountAmt || 0);
+  let total = round2(afterSurcharge - (regularDiscountAmt || 0));
 
   // Minimum booking floor
   let minimumApplied = false;
@@ -627,16 +660,22 @@ export async function estimateQuote(
         adjustment += minimum - returnJourneyCost;
         minimumApplied = true;
       }
-      total += adjustment;
+      total = round2(total + adjustment);
     } else if (total < minimum) {
       total = minimum;
       minimumApplied = true;
     }
   }
 
+  // Guard: no quote component or total should ever be negative
+  if (total < 0) {
+    console.warn('[quote-engine] Negative total clamped to 0', { total, service });
+    total = 0;
+  }
+
   const spread = pricing.rangeSpread;
-  const low = Math.round(total * (1 - spread / 2));
-  const high = Math.round(total * (1 + spread / 2));
+  const low = Math.max(0, Math.round(total * (1 - spread / 2)));
+  const high = Math.max(0, Math.round(total * (1 + spread / 2)));
 
   return {
     low,

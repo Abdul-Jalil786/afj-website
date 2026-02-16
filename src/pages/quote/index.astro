@@ -824,6 +824,36 @@ const jsonLD = {
       }
     }
 
+    // Same-day return: return pickup time must be at least 30 minutes after outbound time
+    if (answers.returnJourney === 'yes' && answers.returnType !== 'no' && answers.returnPickupTime && answers.time) {
+      var outParts = answers.time.split(':');
+      var retParts = answers.returnPickupTime.split(':');
+      var outMin = parseInt(outParts[0]) * 60 + parseInt(outParts[1]);
+      var retMin = parseInt(retParts[0]) * 60 + parseInt(retParts[1]);
+      if (retMin - outMin < 30) {
+        valid = false;
+        var rptEl = document.querySelector('[data-qid="returnPickupTime"]');
+        if (rptEl) rptEl.style.borderColor = '#E53E3E';
+        // Show or create validation message
+        var msgId = 'returnTimeMsg';
+        var existing = document.getElementById(msgId);
+        if (!existing) {
+          var msg = document.createElement('p');
+          msg.id = msgId;
+          msg.className = 'text-afj-red text-xs mt-1';
+          msg.setAttribute('aria-live', 'polite');
+          msg.textContent = 'Return pickup must be at least 30 minutes after the outbound time.';
+          var rptWrap = rptEl.closest('.autocomplete-wrap') || rptEl;
+          rptWrap.parentNode.appendChild(msg);
+        } else {
+          existing.classList.remove('hidden');
+        }
+      } else {
+        var existingMsg = document.getElementById('returnTimeMsg');
+        if (existingMsg) existingMsg.classList.add('hidden');
+      }
+    }
+
     return valid ? answers : null;
   }
 
@@ -904,9 +934,12 @@ const jsonLD = {
     }
 
     if (est.regularDiscountAmount) {
+      var discLabel = est.returnType === 'separate'
+        ? 'Regular booking discount on both legs (\u2212' + est.regularDiscountPercent + '%)'
+        : 'Regular booking discount (\u2212' + est.regularDiscountPercent + '%)';
       var discDiv = document.createElement('div');
       discDiv.className = 'flex justify-between text-sm text-green-700';
-      discDiv.innerHTML = '<span>Regular booking discount (\u2212' + est.regularDiscountPercent + '%)</span><span class="tabular-nums">\u2212\u00A3' + Math.round(est.regularDiscountAmount) + '</span>';
+      discDiv.innerHTML = '<span>' + discLabel + '</span><span class="tabular-nums">\u2212\u00A3' + Math.round(est.regularDiscountAmount) + '</span>';
       adj.appendChild(discDiv);
     }
 

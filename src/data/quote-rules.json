@@ -60,7 +60,7 @@
           { "value": "17-24", "label": "17\u201324 passengers" },
           { "value": "25-33", "label": "25\u201333 passengers" }
         ]},
-        { "id": "direction", "label": "Pickup from airport or drop-off?", "inputType": "toggle", "required": false, "toggleLabels": { "no": "Departure", "yes": "Arrival" } },
+        { "id": "direction", "label": "Are you being picked up from the airport (arrival) or dropped off (departure)?", "inputType": "toggle", "required": false, "toggleLabels": { "no": "Departure", "yes": "Arrival" } },
         { "id": "vehicleClass", "label": "Vehicle class", "inputType": "select", "required": false, "options": [
           { "value": "standard", "label": "Standard" },
           { "value": "executive", "label": "Executive (+30%)" }
@@ -132,10 +132,14 @@
     "sunday": { "dayOfWeek": 0, "percent": 20, "label": "Sunday" },
     "bankHoliday": { "percent": 50, "label": "Bank holiday" }
   },
+  "_bankHolidaysNote": "Update annually. Last updated 2026-02-16. Source: gov.uk/bank-holidays",
   "bankHolidays": [
     "2026-01-01", "2026-04-03", "2026-04-06",
     "2026-05-04", "2026-05-25", "2026-08-31",
-    "2026-12-25", "2026-12-28"
+    "2026-12-25", "2026-12-28",
+    "2027-01-01", "2027-03-26", "2027-03-29",
+    "2027-05-03", "2027-05-31", "2027-08-30",
+    "2027-12-27", "2027-12-28"
   ],
   "minimumBooking": {
     "private-hire": 35,
@@ -156,6 +160,7 @@
     "LE": { "B": 43, "M": 85, "CV": 25, "WS": 45, "WV": 50, "DY": 50, "ST": 55, "DE": 28, "NG": 28, "TF": 65, "SY": 90, "LE": 5 },
     "default": { "B": 40, "M": 85, "CV": 45, "WS": 40, "WV": 40, "DY": 40, "ST": 50, "DE": 45, "NG": 50, "TF": 45, "SY": 55, "LE": 45, "default": 50 }
   },
+  "_airportRatesReviewed": "2026-02-16: All airport rates verified proportional to driving distance. ST→LPL £150 (~55mi) vs M→LPL £90 (~35mi) confirmed correct.",
   "airportRates": {
     "B":  { "BHX": 50,  "MAN": 220, "EMA": 130, "LHR": 295, "LGW": 330, "LTN": 260, "STN": 315, "BRS": 230, "LPL": 250 },
     "M":  { "BHX": 220, "MAN": 50,  "EMA": 160, "LHR": 350, "LGW": 385, "LTN": 310, "STN": 355, "BRS": 310, "LPL": 90  },
