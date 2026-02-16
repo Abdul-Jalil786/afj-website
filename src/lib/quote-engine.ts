@@ -46,6 +46,9 @@ export interface QuoteEstimate {
  * Extract the postcode area letters from a UK postcode or city name.
  * e.g. "B7 4QS" → "B", "CV6 3BL" → "CV", "Manchester" → "M"
  */
+// London postcode areas map to "LDN" in the distance matrix
+const LONDON_AREAS = new Set(['E', 'EC', 'N', 'NW', 'SE', 'SW', 'W', 'WC']);
+
 function extractArea(input: string): string {
   const trimmed = input.trim().toUpperCase();
 
@@ -53,6 +56,8 @@ function extractArea(input: string): string {
   const match = trimmed.match(/^([A-Z]{1,2})/);
   if (match) {
     const area = match[1];
+    // Map London postcodes to a single LDN key
+    if (LONDON_AREAS.has(area)) return 'LDN';
     if (area in quoteRules.distanceMatrix) return area;
   }
 
@@ -353,7 +358,9 @@ export async function estimateQuote(
     const deadheadApplies = deadhead.miles > deadheadThreshold;
 
     // Also get deadhead from destination to base (for return legs)
-    const destDeadhead = await getDeadheadFromBase(answers.destinationPostcode || '');
+    const destDeadhead = answers.destinationPostcode
+      ? await getDeadheadFromBase(answers.destinationPostcode)
+      : { miles: 0, minutes: 0 };
 
     const passengerKey = answers.passengers || '1-8';
     const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;

@@ -26,6 +26,31 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    // Validate service is a known key
+    const validServices = ['private-hire', 'airport', 'send', 'nepts', 'executive', 'fleet'];
+    if (typeof service !== 'string' || !validServices.includes(service)) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid service type' }),
+        { status: 400, headers: JSON_HEADERS },
+      );
+    }
+
+    // Validate answer values are strings and not excessively long
+    for (const [key, val] of Object.entries(answers)) {
+      if (typeof val !== 'string') {
+        return new Response(
+          JSON.stringify({ success: false, error: `Answer "${key}" must be a string` }),
+          { status: 400, headers: JSON_HEADERS },
+        );
+      }
+      if ((val as string).length > 200) {
+        return new Response(
+          JSON.stringify({ success: false, error: `Answer "${key}" exceeds maximum length` }),
+          { status: 400, headers: JSON_HEADERS },
+        );
+      }
+    }
+
     const estimate = await estimateQuote(service, answers);
 
     return new Response(
