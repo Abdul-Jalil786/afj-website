@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import complianceData from '../../../data/compliance.json';
+import { updateFileContent } from '../../../lib/github';
 
 export const POST: APIRoute = async ({ request }) => {
   const secret = import.meta.env.DASHBOARD_SECRET;
@@ -44,54 +45,12 @@ export const POST: APIRoute = async ({ request }) => {
       }),
     };
 
-    // Push to GitHub via API
-    const githubToken = import.meta.env.GITHUB_TOKEN;
-    const githubRepo = import.meta.env.GITHUB_REPO;
-
-    if (!githubToken || !githubRepo) {
-      return new Response(
-        JSON.stringify({ error: 'GitHub credentials not configured' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } },
-      );
-    }
-
-    const filePath = 'src/data/compliance.json';
     const content = JSON.stringify(updated, null, 2) + '\n';
-    const encoded = Buffer.from(content).toString('base64');
-
-    // Get current file SHA
-    const getRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        Accept: 'application/vnd.github.v3+json',
-      },
-    });
-
-    let sha = '';
-    if (getRes.ok) {
-      const fileData = await getRes.json();
-      sha = fileData.sha;
-    }
-
-    // Update file
-    const putRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        Accept: 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: `chore: update compliance data (${updated.lastUpdated})`,
-        content: encoded,
-        sha,
-      }),
-    });
-
-    if (!putRes.ok) {
-      const errData = await putRes.json().catch(() => ({}));
-      throw new Error(`GitHub API error: ${(errData as any).message || putRes.statusText}`);
-    }
+    await updateFileContent(
+      'src/data/compliance.json',
+      content,
+      `chore: update compliance data (${updated.lastUpdated})`,
+    );
 
     return new Response(
       JSON.stringify({ success: true }),

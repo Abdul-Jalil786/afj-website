@@ -2,11 +2,10 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { auditLog } from '../../../lib/audit-log';
+import { createOrUpdateFile, encodeBase64 } from '../../../lib/github';
 
 export const POST: APIRoute = async ({ request }) => {
   const secret = import.meta.env.DASHBOARD_SECRET;
-  const githubToken = import.meta.env.GITHUB_TOKEN;
-  const githubRepo = import.meta.env.GITHUB_REPO;
 
   // Auth: accept either DASHBOARD_SECRET header or Cloudflare Access JWT
   const authHeader = request.headers.get('x-dashboard-secret');
@@ -16,13 +15,6 @@ export const POST: APIRoute = async ({ request }) => {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
     });
-  }
-
-  if (!githubToken || !githubRepo) {
-    return new Response(
-      JSON.stringify({ error: 'GitHub credentials not configured' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
-    );
   }
 
   try {
@@ -53,35 +45,11 @@ export const POST: APIRoute = async ({ request }) => {
 
     const fileContent = `${frontmatter}\n\n${content}\n`;
     const filePath = `src/content/blog/${slug}.md`;
-    const encoded = Buffer.from(fileContent).toString('base64');
 
-    // Create file via GitHub API
-    const response = await fetch(
-      `https://api.github.com/repos/${githubRepo}/contents/${filePath}`,
-      {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${githubToken}`,
-          Accept: 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: `blog: add ${title}`,
-          content: encoded,
-          branch: 'main',
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      return new Response(
-        JSON.stringify({ error: 'GitHub API error', details: errorData.message }),
-        { status: response.status, headers: { 'Content-Type': 'application/json' } },
-      );
-    }
-
-    const data = await response.json();
+    const result = await createOrUpdateFile(filePath, {
+      content: fileContent,
+      message: `blog: add ${title}`,
+    });
 
     const userEmail = request.headers.get('Cf-Access-Authenticated-User-Email') || 'api-client';
     await auditLog(userEmail, 'blog-create', { title, slug, path: filePath });
@@ -90,7 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
       JSON.stringify({
         success: true,
         message: `Blog post "${title}" created successfully`,
-        url: data.content?.html_url,
+        url: result.htmlUrl,
         path: filePath,
       }),
       { status: 201, headers: { 'Content-Type': 'application/json' } },

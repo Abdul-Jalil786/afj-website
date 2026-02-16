@@ -5,6 +5,7 @@ import { generateText } from '../../../lib/llm';
 import { PAGE_EDIT_SYSTEM_PROMPT } from '../../../lib/prompts';
 import departments from '../../../data/departments.json';
 import { auditLog } from '../../../lib/audit-log';
+import { getFileContent } from '../../../lib/github';
 
 const ALLOWED_DEPARTMENTS = ['management', 'marketing'];
 
@@ -17,8 +18,6 @@ function getUserDepartment(email: string): string {
 
 export const POST: APIRoute = async ({ request }) => {
   const secret = import.meta.env.DASHBOARD_SECRET;
-  const githubToken = import.meta.env.GITHUB_TOKEN;
-  const githubRepo = import.meta.env.GITHUB_REPO;
 
   // Auth: accept either DASHBOARD_SECRET header or Cloudflare Access JWT
   const authHeader = request.headers.get('x-dashboard-secret');
@@ -42,13 +41,6 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  if (!githubToken || !githubRepo) {
-    return new Response(
-      JSON.stringify({ error: 'GitHub credentials not configured' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
-    );
-  }
-
   try {
     const body = await request.json();
     const { pagePath, instruction } = body;
@@ -61,23 +53,18 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Fetch current file content from GitHub
-    const fileUrl = `https://api.github.com/repos/${githubRepo}/contents/${pagePath}`;
-    const ghResponse = await fetch(fileUrl, {
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        Accept: 'application/vnd.github.v3+json',
-      },
-    });
-
-    if (!ghResponse.ok) {
+    let currentContent: string;
+    let fileSha: string;
+    try {
+      const file = await getFileContent(pagePath);
+      currentContent = file.content;
+      fileSha = file.sha;
+    } catch {
       return new Response(
         JSON.stringify({ error: 'The requested page could not be found or accessed' }),
         { status: 404, headers: { 'Content-Type': 'application/json' } },
       );
     }
-
-    const ghData = await ghResponse.json();
-    const currentContent = Buffer.from(ghData.content, 'base64').toString('utf-8');
 
     // Send to LLM with page content and instruction
     const userMessage = [
@@ -96,7 +83,7 @@ export const POST: APIRoute = async ({ request }) => {
         success: true,
         currentContent,
         proposedContent: proposedChanges,
-        fileSha: ghData.sha,
+        fileSha,
         pagePath,
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } },

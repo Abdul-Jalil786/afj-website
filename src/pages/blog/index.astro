@@ -1,8 +1,8 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
-import Hero from '../../components/Hero.astro';
-import BlogCard from '../../components/BlogCard.astro';
-import SocialSidebar from '../../components/SocialSidebar.astro';
+import Hero from '../../components/sections/Hero.astro';
+import BlogCard from '../../components/sections/BlogCard.astro';
+import SocialSidebar from '../../components/ui/SocialSidebar.astro';
 import { getCollection } from 'astro:content';
 
 const breadcrumbs = [{ label: 'News' }];
@@ -58,13 +58,22 @@ const displayPosts = posts.length > 0 ? posts : placeholderPosts;
 
 const jsonLD = {
   '@context': 'https://schema.org',
-  '@type': 'Blog',
+  '@type': 'CollectionPage',
   name: 'AFJ Limited News',
   description: 'News, insights, and guides about SEND transport, patient transport, fleet management, and transport industry topics from AFJ Limited.',
   url: 'https://www.afjltd.co.uk/blog',
   publisher: {
     '@type': 'Organization',
     name: 'AFJ Limited',
+  },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: displayPosts.slice(0, 20).map((post: any, i: number) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `https://www.afjltd.co.uk/blog/${post.slug}`,
+      name: post.data.title,
+    })),
   },
 };
 ---

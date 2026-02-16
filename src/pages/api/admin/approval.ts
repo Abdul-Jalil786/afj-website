@@ -3,6 +3,14 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import departments from '../../../data/departments.json';
 import { auditLog } from '../../../lib/audit-log';
+import {
+  listDirectory,
+  getFileContent,
+  createOrUpdateFile,
+  deleteFile,
+  encodeBase64,
+  decodeBase64,
+} from '../../../lib/github';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -32,21 +40,6 @@ function authCheck(request: Request): string | null {
   const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
   if ((!secret || authHeader !== secret) && !cfJwt) return null;
   return request.headers.get('Cf-Access-Authenticated-User-Email') || 'admin@afjltd.co.uk';
-}
-
-async function ghFetch(path: string, options?: RequestInit) {
-  const token = import.meta.env.GITHUB_TOKEN;
-  const repo = import.meta.env.GITHUB_REPO;
-  const url = `https://api.github.com/repos/${repo}/contents/${path}`;
-  return fetch(url, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-      ...(options?.headers || {}),
-    },
-  });
 }
 
 async function sendEmail(to: string, subject: string, bodyHtml: string) {
@@ -91,32 +84,21 @@ export const GET: APIRoute = async ({ request }) => {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), { status: 401, headers: JSON_HEADERS });
   }
 
-  if (!import.meta.env.GITHUB_TOKEN || !import.meta.env.GITHUB_REPO) {
-    return new Response(JSON.stringify({ error: 'GitHub credentials not configured' }), { status: 500, headers: JSON_HEADERS });
-  }
-
   try {
-    const res = await ghFetch('pending');
-    if (!res.ok) {
-      // 404 means no pending directory yet — that's fine
-      if (res.status === 404) {
-        return new Response(JSON.stringify({ success: true, items: [] }), { status: 200, headers: JSON_HEADERS });
-      }
-      return new Response(JSON.stringify({ error: 'Failed to read pending items' }), { status: 500, headers: JSON_HEADERS });
-    }
-
-    const files = await res.json();
+    const files = await listDirectory('pending');
     const items = [];
 
     for (const file of files) {
       if (!file.name.endsWith('.json')) continue;
-      const fileRes = await ghFetch(file.path);
-      if (!fileRes.ok) continue;
-      const fileData = await fileRes.json();
-      const content = JSON.parse(Buffer.from(fileData.content, 'base64').toString('utf-8'));
-      content._sha = fileData.sha;
-      content._path = file.path;
-      items.push(content);
+      try {
+        const fileData = await getFileContent(file.path);
+        const content = JSON.parse(fileData.content);
+        content._sha = fileData.sha;
+        content._path = file.path;
+        items.push(content);
+      } catch {
+        continue;
+      }
     }
 
     // Filter: management sees all, others see only their own
@@ -137,10 +119,6 @@ export const POST: APIRoute = async ({ request }) => {
   const userEmail = authCheck(request);
   if (!userEmail) {
     return new Response(JSON.stringify({ error: 'Unauthorised' }), { status: 401, headers: JSON_HEADERS });
-  }
-
-  if (!import.meta.env.GITHUB_TOKEN || !import.meta.env.GITHUB_REPO) {
-    return new Response(JSON.stringify({ error: 'GitHub credentials not configured' }), { status: 500, headers: JSON_HEADERS });
   }
 
   try {
@@ -170,25 +148,11 @@ export const POST: APIRoute = async ({ request }) => {
       metadata: metadata || {},
     };
 
-    const encoded = Buffer.from(JSON.stringify(pendingItem, null, 2)).toString('base64');
     const filePath = `pending/${id}.json`;
-
-    const res = await ghFetch(filePath, {
-      method: 'PUT',
-      body: JSON.stringify({
-        message: `pending: ${type} from ${departmentName} — ${title}`,
-        content: encoded,
-        branch: 'main',
-      }),
+    await createOrUpdateFile(filePath, {
+      content: JSON.stringify(pendingItem, null, 2),
+      message: `pending: ${type} from ${departmentName} — ${title}`,
     });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      return new Response(
-        JSON.stringify({ error: 'Failed to save pending item', details: (errorData as any).message }),
-        { status: 500, headers: JSON_HEADERS },
-      );
-    }
 
     // Send notification email to management
     const notificationEmail = import.meta.env.NOTIFICATION_EMAIL || 'info@afjltd.co.uk';
@@ -228,10 +192,6 @@ export const PUT: APIRoute = async ({ request }) => {
   const { canApprove } = getDepartment(userEmail);
   if (!canApprove) {
     return new Response(JSON.stringify({ error: 'You do not have approval permissions' }), { status: 403, headers: JSON_HEADERS });
-  }
-
-  if (!import.meta.env.GITHUB_TOKEN || !import.meta.env.GITHUB_REPO) {
-    return new Response(JSON.stringify({ error: 'GitHub credentials not configured' }), { status: 500, headers: JSON_HEADERS });
   }
 
   try {
@@ -294,24 +254,11 @@ export const PUT: APIRoute = async ({ request }) => {
 
         const fileContent = `${frontmatter}\n\n${blogBody}\n`;
         const blogPath = `src/content/blog/${slug}.md`;
-        const encoded = Buffer.from(fileContent).toString('base64');
 
-        const pubRes = await ghFetch(blogPath, {
-          method: 'PUT',
-          body: JSON.stringify({
-            message: `blog: publish ${title} (approved by ${userEmail})`,
-            content: encoded,
-            branch: 'main',
-          }),
+        await createOrUpdateFile(blogPath, {
+          content: fileContent,
+          message: `blog: publish ${title} (approved by ${userEmail})`,
         });
-
-        if (!pubRes.ok) {
-          const errData = await pubRes.json();
-          return new Response(
-            JSON.stringify({ error: 'Failed to publish blog post', details: (errData as any).message }),
-            { status: 500, headers: JSON_HEADERS },
-          );
-        }
       } else if (item.type === 'page-edit') {
         // Apply page edit — the content contains the proposed changes
         // For now, store as a note; full apply requires more complex merge logic
@@ -319,13 +266,9 @@ export const PUT: APIRoute = async ({ request }) => {
       }
 
       // Delete the pending file
-      await ghFetch(filePath, {
-        method: 'DELETE',
-        body: JSON.stringify({
-          message: `approved: ${item.title} by ${userEmail}`,
-          sha: fileSha,
-          branch: 'main',
-        }),
+      await deleteFile(filePath, {
+        message: `approved: ${item.title} by ${userEmail}`,
+        sha: fileSha,
       });
 
       // Notify the author
@@ -351,16 +294,11 @@ export const PUT: APIRoute = async ({ request }) => {
     if (action === 'reject') {
       // Update the pending file with rejected status
       const rejectedItem = { ...item, status: 'rejected', rejectedBy: userEmail, rejectionReason: reason || '', rejectedAt: new Date().toISOString() };
-      const encoded = Buffer.from(JSON.stringify(rejectedItem, null, 2)).toString('base64');
 
-      await ghFetch(filePath, {
-        method: 'PUT',
-        body: JSON.stringify({
-          message: `rejected: ${item.title} by ${userEmail}`,
-          content: encoded,
-          sha: fileSha,
-          branch: 'main',
-        }),
+      await createOrUpdateFile(filePath, {
+        content: JSON.stringify(rejectedItem, null, 2),
+        message: `rejected: ${item.title} by ${userEmail}`,
+        sha: fileSha,
       });
 
       // Notify the author

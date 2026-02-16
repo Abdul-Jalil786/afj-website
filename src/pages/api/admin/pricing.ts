@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import quoteRules from '../../../data/quote-rules.json';
+import { updateFileContent } from '../../../lib/github';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -81,54 +82,12 @@ export const POST: APIRoute = async ({ request }) => {
       updated.dvsa = { ...updated.dvsa, ...body.dvsa };
     }
 
-    // Push to GitHub via API
-    const githubToken = import.meta.env.GITHUB_TOKEN;
-    const githubRepo = import.meta.env.GITHUB_REPO;
-
-    if (!githubToken || !githubRepo) {
-      return new Response(
-        JSON.stringify({ error: 'GitHub credentials not configured' }),
-        { status: 500, headers: JSON_HEADERS },
-      );
-    }
-
-    const filePath = 'src/data/quote-rules.json';
     const content = JSON.stringify(updated, null, 2) + '\n';
-    const encoded = Buffer.from(content).toString('base64');
-
-    // Get current file SHA
-    const getRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        Accept: 'application/vnd.github.v3+json',
-      },
-    });
-
-    let sha = '';
-    if (getRes.ok) {
-      const fileData = await getRes.json();
-      sha = (fileData as any).sha;
-    }
-
-    // Update file
-    const putRes = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        Accept: 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: `chore: update pricing config via admin portal`,
-        content: encoded,
-        sha,
-      }),
-    });
-
-    if (!putRes.ok) {
-      const errData = await putRes.json().catch(() => ({}));
-      throw new Error(`GitHub API error: ${(errData as any).message || putRes.statusText}`);
-    }
+    await updateFileContent(
+      'src/data/quote-rules.json',
+      content,
+      'chore: update pricing config via admin portal',
+    );
 
     return new Response(
       JSON.stringify({ success: true }),
