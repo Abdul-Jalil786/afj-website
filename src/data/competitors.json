@@ -1,28 +1,52 @@
 {
   "competitors": [
     {
-      "name": "National Express",
-      "url": "https://www.nationalexpress.com",
-      "tier": "national",
-      "services": ["coach hire", "airport transfers", "private hire"]
+      "name": "Green Destinations",
+      "url": "https://www.greendestinations.co.uk",
+      "tier": "direct",
+      "services": ["SEND transport", "patient transport", "private hire"]
     },
     {
-      "name": "Arriva Transport Solutions",
-      "url": "https://www.arriva.co.uk",
-      "tier": "national",
+      "name": "HATS Group",
+      "url": "https://www.hatsgroup.co.uk",
+      "tier": "direct",
       "services": ["SEND transport", "patient transport", "community transport"]
     },
     {
-      "name": "HCT Group",
-      "url": "https://www.hctgroup.org",
-      "tier": "regional",
-      "services": ["SEND transport", "community transport", "bus services"]
+      "name": "Travel SOS",
+      "url": "https://www.travelsos.co.uk",
+      "tier": "direct",
+      "services": ["SEND transport", "school transport", "minibus hire"]
     },
     {
-      "name": "Go Goodwins",
-      "url": "https://www.gogoodwins.co.uk",
-      "tier": "regional",
-      "services": ["minibus hire", "airport transfers", "school transport"]
+      "name": "Smart Kids Group",
+      "url": "https://www.smartkidsgroup.co.uk",
+      "tier": "direct",
+      "services": ["SEND transport", "school transport", "community transport"]
+    },
+    {
+      "name": "AJ Travel",
+      "url": "https://www.ajtravel.co.uk",
+      "tier": "indirect",
+      "services": ["minibus hire", "school transport", "private hire"]
+    },
+    {
+      "name": "HS2 Travel",
+      "url": "https://www.hs2travel.co.uk",
+      "tier": "indirect",
+      "services": ["minibus hire", "airport transfers", "private hire"]
+    },
+    {
+      "name": "Aziz Coach Service",
+      "url": "https://www.azizcoachservice.co.uk",
+      "tier": "indirect",
+      "services": ["coach hire", "school transport", "private hire"]
+    },
+    {
+      "name": "Aston Manor Coaches",
+      "url": "https://www.astonmanorcoaches.co.uk",
+      "tier": "indirect",
+      "services": ["coach hire", "school transport", "airport transfers"]
     }
   ]
 }

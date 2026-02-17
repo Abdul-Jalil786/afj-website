@@ -34,7 +34,7 @@ function loadReport(name: string): any {
 }
 
 const reports: Record<string, any> = {};
-const reportFiles = ['security-report', 'seo-report', 'remediation-report', 'marketing-report', 'competitor-report', 'performance-report', 'pricing-report'];
+const reportFiles = ['security-report', 'seo-report', 'remediation-report', 'marketing-report', 'competitor-report', 'performance-report', 'pricing-report', 'compliance-check-report', 'meta-report'];
 for (const name of reportFiles) {
   try {
     const mod = await import(`../../data/reports/${name}.json`);
@@ -108,6 +108,22 @@ const agents = [
     reportKey: 'pricing-report',
     usesAI: true,
   },
+  {
+    id: 'compliance',
+    name: 'Compliance Check',
+    icon: '&#9989;',
+    schedule: 'Daily 7:00 UTC',
+    reportKey: 'compliance-check-report',
+    usesAI: false,
+  },
+  {
+    id: 'meta',
+    name: 'Meta Agent',
+    icon: '&#129302;',
+    schedule: '1st of month 8:00 UTC',
+    reportKey: 'meta-report',
+    usesAI: true,
+  },
 ];
 
 // Load proposed fixes for the fixes tab
@@ -171,6 +187,9 @@ function trendIcon(trend: string): string {
           <button class="mon-tab px-4 py-3 text-sm font-medium border-b-2 transition-colors" data-tab="fixes" class:list={[activeTab === 'fixes' ? 'border-afj-accent text-afj-accent' : 'border-transparent text-gray-500 hover:text-gray-700']}>
             Proposed Fixes
             {pendingFixCount > 0 && <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-red-100 text-red-700 font-medium">{pendingFixCount}</span>}
+          </button>
+          <button class="mon-tab px-4 py-3 text-sm font-medium border-b-2 transition-colors" data-tab="health" class:list={[activeTab === 'health' ? 'border-afj-accent text-afj-accent' : 'border-transparent text-gray-500 hover:text-gray-700']}>
+            Agent Health
           </button>
         </div>
 
@@ -359,6 +378,34 @@ function trendIcon(trend: string): string {
                         <a href="/admin/pricing-intelligence" class="inline-block mt-2 text-afj-accent hover:underline text-sm font-medium">View full report &rarr;</a>
                       </div>
                     )}
+
+                    {/* Compliance Check */}
+                    {agent.id === 'compliance' && report && (
+                      <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Compliance Check</h4>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">MOT Checked</span><p class="font-bold">{report.motChecked ?? 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">DBS Checked</span><p class="font-bold">{report.dbsChecked ?? 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">MOT Expiring</span><p class="font-bold text-amber-600">{report.motExpiring ?? 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">DBS Expiring</span><p class="font-bold text-amber-600">{report.dbsExpiring ?? 0}</p></div>
+                        </div>
+                        {report.alertCount > 0 && <p class="text-amber-700 text-sm font-medium">{report.alertCount} compliance alert(s)</p>}
+                        <a href="/admin/compliance-records" class="inline-block mt-2 text-afj-accent hover:underline text-sm font-medium">View records &rarr;</a>
+                      </div>
+                    )}
+
+                    {/* Meta Agent */}
+                    {agent.id === 'meta' && report && (
+                      <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Agent Health</h4>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Agents</span><p class="font-bold">{report.agentCount ?? 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Health</span><p class="font-bold capitalize">{report.overallHealth ?? '?'}</p></div>
+                        </div>
+                        {report.summary && <p class="text-gray-700">{typeof report.summary === 'string' ? report.summary.slice(0, 300) : ''}</p>}
+                        <a href="/admin/monitoring?tab=health" class="inline-block mt-2 text-afj-accent hover:underline text-sm font-medium">View health report &rarr;</a>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -419,6 +466,113 @@ function trendIcon(trend: string): string {
         </div>
         </div>
         {/* End Agents panel */}
+
+        {/* Tab: Agent Health */}
+        <div id="panelHealth" class:list={[activeTab !== 'health' && 'hidden']}>
+          {reports['meta-report'] ? (
+            <div class="space-y-6">
+              {/* Overview */}
+              <div class="bg-white rounded-lg border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h2 class="text-lg font-semibold text-gray-900">Agent Health Overview</h2>
+                  <span class:list={[
+                    'px-3 py-1 rounded-full text-sm font-bold',
+                    reports['meta-report'].overallHealth === 'healthy' ? 'bg-green-100 text-green-700' :
+                    reports['meta-report'].overallHealth === 'degraded' ? 'bg-amber-100 text-amber-700' :
+                    'bg-red-100 text-red-700'
+                  ]}>
+                    {reports['meta-report'].overallHealth}
+                  </span>
+                </div>
+                <p class="text-gray-700">{reports['meta-report'].summary}</p>
+                <p class="text-xs text-gray-400 mt-2">
+                  Last analysed: {new Date(reports['meta-report'].generatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+
+              {/* Agent Assessments */}
+              {reports['meta-report'].agentAssessments?.length > 0 && (
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                  <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="font-semibold text-gray-900">Individual Agent Status</h3>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                      <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200">
+                          <th class="py-2 px-4 text-left font-medium text-gray-700">Agent</th>
+                          <th class="py-2 px-4 text-left font-medium text-gray-700">Health</th>
+                          <th class="py-2 px-4 text-left font-medium text-gray-700">Trend</th>
+                          <th class="py-2 px-4 text-left font-medium text-gray-700">Assessment</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {reports['meta-report'].agentAssessments.map((a: any) => (
+                          <tr class="border-b border-gray-100">
+                            <td class="py-2 px-4 font-medium text-gray-900 capitalize">{a.name}</td>
+                            <td class="py-2 px-4">
+                              <span class:list={[
+                                'px-2 py-0.5 rounded-full text-xs font-medium',
+                                a.health === 'healthy' ? 'bg-green-100 text-green-700' :
+                                a.health === 'degraded' ? 'bg-amber-100 text-amber-700' :
+                                a.health === 'critical' ? 'bg-red-100 text-red-700' :
+                                'bg-gray-100 text-gray-500'
+                              ]}>
+                                {a.health}
+                              </span>
+                            </td>
+                            <td class="py-2 px-4 capitalize text-gray-600">{a.trend}</td>
+                            <td class="py-2 px-4 text-gray-600 max-w-sm truncate">{a.assessment}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Recommendations */}
+              {reports['meta-report'].recommendations?.length > 0 && (
+                <div class="bg-white rounded-lg border border-gray-200 p-6">
+                  <h3 class="font-semibold text-gray-900 mb-4">Recommendations</h3>
+                  <div class="space-y-3">
+                    {reports['meta-report'].recommendations.map((r: any) => (
+                      <div class="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
+                        <span class:list={[
+                          'px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 mt-0.5',
+                          r.priority === 'high' ? 'bg-red-100 text-red-700' :
+                          r.priority === 'medium' ? 'bg-amber-100 text-amber-700' :
+                          'bg-gray-100 text-gray-600'
+                        ]}>
+                          {r.priority}
+                        </span>
+                        <div>
+                          <p class="font-medium text-gray-900">{r.title}</p>
+                          <p class="text-sm text-gray-600 mt-0.5">{r.description}</p>
+                          {r.category && <span class="text-xs text-gray-400 mt-1 inline-block">{r.category}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Cost Estimate */}
+              {reports['meta-report'].costEstimate && (
+                <div class="bg-white rounded-lg border border-gray-200 p-6">
+                  <h3 class="font-semibold text-gray-900 mb-2">Cost Estimate</h3>
+                  <p class="text-2xl font-bold text-gray-900">{reports['meta-report'].costEstimate.estimatedMonthlyCost}</p>
+                  <p class="text-sm text-gray-500 mt-1">{reports['meta-report'].costEstimate.breakdown}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div class="bg-white rounded-lg border border-gray-200 p-8 text-center text-gray-400">
+              <p>No meta agent report yet. The meta agent runs on the 1st of each month.</p>
+              <p class="text-xs mt-1">Trigger it manually from GitHub Actions if needed.</p>
+            </div>
+          )}
+        </div>
 
         {/* Tab: Proposed Fixes */}
         <div id="panelFixes" class:list={[activeTab !== 'fixes' && 'hidden']}>
@@ -504,6 +658,7 @@ function trendIcon(trend: string): string {
         btn.classList.remove('border-transparent', 'text-gray-500');
         document.getElementById('panelAgents').classList.add('hidden');
         document.getElementById('panelFixes').classList.add('hidden');
+        document.getElementById('panelHealth').classList.add('hidden');
         var tab = btn.getAttribute('data-tab');
         document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
       });

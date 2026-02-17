@@ -25,6 +25,8 @@ const AGENTS = [
   { name: 'marketing', script: 'marketing-agent.mjs' },
   { name: 'competitor', script: 'competitor-agent.mjs' },
   { name: 'performance', script: 'performance-agent.mjs' },
+  { name: 'compliance', script: 'compliance-check-agent.mjs' },
+  { name: 'meta', script: 'meta-agent.mjs' },
 ];
 
 const requestedAgents = process.argv.slice(2);

@@ -4,14 +4,15 @@ export const prerender = false;
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import departments from '../../data/departments.json';
 import { authenticateRequest } from '../../lib/cf-auth';
+import { readNotifications } from '../../lib/notifications';
 
-// Authenticate via Cloudflare JWT or DASHBOARD_SECRET
+// Authenticate
 const userEmail = await authenticateRequest(Astro.request);
 if (!userEmail) {
   return new Response('<h1>Access Denied</h1><p>You must be authenticated via Cloudflare Zero Trust to access the admin dashboard.</p><p><a href="/">Return to website</a></p>', { status: 403, headers: { 'Content-Type': 'text/html' } });
 }
 
-// Determine user's department
+// Department
 type DeptKey = keyof typeof departments;
 let userDepartment: DeptKey = 'management';
 let departmentName = 'Management';
@@ -26,102 +27,269 @@ for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof depart
   }
 }
 
+const isManagement = userDepartment === 'management';
+
+// Load notifications for "Needs Attention" section
+const allNotifications = await readNotifications();
+const pendingNotifs = allNotifications.filter(n => n.status === 'pending').slice(0, 8);
+const unreadCount = pendingNotifs.length;
+
+// Load agent reports for status strip
+const agentReports: Record<string, any> = {};
+const agentKeys = ['security-report', 'seo-report', 'performance-report', 'compliance-check-report'];
+for (const key of agentKeys) {
+  try {
+    const mod = await import(`../../data/reports/${key}.json`);
+    agentReports[key] = mod.default || mod;
+  } catch {
+    agentReports[key] = null;
+  }
+}
+
+// Load blog drafts count
+let draftCount = 0;
+try {
+  const draftsMod = await import('../../data/blog-drafts.json');
+  const draftsData = draftsMod.default || draftsMod;
+  draftCount = (draftsData.drafts || []).filter((d: any) => d.status === 'draft').length;
+} catch { /* no drafts */ }
+
+// Load social drafts count
+let socialDraftCount = 0;
+try {
+  const socialMod = await import('../../data/social-drafts.json');
+  const socialData = socialMod.default || socialMod;
+  socialDraftCount = (socialData.drafts || []).filter((d: any) => d.status === 'draft').length;
+} catch { /* no social drafts */ }
+
+// Load proposed fixes count
+let fixCount = 0;
+try {
+  const fixesMod = await import('../../data/proposed-fixes.json');
+  const fixesData = fixesMod.default || fixesMod;
+  fixCount = (fixesData.fixes || []).filter((f: any) => f.status === 'pending').length;
+} catch { /* no fixes */ }
+
+// Notification type icons
+const TYPE_EMOJIS: Record<string, string> = {
+  'blog-draft': '\u{1F4DD}',
+  'pricing-recommendation': '\u{1F4B0}',
+  'security-fix': '\u{1F6E1}\uFE0F',
+  'seo-fix': '\u{1F50D}',
+  'compliance-expiry': '\u{26A0}\uFE0F',
+  'social-draft': '\u{1F4F1}',
+  'conversion-milestone': '\u{1F4C8}',
+  'agent-critical': '\u{1F6A8}',
+};
+
+const PRIORITY_CLASSES: Record<string, string> = {
+  high: 'border-l-red-500 bg-red-50',
+  medium: 'border-l-amber-500 bg-amber-50',
+  low: 'border-l-gray-300 bg-gray-50',
+};
+
+function gradeColour(grade: string): string {
+  const colours: Record<string, string> = {
+    A: 'text-green-600 bg-green-50',
+    B: 'text-lime-600 bg-lime-50',
+    C: 'text-yellow-600 bg-yellow-50',
+    D: 'text-orange-600 bg-orange-50',
+    F: 'text-red-600 bg-red-50',
+  };
+  return colours[grade] || 'text-gray-600 bg-gray-50';
+}
+
+// Quick actions
 const quickActions = [
-  {
-    title: 'Create Blog Post',
-    description: 'Use AI to draft a blog post in AFJ\'s brand voice. Enter a topic and key points — the AI generates the draft for you to review.',
-    href: '/admin/content',
-    icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z',
-    colour: 'bg-afj-accent',
-  },
-  {
-    title: 'Update Page Content',
-    description: 'Describe what you want changed in plain English. The AI will generate the edits for your approval before publishing.',
-    href: '/admin/pages',
-    icon: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z',
-    colour: 'bg-blue-600',
-  },
-  {
-    title: 'View Approvals',
-    description: canApprove
-      ? 'Review and approve pending blog posts and page changes submitted by your team.'
-      : 'View the status of content you\'ve submitted for approval.',
-    href: '/admin/approvals',
-    icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-    colour: 'bg-amber-500',
-  },
-  {
-    title: 'Compliance Editor',
-    description: 'Update compliance figures — CQC rating, DBS checks, MOT pass rates, insurance status, and more.',
-    href: '/admin/compliance',
-    icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
-    colour: 'bg-teal-600',
-  },
-  {
-    title: 'Testimonials & Case Studies',
-    description: 'Paste raw customer feedback and let AI generate polished testimonials and case studies.',
-    href: '/admin/testimonials',
-    icon: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z',
-    colour: 'bg-purple-600',
-  },
-  {
-    title: 'Back to Website',
-    description: 'Return to the public-facing AFJ website.',
-    href: '/',
-    icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
-    colour: 'bg-gray-600',
-  },
+  { label: 'Create Blog Post', href: '/admin/content', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' },
+  { label: 'Update Page', href: '/admin/pages', icon: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z' },
+  { label: 'Social Media', href: '/admin/social', icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
+  { label: 'Compliance', href: '/admin/compliance', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+  { label: 'Testimonials', href: '/admin/testimonials', icon: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z' },
+  { label: 'View Website', href: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
 ];
 ---
 
-<AdminLayout title="Dashboard" userEmail={userEmail}>
+<AdminLayout title="Command Centre" userEmail={userEmail}>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Welcome -->
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Welcome back</h1>
+    <!-- Welcome + User Info -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Command Centre</h1>
       <p class="text-gray-600 mt-1">
-        Logged in as <span class="font-medium text-afj-dark-blue">{userEmail}</span>
-        &middot; Department: <span class="font-medium text-afj-accent">{departmentName}</span>
+        <span class="font-medium text-afj-dark-blue">{userEmail}</span>
+        &middot; <span class="text-afj-accent">{departmentName}</span>
       </p>
     </div>
 
-    <!-- Quick Actions Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {quickActions.map((action) => (
-        <a href={action.href} class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow group block">
-          <div class="flex items-start gap-4">
-            <div class:list={['flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center', action.colour]}>
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={action.icon} />
-              </svg>
-            </div>
-            <div>
-              <h2 class="text-lg font-semibold text-gray-900 group-hover:text-afj-accent transition-colors">{action.title}</h2>
-              <p class="text-gray-600 text-sm mt-1">{action.description}</p>
-            </div>
-          </div>
-        </a>
-      ))}
+    <!-- Key Metrics Row -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+      <div class="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Unread Alerts</p>
+        <p class:list={['text-3xl font-bold', unreadCount > 0 ? 'text-red-600' : 'text-green-600']}>{unreadCount}</p>
+      </div>
+      <div class="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Blog Drafts</p>
+        <p class:list={['text-3xl font-bold', draftCount > 0 ? 'text-blue-600' : 'text-gray-400']}>{draftCount}</p>
+      </div>
+      <div class="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Social Drafts</p>
+        <p class:list={['text-3xl font-bold', socialDraftCount > 0 ? 'text-indigo-600' : 'text-gray-400']}>{socialDraftCount}</p>
+      </div>
+      <div class="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Pending Fixes</p>
+        <p class:list={['text-3xl font-bold', fixCount > 0 ? 'text-amber-600' : 'text-gray-400']}>{fixCount}</p>
+      </div>
+      <div class="bg-white rounded-lg border border-gray-200 p-4 text-center">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Site Health</p>
+        {agentReports['performance-report']?.grade ? (
+          <p class={`text-3xl font-bold ${gradeColour(agentReports['performance-report'].grade).split(' ')[0]}`}>
+            {agentReports['performance-report'].grade}
+          </p>
+        ) : (
+          <p class="text-3xl font-bold text-gray-400">—</p>
+        )}
+      </div>
     </div>
 
-    <!-- Department Info -->
-    <div class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <h2 class="text-lg font-semibold text-gray-900 mb-3">Your Access</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Main Column (2/3) -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Needs Your Attention -->
         <div>
-          <span class="text-gray-500">Department</span>
-          <p class="font-medium text-gray-900">{departmentName}</p>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-semibold text-gray-900">Needs Your Attention</h2>
+            {unreadCount > 0 && (
+              <a href="/admin/notifications" class="text-sm text-afj-accent hover:underline">View all &rarr;</a>
+            )}
+          </div>
+          {pendingNotifs.length === 0 ? (
+            <div class="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+              <p class="text-green-700 font-medium">All clear — no pending actions.</p>
+            </div>
+          ) : (
+            <div class="space-y-2">
+              {pendingNotifs.map(n => {
+                const emoji = TYPE_EMOJIS[n.type] || '';
+                const priorityClass = PRIORITY_CLASSES[n.priority] || PRIORITY_CLASSES.low;
+                return (
+                  <a href={n.actionUrl} class={`block rounded-lg border-l-4 p-4 hover:shadow-sm transition-shadow ${priorityClass}`}>
+                    <div class="flex items-start gap-3">
+                      <span class="text-lg flex-shrink-0">{emoji}</span>
+                      <div class="min-w-0 flex-1">
+                        <p class="font-medium text-gray-900 text-sm">{n.title}</p>
+                        <p class="text-xs text-gray-600 mt-0.5 line-clamp-2">{n.summary}</p>
+                      </div>
+                      <span class="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
+                        {new Date(n.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                      </span>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          )}
         </div>
+
+        <!-- Agent Status Strip -->
+        {isManagement && (
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-lg font-semibold text-gray-900">Agent Status</h2>
+              <a href="/admin/monitoring" class="text-sm text-afj-accent hover:underline">Full dashboard &rarr;</a>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { name: 'Security', key: 'security-report', icon: '&#128274;' },
+                { name: 'SEO', key: 'seo-report', icon: '&#128269;' },
+                { name: 'Performance', key: 'performance-report', icon: '&#9889;' },
+                { name: 'Compliance', key: 'compliance-check-report', icon: '&#9989;' },
+              ].map(agent => {
+                const report = agentReports[agent.key];
+                const grade = report?.grade || '—';
+                const lastRun = report?.generatedAt
+                  ? new Date(report.generatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+                  : 'Never';
+                return (
+                  <div class="bg-white rounded-lg border border-gray-200 p-3 flex items-center gap-3">
+                    <span class="text-xl" set:html={agent.icon} />
+                    <div class="min-w-0">
+                      <p class="text-sm font-medium text-gray-900">{agent.name}</p>
+                      <div class="flex items-center gap-2">
+                        {grade !== '—' ? (
+                          <span class={`px-1.5 py-0.5 rounded text-xs font-bold ${gradeColour(grade)}`}>{grade}</span>
+                        ) : (
+                          <span class="text-xs text-gray-400">No data</span>
+                        )}
+                        <span class="text-xs text-gray-400">{lastRun}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- Sidebar (1/3) -->
+      <div class="space-y-6">
+        <!-- Quick Actions -->
         <div>
-          <span class="text-gray-500">Approval Permission</span>
-          <p class="font-medium text-gray-900">{canApprove ? 'Can approve content' : 'Submit for approval'}</p>
+          <h2 class="text-lg font-semibold text-gray-900 mb-3">Quick Actions</h2>
+          <div class="space-y-2">
+            {quickActions.map(action => (
+              <a href={action.href} class="flex items-center gap-3 bg-white rounded-lg border border-gray-200 p-3 hover:shadow-sm hover:border-afj-accent transition-all group">
+                <div class="w-8 h-8 rounded-md bg-afj-dark-blue/5 flex items-center justify-center flex-shrink-0 group-hover:bg-afj-accent/10 transition-colors">
+                  <svg class="w-4 h-4 text-afj-dark-blue group-hover:text-afj-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={action.icon} />
+                  </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-700 group-hover:text-afj-accent transition-colors">{action.label}</span>
+              </a>
+            ))}
+          </div>
         </div>
-        <div>
-          <span class="text-gray-500">Editable Pages</span>
-          <p class="font-medium text-gray-900">
-            {departments[userDepartment].pages[0] === 'all' ? 'All pages' : `${departments[userDepartment].pages.length} page(s)`}
-          </p>
+
+        <!-- Your Access -->
+        <div class="bg-white rounded-lg border border-gray-200 p-4">
+          <h3 class="text-sm font-semibold text-gray-900 mb-2">Your Access</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-500">Department</span>
+              <span class="font-medium text-gray-900">{departmentName}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Approval</span>
+              <span class="font-medium text-gray-900">{canApprove ? 'Can approve' : 'Submit only'}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Pages</span>
+              <span class="font-medium text-gray-900">
+                {departments[userDepartment].pages[0] === 'all' ? 'All pages' : `${departments[userDepartment].pages.length} page(s)`}
+              </span>
+            </div>
+          </div>
         </div>
+
+        {/* Management-only links */}
+        {isManagement && (
+          <div class="bg-white rounded-lg border border-gray-200 p-4">
+            <h3 class="text-sm font-semibold text-gray-900 mb-2">Management Tools</h3>
+            <div class="space-y-1">
+              {[
+                { label: 'Pricing Portal', href: '/admin/pricing' },
+                { label: 'Conversion Tracking', href: '/admin/conversions' },
+                { label: 'Pricing Intelligence', href: '/admin/pricing-intelligence' },
+                { label: 'Fleet & DBS Records', href: '/admin/compliance-records' },
+                { label: 'Monitoring Dashboard', href: '/admin/monitoring' },
+              ].map(link => (
+                <a href={link.href} class="block text-sm text-gray-600 hover:text-afj-accent transition-colors py-1">
+                  {link.label} &rarr;
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   </div>

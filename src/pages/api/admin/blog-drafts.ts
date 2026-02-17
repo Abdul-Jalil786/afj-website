@@ -22,6 +22,7 @@ import {
 } from '../../../lib/blog-drafter';
 import { createNotification } from '../../../lib/notifications';
 import { createOrUpdateFile } from '../../../lib/github';
+import { generateBlogSocialDrafts } from '../../../lib/social-drafter';
 
 export const GET: APIRoute = async ({ request, url }) => {
   const user = await authenticateRequest(request);
@@ -261,6 +262,25 @@ tags: ["${draft.keyword.split(',')[0]?.trim() || 'transport'}"]
         actionUrl: `/blog/${slug}`,
         priority: 'low',
       }).catch(() => {});
+
+      // Auto-generate social media drafts for the published blog
+      generateBlogSocialDrafts({
+        blogTitle: draft.title,
+        blogSlug: slug,
+        blogContent: draft.content,
+      }).then((socialDrafts) => {
+        if (socialDrafts.length > 0) {
+          createNotification({
+            type: 'social-draft',
+            title: `Social posts ready: ${draft.title}`,
+            summary: `${socialDrafts.length} social media draft(s) generated for "${draft.title}". Review and publish them from the Social Media page.`,
+            actionUrl: '/admin/social',
+            priority: 'medium',
+          }).catch(() => {});
+        }
+      }).catch((err) => {
+        console.error('Social draft auto-generation failed:', err instanceof Error ? err.message : err);
+      });
 
       return new Response(
         JSON.stringify({ success: true, data: { slug, url: `/blog/${slug}` } }),

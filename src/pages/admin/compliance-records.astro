@@ -1,0 +1,488 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import departments from '../../data/departments.json';
+import { authenticateRequest } from '../../lib/cf-auth';
+
+const userEmail = await authenticateRequest(Astro.request);
+if (!userEmail) {
+  return new Response('<h1>Access Denied</h1><p>You must be authenticated via Cloudflare Zero Trust to access the admin dashboard.</p><p><a href="/">Return to website</a></p>', { status: 403, headers: { 'Content-Type': 'text/html' } });
+}
+
+type DeptKey = keyof typeof departments;
+let userDepartment: DeptKey = 'management';
+
+for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof departments[DeptKey]][]) {
+  if (dept && typeof dept === 'object' && Array.isArray(dept.emails) && dept.emails.includes(userEmail)) {
+    userDepartment = key;
+    break;
+  }
+}
+
+const canView = userDepartment === 'management' || userDepartment === 'operations';
+const activeTab = Astro.url.searchParams.get('tab') || 'mot';
+---
+
+<AdminLayout title="Fleet & DBS Records" userEmail={userEmail}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Fleet & DBS Records</h1>
+        <p class="text-gray-600 mt-1">Track MOT certificates and DBS checks. Expiry alerts run daily at 7:00 UTC.</p>
+      </div>
+    </div>
+
+    {!canView ? (
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
+        <p class="text-amber-800 font-medium">You do not have permission to view compliance records.</p>
+        <p class="text-amber-600 text-sm mt-1">Only Operations and Management departments can access this page.</p>
+      </div>
+    ) : (
+      <div>
+        <!-- Stats Dashboard -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" id="statsGrid">
+          <div class="bg-white rounded-lg border border-gray-200 p-4">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">MOT Pass Rate</p>
+            <p class="text-2xl font-bold text-gray-900" id="statMotRate">—</p>
+          </div>
+          <div class="bg-white rounded-lg border border-gray-200 p-4">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">MOT Expiring Soon</p>
+            <p class="text-2xl font-bold text-amber-600" id="statMotExpiring">—</p>
+          </div>
+          <div class="bg-white rounded-lg border border-gray-200 p-4">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">DBS Compliance</p>
+            <p class="text-2xl font-bold text-gray-900" id="statDbsRate">—</p>
+          </div>
+          <div class="bg-white rounded-lg border border-gray-200 p-4">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">DBS Expiring Soon</p>
+            <p class="text-2xl font-bold text-amber-600" id="statDbsExpiring">—</p>
+          </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex border-b border-gray-200 mb-6">
+          <button class="cr-tab px-4 py-3 text-sm font-medium border-b-2 transition-colors" data-tab="mot">
+            MOT Records
+          </button>
+          <button class="cr-tab px-4 py-3 text-sm font-medium border-b-2 transition-colors" data-tab="dbs">
+            DBS Records
+          </button>
+          <button class="cr-tab px-4 py-3 text-sm font-medium border-b-2 transition-colors" data-tab="import">
+            CSV Import
+          </button>
+        </div>
+
+        <!-- MOT Tab -->
+        <div id="panelMot" class="cr-panel">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">MOT Records</h2>
+            <button id="addMotBtn" class="bg-afj-accent text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-afj-green transition-colors">
+              + Add MOT Record
+            </button>
+          </div>
+          <div id="motTable" class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <p class="p-8 text-center text-gray-400">Loading...</p>
+          </div>
+        </div>
+
+        <!-- DBS Tab -->
+        <div id="panelDbs" class="cr-panel hidden">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">DBS Records</h2>
+            <button id="addDbsBtn" class="bg-afj-accent text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-afj-green transition-colors">
+              + Add DBS Record
+            </button>
+          </div>
+          <div id="dbsTable" class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <p class="p-8 text-center text-gray-400">Loading...</p>
+          </div>
+        </div>
+
+        <!-- Import Tab -->
+        <div id="panelImport" class="cr-panel hidden">
+          <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">CSV Import</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Record Type</label>
+                <select id="importType" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                  <option value="mot">MOT Records</option>
+                  <option value="dbs">DBS Records</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">CSV File</label>
+                <input type="file" id="csvFile" accept=".csv" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-afj-accent file:text-white hover:file:bg-afj-green" />
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
+                <p class="font-medium mb-2">Expected CSV columns:</p>
+                <p class="mb-1"><strong>MOT:</strong> VehicleReg, VehicleName, MOTDate, MOTExpiry, Result, Advisories, Mileage, Garage, Notes</p>
+                <p><strong>DBS:</strong> DriverName, DBSNumber, IssueDate, ExpiryDate, Level, Role, Notes</p>
+                <p class="mt-2 text-xs text-gray-400">DBS expiry auto-calculated as 3 years from issue date if not provided.</p>
+              </div>
+              <button id="importBtn" class="bg-afj-accent text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-afj-green transition-colors">
+                Import CSV
+              </button>
+              <div id="importResult" class="hidden text-sm"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add/Edit Modal -->
+        <div id="recordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div class="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 id="modalTitle" class="text-lg font-semibold text-gray-900">Add Record</h3>
+              <button id="modalClose" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+            </div>
+            <div id="modalBody" class="p-6">
+              <!-- Dynamic form content -->
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <script is:inline>
+    (function() {
+      var activeTab = new URLSearchParams(window.location.search).get('tab') || 'mot';
+
+      // Tab switching
+      document.querySelectorAll('.cr-tab').forEach(function(btn) {
+        var tab = btn.getAttribute('data-tab');
+        if (tab === activeTab) {
+          btn.classList.add('border-afj-accent', 'text-afj-accent');
+          btn.classList.remove('border-transparent', 'text-gray-500');
+        } else {
+          btn.classList.add('border-transparent', 'text-gray-500');
+          btn.classList.remove('border-afj-accent', 'text-afj-accent');
+        }
+
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.cr-tab').forEach(function(t) {
+            t.classList.remove('border-afj-accent', 'text-afj-accent');
+            t.classList.add('border-transparent', 'text-gray-500');
+          });
+          btn.classList.add('border-afj-accent', 'text-afj-accent');
+          btn.classList.remove('border-transparent', 'text-gray-500');
+          document.querySelectorAll('.cr-panel').forEach(function(p) { p.classList.add('hidden'); });
+          var panelId = 'panel' + tab.charAt(0).toUpperCase() + tab.slice(1);
+          document.getElementById(panelId).classList.remove('hidden');
+        });
+      });
+
+      // Show initial panel
+      document.querySelectorAll('.cr-panel').forEach(function(p) { p.classList.add('hidden'); });
+      var initialPanel = 'panel' + activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
+      var el = document.getElementById(initialPanel);
+      if (el) el.classList.remove('hidden');
+
+      var STATUS_COLOURS = {
+        pass: 'bg-green-100 text-green-700',
+        fail: 'bg-red-100 text-red-700',
+        advisory: 'bg-amber-100 text-amber-700',
+        valid: 'bg-green-100 text-green-700',
+        expiring: 'bg-amber-100 text-amber-700',
+        expired: 'bg-red-100 text-red-700',
+        pending: 'bg-blue-100 text-blue-700',
+      };
+
+      function loadData() {
+        fetch('/api/admin/compliance-records')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (!data.success) return;
+            var d = data.data;
+            renderStats(d.stats);
+            renderMotTable(d.motRecords || []);
+            renderDbsTable(d.dbsRecords || []);
+          })
+          .catch(function() {
+            document.getElementById('motTable').innerHTML = '<p class="p-8 text-center text-red-500">Failed to load</p>';
+            document.getElementById('dbsTable').innerHTML = '<p class="p-8 text-center text-red-500">Failed to load</p>';
+          });
+      }
+
+      function renderStats(stats) {
+        document.getElementById('statMotRate').textContent = stats.mot.passRate + '%';
+        document.getElementById('statMotExpiring').textContent = String(stats.mot.expiringSoon + stats.mot.expired);
+        document.getElementById('statDbsRate').textContent = stats.dbs.complianceRate + '%';
+        document.getElementById('statDbsExpiring').textContent = String(stats.dbs.expiringSoon + stats.dbs.expired);
+      }
+
+      function isExpiringSoon(dateStr) {
+        var d = new Date(dateStr);
+        var now = new Date();
+        var in30 = new Date(now.getTime() + 30*24*60*60*1000);
+        return d > now && d <= in30;
+      }
+
+      function isExpired(dateStr) { return new Date(dateStr) < new Date(); }
+
+      function expiryClass(dateStr) {
+        if (isExpired(dateStr)) return 'text-red-600 font-bold';
+        if (isExpiringSoon(dateStr)) return 'text-amber-600 font-medium';
+        return 'text-gray-900';
+      }
+
+      function renderMotTable(records) {
+        if (records.length === 0) {
+          document.getElementById('motTable').innerHTML = '<p class="p-8 text-center text-gray-400">No MOT records yet. Add one or import a CSV.</p>';
+          return;
+        }
+        // Sort by expiry ascending (soonest first)
+        records.sort(function(a, b) { return new Date(a.motExpiry) - new Date(b.motExpiry); });
+
+        var html = '<div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b border-gray-200 bg-gray-50">'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Reg</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Vehicle</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">MOT Date</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Expiry</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Result</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Mileage</th>'
+          + '<th class="py-2 px-3 text-right font-medium text-gray-700">Actions</th>'
+          + '</tr></thead><tbody>';
+
+        records.forEach(function(r) {
+          var badge = STATUS_COLOURS[r.result] || 'bg-gray-100 text-gray-700';
+          html += '<tr class="border-b border-gray-100 hover:bg-gray-50">'
+            + '<td class="py-2 px-3 font-medium text-gray-900">' + r.vehicleReg + '</td>'
+            + '<td class="py-2 px-3 text-gray-600">' + (r.vehicleName || '—') + '</td>'
+            + '<td class="py-2 px-3 text-gray-600">' + r.motDate + '</td>'
+            + '<td class="py-2 px-3 ' + expiryClass(r.motExpiry) + '">' + r.motExpiry + '</td>'
+            + '<td class="py-2 px-3"><span class="px-2 py-0.5 rounded-full text-xs font-medium ' + badge + '">' + r.result + '</span></td>'
+            + '<td class="py-2 px-3 text-gray-600">' + (r.mileage ? r.mileage.toLocaleString() : '—') + '</td>'
+            + '<td class="py-2 px-3 text-right"><button class="text-red-500 hover:text-red-700 text-xs delete-mot" data-id="' + r.id + '">Delete</button></td>'
+            + '</tr>';
+        });
+        html += '</tbody></table></div>';
+        document.getElementById('motTable').innerHTML = html;
+      }
+
+      function renderDbsTable(records) {
+        if (records.length === 0) {
+          document.getElementById('dbsTable').innerHTML = '<p class="p-8 text-center text-gray-400">No DBS records yet. Add one or import a CSV.</p>';
+          return;
+        }
+        records.sort(function(a, b) { return new Date(a.expiryDate) - new Date(b.expiryDate); });
+
+        var html = '<div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b border-gray-200 bg-gray-50">'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Driver</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">DBS No.</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Issue Date</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Expiry</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Level</th>'
+          + '<th class="py-2 px-3 text-left font-medium text-gray-700">Status</th>'
+          + '<th class="py-2 px-3 text-right font-medium text-gray-700">Actions</th>'
+          + '</tr></thead><tbody>';
+
+        records.forEach(function(r) {
+          var badge = STATUS_COLOURS[r.status] || 'bg-gray-100 text-gray-700';
+          html += '<tr class="border-b border-gray-100 hover:bg-gray-50">'
+            + '<td class="py-2 px-3 font-medium text-gray-900">' + r.driverName + '</td>'
+            + '<td class="py-2 px-3 text-gray-600 font-mono text-xs">' + r.dbsNumber + '</td>'
+            + '<td class="py-2 px-3 text-gray-600">' + r.issueDate + '</td>'
+            + '<td class="py-2 px-3 ' + expiryClass(r.expiryDate) + '">' + r.expiryDate + '</td>'
+            + '<td class="py-2 px-3 text-gray-600 capitalize">' + r.level + '</td>'
+            + '<td class="py-2 px-3"><span class="px-2 py-0.5 rounded-full text-xs font-medium ' + badge + '">' + r.status + '</span></td>'
+            + '<td class="py-2 px-3 text-right"><button class="text-red-500 hover:text-red-700 text-xs delete-dbs" data-id="' + r.id + '">Delete</button></td>'
+            + '</tr>';
+        });
+        html += '</tbody></table></div>';
+        document.getElementById('dbsTable').innerHTML = html;
+      }
+
+      // Add MOT
+      document.getElementById('addMotBtn').addEventListener('click', function() {
+        document.getElementById('modalTitle').textContent = 'Add MOT Record';
+        document.getElementById('modalBody').innerHTML = ''
+          + '<div class="space-y-3">'
+          + '<div class="grid grid-cols-2 gap-3">'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Vehicle Reg *</label><input id="fVehicleReg" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" placeholder="AB12 CDE" /></div>'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Vehicle Name</label><input id="fVehicleName" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" placeholder="Ford Transit" /></div>'
+          + '</div>'
+          + '<div class="grid grid-cols-2 gap-3">'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">MOT Date *</label><input id="fMotDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" /></div>'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">MOT Expiry *</label><input id="fMotExpiry" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" /></div>'
+          + '</div>'
+          + '<div class="grid grid-cols-2 gap-3">'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Result</label><select id="fResult" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"><option value="pass">Pass</option><option value="fail">Fail</option><option value="advisory">Advisory</option></select></div>'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Mileage</label><input id="fMileage" type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" /></div>'
+          + '</div>'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Garage</label><input id="fGarage" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" /></div>'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Notes</label><textarea id="fNotes" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" rows="2"></textarea></div>'
+          + '<button id="submitMot" class="w-full bg-afj-accent text-white font-semibold py-2.5 rounded-lg hover:bg-afj-green transition-colors">Add Record</button>'
+          + '</div>';
+
+        document.getElementById('recordModal').classList.remove('hidden');
+
+        document.getElementById('submitMot').addEventListener('click', function() {
+          var btn = this;
+          btn.disabled = true;
+          btn.textContent = 'Saving...';
+
+          fetch('/api/admin/compliance-records', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'add-mot',
+              vehicleReg: document.getElementById('fVehicleReg').value,
+              vehicleName: document.getElementById('fVehicleName').value,
+              motDate: document.getElementById('fMotDate').value,
+              motExpiry: document.getElementById('fMotExpiry').value,
+              result: document.getElementById('fResult').value,
+              mileage: parseInt(document.getElementById('fMileage').value || '0', 10),
+              garage: document.getElementById('fGarage').value,
+              notes: document.getElementById('fNotes').value,
+            }),
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.success) {
+              document.getElementById('recordModal').classList.add('hidden');
+              loadData();
+            } else {
+              alert(data.error || 'Failed to save');
+            }
+          })
+          .catch(function() { alert('Request failed'); })
+          .finally(function() { btn.disabled = false; btn.textContent = 'Add Record'; });
+        });
+      });
+
+      // Add DBS
+      document.getElementById('addDbsBtn').addEventListener('click', function() {
+        document.getElementById('modalTitle').textContent = 'Add DBS Record';
+        document.getElementById('modalBody').innerHTML = ''
+          + '<div class="space-y-3">'
+          + '<div class="grid grid-cols-2 gap-3">'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Driver Name *</label><input id="fDriverName" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" /></div>'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">DBS Number *</label><input id="fDbsNumber" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" /></div>'
+          + '</div>'
+          + '<div class="grid grid-cols-2 gap-3">'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Issue Date *</label><input id="fIssueDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" /></div>'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Expiry Date</label><input id="fExpiryDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" /><p class="text-xs text-gray-400 mt-0.5">Auto: 3 years from issue</p></div>'
+          + '</div>'
+          + '<div class="grid grid-cols-2 gap-3">'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Level</label><select id="fLevel" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"><option value="enhanced">Enhanced</option><option value="standard">Standard</option><option value="basic">Basic</option></select></div>'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Role</label><input id="fRole" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" value="Driver" /></div>'
+          + '</div>'
+          + '<div><label class="block text-xs font-medium text-gray-500 mb-1">Notes</label><textarea id="fDbsNotes" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" rows="2"></textarea></div>'
+          + '<button id="submitDbs" class="w-full bg-afj-accent text-white font-semibold py-2.5 rounded-lg hover:bg-afj-green transition-colors">Add Record</button>'
+          + '</div>';
+
+        document.getElementById('recordModal').classList.remove('hidden');
+
+        document.getElementById('submitDbs').addEventListener('click', function() {
+          var btn = this;
+          btn.disabled = true;
+          btn.textContent = 'Saving...';
+
+          fetch('/api/admin/compliance-records', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'add-dbs',
+              driverName: document.getElementById('fDriverName').value,
+              dbsNumber: document.getElementById('fDbsNumber').value,
+              issueDate: document.getElementById('fIssueDate').value,
+              expiryDate: document.getElementById('fExpiryDate').value,
+              level: document.getElementById('fLevel').value,
+              role: document.getElementById('fRole').value,
+              notes: document.getElementById('fDbsNotes').value,
+            }),
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.success) {
+              document.getElementById('recordModal').classList.add('hidden');
+              loadData();
+            } else {
+              alert(data.error || 'Failed to save');
+            }
+          })
+          .catch(function() { alert('Request failed'); })
+          .finally(function() { btn.disabled = false; btn.textContent = 'Add Record'; });
+        });
+      });
+
+      // Delete handlers (delegated)
+      document.addEventListener('click', function(e) {
+        var motDel = e.target.closest('.delete-mot');
+        if (motDel) {
+          if (!confirm('Delete this MOT record?')) return;
+          fetch('/api/admin/compliance-records', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: motDel.getAttribute('data-id'), type: 'mot', action: 'delete' }),
+          }).then(function() { loadData(); });
+        }
+        var dbsDel = e.target.closest('.delete-dbs');
+        if (dbsDel) {
+          if (!confirm('Delete this DBS record?')) return;
+          fetch('/api/admin/compliance-records', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: dbsDel.getAttribute('data-id'), type: 'dbs', action: 'delete' }),
+          }).then(function() { loadData(); });
+        }
+      });
+
+      // Modal close
+      document.getElementById('modalClose').addEventListener('click', function() {
+        document.getElementById('recordModal').classList.add('hidden');
+      });
+      document.getElementById('recordModal').addEventListener('click', function(e) {
+        if (e.target === this) this.classList.add('hidden');
+      });
+
+      // CSV Import
+      document.getElementById('importBtn').addEventListener('click', function() {
+        var fileInput = document.getElementById('csvFile');
+        var file = fileInput.files[0];
+        if (!file) { alert('Please select a CSV file'); return; }
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var btn = document.getElementById('importBtn');
+          btn.disabled = true;
+          btn.textContent = 'Importing...';
+
+          fetch('/api/admin/compliance-records', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'import-csv',
+              type: document.getElementById('importType').value,
+              csvData: e.target.result,
+            }),
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var resultEl = document.getElementById('importResult');
+            resultEl.classList.remove('hidden');
+            if (data.success) {
+              resultEl.className = 'text-sm text-green-600';
+              resultEl.textContent = 'Imported ' + data.data.imported + ' records successfully.';
+              loadData();
+            } else {
+              resultEl.className = 'text-sm text-red-600';
+              resultEl.textContent = data.error || 'Import failed';
+            }
+          })
+          .catch(function() {
+            document.getElementById('importResult').className = 'text-sm text-red-600';
+            document.getElementById('importResult').classList.remove('hidden');
+            document.getElementById('importResult').textContent = 'Request failed';
+          })
+          .finally(function() { btn.disabled = false; btn.textContent = 'Import CSV'; });
+        };
+        reader.readAsText(file);
+      });
+
+      loadData();
+    })();
+  </script>
+</AdminLayout>

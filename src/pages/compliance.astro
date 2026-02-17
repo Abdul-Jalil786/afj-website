@@ -5,13 +5,38 @@ import CTABanner from '../components/ui/CTABanner.astro';
 import AccreditationBadges from '../components/sections/AccreditationBadges.astro';
 import SocialSidebar from '../components/ui/SocialSidebar.astro';
 import complianceData from '../data/compliance.json';
+import complianceRecords from '../data/compliance-records.json';
 
 const breadcrumbs = [{ label: 'Compliance & Standards' }];
+
+// Compute live stats from compliance records (percentages only — NEVER expose fleet size)
+const now = new Date();
+const motRecords = complianceRecords.motRecords || [];
+const dbsRecords = complianceRecords.dbsRecords || [];
+
+const motPassRate = motRecords.length > 0
+  ? Math.round((motRecords.filter((r: any) => r.result === 'pass').length / motRecords.length) * 100)
+  : null;
+
+const dbsComplianceRate = dbsRecords.length > 0
+  ? Math.round((dbsRecords.filter((r: any) => new Date(r.expiryDate) > now).length / dbsRecords.length) * 100)
+  : null;
+
+// Override static compliance values with computed ones when records exist
+const items = complianceData.items.map((item: any) => {
+  if (item.id === 'mot-pass-rate' && motPassRate !== null) {
+    return { ...item, value: `${motPassRate}%`, detail: 'First-time pass rate (computed from records)' };
+  }
+  if (item.id === 'dbs-checks' && dbsComplianceRate !== null) {
+    return { ...item, value: `${dbsComplianceRate}% compliant`, detail: 'All drivers DBS-checked' };
+  }
+  return item;
+});
 
 // Group items by category
 type ComplianceItem = (typeof complianceData.items)[number];
 const grouped: Record<string, ComplianceItem[]> = {};
-for (const item of complianceData.items) {
+for (const item of items) {
   if (!grouped[item.category]) grouped[item.category] = [];
   grouped[item.category].push(item);
 }
@@ -30,8 +55,8 @@ const statusColour: Record<string, { bg: string; text: string; dot: string }> = 
   fail: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500' },
 };
 
-const passCount = complianceData.items.filter((i) => i.status === 'pass').length;
-const totalCount = complianceData.items.length;
+const passCount = items.filter((i: any) => i.status === 'pass').length;
+const totalCount = items.length;
 
 const jsonLD = {
   '@context': 'https://schema.org',
