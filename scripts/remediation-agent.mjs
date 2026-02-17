@@ -155,8 +155,8 @@ async function run() {
     const allSecIssues = [];
 
     // Collect issues from auth checks
-    if (securityReport.auth) {
-      for (const a of securityReport.auth) {
+    if (securityReport.authEnforcement) {
+      for (const a of securityReport.authEnforcement) {
         if (!a.protected) {
           allSecIssues.push({ type: 'unprotected-endpoint', endpoint: a.endpoint, status: a.status, message: `Unprotected admin endpoint: ${a.endpoint}` });
         }
@@ -164,8 +164,8 @@ async function run() {
     }
 
     // Collect issues from headers
-    if (securityReport.headers) {
-      for (const h of securityReport.headers) {
+    if (securityReport.securityHeaders) {
+      for (const h of securityReport.securityHeaders) {
         if (h.missingRequired?.length > 0) {
           allSecIssues.push({ type: 'missing-header', page: h.page, missingRequired: h.missingRequired, message: `Missing security headers on ${h.page}: ${h.missingRequired.join(', ')}` });
         }
