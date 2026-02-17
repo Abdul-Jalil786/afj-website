@@ -2,7 +2,7 @@
 
 > This is the primary instruction file for Claude Code working on the AFJ website.
 > Read this ENTIRE file before making any changes. Follow all rules strictly.
-> Last updated: 2026-02-17 (monitoring agents)
+> Last updated: 2026-02-17 (security headers middleware)
 
 ---
 
@@ -250,7 +250,16 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - AdminLayout nav updated with Monitoring link
 - GitHub secrets needed: `LLM_API_KEY`, `SITE_URL`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL`
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), Component subdirectory structure (stable), github.ts shared utility (stable), James knowledge base (stable), Quote logging infrastructure (stable), Conversion tracking admin (stable), Pricing intelligence admin (stable), Monitoring agents + agent-utils.mjs (stable), Competitor data (stable)
+**Security Headers Middleware — COMPLETE (2026-02-17)**
+- `src/middleware.ts` — Astro middleware applying security headers to every response (public + admin + API)
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: SAMEORIGIN
+- Referrer-Policy: strict-origin-when-cross-origin
+- Permissions-Policy: camera=(), microphone=(), geolocation=()
+- Strict-Transport-Security: max-age=31536000; includeSubDomains
+- Content-Security-Policy: allowlists for Google Analytics, Cloudflare CDN, Google Fonts, Web3Forms, Postcodes.io, OSRM, Anthropic API, OpenAI API
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), Component subdirectory structure (stable), github.ts shared utility (stable), James knowledge base (stable), Quote logging infrastructure (stable), Conversion tracking admin (stable), Pricing intelligence admin (stable), Monitoring agents + agent-utils.mjs (stable), Competitor data (stable), Security headers middleware (stable)
 
 ---
 
@@ -336,6 +345,7 @@ afj-website/
 ├── CLAUDE.md                       # THIS FILE — read first
 ├── SYSTEM-MAP.md                   # Architecture map and project status
 ├── src/
+│   ├── middleware.ts                # 🆕 Security headers on all responses
 │   ├── pages/
 │   │   ├── index.astro             # Homepage
 │   │   ├── about.astro
