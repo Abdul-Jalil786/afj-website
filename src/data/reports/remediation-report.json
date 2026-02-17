@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-17T19:43:10.473Z",
+  "generatedAt": "2026-02-17T19:54:56.568Z",
   "agent": "remediation",
-  "grade": "A",
-  "newFixes": 0,
-  "pendingFixes": 0,
-  "totalFixes": 0
+  "grade": "B",
+  "newFixes": 2,
+  "pendingFixes": 2,
+  "totalFixes": 2
 }

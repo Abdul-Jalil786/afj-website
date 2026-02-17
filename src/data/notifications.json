@@ -25,6 +25,19 @@
       "readAt": null,
       "actedAt": null,
       "emailSent": true
+    },
+    {
+      "id": "n_1771358100_791",
+      "type": "security-fix",
+      "title": "2 security fixes available",
+      "summary": "Auto-generated code fixes for security issues. Review and approve to apply.",
+      "actionUrl": "/admin/monitoring?tab=fixes",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-02-17T19:55:00.316Z",
+      "readAt": null,
+      "actedAt": null,
+      "emailSent": true
     }
   ]
 }
