@@ -274,6 +274,7 @@ Dashboard: /admin/monitoring — 9-agent card grid with expandable reports, grad
 Remediation reads security + SEO reports → generates code fix proposals → stores in proposed-fixes.json → admin approves/rejects → auto-applies via GitHub API.
 Compliance agent: pure date logic (no AI, no cost). Reads compliance-records.json, checks MOT/DBS expiry dates, creates notifications for items expiring within 30/14/7 days, weekly dedup.
 Meta agent: reads all agent scripts + reports, AI analysis via Haiku (~£0.03/run), generates health assessments, recommendations, cost estimates.
+Workflow commit step: all 9 agent workflows use a robust git conflict handler — stash, pull --rebase, stash pop, retry push with delay. Prevents failures when concurrent agents write to shared files (notifications.json, history.json).
 
 ---
 

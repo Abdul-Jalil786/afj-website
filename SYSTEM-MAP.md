@@ -349,9 +349,10 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - AdminLayout nav updated with Monitoring link
 
 **GitHub Actions:**
-- All 5 workflows include `workflow_dispatch` for manual triggering
+- All 9 workflows include `workflow_dispatch` for manual triggering
 - Security agent has `issues: write` permission for GitHub issue creation
 - All workflows auto-commit report files and push to main
+- **Robust conflict handling** (2026-02-17): all 9 agent workflows use a shared commit step pattern — `git add -A`, stash local changes, `git pull --rebase` (with `--no-rebase` fallback if rebase fails), stash pop, re-add, commit, push with 5-second retry. Prevents failures when concurrent agents write to shared files (`notifications.json`, `history.json`). The `|| true` guards ensure the workflow never fails on the commit step — the agent has already run and sent emails successfully.
 
 ### Phase 12.1 — Security Headers Middleware (2026-02-17)
 - `src/middleware.ts` — Astro middleware applying 6 security headers to every response (public, admin, API)
