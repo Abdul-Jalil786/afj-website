@@ -23,6 +23,8 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_MODEL: claude-haiku-4-5-20251001
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
         run: node scripts/market-research-agent.mjs
 
       - name: Commit report
