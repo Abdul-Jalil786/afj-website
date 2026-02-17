@@ -10,21 +10,23 @@
 **All Tiers 1-5 COMPLETE.** Active development on automation and intelligence features.
 
 **Recently completed:**
+- Compliance data management: MOT/DBS record tracking, CSV import, expiry warnings, daily compliance check agent (no AI)
+- Social media auto-publishing: AI-generated LinkedIn + Facebook drafts on blog publish, manual post creation, admin review/approve/publish workflow
+- Meta agent: monthly AI health check of all agents, recommendations, cost estimates, Agent Health tab in monitoring
+- Command centre dashboard: admin home rebuilt with key metrics, action cards, agent status strip, quick actions sidebar
 - Centralised notification system with admin bell icon, email alerts, /admin/notifications page
 - Blog auto-drafting with inline AI editing, diff view, edit history, publish via GitHub API
 - Security/SEO remediation agent (daily 5am, auto-generates code fix proposals for admin approval)
 - Pricing intelligence system (quote tracking, conversion analytics, market research agent, recommendations)
-- 7 monitoring agents (security, SEO, remediation, marketing, competitor, performance, pricing) with email reports
+- 9 monitoring agents (security, SEO, remediation, marketing, competitor, performance, pricing, compliance, meta) with email reports
 - Security headers middleware on all routes
 - Vehicle tiers expanded to 1-48 passengers with per-tier minimums
 - James AI chat assistant with voice input, OpenAI TTS, auto-knowledge, quote calculator
 
 **In progress / next:**
-- Compliance data management (MOT/DBS tracking with expiry warnings)
-- Social media auto-publishing (LinkedIn + Facebook)
-- Meta agent for keeping other agents up to date
+- (nothing currently in progress)
 
-**Do NOT touch:** ContactForm, BaseLayout GA4, SEOHead, redirects, Content calendar, Social Impact Report components, Hero slider logic, Header navigation structure, Component subdirectory structure, github.ts shared utility, Notification bell in AdminLayout header
+**Do NOT touch:** ContactForm, BaseLayout GA4, SEOHead, redirects, Content calendar, Social Impact Report components, Hero slider logic, Header navigation structure, Component subdirectory structure, github.ts shared utility, Notification bell in AdminLayout header, Compliance records API + agent, Social drafter lib + API
 
 ---
 
@@ -147,27 +149,32 @@ src/
 │   ├── audit-log.ts                # Admin action logging
 │   ├── tts-usage.ts                # Daily TTS character tracking
 │   ├── notifications.ts            # Centralised notification service (create, email, read/mark)
-│   └── blog-drafter.ts             # AI blog draft generation + inline editing
+│   ├── blog-drafter.ts             # AI blog draft generation + inline editing
+│   └── social-drafter.ts           # LinkedIn + Facebook post generation (blog-triggered + manual)
 ├── data/
 │   ├── quote-rules.json            # Pricing config (rates, multipliers, surcharges, distances)
 │   ├── departments.json            # Department → email → page mapping
 │   ├── compliance.json             # Compliance status data
-│   ├── competitors.json            # 4 competitors for monitoring
+│   ├── competitors.json            # 8 competitors (4 direct + 4 indirect) for monitoring
+│   ├── compliance-records.json     # MOT + DBS records (expiry tracking)
 │   ├── notifications.json          # Notification queue
 │   ├── blog-drafts.json            # AI-generated blog drafts
+│   ├── social-drafts.json          # AI-generated social media drafts
 │   ├── proposed-fixes.json         # Remediation agent proposed fixes
 │   ├── area-data/                  # Schools, hospitals, areas for SEO pages
 │   └── reports/                    # Agent reports (security, seo, marketing, etc.)
 ├── pages/
 │   ├── admin/
-│   │   ├── index.astro             # Dashboard home
+│   │   ├── index.astro             # Command Centre dashboard (metrics, actions, agent status)
 │   │   ├── content.astro           # Blog creation + AI drafts + inline editor
+│   │   ├── social.astro            # Social media drafts (LinkedIn + Facebook)
 │   │   ├── pages.astro             # NL page updates
 │   │   ├── approvals.astro         # Approval queue
 │   │   ├── pricing.astro           # Pricing config (management only)
 │   │   ├── conversions.astro       # Quote conversion tracking
 │   │   ├── pricing-intelligence.astro  # AI pricing recommendations
-│   │   ├── monitoring.astro        # 7-agent monitoring dashboard + proposed fixes tab
+│   │   ├── compliance-records.astro    # MOT + DBS record management + CSV import
+│   │   ├── monitoring.astro        # 9-agent monitoring dashboard + proposed fixes + agent health tabs
 │   │   └── notifications.astro     # Notification centre
 │   ├── api/
 │   │   ├── chat.ts                 # James AI chat endpoint
@@ -176,7 +183,7 @@ src/
 │   │   ├── contact/submit.ts       # Contact form handler
 │   │   ├── blog/create.ts          # Blog publish via GitHub
 │   │   ├── ai/                     # AI endpoints (draft, page-edit, seo-generate)
-│   │   └── admin/                  # Admin APIs (pricing, conversions, notifications, etc.)
+│   │   └── admin/                  # Admin APIs (pricing, conversions, notifications, social, compliance-records, etc.)
 │   ├── areas/[slug].astro          # 25 dynamic area pages
 │   ├── quote/index.astro           # Public quote wizard
 │   └── compliance.astro            # Public compliance dashboard
@@ -190,9 +197,11 @@ scripts/
 ├── seo-agent.mjs                   # Daily 4am
 ├── remediation-agent.mjs           # Daily 5am (generates fix proposals)
 ├── performance-agent.mjs           # Daily 6am (no AI)
+├── compliance-check-agent.mjs      # Daily 7am (no AI, pure date logic, expiry warnings)
 ├── marketing-agent.mjs             # Weekly Mon 7am (+ auto-drafts top 2 blog ideas)
 ├── competitor-agent.mjs            # Weekly Sun 9pm
 ├── market-research-agent.mjs       # Weekly Sun 10pm
+├── meta-agent.mjs                  # Monthly 1st 8am (AI health check of all agents)
 └── run-all-agents.mjs              # Run all/subset convenience
 .github/workflows/                  # CI/CD + agent cron schedules
 ```
@@ -253,14 +262,18 @@ Website/Chat quotes → quote-log.jsonl → market-research-agent (weekly)
 | SEO | Daily 4am | Yes | Always |
 | Remediation | Daily 5am | Yes | On fixes found |
 | Performance | Daily 6am | No | Failures only |
+| Compliance | Daily 7am | No | On expiring/expired |
 | Marketing | Mon 7am | Yes | Always |
 | Competitor | Sun 9pm | Yes | Always |
 | Market Research | Sun 10pm | Yes | Via admin |
+| Meta Agent | 1st of month 8am | Yes | Always |
 
 Shared utils: scripts/agent-utils.mjs (callHaiku, sendReportEmail, saveReport, createNotification, gradeFromIssues, etc.)
 Grading: A (no issues) → F (critical). Reports in src/data/reports/. History capped at 90 days.
-Dashboard: /admin/monitoring — 7-agent card grid with expandable reports, grade history, and Proposed Fixes tab.
+Dashboard: /admin/monitoring — 9-agent card grid with expandable reports, grade history, Proposed Fixes tab, and Agent Health tab.
 Remediation reads security + SEO reports → generates code fix proposals → stores in proposed-fixes.json → admin approves/rejects → auto-applies via GitHub API.
+Compliance agent: pure date logic (no AI, no cost). Reads compliance-records.json, checks MOT/DBS expiry dates, creates notifications for items expiring within 30/14/7 days, weekly dedup.
+Meta agent: reads all agent scripts + reports, AI analysis via Haiku (~£0.03/run), generates health assessments, recommendations, cost estimates.
 
 ---
 
