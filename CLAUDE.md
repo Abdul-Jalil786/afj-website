@@ -2,7 +2,7 @@
 
 > This is the primary instruction file for Claude Code working on the AFJ website.
 > Read this ENTIRE file before making any changes. Follow all rules strictly.
-> Last updated: 2026-02-17
+> Last updated: 2026-02-17 (monitoring agents)
 
 ---
 
@@ -225,7 +225,32 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - `src/pages/api/admin/pricing-report.ts` — GET (read report), PUT (approve/reject recommendation)
 - AdminLayout nav updated: Conversions + Intelligence links added after Pricing
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable), Component subdirectory structure (stable), github.ts shared utility (stable), James knowledge base (stable), Quote logging infrastructure (stable), Conversion tracking admin (stable), Pricing intelligence admin (stable)
+**Automated Monitoring Agents — COMPLETE (2026-02-17)**
+- 5 monitoring agents with shared utility module (`scripts/agent-utils.mjs`):
+  - `scripts/security-agent.mjs` — Daily 3:00 UTC: auth enforcement on admin endpoints, security headers, info leakage, SSL, AI analysis. Creates GitHub issues on CRITICAL findings.
+  - `scripts/seo-agent.mjs` — Daily 4:00 UTC: sitemap crawl (all URLs return 200), meta tags (title, desc, OG), broken internal links, schema markup, blog freshness, page load times, AI analysis.
+  - `scripts/marketing-agent.mjs` — Weekly Monday 7:00 UTC: AI content gap analysis, blog ideas, social media post suggestions, newsletter topics, content freshness assessment.
+  - `scripts/competitor-agent.mjs` — Weekly Sunday 21:00 UTC: crawls 4 competitors (National Express, Arriva, HCT Group, Go Goodwins), content hash change detection, AI competitive analysis.
+  - `scripts/performance-agent.mjs` — Daily 6:00 UTC: endpoint health (12 pages), admin protection verification, API health, SSL, content integrity. NO AI. Only emails on failures (grade D/F).
+- Shared utilities: `callHaiku`, `sendReportEmail` (Resend), `saveReport`, `loadReport`, `updateHistory` (90-day cap), `fetchWithTimeout`, `createGitHubIssue`, `gradeFromIssues` (A-F scale), HTML email helpers.
+- `scripts/run-all-agents.mjs` — convenience script to run all 5 in sequence (supports subset: `node scripts/run-all-agents.mjs security performance`).
+- `src/data/competitors.json` — 4 competitors with URLs and service tiers.
+- Report files: `src/data/reports/{security,seo,marketing,competitor,performance}-report.json` + `history.json` (90-day capped grade history) + `competitor-hashes.json` (content change tracking).
+- GitHub Actions workflows (all with `workflow_dispatch` for manual trigger):
+  - `.github/workflows/security-agent.yml` — daily 3:00 UTC (permissions: contents write, issues write)
+  - `.github/workflows/seo-agent.yml` — daily 4:00 UTC
+  - `.github/workflows/marketing-agent.yml` — weekly Monday 7:00 UTC
+  - `.github/workflows/competitor-agent.yml` — weekly Sunday 21:00 UTC
+  - `.github/workflows/performance-agent.yml` — daily 6:00 UTC (no AI key needed)
+- Admin monitoring dashboard at `/admin/monitoring` (management only):
+  - 6-agent card grid (security, SEO, marketing, competitor, performance, pricing intelligence)
+  - Grade badge (A-F) with trend indicator (improving/stable/declining)
+  - Expandable report details per agent
+  - 90-day grade history table with recent grades and summaries
+- AdminLayout nav updated with Monitoring link
+- GitHub secrets needed: `LLM_API_KEY`, `SITE_URL`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL`
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), Component subdirectory structure (stable), github.ts shared utility (stable), James knowledge base (stable), Quote logging infrastructure (stable), Conversion tracking admin (stable), Pricing intelligence admin (stable), Monitoring agents + agent-utils.mjs (stable), Competitor data (stable)
 
 ---
 
@@ -348,7 +373,8 @@ afj-website/
 │   │   │   ├── approvals.astro     # Pending content approval queue
 │   │   │   ├── pricing.astro       # 🆕 Pricing configuration portal (management only)
 │   │   │   ├── conversions.astro   # 🆕 Quote conversion tracking (management only)
-│   │   │   └── pricing-intelligence.astro  # 🆕 AI pricing recommendations (management only)
+│   │   │   ├── pricing-intelligence.astro  # 🆕 AI pricing recommendations (management only)
+│   │   │   └── monitoring.astro    # 🆕 Monitoring dashboard — 6 agents (management only)
 │   │   ├── api/
 │   │   │   ├── blog/
 │   │   │   │   └── create.ts       # POST — create blog via GitHub API
@@ -430,8 +456,16 @@ afj-website/
 │       │   ├── hospitals.json
 │       │   └── areas.json
 │       ├── quote-rules.json        # 🆕 Quote estimation rules and ranges
+│       ├── competitors.json        # 🆕 Competitor URLs and service tiers (4 competitors)
 │       └── reports/
-│           └── pricing-report.json # 🆕 AI-generated weekly pricing report
+│           ├── pricing-report.json # 🆕 AI-generated weekly pricing report
+│           ├── security-report.json  # 🆕 Daily security scan report
+│           ├── seo-report.json       # 🆕 Daily SEO scan report
+│           ├── marketing-report.json # 🆕 Weekly marketing analysis report
+│           ├── competitor-report.json # 🆕 Weekly competitor monitor report
+│           ├── performance-report.json # 🆕 Daily performance/uptime report
+│           ├── history.json          # 🆕 90-day grade history (all agents)
+│           └── competitor-hashes.json # 🆕 Content hash tracking for change detection
 ├── seo/
 │   ├── content-calendar.csv        # 24 planned blog posts
 │   ├── redirects.json              # 🆕 WordPress → new URL mapping
@@ -450,13 +484,25 @@ afj-website/
 │   ├── documents/                  # PDFs
 │   └── social-impact-report/       # Social Impact Report assets
 ├── scripts/
-│   └── market-research-agent.mjs   # 🆕 Weekly AI pricing analysis (Haiku)
+│   ├── agent-utils.mjs             # 🆕 Shared monitoring agent utilities
+│   ├── market-research-agent.mjs   # 🆕 Weekly AI pricing analysis (Haiku)
+│   ├── security-agent.mjs          # 🆕 Daily security scan (3:00 UTC)
+│   ├── seo-agent.mjs               # 🆕 Daily SEO scan (4:00 UTC)
+│   ├── marketing-agent.mjs         # 🆕 Weekly marketing analysis (Mon 7:00 UTC)
+│   ├── competitor-agent.mjs        # 🆕 Weekly competitor monitor (Sun 21:00 UTC)
+│   ├── performance-agent.mjs       # 🆕 Daily performance/uptime check (6:00 UTC)
+│   └── run-all-agents.mjs          # 🆕 Convenience script to run all agents
 └── .github/
-    └── workflows/                  # 🆕 CI/CD
+    └── workflows/                  # 🆕 CI/CD + Monitoring
         ├── lighthouse.yml
         ├── broken-links.yml
         ├── deploy-validate.yml
-        └── market-research.yml     # 🆕 Sunday 22:00 UTC pricing agent cron
+        ├── market-research.yml     # 🆕 Sunday 22:00 UTC pricing agent cron
+        ├── security-agent.yml      # 🆕 Daily 3:00 UTC
+        ├── seo-agent.yml           # 🆕 Daily 4:00 UTC
+        ├── marketing-agent.yml     # 🆕 Monday 7:00 UTC
+        ├── competitor-agent.yml    # 🆕 Sunday 21:00 UTC
+        └── performance-agent.yml   # 🆕 Daily 6:00 UTC
 ```
 
 ---
@@ -685,7 +731,64 @@ Website/Chat quotes → quote-log.jsonl → market-research-agent.mjs (weekly)
 
 ---
 
-## 12. Programmatic SEO Strategy
+## 12. Automated Monitoring Agents
+
+6 automated agents running on GitHub Actions cron schedules, providing continuous security, SEO, marketing, competitive, performance, and pricing intelligence.
+
+### Agent Overview
+
+| Agent | Script | Schedule | AI | Email |
+|-------|--------|----------|----|-------|
+| Security | `security-agent.mjs` | Daily 3:00 UTC | Yes | Always |
+| SEO | `seo-agent.mjs` | Daily 4:00 UTC | Yes | Always |
+| Marketing | `marketing-agent.mjs` | Mon 7:00 UTC | Yes | Always |
+| Competitor | `competitor-agent.mjs` | Sun 21:00 UTC | Yes | Always |
+| Performance | `performance-agent.mjs` | Daily 6:00 UTC | No | Failures only |
+| Pricing | `market-research-agent.mjs` | Sun 22:00 UTC | Yes | N/A (admin page) |
+
+### Shared Utilities (`scripts/agent-utils.mjs`)
+All agents import from `agent-utils.mjs`:
+- `callHaiku(system, userMessage)` — Anthropic API call
+- `parseAIJSON(raw)` — strips markdown fencing, parses JSON
+- `sendReportEmail(subject, htmlBody)` — Resend API (skips silently if no key)
+- `saveReport(filename, data)` / `loadReport(filename)` — JSON persistence in `src/data/reports/`
+- `updateHistory(agentName, grade, summary)` — 90-day capped grade history
+- `gradeFromIssues(critical, high, medium, low)` — A-F grading scale
+- `fetchWithTimeout(url, options, timeoutMs)` — fetch with AbortController timeout
+- `createGitHubIssue(title, body, labels)` — GitHub API issue creation
+- `reportHeader()` / `reportFooter()` — branded HTML email templates
+
+### Grading Scale
+- **A**: No issues
+- **B**: Minor/low issues only
+- **C**: Some moderate issues
+- **D**: Significant problems (performance agent emails here)
+- **F**: Critical failures (security agent creates GitHub issues here)
+
+### Admin Dashboard (`/admin/monitoring`)
+Management-only page showing all 6 agents in a card grid. Each card shows:
+- Agent name, schedule, AI-powered flag
+- Grade badge (A-F) with colour coding
+- Trend indicator (improving/stable/declining) based on last 3 grades
+- Last run timestamp
+- Expandable report detail panel with agent-specific sections
+- 90-day grade history table at bottom
+
+### GitHub Secrets Required
+| Secret | Used By |
+|--------|---------|
+| `LLM_API_KEY` | Security, SEO, Marketing, Competitor, Pricing agents |
+| `SITE_URL` | All 5 monitoring agents |
+| `RESEND_API_KEY` | All agents (email reports) |
+| `NOTIFICATION_EMAIL` | All agents (email recipient) |
+| `GITHUB_TOKEN` | Security agent (issue creation) |
+
+### Competitor Data
+`src/data/competitors.json` stores 4 competitors with URLs and service tiers. The competitor agent crawls `/`, `/services`, `/about`, `/contact` for each, hashes body content, and detects changes between runs. Hashes stored in `src/data/reports/competitor-hashes.json`.
+
+---
+
+## 13. Programmatic SEO Strategy
 
 ### Current: 5 area pages
 Birmingham, Manchester, Sandwell, Coventry, West Midlands
@@ -707,7 +810,7 @@ Expand to cover every borough and district served. Each page is unique because i
 
 ---
 
-## 13. Compliance Dashboard
+## 14. Compliance Dashboard
 
 Public page at `/compliance` showing real-time trust signals.
 
@@ -730,7 +833,7 @@ Operations manager logs into admin dashboard → updates compliance figures → 
 
 ---
 
-## 14. Error Handling & Logging
+## 15. Error Handling & Logging
 
 ### API Endpoints
 - All `/api/*` endpoints return consistent JSON: `{ success: boolean, data?: any, error?: string }`
@@ -749,7 +852,7 @@ Operations manager logs into admin dashboard → updates compliance figures → 
 
 ---
 
-## 15. Testing & Validation
+## 16. Testing & Validation
 
 ### Before Every Commit
 1. `npm run build` must complete without errors
@@ -773,7 +876,7 @@ Operations manager logs into admin dashboard → updates compliance figures → 
 
 ---
 
-## 16. Environment Variables (Complete Reference)
+## 17. Environment Variables (Complete Reference)
 
 ```env
 # === REQUIRED (site won't function fully without these) ===
@@ -812,11 +915,17 @@ LINKEDIN_ACCESS_TOKEN=
 
 # === RAILWAY ===
 RAILWAY_TOKEN=                              # Railway deployment token
+
+# === GITHUB ACTIONS SECRETS (set in repo Settings → Secrets → Actions) ===
+# LLM_API_KEY                              # Same as LLM_API_KEY above (for CI agents)
+# SITE_URL                                 # https://www.afjltd.co.uk (for CI agents)
+# RESEND_API_KEY                           # Same as above (for agent email reports)
+# NOTIFICATION_EMAIL                       # info@afjltd.co.uk (for agent email reports)
 ```
 
 ---
 
-## 17. Common Troubleshooting
+## 18. Common Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
@@ -830,7 +939,7 @@ RAILWAY_TOKEN=                              # Railway deployment token
 
 ---
 
-## 18. Git Workflow
+## 19. Git Workflow
 
 1. **Feature branches:** `feature/admin-dashboard`, `feature/quote-wizard`, etc.
 2. **Commit messages:** Descriptive, present tense: "Add AI draft endpoint for blog posts"
@@ -840,7 +949,7 @@ RAILWAY_TOKEN=                              # Railway deployment token
 
 ---
 
-## 19. Implementation Priority Order
+## 20. Implementation Priority Order
 
 This is the build sequence. Complete each tier before starting the next.
 
