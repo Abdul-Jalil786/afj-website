@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-02-17T19:06:56.163Z",
+  "grade": "A",
+  "motChecked": 0,
+  "dbsChecked": 0,
+  "motExpiring": 0,
+  "motExpired": 0,
+  "dbsExpiring": 0,
+  "dbsExpired": 0,
+  "alertCount": 0,
+  "alerts": [],
+  "summary": "All 0 MOT and 0 DBS records are compliant"
+}
