@@ -352,6 +352,15 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - Security agent has `issues: write` permission for GitHub issue creation
 - All workflows auto-commit report files and push to main
 
+### Phase 12.1 — Security Headers Middleware (2026-02-17)
+- `src/middleware.ts` — Astro middleware applying 6 security headers to every response (public, admin, API)
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: SAMEORIGIN
+- Referrer-Policy: strict-origin-when-cross-origin
+- Permissions-Policy: camera=(), microphone=(), geolocation=()
+- Strict-Transport-Security: max-age=31536000; includeSubDomains
+- Content-Security-Policy: allowlists for Google Analytics, Google Tag Manager, Cloudflare CDN, Google Fonts, Web3Forms, Postcodes.io, OSRM, Anthropic API, OpenAI API, Google reCAPTCHA iframe
+
 ### Phase 13 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
 - Parent notification system (real-time transport updates)
@@ -504,6 +513,10 @@ src/lib/
   rate-limit.ts                 In-memory rate limiter (per-IP, auto-cleanup, configurable per endpoint)
   validate-body.ts              Request body size validation (50KB default, 200KB large)
   utils.ts                      Shared utilities (escapeHtml)
+
+src/middleware.ts                Astro middleware — security headers on all responses
+                                  (X-Content-Type-Options, X-Frame-Options, Referrer-Policy,
+                                   Permissions-Policy, HSTS, CSP)
 ```
 
 ### Data Files
@@ -599,6 +612,7 @@ OSRM                → Real driving distance and duration via router.project-os
 - Email reports via Resend (all agents except performance on success-only)
 - Competitor crawling with content hash change detection (4 competitors)
 - GitHub issue creation on critical security findings
+- Security headers middleware on all responses (CSP, HSTS, X-Frame-Options, etc.)
 
 ### Needs Environment Variables to Activate ⚙️
 | Feature | Env Vars Required | Status |
@@ -775,6 +789,7 @@ Customer → /contact → fills form (name, email, phone, message)
 
 All API endpoints validate request body size (50KB default, 200KB for large content).
 All admin API endpoints use `authenticateRequest()` from `src/lib/cf-auth.ts`.
+All responses include security headers via `src/middleware.ts` (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy).
 
 ### Secret Management
 - All secrets stored as Railway environment variables (never committed to repo)
@@ -844,7 +859,7 @@ RAILWAY_TOKEN=
 | Internal tools | 2 + admin dashboard (9 routes) | — |
 | API endpoints | 16 | — |
 | Components | 27 | — |
-| Library modules | 10 | — |
+| Library modules | 11 | — |
 | Data files | 22 | — |
 | Blog posts (published) | 16 | 40+ |
 | Blog posts (planned) | 24 | 24 (in content calendar) |
