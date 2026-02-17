@@ -251,7 +251,7 @@ Systematic audit of the entire codebase covering pricing, security, admin, acces
 **Dependency audit:**
 - 5 moderate lodash vulnerabilities (dev-only, @astrojs/check chain) — accepted risk
 
-### Phase 11 — Pricing Intelligence System (2026-02-17) ← LATEST
+### Phase 11 — Pricing Intelligence System (2026-02-17)
 Complete pipeline for quote tracking, conversion analytics, and AI-powered pricing recommendations.
 
 **Quote Logging:**
@@ -292,7 +292,67 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - Tier analysis and minimum floor analysis sections
 - API: `GET /api/admin/pricing-report` (read), `PUT` (approve/reject)
 
-### Phase 12 — Future Integration (PLANNED, pending Telemex)
+### Phase 12 — Automated Monitoring Agents (2026-02-17) ← LATEST
+5 automated monitoring agents with shared utilities, GitHub Actions workflows, email reports, and admin dashboard.
+
+**Shared Infrastructure:**
+- `scripts/agent-utils.mjs` — shared utility module: callHaiku, sendReportEmail (Resend), saveReport/loadReport, updateHistory (90-day cap), gradeFromIssues (A-F scale), fetchWithTimeout, createGitHubIssue, parseAIJSON, HTML email template helpers
+- `scripts/run-all-agents.mjs` — convenience script to run all 5 agents in sequence (supports subset: `node scripts/run-all-agents.mjs security performance`)
+
+**Security Agent (daily 3:00 UTC):**
+- `scripts/security-agent.mjs` + `.github/workflows/security-agent.yml`
+- Checks: auth enforcement on 5 admin endpoints (expects 401/403), security headers (6 headers across 4 pages), info leakage on 3 endpoints (server paths, stack traces, sensitive keywords), SSL/HTTPS status
+- AI analysis via Haiku: summary, recommendations, risk level
+- Creates GitHub issues on CRITICAL findings (unprotected admin endpoints, SSL failure)
+- Always emails report via Resend
+
+**SEO Agent (daily 4:00 UTC):**
+- `scripts/seo-agent.mjs` + `.github/workflows/seo-agent.yml`
+- Fetches sitemap-index.xml → crawls all sitemap URLs → checks each page for: HTTP status, title/description/OG meta tags, canonical, JSON-LD schema, response time
+- Checks broken internal links (samples 30 unique paths from first 5 pages)
+- AI analysis via Haiku: summary, recommendations, quick wins
+- Always emails report via Resend
+
+**Marketing Agent (weekly Monday 7:00 UTC):**
+- `scripts/marketing-agent.mjs` + `.github/workflows/marketing-agent.yml`
+- Reads blog posts (.md files), service pages, area pages, content calendar
+- AI analysis via Haiku: content gaps (with priority), blog ideas (with target keywords), social media post suggestions (LinkedIn/Facebook), newsletter topics, content freshness assessment, overall assessment
+- Grades based on blog freshness (30/60 day thresholds) and content gap count
+- Always emails report via Resend
+
+**Competitor Agent (weekly Sunday 21:00 UTC):**
+- `scripts/competitor-agent.mjs` + `.github/workflows/competitor-agent.yml`
+- Crawls 4 competitors (National Express, Arriva, HCT Group, Go Goodwins) defined in `src/data/competitors.json`
+- Checks `/`, `/services`, `/about`, `/contact` for each — extracts title, description, content hash (SHA-256 of body text)
+- Compares hashes against `src/data/reports/competitor-hashes.json` to detect content changes
+- AI analysis via Haiku: competitive landscape summary, per-competitor assessment (strengths/weaknesses/threat level), opportunities, recommendations
+- Always emails report via Resend
+
+**Performance Agent (daily 6:00 UTC):**
+- `scripts/performance-agent.mjs` + `.github/workflows/performance-agent.yml`
+- NO AI — pure programmatic checks
+- Endpoint health: 12 public pages (status + response time), 4 admin pages (expects redirect/403), 1 API endpoint
+- SSL verification, content integrity (keyword checks on 4 key pages)
+- Only emails on failures (grade D or F) — no daily noise
+- Workflow does NOT need `LLM_API_KEY`
+
+**Report Files:**
+- `src/data/reports/{security,seo,marketing,competitor,performance}-report.json` — latest report per agent
+- `src/data/reports/history.json` — 90-day capped grade history for all agents (used by trend indicators)
+- `src/data/reports/competitor-hashes.json` — content hash tracking for change detection across runs
+
+**Admin Dashboard (`/admin/monitoring`):**
+- Management-only page with 6-agent card grid (security, SEO, marketing, competitor, performance, pricing intelligence)
+- Each card: grade badge (A-F with colour), trend indicator (improving/stable/declining), schedule, last run, AI-powered flag, expandable report details
+- 90-day grade history table at bottom with recent grades and summaries
+- AdminLayout nav updated with Monitoring link
+
+**GitHub Actions:**
+- All 5 workflows include `workflow_dispatch` for manual triggering
+- Security agent has `issues: write` permission for GitHub issue creation
+- All workflows auto-commit report files and push to main
+
+### Phase 13 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
 - Parent notification system (real-time transport updates)
 - Fleet performance dashboard with live data
@@ -345,6 +405,7 @@ LIVE ROUTES:
 /admin/pricing                  Pricing configuration portal (management only)
 /admin/conversions              Quote conversion tracking (management only)
 /admin/pricing-intelligence     AI pricing recommendations (management only)
+/admin/monitoring                Monitoring dashboard — 6 agents (management only)
 /admin/compliance               Compliance data editor (operations + management only)
 /admin/testimonials             AI testimonial/case study creator
 ```
@@ -459,8 +520,16 @@ src/data/quote-rules.json       Quote rules: cost-per-mile (£0.45), charge-out 
                                   airport rates (15 areas × 9 airports), city lookup,
                                   base postcodes with lat/lng, bank holidays 2026-2027,
                                   service questions with showWhen, toggleLabels, luggage, wheelchair
+src/data/competitors.json        4 competitors with URLs and service tiers (National Express, Arriva, HCT, Go Goodwins)
 src/data/quote-log.json         Empty placeholder (actual log at data/quote-log.jsonl, gitignored)
 src/data/reports/pricing-report.json  AI-generated weekly pricing report (recommendations, tier analysis)
+src/data/reports/security-report.json  Daily security scan report (auth, headers, leakage, SSL)
+src/data/reports/seo-report.json      Daily SEO scan report (sitemap, meta, links, schema)
+src/data/reports/marketing-report.json Weekly marketing analysis (gaps, ideas, social, newsletter)
+src/data/reports/competitor-report.json Weekly competitor crawl (pages, changes, AI analysis)
+src/data/reports/performance-report.json Daily performance/uptime (health, admin, APIs, SSL)
+src/data/reports/history.json          90-day grade history for all agents (A-F scale)
+src/data/reports/competitor-hashes.json Content hash tracking for competitor change detection
 src/data/area-data/areas.json   25 areas with metadata (slug, council, population, distance, region, services)
 src/data/area-data/schools.json 3-5 SEND schools per area with postcodes (not imported by area pages — competitive protection)
 src/data/area-data/hospitals.json 2-3 hospitals/clinics per area with NHS trust names
@@ -525,6 +594,11 @@ OSRM                → Real driving distance and duration via router.project-os
 - Vehicle tiers 1-48 pax with per-tier minimums
 - Weekly market research agent (GitHub Actions cron)
 - Pricing intelligence admin with AI recommendations + Test This panel
+- 5 automated monitoring agents (security, SEO, marketing, competitor, performance)
+- Monitoring admin dashboard with 6-agent card grid, grade history, trend indicators
+- Email reports via Resend (all agents except performance on success-only)
+- Competitor crawling with content hash change detection (4 competitors)
+- GitHub issue creation on critical security findings
 
 ### Needs Environment Variables to Activate ⚙️
 | Feature | Env Vars Required | Status |
@@ -539,6 +613,7 @@ OSRM                → Real driving distance and duration via router.project-os
 | Facebook publishing | `FACEBOOK_PAGE_ID`, `FACEBOOK_ACCESS_TOKEN` | Script built, needs tokens |
 | LinkedIn publishing | `LINKEDIN_ORG_ID`, `LINKEDIN_ACCESS_TOKEN` | Script built, needs tokens |
 | Market research agent | `LLM_API_KEY` (GitHub repo secret) | Workflow built, needs secret |
+| Monitoring agents | `LLM_API_KEY`, `SITE_URL`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL` (GitHub repo secrets) | Workflows built, need secrets |
 
 ### Not Yet Built 🔨
 | Feature | Priority | Phase | Dependencies |
@@ -632,6 +707,49 @@ Manual conversion tracking:
     → Add phone booking → POST /api/admin/conversions
 ```
 
+### Automated Monitoring Pipeline (Current)
+```
+GitHub Actions cron triggers:
+  → security-agent.mjs (daily 3am)
+      → fetchWithTimeout() checks admin endpoints, headers, leakage, SSL
+      → callHaiku() AI analysis
+      → saveReport() → security-report.json
+      → updateHistory() → history.json (90-day cap)
+      → sendReportEmail() → Resend → NOTIFICATION_EMAIL
+      → createGitHubIssue() on CRITICAL findings
+
+  → seo-agent.mjs (daily 4am)
+      → fetchSitemap() → crawl all URLs → checkPage() meta/schema/response time
+      → checkBrokenLinks() sample internal links
+      → callHaiku() AI analysis
+      → saveReport() + updateHistory() + sendReportEmail()
+
+  → marketing-agent.mjs (weekly Mon 7am)
+      → readdirSync() blog posts, services, areas, content calendar
+      → callHaiku() content gap analysis + recommendations
+      → saveReport() + updateHistory() + sendReportEmail()
+
+  → competitor-agent.mjs (weekly Sun 9pm)
+      → loadCompetitors() from src/data/competitors.json
+      → crawlCompetitor() × 4 → content hash (SHA-256)
+      → detectChanges() vs competitor-hashes.json
+      → callHaiku() competitive analysis
+      → saveReport() + saveHashes() + updateHistory() + sendReportEmail()
+
+  → performance-agent.mjs (daily 6am)
+      → checkEndpointHealth() 12 pages + checkAdminProtection() 4 admin routes
+      → checkAPIs() + checkSSL() + checkContentIntegrity()
+      → saveReport() + updateHistory()
+      → sendReportEmail() ONLY on grade D/F (failures only)
+
+  → All workflows: git add reports → git commit → git push → Railway auto-deploy
+
+Admin review:
+  → /admin/monitoring → 6-agent card grid with grades + trends
+    → Expandable report details per agent
+    → 90-day grade history table
+```
+
 ### Contact Form (Current)
 ```
 Customer → /contact → fills form (name, email, phone, message)
@@ -708,6 +826,12 @@ LINKEDIN_ACCESS_TOKEN=
 
 # === RAILWAY ===
 RAILWAY_TOKEN=
+
+# === GITHUB ACTIONS SECRETS (repo Settings → Secrets → Actions) ===
+# LLM_API_KEY                              # For AI-powered agents (security, SEO, marketing, competitor, pricing)
+# SITE_URL                                 # https://www.afjltd.co.uk (all monitoring agents)
+# RESEND_API_KEY                           # Agent email reports
+# NOTIFICATION_EMAIL                       # Agent email recipient
 ```
 
 ---
@@ -717,11 +841,11 @@ RAILWAY_TOKEN=
 | Category | Current | Planned |
 |----------|---------|---------|
 | Public pages | 55+ routes | — |
-| Internal tools | 2 + admin dashboard (8 routes) | — |
+| Internal tools | 2 + admin dashboard (9 routes) | — |
 | API endpoints | 16 | — |
 | Components | 27 | — |
 | Library modules | 10 | — |
-| Data files | 14 | — |
+| Data files | 22 | — |
 | Blog posts (published) | 16 | 40+ |
 | Blog posts (planned) | 24 | 24 (in content calendar) |
 | Social media templates | 10 | — |
@@ -729,8 +853,8 @@ RAILWAY_TOKEN=
 | Local SEO area pages | 25 | — |
 | Service pages | 8 | — |
 | JSON-LD schemas | 4 types (LocalBusiness, Service, FAQPage, BreadcrumbList) | — |
-| CI/CD workflows | 4 (Lighthouse, broken links, deploy validation, market research) | — |
-| Scripts | 4 (image-audit, download-media, migrate-wordpress, market-research-agent) | — |
+| CI/CD workflows | 9 (Lighthouse, broken links, deploy validation, market research, security, SEO, marketing, competitor, performance) | — |
+| Scripts | 10 (image-audit, download-media, migrate-wordpress, market-research-agent, agent-utils, security/seo/marketing/competitor/performance-agent, run-all-agents) | — |
 
 ---
 
@@ -747,3 +871,5 @@ RAILWAY_TOKEN=
 | Social media | Automated publishing pipeline | Manual posting |
 | Trust signals | Live accreditation display | Static logos |
 | Pricing intelligence | AI-powered weekly analysis with conversion tracking | Manual spreadsheet reviews |
+| Automated monitoring | 6 agents: security, SEO, marketing, competitor, performance, pricing | No automated monitoring |
+| Competitive intelligence | Weekly AI-powered competitor crawling with change detection | Ad-hoc manual checks |
