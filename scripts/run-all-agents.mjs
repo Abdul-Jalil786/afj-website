@@ -21,6 +21,7 @@ const ROOT = process.cwd();
 const AGENTS = [
   { name: 'security', script: 'security-agent.mjs' },
   { name: 'seo', script: 'seo-agent.mjs' },
+  { name: 'remediation', script: 'remediation-agent.mjs' },
   { name: 'marketing', script: 'marketing-agent.mjs' },
   { name: 'competitor', script: 'competitor-agent.mjs' },
   { name: 'performance', script: 'performance-agent.mjs' },

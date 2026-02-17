@@ -13,7 +13,7 @@
 import {
   SITE_URL, fetchWithTimeout,
   saveReport, updateHistory, gradeFromIssues,
-  sendReportEmail, reportHeader, reportFooter,
+  sendReportEmail, createNotification, reportHeader, reportFooter,
 } from './agent-utils.mjs';
 
 // ── Pages to health-check ──
@@ -259,6 +259,18 @@ async function run() {
 
   saveReport('performance-report.json', report);
   updateHistory('performance', grade, `${health.filter(h => h.ok).length}/${HEALTH_PAGES.length} up, avg ${avgResponseTime}ms`);
+
+  // Create notification for failures
+  if (grade === 'D' || grade === 'F') {
+    const failedCount = health.filter(h => !h.ok).length;
+    createNotification({
+      type: 'agent-critical',
+      title: `Performance: ${failedCount} pages down`,
+      summary: `Daily performance check found ${failedCount} page(s) failing. Grade: ${grade}. Immediate attention required.`,
+      actionUrl: '/admin/monitoring',
+      priority: 'high',
+    });
+  }
 
   // Only email on failures (grade D or F)
   if (grade === 'D' || grade === 'F') {

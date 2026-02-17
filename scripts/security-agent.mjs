@@ -12,7 +12,7 @@
 import {
   SITE_URL, API_KEY, fetchWithTimeout, callHaiku, parseAIJSON,
   saveReport, updateHistory, gradeFromIssues,
-  sendReportEmail, createGitHubIssue,
+  sendReportEmail, createGitHubIssue, createNotification,
   reportHeader, reportFooter, gradeColour,
 } from './agent-utils.mjs';
 
@@ -244,6 +244,17 @@ async function run() {
     const title = `CRITICAL: Security issue — ${finding.endpoint || finding.url || 'unknown'}`;
     const body = `## Automated Security Alert\n\n\`\`\`json\n${JSON.stringify(finding, null, 2)}\n\`\`\`\n\nDetected by AFJ Security Agent on ${now.toISOString().split('T')[0]}.`;
     await createGitHubIssue(title, body, ['security', 'critical', 'automated']);
+  }
+
+  // Create notification for critical/high findings
+  if (counts.critical > 0 || counts.high > 0) {
+    createNotification({
+      type: 'agent-critical',
+      title: `Security: ${counts.critical} critical, ${counts.high} high issues`,
+      summary: `Daily security scan found ${counts.critical + counts.high} serious issue(s). Review and apply fixes.`,
+      actionUrl: '/admin/monitoring',
+      priority: counts.critical > 0 ? 'high' : 'medium',
+    });
   }
 
   // Email report

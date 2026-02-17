@@ -12,7 +12,7 @@
  * Schedule: Sunday 22:00 UTC via GitHub Actions
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOT = process.cwd();
@@ -288,6 +288,39 @@ Output ONLY valid JSON matching this schema (no markdown, no explanation outside
   console.log(`Report saved to ${REPORT_PATH}`);
   console.log(`  Quotes analysed: ${report.quoteCount}`);
   console.log(`  Recommendations: ${report.recommendations.length}`);
+
+  // Create notification if there are recommendations
+  if (report.recommendations.length > 0) {
+    try {
+      const NOTIFICATIONS_PATH = join(ROOT, 'src', 'data', 'notifications.json');
+      const ts = Math.floor(Date.now() / 1000);
+      const rand = Math.random().toString(36).substring(2, 5);
+      const highCount = report.recommendations.filter(r => r.priority === 'high').length;
+      const notification = {
+        id: `n_${ts}_${rand}`,
+        type: 'pricing-recommendation',
+        title: `${report.recommendations.length} pricing recommendations`,
+        summary: `Market research analysed ${report.quoteCount} quotes. ${highCount} high-priority suggestions ready for review.`,
+        actionUrl: '/admin/pricing-intelligence',
+        priority: highCount > 0 ? 'high' : 'medium',
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        readAt: null,
+        actedAt: null,
+        emailSent: false,
+      };
+      let store = { notifications: [] };
+      if (existsSync(NOTIFICATIONS_PATH)) {
+        try { store = JSON.parse(readFileSync(NOTIFICATIONS_PATH, 'utf-8')); } catch { store = { notifications: [] }; }
+      }
+      store.notifications.push(notification);
+      store.notifications = store.notifications.slice(-200);
+      writeFileSync(NOTIFICATIONS_PATH, JSON.stringify(store, null, 2) + '\n', 'utf-8');
+      console.log(`Notification created: ${notification.title}`);
+    } catch (err) {
+      console.error('Failed to create notification:', err.message);
+    }
+  }
 
   return report;
 }

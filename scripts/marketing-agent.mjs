@@ -13,6 +13,7 @@ import {
   SITE_URL, API_KEY, callHaiku, parseAIJSON,
   saveReport, updateHistory, gradeFromIssues,
   sendReportEmail, reportHeader, reportFooter,
+  createNotification,
 } from './agent-utils.mjs';
 
 const ROOT = process.cwd();
@@ -175,6 +176,72 @@ Output ONLY valid JSON:
 
   saveReport('marketing-report.json', report);
   updateHistory('marketing', grade, `${blogPosts.length} posts, ${daysSinceLastBlog}d since last`);
+
+  // Auto-draft top 2 blog ideas
+  const blogIdeas = (analysis.blogIdeas || []).slice(0, 2);
+  if (blogIdeas.length > 0 && API_KEY) {
+    console.log(`Auto-drafting ${blogIdeas.length} blog posts...`);
+    for (const idea of blogIdeas) {
+      try {
+        const draftContent = await callHaiku(
+          `You are a content writer for AFJ Limited, a Birmingham-based UK transport company.
+Services: SEND school transport, NEPTS, private minibus hire, airport transfers, executive hire, fleet maintenance, driver training, vehicle conversions.
+700+ students daily, 47+ drivers, 18+ years of service.
+
+Write a blog post in markdown format.
+
+Requirements:
+- 600-800 words
+- Professional but approachable British English tone
+- Include the target keyword naturally 3-5 times
+- Structure: engaging intro, 3-4 subheadings with content, conclusion with CTA
+- CTA should direct readers to contact AFJ or use the quote wizard at /quote
+- Mention Birmingham and Manchester where relevant
+- Include relevant AFJ services
+- Do NOT make up statistics or quotes
+- Output ONLY the markdown content (no frontmatter)`,
+          `Topic: ${idea.title}\nTarget keyword: ${(idea.targetKeywords || []).join(', ') || idea.title}\nAngle: ${idea.angle || 'General informational'}`
+        );
+
+        // Save draft
+        const draftsPath = join(ROOT, 'src', 'data', 'blog-drafts.json');
+        let draftsStore = { drafts: [] };
+        if (existsSync(draftsPath)) {
+          try { draftsStore = JSON.parse(readFileSync(draftsPath, 'utf-8')); } catch { draftsStore = { drafts: [] }; }
+        }
+
+        const draftId = `draft_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`;
+        const wordCount = draftContent.split(/\s+/).length;
+        const draft = {
+          id: draftId,
+          title: idea.title,
+          keyword: (idea.targetKeywords || []).join(', ') || '',
+          content: draftContent,
+          status: 'draft',
+          createdAt: new Date().toISOString().split('T')[0],
+          source: 'marketing-agent',
+          editHistory: [],
+          publishedAt: null,
+          publishedSlug: null,
+        };
+
+        draftsStore.drafts.push(draft);
+        writeFileSync(draftsPath, JSON.stringify(draftsStore, null, 2) + '\n', 'utf-8');
+        console.log(`Blog draft saved: ${idea.title}`);
+
+        // Create notification
+        createNotification({
+          type: 'blog-draft',
+          title: `New blog draft: ${idea.title}`,
+          summary: `AI wrote a ${wordCount}-word post targeting '${draft.keyword || idea.title}'. Ready for review.`,
+          actionUrl: `/admin/content?draft=${draftId}`,
+          priority: 'medium',
+        });
+      } catch (err) {
+        console.error(`Failed to draft blog "${idea.title}":`, err.message);
+      }
+    }
+  }
 
   // Email report
   const emailHtml = `

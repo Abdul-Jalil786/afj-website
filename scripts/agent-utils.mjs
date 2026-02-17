@@ -223,6 +223,125 @@ export async function createGitHubIssue(title, body, labels = ['security', 'auto
   }
 }
 
+// ── Notification creation (writes directly to notifications.json) ──
+
+const NOTIFICATIONS_PATH = join(ROOT, 'src', 'data', 'notifications.json');
+
+const NOTIF_TYPE_EMOJIS = {
+  'blog-draft': '\u{1F4DD}',
+  'pricing-recommendation': '\u{1F4B0}',
+  'security-fix': '\u{1F6E1}\uFE0F',
+  'seo-fix': '\u{1F50D}',
+  'compliance-expiry': '\u{26A0}\uFE0F',
+  'social-draft': '\u{1F4F1}',
+  'conversion-milestone': '\u{1F4C8}',
+  'agent-critical': '\u{1F6A8}',
+};
+
+/**
+ * Create a notification and optionally send an email.
+ * Agents call this after saving their reports.
+ */
+export function createNotification({ type, title, summary, actionUrl, priority = 'medium' }) {
+  try {
+    const ts = Math.floor(Date.now() / 1000);
+    const rand = Math.random().toString(36).substring(2, 5);
+    const id = `n_${ts}_${rand}`;
+
+    const notification = {
+      id,
+      type,
+      title,
+      summary,
+      actionUrl,
+      priority,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      readAt: null,
+      actedAt: null,
+      emailSent: false,
+    };
+
+    let store = { notifications: [] };
+    if (existsSync(NOTIFICATIONS_PATH)) {
+      try { store = JSON.parse(readFileSync(NOTIFICATIONS_PATH, 'utf-8')); } catch { store = { notifications: [] }; }
+    }
+    store.notifications.push(notification);
+    // Keep last 200
+    store.notifications = store.notifications.slice(-200);
+    writeFileSync(NOTIFICATIONS_PATH, JSON.stringify(store, null, 2) + '\n', 'utf-8');
+    console.log(`Notification created: ${title}`);
+
+    // Fire-and-forget email
+    sendNotificationEmail(notification).catch(err => {
+      console.error('Notification email failed:', err.message);
+    });
+
+    return notification;
+  } catch (err) {
+    console.error('Failed to create notification:', err.message);
+    return null;
+  }
+}
+
+async function sendNotificationEmail(notification) {
+  if (!RESEND_API_KEY) return;
+
+  const emoji = NOTIF_TYPE_EMOJIS[notification.type] || '';
+  const subject = `[AFJ] ${emoji} ${notification.title}`;
+  const siteUrl = SITE_URL;
+  const actionLink = `${siteUrl}${notification.actionUrl}`;
+  const priorityColours = { high: '#dc2626', medium: '#ea580c', low: '#6b7280' };
+  const priorityColour = priorityColours[notification.priority] || '#6b7280';
+
+  const html = `
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+      <div style="background:#1e3a5f;color:white;padding:20px;border-radius:8px 8px 0 0">
+        <h1 style="margin:0;font-size:18px">${emoji} ${notification.title}</h1>
+        <p style="margin:4px 0 0;opacity:0.8;font-size:12px">${new Date(notification.createdAt).toLocaleString('en-GB')}</p>
+      </div>
+      <div style="border:1px solid #e5e7eb;border-top:none;padding:20px;border-radius:0 0 8px 8px">
+        <div style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:bold;color:white;background:${priorityColour};margin-bottom:12px">
+          ${notification.priority.toUpperCase()} PRIORITY
+        </div>
+        <p style="color:#374151;font-size:14px;line-height:1.6;margin:12px 0">${notification.summary}</p>
+        <a href="${actionLink}" style="display:inline-block;background:#2ecc40;color:white;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;margin-top:8px">
+          Take Action
+        </a>
+      </div>
+      <p style="text-align:center;color:#9ca3af;font-size:11px;margin-top:12px">
+        AFJ Limited &middot; <a href="${siteUrl}/admin/notifications" style="color:#9ca3af">View all notifications</a>
+      </p>
+    </div>
+  `;
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: 'AFJ Notifications <onboarding@resend.dev>',
+      to: [NOTIFICATION_EMAIL],
+      subject,
+      html,
+    }),
+  });
+
+  if (res.ok) {
+    // Mark emailSent
+    try {
+      const store = JSON.parse(readFileSync(NOTIFICATIONS_PATH, 'utf-8'));
+      const n = store.notifications.find(x => x.id === notification.id);
+      if (n) {
+        n.emailSent = true;
+        writeFileSync(NOTIFICATIONS_PATH, JSON.stringify(store, null, 2) + '\n', 'utf-8');
+      }
+    } catch { /* best effort */ }
+    console.log(`Notification email sent: ${notification.title}`);
+  } else {
+    console.error(`Notification email failed (${res.status}):`, await res.text());
+  }
+}
+
 // ── HTML report helpers ──
 
 export function gradeColour(grade) {
