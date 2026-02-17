@@ -24,6 +24,8 @@ function checkGlobalLimit(): boolean {
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  console.log("TTS endpoint hit, OPENAI_API_KEY set:", !!process.env.OPENAI_API_KEY, "key prefix:", process.env.OPENAI_API_KEY?.substring(0, 10));
+
   // Rate limit: per-minute per IP (same as chat)
   const minCheck = checkRateLimit(request, 'ttsMin', RATE_LIMITS.chatPerMinute);
   if (!minCheck.allowed) {
