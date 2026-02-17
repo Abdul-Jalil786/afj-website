@@ -1,1 +1,233 @@
-{}
+{
+  "generatedAt": "2026-02-17T14:03:30.669Z",
+  "agent": "competitor",
+  "grade": "A",
+  "competitorCount": 4,
+  "competitors": [
+    {
+      "name": "National Express",
+      "url": "https://www.nationalexpress.com",
+      "tier": "national",
+      "accessible": true,
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "title": "Coach Travel & Airport Transfers | National Express",
+          "description": "Book coach travel to 100's of UK towns, cities and airports with National Express coaches",
+          "contentHash": "e26549efb23c231a",
+          "contentLength": 10000
+        },
+        {
+          "path": "/services",
+          "status": 404,
+          "error": "HTTP 404"
+        },
+        {
+          "path": "/about",
+          "status": 404,
+          "error": "HTTP 404"
+        },
+        {
+          "path": "/contact",
+          "status": 200,
+          "title": "Contact | National Express",
+          "description": "Discover the answers to our most frequently asked questions, our social media links and other general contact information",
+          "contentHash": "bcf82b2a38b8ea39",
+          "contentLength": 10000
+        }
+      ],
+      "changes": [],
+      "error": null
+    },
+    {
+      "name": "Arriva Transport Solutions",
+      "url": "https://www.arriva.co.uk",
+      "tier": "national",
+      "accessible": true,
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "title": "Arriva",
+          "description": "Delivering for and on behalf of our clients",
+          "contentHash": "eb0c88c3dcb5325a",
+          "contentLength": 3230
+        },
+        {
+          "path": "/services",
+          "status": 404,
+          "error": "HTTP 404"
+        },
+        {
+          "path": "/about",
+          "status": 404,
+          "error": "HTTP 404"
+        },
+        {
+          "path": "/contact",
+          "status": 404,
+          "error": "HTTP 404"
+        }
+      ],
+      "changes": [],
+      "error": null
+    },
+    {
+      "name": "HCT Group",
+      "url": "https://www.hctgroup.org",
+      "tier": "regional",
+      "accessible": true,
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "title": "HCTGROUP สล็อตเว็บตรง 2025 สล็อตทดลอง ฝาก-ถอนไวสุด",
+          "description": "HCTGROUP คู่มือสล็อตเว็บตรง 2025 สล็อตทดลอง สำหรับมือใหม่และเซียน: เลือกเว็บแท้ เว็บสล็อตเว็บตรง ฝากถอน True Wallet ไม่มีขั้นต่ำ เกมแตกง่าย",
+          "contentHash": "bfdf6f8b5e3d5c12",
+          "contentLength": 10000
+        },
+        {
+          "path": "/services",
+          "status": 200,
+          "title": "HCTGROUP สล็อตเว็บตรง 2025 สล็อตทดลอง ฝาก-ถอนไวสุด",
+          "description": "HCTGROUP คู่มือสล็อตเว็บตรง 2025 สล็อตทดลอง สำหรับมือใหม่และเซียน: เลือกเว็บแท้ เว็บสล็อตเว็บตรง ฝากถอน True Wallet ไม่มีขั้นต่ำ เกมแตกง่าย",
+          "contentHash": "bfdf6f8b5e3d5c12",
+          "contentLength": 10000
+        },
+        {
+          "path": "/about",
+          "status": 200,
+          "title": "HCTGROUP สล็อตเว็บตรง 2025 สล็อตทดลอง ฝาก-ถอนไวสุด",
+          "description": "HCTGROUP คู่มือสล็อตเว็บตรง 2025 สล็อตทดลอง สำหรับมือใหม่และเซียน: เลือกเว็บแท้ เว็บสล็อตเว็บตรง ฝากถอน True Wallet ไม่มีขั้นต่ำ เกมแตกง่าย",
+          "contentHash": "bfdf6f8b5e3d5c12",
+          "contentLength": 10000
+        },
+        {
+          "path": "/contact",
+          "status": 200,
+          "title": "HCTGROUP สล็อตเว็บตรง 2025 สล็อตทดลอง ฝาก-ถอนไวสุด",
+          "description": "HCTGROUP คู่มือสล็อตเว็บตรง 2025 สล็อตทดลอง สำหรับมือใหม่และเซียน: เลือกเว็บแท้ เว็บสล็อตเว็บตรง ฝากถอน True Wallet ไม่มีขั้นต่ำ เกมแตกง่าย",
+          "contentHash": "bfdf6f8b5e3d5c12",
+          "contentLength": 10000
+        }
+      ],
+      "changes": [],
+      "error": null
+    },
+    {
+      "name": "Go Goodwins",
+      "url": "https://www.gogoodwins.co.uk",
+      "tier": "regional",
+      "accessible": true,
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "title": "Go Goodwins Coaches North Wales",
+          "description": "We are Go Goodwins Group. Modern, and wheelchair friendly coaches across North Wales & The North West. Telephone: 01745 341 822 / TOURS - BUSES - COACHES - VINTAGE RANGE - FILM & TV",
+          "contentHash": "27ba69bd1668db1e",
+          "contentLength": 253
+        },
+        {
+          "path": "/services",
+          "status": 404,
+          "error": "HTTP 404"
+        },
+        {
+          "path": "/about",
+          "status": 404,
+          "error": "HTTP 404"
+        },
+        {
+          "path": "/contact",
+          "status": 200,
+          "title": "Contact details",
+          "description": "We are Go Goodwins Group. Modern, and wheelchair friendly coaches across North Wales & The North West. Telephone: 01745 341 822 / TOURS - BUSES - COACHES - VINTAGE RANGE - FILM & TV",
+          "contentHash": "c965b5ee762c8bff",
+          "contentLength": 2398
+        }
+      ],
+      "changes": [],
+      "error": null
+    }
+  ],
+  "changesDetected": 0,
+  "changes": [],
+  "aiAnalysis": {
+    "summary": "AFJ Limited operates in a competitive transport market dominated by national players (National Express, Arriva) and regional operators (Go Goodwins, HCT Group). National Express and Arriva leverage scale and comprehensive UK coverage across coach, airport, and specialist services, while regional competitors focus on geographic niches. AFJ's strength lies in specialized SEND school transport and NEPTS services with regional concentration in West Midlands and Greater Manchester—segments less emphasized by larger competitors. However, data quality issues prevent full competitive assessment (HCT Group shows SEO compromise/malicious content injection, limiting analysis).",
+    "competitorAssessments": [
+      {
+        "name": "National Express",
+        "strengths": [
+          "National brand recognition and extensive route network (100+ UK destinations)",
+          "Airport transfer expertise and established market presence",
+          "Comprehensive digital presence with organized service pages"
+        ],
+        "weaknesses": [
+          "Likely limited focus on specialized SEND school transport market",
+          "Mass-market positioning may not address niche regional needs",
+          "Generic service offerings compared to specialized providers"
+        ],
+        "threat": "high"
+      },
+      {
+        "name": "Arriva Transport Solutions",
+        "strengths": [
+          "National scale and 'Delivering for and on behalf of clients' suggests contract/B2B focus",
+          "Established operational infrastructure across UK",
+          "Corporate positioning suggests institutional relationships"
+        ],
+        "weaknesses": [
+          "Likely enterprise-focused rather than specialized transport niches",
+          "Minimal digital differentiation visible in available pages",
+          "Generic service messaging without specialized capability clarity"
+        ],
+        "threat": "high"
+      },
+      {
+        "name": "Go Goodwins",
+        "strengths": [
+          "Regional geographic focus (North Wales, North West) with clear local presence",
+          "Modern, wheelchair-accessible fleet highlighted",
+          "Diverse service portfolio (tours, buses, coaches, heritage services, media contracts)"
+        ],
+        "weaknesses": [
+          "Limited to North Wales/North West—non-overlapping with AFJ core regions",
+          "No evident SEND school transport specialization",
+          "Smaller scale limits competitive threat to AFJ's market position"
+        ],
+        "threat": "low"
+      },
+      {
+        "name": "HCT Group",
+        "strengths": [
+          "Regional presence suggests local market understanding",
+          "Established transport service infrastructure"
+        ],
+        "weaknesses": [
+          "Website compromised with injected Thai gambling content—indicates poor security/maintenance",
+          "Unable to assess actual service offerings due to data quality issues",
+          "Potentially distracted/under-resourced if security not addressed"
+        ],
+        "threat": "low"
+      }
+    ],
+    "opportunities": [
+      "Deepen SEND school transport and NEPTS specialization—national competitors underinvest in these regulated, high-margin segments with specific compliance requirements AFJ already possesses",
+      "Expand geographic footprint eastward from West Midlands/Greater Manchester toward underserved regions (East Midlands, Yorkshire) where SEND/NEPTS demand is rising",
+      "Develop digital-first booking and parent communication platform for SEND services—most competitors show limited specialized digital experience for education transport",
+      "Target local authority procurement contracts directly—national players less agile; HCT's compromised position creates vacuum for reliability-focused regional operator",
+      "Create service bundling (SEND + private hire + executive transfers) marketed as 'integrated regional solutions' vs. commodity coach travel",
+      "Establish partnerships with special schools and local authority education departments; position as specialized partner vs. generic transport vendor"
+    ],
+    "recommendations": [
+      "Strengthen digital presence emphasizing SEND/NEPTS expertise, compliance certifications, and regional coverage—differentiate from national generalists and compromised competitors",
+      "Conduct targeted competitive pricing analysis of National Express/Arriva in West Midlands/Greater Manchester SEND contracts to identify undercuts",
+      "Monitor HCT Group recovery; if website issues persist, approach their clients offering transition support",
+      "Invest in SEO/content marketing around 'specialized school transport,' 'NEPTS provider,' and local authority procurement keywords where national competitors have low visibility",
+      "Build case studies demonstrating AFJ reliability/compliance in SEND services—address institutional buyer risk concerns vs. larger, less-specialized competitors",
+      "Consider regional partnership strategy with local coach/transport operators to expand service footprint without capital investment"
+    ]
+  }
+}
