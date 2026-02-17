@@ -1,1 +1,184 @@
-{}
+{
+  "generatedAt": "2026-02-17T19:27:38.324Z",
+  "agent": "performance",
+  "grade": "A",
+  "counts": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "health": {
+    "totalPages": 12,
+    "pagesUp": 12,
+    "pagesDown": 0,
+    "avgResponseTime": 163,
+    "maxResponseTime": 659,
+    "details": [
+      {
+        "path": "/",
+        "status": 200,
+        "responseTime": 659,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/about",
+        "status": 200,
+        "responseTime": 103,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/contact",
+        "status": 200,
+        "responseTime": 143,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/services/send-transport",
+        "status": 200,
+        "responseTime": 110,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/services/patient-transport",
+        "status": 200,
+        "responseTime": 157,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/services/private-hire",
+        "status": 200,
+        "responseTime": 118,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/services/airport-transfers",
+        "status": 200,
+        "responseTime": 112,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/quote",
+        "status": 200,
+        "responseTime": 101,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/compliance",
+        "status": 200,
+        "responseTime": 113,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/blog",
+        "status": 200,
+        "responseTime": 112,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/areas",
+        "status": 200,
+        "responseTime": 114,
+        "ok": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/faq",
+        "status": 200,
+        "responseTime": 119,
+        "ok": true,
+        "severity": "ok"
+      }
+    ]
+  },
+  "adminProtection": {
+    "totalChecked": 4,
+    "allProtected": true,
+    "details": [
+      {
+        "path": "/admin",
+        "status": 403,
+        "protected": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/admin/content",
+        "status": 403,
+        "protected": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/admin/pricing",
+        "status": 403,
+        "protected": true,
+        "severity": "ok"
+      },
+      {
+        "path": "/admin/monitoring",
+        "status": 403,
+        "protected": true,
+        "severity": "ok"
+      }
+    ]
+  },
+  "apis": {
+    "checked": 1,
+    "allOk": true,
+    "details": [
+      {
+        "path": "/api/compliance/status",
+        "method": "GET",
+        "status": 200,
+        "responseTime": 584,
+        "ok": true,
+        "severity": "ok"
+      }
+    ]
+  },
+  "ssl": {
+    "ok": true,
+    "isHttps": true,
+    "status": 200,
+    "severity": "ok"
+  },
+  "contentIntegrity": {
+    "checked": 4,
+    "allOk": true,
+    "details": [
+      {
+        "path": "/",
+        "ok": true,
+        "missingKeywords": [],
+        "severity": "ok"
+      },
+      {
+        "path": "/services/send-transport",
+        "ok": true,
+        "missingKeywords": [],
+        "severity": "ok"
+      },
+      {
+        "path": "/services/patient-transport",
+        "ok": true,
+        "missingKeywords": [],
+        "severity": "ok"
+      },
+      {
+        "path": "/quote",
+        "ok": true,
+        "missingKeywords": [],
+        "severity": "ok"
+      }
+    ]
+  }
+}
