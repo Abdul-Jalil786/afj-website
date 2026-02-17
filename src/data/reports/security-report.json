@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T14:02:47.224Z",
+  "generatedAt": "2026-02-17T14:27:46.888Z",
   "agent": "security",
   "grade": "D",
   "counts": {
@@ -155,16 +155,16 @@
     "severity": "ok"
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's staging environment demonstrates strong authentication controls with all admin endpoints properly protected (403 responses), and SSL/TLS is correctly implemented. However, the application has significant security gaps in HTTP response headers across multiple pages. Four pages are missing critical security headers including X-Content-Type-Options and X-Frame-Options, which are essential for preventing MIME-sniffing attacks and clickjacking vulnerabilities. Additionally, recommended security headers like Strict-Transport-Security, Content-Security-Policy, and Permissions-Policy are absent across the entire application, leaving the platform vulnerable to various client-side attacks.",
+    "summary": "AFJ Limited's staging environment demonstrates strong authentication controls with all admin endpoints properly protected (403 responses), and SSL/TLS is correctly implemented. However, critical security headers are missing across all scanned pages, creating significant vulnerabilities to clickjacking, MIME-type sniffing, XSS attacks, and other client-side exploits. The absence of Content-Security-Policy, X-Frame-Options on most pages, and HSTS headers represents the primary security gap that must be addressed immediately.",
     "recommendations": [
-      "Immediately implement X-Content-Type-Options: nosniff header on all pages to prevent MIME-type sniffing attacks",
-      "Add X-Frame-Options: SAMEORIGIN (or DENY if not using iframes) to all pages to prevent clickjacking, currently only implemented on /admin",
-      "Deploy Strict-Transport-Security header with appropriate max-age value (minimum 31536000) to enforce HTTPS and prevent downgrade attacks",
-      "Implement Content-Security-Policy header with a restrictive policy tailored to the application's needs to mitigate XSS vulnerabilities",
-      "Add Referrer-Policy header (recommend 'strict-origin-when-cross-origin') to protect user privacy and prevent sensitive data leakage",
-      "Configure Permissions-Policy to restrict access to browser features and APIs that the application doesn't require",
-      "Apply these headers globally via web server configuration (nginx/Apache) or application framework middleware to ensure consistency across all endpoints",
-      "Conduct a security audit of the application's input validation and output encoding practices given the high number of missing CSP headers"
+      "Implement X-Content-Type-Options: nosniff header site-wide to prevent MIME-type sniffing attacks",
+      "Add X-Frame-Options: SAMEORIGIN (or DENY if no framing needed) to all pages, particularly public-facing endpoints like /quote and /services/send-transport",
+      "Deploy a comprehensive Content-Security-Policy header to mitigate XSS vulnerabilities, especially given user input on quote and contact forms",
+      "Enable Strict-Transport-Security (HSTS) with appropriate max-age value to enforce HTTPS across all pages and subdomains",
+      "Add Referrer-Policy: strict-origin-when-cross-origin to protect user privacy and prevent sensitive URL parameter leakage",
+      "Include Permissions-Policy header to restrict access to browser features (camera, microphone, geolocation, etc.)",
+      "Configure these headers in your reverse proxy (nginx/Apache) or application framework rather than ad-hoc per-page",
+      "Verify header deployment across production environment with same security scan"
     ],
     "riskLevel": "high"
   }
