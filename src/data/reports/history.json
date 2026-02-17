@@ -69,11 +69,19 @@
       "summary": "All 0 MOT and 0 DBS records are compliant"
     }
   ],
+<<<<<<< Updated upstream
   "performance": [
     {
       "date": "2026-02-17",
       "grade": "A",
       "summary": "12/12 up, avg 163ms"
+=======
+  "meta": [
+    {
+      "date": "2026-02-17",
+      "grade": "A",
+      "summary": "8 agents configured. 0 have missed recent runs. 0 scripts missing."
+>>>>>>> Stashed changes
     }
   ]
 }

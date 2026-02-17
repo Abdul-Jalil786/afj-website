@@ -1,0 +1,245 @@
+{
+  "generatedAt": "2026-02-17T19:27:53.204Z",
+  "grade": "A",
+  "overallHealth": "healthy",
+  "summary": "8 agents configured. 0 have missed recent runs. 0 scripts missing.",
+  "agentCount": 8,
+  "agentAssessments": [
+    {
+      "name": "security",
+      "health": "healthy",
+      "assessment": "Running normally",
+      "trend": "stable"
+    },
+    {
+      "name": "seo",
+      "health": "healthy",
+      "assessment": "Running normally",
+      "trend": "stable"
+    },
+    {
+      "name": "remediation",
+      "health": "healthy",
+      "assessment": "Running normally",
+      "trend": "unknown"
+    },
+    {
+      "name": "performance",
+      "health": "healthy",
+      "assessment": "Running normally",
+      "trend": "unknown"
+    },
+    {
+      "name": "compliance",
+      "health": "healthy",
+      "assessment": "Running normally",
+      "trend": "unknown"
+    },
+    {
+      "name": "marketing",
+      "health": "healthy",
+      "assessment": "Running normally",
+      "trend": "stable"
+    },
+    {
+      "name": "competitor",
+      "health": "healthy",
+      "assessment": "Running normally",
+      "trend": "stable"
+    },
+    {
+      "name": "pricing",
+      "health": "healthy",
+      "assessment": "Running normally",
+      "trend": "unknown"
+    }
+  ],
+  "recommendations": [],
+  "costEstimate": {
+    "monthlyAICalls": 0,
+    "estimatedMonthlyCost": "£0.00",
+    "breakdown": "Could not estimate"
+  },
+  "patterns": [],
+  "agentData": [
+    {
+      "name": "security",
+      "schedule": "Daily 3:00 UTC",
+      "usesAI": true,
+      "scriptExists": true,
+      "scriptLines": 303,
+      "lastReport": {
+        "generatedAt": "2026-02-17T19:07:11.574Z",
+        "grade": "D",
+        "summary": null
+      },
+      "lastGrade": "D",
+      "lastRunDate": "2026-02-17T19:07:11.574Z",
+      "recentGrades": [
+        {
+          "date": "2026-02-17",
+          "grade": "D"
+        },
+        {
+          "date": "2026-02-17",
+          "grade": "D"
+        },
+        {
+          "date": "2026-02-17",
+          "grade": "D"
+        },
+        {
+          "date": "2026-02-17",
+          "grade": "D"
+        },
+        {
+          "date": "2026-02-17",
+          "grade": "D"
+        }
+      ],
+      "daysSinceLastRun": 0,
+      "missedRuns": false
+    },
+    {
+      "name": "seo",
+      "schedule": "Daily 4:00 UTC",
+      "usesAI": true,
+      "scriptExists": true,
+      "scriptLines": 321,
+      "lastReport": {
+        "generatedAt": "2026-02-17T19:07:18.786Z",
+        "grade": "F",
+        "summary": null
+      },
+      "lastGrade": "F",
+      "lastRunDate": "2026-02-17T19:07:18.786Z",
+      "recentGrades": [
+        {
+          "date": "2026-02-17",
+          "grade": "F"
+        },
+        {
+          "date": "2026-02-17",
+          "grade": "F"
+        }
+      ],
+      "daysSinceLastRun": 0,
+      "missedRuns": false
+    },
+    {
+      "name": "remediation",
+      "schedule": "Daily 5:00 UTC",
+      "usesAI": true,
+      "scriptExists": true,
+      "scriptLines": 370,
+      "lastReport": null,
+      "lastGrade": null,
+      "lastRunDate": null,
+      "recentGrades": [],
+      "daysSinceLastRun": null,
+      "missedRuns": false
+    },
+    {
+      "name": "performance",
+      "schedule": "Daily 6:00 UTC",
+      "usesAI": false,
+      "scriptExists": true,
+      "scriptLines": 316,
+      "lastReport": {
+        "summary": null
+      },
+      "recentGrades": [],
+      "daysSinceLastRun": null,
+      "missedRuns": false
+    },
+    {
+      "name": "compliance",
+      "schedule": "Daily 7:00 UTC",
+      "usesAI": false,
+      "scriptExists": true,
+      "scriptLines": 298,
+      "lastReport": {
+        "generatedAt": "2026-02-17T19:06:56.163Z",
+        "grade": "A",
+        "summary": "All 0 MOT and 0 DBS records are compliant"
+      },
+      "lastGrade": "A",
+      "lastRunDate": "2026-02-17T19:06:56.163Z",
+      "recentGrades": [
+        {
+          "date": "2026-02-17",
+          "grade": "A"
+        }
+      ],
+      "daysSinceLastRun": 0,
+      "missedRuns": false
+    },
+    {
+      "name": "marketing",
+      "schedule": "Monday 7:00 UTC",
+      "usesAI": true,
+      "scriptExists": true,
+      "scriptLines": 284,
+      "lastReport": {
+        "generatedAt": "2026-02-17T19:07:57.363Z",
+        "grade": "B",
+        "summary": "AFJ has built a solid foundation of relevant, service-focused blog content addressing school transport, NEPTS, maintenance, and compliance—critical topics for its B2B and B2C audiences. However, the portfolio suffers from three critical weaknesses: (1) no publication dates and zero content calendar entries suggest neglected or outdated content, damaging SEO and credibility; (2) significant gaps in high-ROI topics like council cost-benefit analysis, real case studies with metrics, and airport transfer positioning; and (3) underutilization of the 25-area geographic footprint and 700+ student/47-driver scale as marketing assets. The blog is broad but shallow, lacking the depth, specificity, and case-study evidence that councils and NHS trusts demand during procurement decisions.\n\nImmediate actions: Implement a documented 12-month content calendar with 2 posts/month; refresh and date all existing blogs; prioritize 3 quick-hit pieces on DBS compliance, cost-saving case studies, and airport transfers; and establish a monthly newsletter cadence. Medium-term: develop 4–5 detailed case studies with quantified outcomes from existing council and NHS clients; create geo-targeted content for high-value service areas; and build thought leadership content around driver retention and transport sector challenges. This will position AFJ as a data-driven, compliant, strategically-minded partner—not just a transport operator."
+      },
+      "lastGrade": "B",
+      "lastRunDate": "2026-02-17T19:07:57.363Z",
+      "recentGrades": [
+        {
+          "date": "2026-02-17",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-17",
+          "grade": "B"
+        }
+      ],
+      "daysSinceLastRun": 0,
+      "missedRuns": false
+    },
+    {
+      "name": "competitor",
+      "schedule": "Sunday 21:00 UTC",
+      "usesAI": true,
+      "scriptExists": true,
+      "scriptLines": 273,
+      "lastReport": {
+        "generatedAt": "2026-02-17T19:07:34.975Z",
+        "grade": "C",
+        "summary": null
+      },
+      "lastGrade": "C",
+      "lastRunDate": "2026-02-17T19:07:34.975Z",
+      "recentGrades": [
+        {
+          "date": "2026-02-17",
+          "grade": "A"
+        },
+        {
+          "date": "2026-02-17",
+          "grade": "C"
+        }
+      ],
+      "daysSinceLastRun": 0,
+      "missedRuns": false
+    },
+    {
+      "name": "pricing",
+      "schedule": "Sunday 22:00 UTC",
+      "usesAI": true,
+      "scriptExists": true,
+      "scriptLines": 339,
+      "lastReport": {
+        "generatedAt": "2026-02-17T19:07:47.546Z",
+        "summary": null
+      },
+      "lastRunDate": "2026-02-17T19:07:47.546Z",
+      "recentGrades": [],
+      "daysSinceLastRun": 0,
+      "missedRuns": false
+    }
+  ]
+}
