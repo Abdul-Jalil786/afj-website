@@ -1,7 +1,7 @@
 # CLAUDE.md — AFJ Limited Digital Platform
 
 > Primary instruction file for Claude Code. Read ENTIRE file before making changes.
-> Last updated: 2026-02-17
+> Last updated: 2026-02-18
 
 ---
 
@@ -10,21 +10,21 @@
 **All Tiers 1-5 COMPLETE.** Active development on automation and intelligence features.
 
 **Recently completed:**
+- Centralised notification system with admin bell icon, email alerts, /admin/notifications page
+- Blog auto-drafting with inline AI editing, diff view, edit history, publish via GitHub API
+- Security/SEO remediation agent (daily 5am, auto-generates code fix proposals for admin approval)
 - Pricing intelligence system (quote tracking, conversion analytics, market research agent, recommendations)
-- 5 monitoring agents (security, SEO, marketing, competitor, performance) with email reports
+- 7 monitoring agents (security, SEO, remediation, marketing, competitor, performance, pricing) with email reports
 - Security headers middleware on all routes
 - Vehicle tiers expanded to 1-48 passengers with per-tier minimums
 - James AI chat assistant with voice input, OpenAI TTS, auto-knowledge, quote calculator
 
 **In progress / next:**
-- Centralised notification system with admin bell icon
-- Blog auto-drafting with inline AI editing
-- Security/SEO remediation agent (auto-fix proposals)
 - Compliance data management (MOT/DBS tracking with expiry warnings)
 - Social media auto-publishing (LinkedIn + Facebook)
 - Meta agent for keeping other agents up to date
 
-**Do NOT touch:** ContactForm, BaseLayout GA4, SEOHead, redirects, Content calendar, Social Impact Report components, Hero slider logic, Header navigation structure, Component subdirectory structure, github.ts shared utility
+**Do NOT touch:** ContactForm, BaseLayout GA4, SEOHead, redirects, Content calendar, Social Impact Report components, Hero slider logic, Header navigation structure, Component subdirectory structure, github.ts shared utility, Notification bell in AdminLayout header
 
 ---
 
@@ -145,7 +145,9 @@ src/
 │   ├── github.ts                   # GitHub API helper
 │   ├── cf-auth.ts                  # Cloudflare Zero Trust auth
 │   ├── audit-log.ts                # Admin action logging
-│   └── tts-usage.ts                # Daily TTS character tracking
+│   ├── tts-usage.ts                # Daily TTS character tracking
+│   ├── notifications.ts            # Centralised notification service (create, email, read/mark)
+│   └── blog-drafter.ts             # AI blog draft generation + inline editing
 ├── data/
 │   ├── quote-rules.json            # Pricing config (rates, multipliers, surcharges, distances)
 │   ├── departments.json            # Department → email → page mapping
@@ -159,13 +161,13 @@ src/
 ├── pages/
 │   ├── admin/
 │   │   ├── index.astro             # Dashboard home
-│   │   ├── content.astro           # Blog creation + AI drafts
+│   │   ├── content.astro           # Blog creation + AI drafts + inline editor
 │   │   ├── pages.astro             # NL page updates
 │   │   ├── approvals.astro         # Approval queue
 │   │   ├── pricing.astro           # Pricing config (management only)
 │   │   ├── conversions.astro       # Quote conversion tracking
 │   │   ├── pricing-intelligence.astro  # AI pricing recommendations
-│   │   ├── monitoring.astro        # 6-agent monitoring dashboard
+│   │   ├── monitoring.astro        # 7-agent monitoring dashboard + proposed fixes tab
 │   │   └── notifications.astro     # Notification centre
 │   ├── api/
 │   │   ├── chat.ts                 # James AI chat endpoint
@@ -183,12 +185,12 @@ src/
 │   ├── ui/ChatCharacter.astro      # Animated chauffeur SVG
 │   └── [layout/, core/, content/, social-impact/, admin/, quote/]
 scripts/
-├── agent-utils.mjs                 # Shared: callHaiku, sendReportEmail, saveReport, etc.
+├── agent-utils.mjs                 # Shared: callHaiku, sendReportEmail, saveReport, createNotification, etc.
 ├── security-agent.mjs              # Daily 3am
 ├── seo-agent.mjs                   # Daily 4am
 ├── remediation-agent.mjs           # Daily 5am (generates fix proposals)
 ├── performance-agent.mjs           # Daily 6am (no AI)
-├── marketing-agent.mjs             # Weekly Mon 7am
+├── marketing-agent.mjs             # Weekly Mon 7am (+ auto-drafts top 2 blog ideas)
 ├── competitor-agent.mjs            # Weekly Sun 9pm
 ├── market-research-agent.mjs       # Weekly Sun 10pm
 └── run-all-agents.mjs              # Run all/subset convenience
@@ -255,21 +257,23 @@ Website/Chat quotes → quote-log.jsonl → market-research-agent (weekly)
 | Competitor | Sun 9pm | Yes | Always |
 | Market Research | Sun 10pm | Yes | Via admin |
 
-Shared utils: scripts/agent-utils.mjs (callHaiku, sendReportEmail, saveReport, gradeFromIssues, etc.)
+Shared utils: scripts/agent-utils.mjs (callHaiku, sendReportEmail, saveReport, createNotification, gradeFromIssues, etc.)
 Grading: A (no issues) → F (critical). Reports in src/data/reports/. History capped at 90 days.
-Dashboard: /admin/monitoring — 6-agent card grid with expandable reports and grade history.
+Dashboard: /admin/monitoring — 7-agent card grid with expandable reports, grade history, and Proposed Fixes tab.
+Remediation reads security + SEO reports → generates code fix proposals → stores in proposed-fixes.json → admin approves/rejects → auto-applies via GitHub API.
 
 ---
 
 ## 10. Notification System
 
-Centralised notifications for all approval workflows:
-- Types: blog-draft, pricing-recommendation, security-fix, seo-fix, compliance-expiry, social-draft, agent-critical
-- Storage: src/data/notifications.json
+Live and hooked into all agents. Every system that needs admin attention routes through here.
+- Types: blog-draft, pricing-recommendation, security-fix, seo-fix, compliance-expiry, social-draft, conversion-milestone, agent-critical
+- Storage: src/data/notifications.json (capped at 200)
 - Email via Resend on every notification (from onboarding@resend.dev, temporary)
-- Bell icon in admin header with unread badge
-- /admin/notifications — full list with filters
+- Bell icon in admin header with unread badge + dropdown (latest 10)
+- /admin/notifications — full list with type/status/priority filters, grouped by date, bulk mark-as-read
 - API: GET/PUT /api/admin/notifications
+- Agents create notifications via: createNotification() in agent-utils.mjs (standalone scripts) or src/lib/notifications.ts (Astro runtime)
 
 ---
 
