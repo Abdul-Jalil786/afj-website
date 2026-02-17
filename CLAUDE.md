@@ -2,7 +2,7 @@
 
 > This is the primary instruction file for Claude Code working on the AFJ website.
 > Read this ENTIRE file before making any changes. Follow all rules strictly.
-> Last updated: 2026-02-16
+> Last updated: 2026-02-17
 
 ---
 
@@ -192,7 +192,40 @@ All code committed and pushed. Environment variables need setting on Railway bef
 - Error handling: if quote engine fails, friendly fallback directs to `/quote` or contact
 - Uses existing rate limits — no extra limits needed
 
-**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable), Component subdirectory structure (stable), github.ts shared utility (stable), James knowledge base (stable)
+**Pricing Intelligence System — COMPLETE (2026-02-17)**
+- Quote logging: `src/lib/quote-log.ts` — append-only JSONL logger (5MB rotation, fire-and-forget)
+- All website quotes (`/api/quote/estimate`) and James-chat quotes (`/api/chat`) log automatically to `data/quote-log.jsonl`
+- Log entry: id, timestamp, service, pickup (4 chars only), destination (4 chars only), passengers, date, time, returnType, quoteLow/High/Total, source (website|james-chat|phone), converted, customerName, notes
+- Conversion tracking admin at `/admin/conversions` (management only):
+  - Dashboard metrics: weekly/monthly quotes, conversion rate, avg value, top routes, busiest days
+  - Filterable/sortable quote table with date range, service, source, status filters
+  - Slide-out panel to mark quotes as converted (with booking value) or lost (with reason)
+  - Manual phone booking entry form (creates pre-converted entry with source "phone")
+- `src/pages/api/admin/conversions.ts` — GET (filtered log + computed metrics), PUT (convert/lose), POST (phone booking)
+- Vehicle tiers expanded 1-48 passengers:
+  - New bands: "1-4" (Saloon car) and "34-48" (Full-size coach) for private-hire and airport
+  - Per-tier passenger multipliers: { "1-4": 0.85, "5-8": 1.0, "9-16": 1.3, "17-24": 1.6, "25-33": 2.0, "34-48": 2.8 }
+  - Per-tier minimum booking floors (backward-compatible: `typeof` check for number vs object)
+  - Admin pricing page updated with per-tier minimum inputs and expanded preview dropdown
+- Weekly market research agent: `scripts/market-research-agent.mjs`
+  - Reads `quote-rules.json` + `data/quote-log.jsonl`, analyses pricing performance
+  - Calls Anthropic Haiku with structured prompt, generates recommendations with reasoning
+  - Handles <5 quotes gracefully (baseline report, no AI call)
+  - Saves structured report to `src/data/reports/pricing-report.json`
+  - `.github/workflows/market-research.yml` — Sunday 22:00 UTC cron + manual trigger
+  - Requires `LLM_API_KEY` as GitHub repository secret
+- Pricing intelligence admin at `/admin/pricing-intelligence` (management only):
+  - Latest report display with key metrics (quotes, conversions, rate, avg value)
+  - AI market insights section
+  - Recommendations list with priority badges (high/medium/low) and type tags
+  - "Test This" panel: runs 5 standard test journeys, shows side-by-side current vs recommended pricing
+  - Approve/reject workflow per recommendation (persisted to report JSON via GitHub API)
+  - Tier analysis breakdown and minimum floor analysis sections
+  - Top routes display
+- `src/pages/api/admin/pricing-report.ts` — GET (read report), PUT (approve/reject recommendation)
+- AdminLayout nav updated: Conversions + Intelligence links added after Pricing
+
+**Do NOT touch:** ContactForm (stable), BaseLayout GA4 (stable), SEOHead (stable), redirects (stable), Content calendar dashboard (stable), Social Impact Report components (stable), Admin pricing portal (stable), LLM layer (stable), prompts library (stable), Admin dashboard pages (stable), approval API (stable), Quote wizard (stable), Area data files (stable), Compliance data (stable), Testimonial engine (stable), Schema markup (stable), Social media scripts (stable), GitHub Actions workflows (stable), Component subdirectory structure (stable), github.ts shared utility (stable), James knowledge base (stable), Quote logging infrastructure (stable), Conversion tracking admin (stable), Pricing intelligence admin (stable)
 
 ---
 
@@ -313,7 +346,9 @@ afj-website/
 │   │   │   ├── content.astro       # Content editor with AI drafting
 │   │   │   ├── pages.astro         # Page update requests (NL → code)
 │   │   │   ├── approvals.astro     # Pending content approval queue
-│   │   │   └── pricing.astro       # 🆕 Pricing configuration portal (management only)
+│   │   │   ├── pricing.astro       # 🆕 Pricing configuration portal (management only)
+│   │   │   ├── conversions.astro   # 🆕 Quote conversion tracking (management only)
+│   │   │   └── pricing-intelligence.astro  # 🆕 AI pricing recommendations (management only)
 │   │   ├── api/
 │   │   │   ├── blog/
 │   │   │   │   └── create.ts       # POST — create blog via GitHub API
@@ -328,7 +363,9 @@ afj-website/
 │   │   │   │   └── status.ts       # 🆕 GET — compliance dashboard data
 │   │   │   └── admin/
 │   │   │       ├── pricing.ts      # 🆕 GET/POST — pricing config read/write
-│   │   │       └── compliance.ts   # POST — compliance data update via GitHub API
+│   │   │       ├── compliance.ts   # POST — compliance data update via GitHub API
+│   │   │       ├── conversions.ts  # 🆕 GET/PUT/POST — quote log + conversion tracking
+│   │   │       └── pricing-report.ts # 🆕 GET/PUT — AI pricing report read/approve/reject
 │   │   ├── quote/
 │   │   │   └── index.astro         # 🆕 Intelligent quote wizard
 │   │   ├── compliance.astro        # 🆕 Public compliance dashboard
@@ -383,6 +420,7 @@ afj-website/
 │   │   ├── llm.ts                  # 🆕 LLM provider abstraction (Haiku / Groq switchable)
 │   │   ├── prompts.ts              # 🆕 System prompts for AI features (brand voice baked in)
 │   │   ├── quote-engine.ts         # 🆕 Quote estimation logic
+│   │   ├── quote-log.ts            # 🆕 Quote logging (append-only JSONL, 5MB rotation)
 │   │   └── github.ts               # GitHub API helper for content creation
 │   └── data/
 │       ├── compliance.json         # 🆕 Compliance status data
@@ -391,7 +429,9 @@ afj-website/
 │       │   ├── schools.json
 │       │   ├── hospitals.json
 │       │   └── areas.json
-│       └── quote-rules.json        # 🆕 Quote estimation rules and ranges
+│       ├── quote-rules.json        # 🆕 Quote estimation rules and ranges
+│       └── reports/
+│           └── pricing-report.json # 🆕 AI-generated weekly pricing report
 ├── seo/
 │   ├── content-calendar.csv        # 24 planned blog posts
 │   ├── redirects.json              # 🆕 WordPress → new URL mapping
@@ -409,11 +449,14 @@ afj-website/
 │   ├── images/                     # All site images (pre-optimized)
 │   ├── documents/                  # PDFs
 │   └── social-impact-report/       # Social Impact Report assets
+├── scripts/
+│   └── market-research-agent.mjs   # 🆕 Weekly AI pricing analysis (Haiku)
 └── .github/
     └── workflows/                  # 🆕 CI/CD
         ├── lighthouse.yml
         ├── broken-links.yml
-        └── deploy-validate.yml
+        ├── deploy-validate.yml
+        └── market-research.yml     # 🆕 Sunday 22:00 UTC pricing agent cron
 ```
 
 ---
@@ -578,12 +621,71 @@ Deadhead (base→pickup) is rolled into journey miles — not shown as a separat
 
 **Airport transfers** use a separate fixed-rate model (`airportRates` table), not the cost-per-mile formula.
 
+### Vehicle Tiers
+6 passenger bands for private-hire and airport: "1-4" (Saloon), "5-8" (MPV), "9-16" (Minibus), "17-24" (Large minibus), "25-33" (Coach), "34-48" (Full-size coach). Each has its own multiplier and minimum booking floor.
+
 ### Admin Pricing Portal (`/admin/pricing`)
 Management-only admin page for configuring all pricing inputs without touching code. Changes commit to `quote-rules.json` via GitHub API and auto-deploy via Railway. Includes a quote preview panel to test impact of changes before saving.
 
 ---
 
-## 11. Programmatic SEO Strategy
+## 11. Pricing Intelligence System
+
+A complete pipeline for tracking quotes, analysing conversion performance, and generating AI-powered pricing recommendations.
+
+### Quote Logging
+- `src/lib/quote-log.ts` — mirrors `audit-log.ts` pattern: append-only JSONL, 5MB rotation, fire-and-forget
+- Log path: `data/quote-log.jsonl` (gitignored, persists on Railway between deploys)
+- All quotes logged automatically: website (`/api/quote/estimate`), James chat (`/api/chat`), manual phone entries
+- Privacy: only first 4 characters of postcodes stored; no IP addresses logged
+- Entry fields: id, timestamp, service, pickup, destination, passengers, date, time, returnType, quoteLow, quoteHigh, quoteTotal, source, converted, convertedAt, convertedValue, lostReason, customerName, notes
+
+### Conversion Tracking (`/admin/conversions`)
+Management-only admin page with:
+- Dashboard metrics: this week/month quotes, conversions, rate %, average value, top routes, busiest days
+- Filterable table: date range, service, source (website/james-chat/phone), status (pending/converted/lost)
+- Slide-out panel: mark as converted (booking value, customer name, notes) or lost (reason)
+- Manual phone booking form: creates pre-converted entry with source "phone"
+- API: `GET /api/admin/conversions` (filtered log + metrics), `PUT` (convert/lose), `POST` (phone booking)
+
+### Weekly Market Research Agent
+- Script: `scripts/market-research-agent.mjs` — standalone Node.js script (no Astro runtime)
+- Reads `quote-rules.json` (current pricing) + `data/quote-log.jsonl` (last 7 days of quotes)
+- Calls Anthropic Haiku with structured analysis prompt
+- Generates: recommendations (with field, current/recommended values, reasoning, impact), tier analysis, minimum floor analysis, market insights
+- Saves to `src/data/reports/pricing-report.json`
+- Handles <5 quotes gracefully (baseline report without AI call)
+- Schedule: `.github/workflows/market-research.yml` — Sunday 22:00 UTC + manual trigger via GitHub Actions
+- Requires `LLM_API_KEY` as a GitHub repository secret (Settings → Secrets → Actions)
+
+### Pricing Recommendations (`/admin/pricing-intelligence`)
+Management-only admin page with:
+- Latest report header: period, generation time, status badge (pending/reviewed)
+- Key metrics: quotes, converted, conversion rate, average value
+- AI insights: free-form market analysis text
+- Recommendations list: priority badges (high/medium/low), type tags (rate-adjustment, minimum-floor, multiplier, surcharge, operational)
+- **Test This** panel: click on any recommendation → runs 5 standard test journeys (Birmingham→Manchester, Birmingham→Coventry, Birmingham→London, Wolverhampton→Birmingham, Manchester→Leeds) → shows side-by-side current vs recommended pricing
+- Approve/reject buttons per recommendation: approve updates report status, reject prompts for optional reason
+- Tier analysis and minimum floor analysis sections
+- Top routes display
+- API: `GET /api/admin/pricing-report` (read), `PUT` (approve/reject recommendation)
+
+### Data Flow
+```
+Website/Chat quotes → quote-log.jsonl → market-research-agent.mjs (weekly)
+                                              ↓
+                                    Anthropic Haiku analysis
+                                              ↓
+                                    pricing-report.json
+                                              ↓
+                              /admin/pricing-intelligence (review)
+                                              ↓
+                              Approve → /api/admin/pricing → quote-rules.json → deploy
+```
+
+---
+
+## 12. Programmatic SEO Strategy
 
 ### Current: 5 area pages
 Birmingham, Manchester, Sandwell, Coventry, West Midlands
@@ -605,7 +707,7 @@ Expand to cover every borough and district served. Each page is unique because i
 
 ---
 
-## 12. Compliance Dashboard
+## 13. Compliance Dashboard
 
 Public page at `/compliance` showing real-time trust signals.
 
@@ -628,7 +730,7 @@ Operations manager logs into admin dashboard → updates compliance figures → 
 
 ---
 
-## 13. Error Handling & Logging
+## 14. Error Handling & Logging
 
 ### API Endpoints
 - All `/api/*` endpoints return consistent JSON: `{ success: boolean, data?: any, error?: string }`
@@ -647,7 +749,7 @@ Operations manager logs into admin dashboard → updates compliance figures → 
 
 ---
 
-## 14. Testing & Validation
+## 15. Testing & Validation
 
 ### Before Every Commit
 1. `npm run build` must complete without errors
@@ -671,7 +773,7 @@ Operations manager logs into admin dashboard → updates compliance figures → 
 
 ---
 
-## 15. Environment Variables (Complete Reference)
+## 16. Environment Variables (Complete Reference)
 
 ```env
 # === REQUIRED (site won't function fully without these) ===
@@ -714,7 +816,7 @@ RAILWAY_TOKEN=                              # Railway deployment token
 
 ---
 
-## 16. Common Troubleshooting
+## 17. Common Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
@@ -728,7 +830,7 @@ RAILWAY_TOKEN=                              # Railway deployment token
 
 ---
 
-## 17. Git Workflow
+## 18. Git Workflow
 
 1. **Feature branches:** `feature/admin-dashboard`, `feature/quote-wizard`, etc.
 2. **Commit messages:** Descriptive, present tense: "Add AI draft endpoint for blog posts"
@@ -738,7 +840,7 @@ RAILWAY_TOKEN=                              # Railway deployment token
 
 ---
 
-## 18. Implementation Priority Order
+## 19. Implementation Priority Order
 
 This is the build sequence. Complete each tier before starting the next.
 
