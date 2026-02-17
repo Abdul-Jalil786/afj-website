@@ -292,12 +292,12 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - Tier analysis and minimum floor analysis sections
 - API: `GET /api/admin/pricing-report` (read), `PUT` (approve/reject)
 
-### Phase 12 — Automated Monitoring Agents (2026-02-17) ← LATEST
+### Phase 12 — Automated Monitoring Agents (2026-02-17)
 5 automated monitoring agents with shared utilities, GitHub Actions workflows, email reports, and admin dashboard.
 
 **Shared Infrastructure:**
 - `scripts/agent-utils.mjs` — shared utility module: callHaiku, sendReportEmail (Resend), saveReport/loadReport, updateHistory (90-day cap), gradeFromIssues (A-F scale), fetchWithTimeout, createGitHubIssue, parseAIJSON, HTML email template helpers
-- `scripts/run-all-agents.mjs` — convenience script to run all 5 agents in sequence (supports subset: `node scripts/run-all-agents.mjs security performance`)
+- `scripts/run-all-agents.mjs` — convenience script to run all 7 agents in sequence (supports subset: `node scripts/run-all-agents.mjs security performance`)
 
 **Security Agent (daily 3:00 UTC):**
 - `scripts/security-agent.mjs` + `.github/workflows/security-agent.yml`
@@ -322,7 +322,7 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 
 **Competitor Agent (weekly Sunday 21:00 UTC):**
 - `scripts/competitor-agent.mjs` + `.github/workflows/competitor-agent.yml`
-- Crawls 4 competitors (National Express, Arriva, HCT Group, Go Goodwins) defined in `src/data/competitors.json`
+- Crawls 8 competitors (4 direct + 4 indirect) defined in `src/data/competitors.json`
 - Checks `/`, `/services`, `/about`, `/contact` for each — extracts title, description, content hash (SHA-256 of body text)
 - Compares hashes against `src/data/reports/competitor-hashes.json` to detect content changes
 - AI analysis via Haiku: competitive landscape summary, per-competitor assessment (strengths/weaknesses/threat level), opportunities, recommendations
@@ -342,8 +342,9 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - `src/data/reports/competitor-hashes.json` — content hash tracking for change detection across runs
 
 **Admin Dashboard (`/admin/monitoring`):**
-- Management-only page with 6-agent card grid (security, SEO, marketing, competitor, performance, pricing intelligence)
+- Management-only page with 9-agent card grid (security, SEO, marketing, competitor, performance, pricing intelligence, compliance check, meta agent, remediation)
 - Each card: grade badge (A-F with colour), trend indicator (improving/stable/declining), schedule, last run, AI-powered flag, expandable report details
+- Agent Health tab: overview, per-agent assessments, recommendations, cost estimate (from meta agent)
 - 90-day grade history table at bottom with recent grades and summaries
 - AdminLayout nav updated with Monitoring link
 
@@ -360,6 +361,54 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - Permissions-Policy: camera=(), microphone=(), geolocation=()
 - Strict-Transport-Security: max-age=31536000; includeSubDomains
 - Content-Security-Policy: allowlists for Google Analytics, Google Tag Manager, Cloudflare CDN, Google Fonts, Web3Forms, Postcodes.io, OSRM, Anthropic API, OpenAI API, Google reCAPTCHA iframe
+
+### Phase 12.2 — Notification System, Blog Auto-Drafting, Remediation Agent (2026-02-17)
+- **Centralised notification system** (`src/lib/notifications.ts`) — createNotification, readNotifications, markAsRead, deleteNotification, stored in `src/data/notifications.json`
+- **Blog auto-drafting** (`src/lib/blog-drafter.ts`) — AI generates weekly blog drafts from content calendar, saves to `src/data/blog-drafts.json`
+- **Blog drafts API** (`src/pages/api/admin/blog-drafts.ts`) — GET list, PUT approve/reject/edit, POST publish (→ GitHub API)
+- **Remediation agent** (`scripts/remediation-agent.mjs`) — reads monitoring reports, generates proposed code fixes via Haiku, saves to `src/data/proposed-fixes.json`
+- **Proposed fixes API** (`src/pages/api/admin/proposed-fixes.ts`) — GET list, PUT approve/reject/apply
+- Admin notification bell in AdminLayout header with unread count badge
+- `/admin/notifications` page with filterable notification list
+
+### Phase 12.3 — Compliance Management, Social Publishing, Meta Agent, Command Centre (2026-02-17) ← LATEST
+
+**Compliance Data Management:**
+- `src/data/compliance-records.json` — MOT and DBS record storage (vehicle reg, test dates, results, expiry; driver names, DBS numbers, issue/expiry dates, status)
+- `src/pages/api/admin/compliance-records.ts` — Full CRUD API (GET list with computed stats, POST add/CSV import, PUT update/delete)
+- `src/pages/admin/compliance-records.astro` — Admin page with MOT/DBS tabs, stats dashboard (pass rate, expiring counts), CSV import, add/delete records
+- `scripts/compliance-check-agent.mjs` — Daily agent (7:00 UTC): checks MOT/DBS expiry dates, creates notifications for expired/expiring records (critical/high/medium/low priority), weekly dedup via `compliance-dedup.json`, updates DBS statuses in-place, NO AI
+- `.github/workflows/compliance-check.yml` — Daily 7:00 UTC cron + manual trigger
+- Public `/compliance` page now computes live MOT pass rate and DBS compliance percentage from records (never exposes fleet size)
+
+**Social Media Auto-Publishing:**
+- `src/lib/social-drafter.ts` — Social draft generation library: generateBlogSocialDrafts (auto on blog publish), generateManualDraft, rewriteDraft (AI rewrite), CRUD operations
+- `src/data/social-drafts.json` — Social media draft storage (platform, content, status, blogSlug)
+- `src/pages/api/admin/social.ts` — CRUD API (GET list/filter, POST generate/rewrite, PUT approve/reject/edit/publish/delete)
+- `src/pages/api/admin/social/publish-linkedin.ts` — LinkedIn UGC Post API (returns setup instructions if tokens missing)
+- `src/pages/api/admin/social/publish-facebook.ts` — Facebook Graph API (returns setup instructions if tokens missing)
+- `src/pages/admin/social.astro` — Admin page: create posts (AI generates from topic), filter by platform/status, edit/rewrite/approve/publish/reject/delete
+- Blog publish hook: `blog-drafts.ts` auto-generates LinkedIn + Facebook drafts when a blog post is published, creates notification
+
+**Meta Agent (Monthly):**
+- `scripts/meta-agent.mjs` — Monthly agent health monitor: reads all agent scripts + latest reports, detects missed runs, AI analysis via Haiku (health assessment, recommendations, cost estimate, patterns), fallback if AI fails
+- `.github/workflows/meta-agent.yml` — Monthly 1st 8:00 UTC cron + manual trigger
+- Creates notification, sends email report, saves to `meta-report.json`
+
+**Command Centre Dashboard:**
+- `src/pages/admin/index.astro` — Rebuilt as Command Centre with:
+  - 5 key metrics row (unread alerts, blog drafts, social drafts, pending fixes, site health grade)
+  - "Needs Your Attention" section: pending notifications as colour-coded priority cards
+  - Agent Status strip: Security, SEO, Performance, Compliance grades (management only)
+  - Quick Actions sidebar (6 links with icons)
+  - "Your Access" info panel
+  - "Management Tools" section (management only)
+
+**Other Updates:**
+- `src/data/competitors.json` — Updated from 4 to 8 competitors (4 direct: Green Destinations, HATS Group, Travel SOS, Smart Kids Group; 4 indirect: AJ Travel, HS2 Travel, Aziz Coach Service, Aston Manor Coaches)
+- AdminLayout nav updated with "Social" and "Fleet & DBS" links
+- `scripts/run-all-agents.mjs` — Updated to include compliance + meta agents
+- `/admin/monitoring` — Added Compliance Check and Meta Agent cards, Agent Health tab with overview/assessments/recommendations/cost
 
 ### Phase 13 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
@@ -414,9 +463,12 @@ LIVE ROUTES:
 /admin/pricing                  Pricing configuration portal (management only)
 /admin/conversions              Quote conversion tracking (management only)
 /admin/pricing-intelligence     AI pricing recommendations (management only)
-/admin/monitoring                Monitoring dashboard — 6 agents (management only)
+/admin/monitoring                Monitoring dashboard — 9 agents (management only)
 /admin/compliance               Compliance data editor (operations + management only)
+/admin/compliance-records       MOT & DBS record management (operations + management only)
+/admin/social                   Social media draft management (generate, edit, publish)
 /admin/testimonials             AI testimonial/case study creator
+/admin/notifications            Notification centre (filterable list, mark read/dismiss)
 ```
 
 ### API Endpoints
@@ -440,6 +492,19 @@ PUT  /api/admin/conversions     Mark quote as converted or lost
 POST /api/admin/conversions     Manual phone booking entry
 GET  /api/admin/pricing-report  Read latest AI pricing report
 PUT  /api/admin/pricing-report  Approve/reject recommendation
+GET  /api/admin/compliance-records  List MOT/DBS records with computed stats
+POST /api/admin/compliance-records  Add record or CSV import
+PUT  /api/admin/compliance-records  Update or delete record
+GET  /api/admin/social          List social drafts (filter by platform/status)
+POST /api/admin/social          Generate draft, blog social drafts, AI rewrite
+PUT  /api/admin/social          Approve/reject/edit/publish/delete draft
+POST /api/admin/social/publish-linkedin  Publish to LinkedIn via UGC Post API
+POST /api/admin/social/publish-facebook  Publish to Facebook via Graph API
+GET  /api/admin/blog-drafts     List AI-generated blog drafts
+PUT  /api/admin/blog-drafts     Approve/reject/edit draft
+POST /api/admin/blog-drafts     Publish draft to GitHub
+GET  /api/admin/proposed-fixes  List agent-proposed code fixes
+PUT  /api/admin/proposed-fixes  Approve/reject/apply fix
 ```
 
 ### Components (27)
@@ -513,6 +578,11 @@ src/lib/
   rate-limit.ts                 In-memory rate limiter (per-IP, auto-cleanup, configurable per endpoint)
   validate-body.ts              Request body size validation (50KB default, 200KB large)
   utils.ts                      Shared utilities (escapeHtml)
+  notifications.ts              Centralised notification service (createNotification, readNotifications,
+                                  markAsRead, deleteNotification) → src/data/notifications.json
+  blog-drafter.ts               AI blog draft generation from content calendar topics
+  social-drafter.ts             Social media draft generation (blog auto-drafts, manual drafts, AI rewrite)
+                                  generateBlogSocialDrafts, generateManualDraft, rewriteDraft, CRUD ops
 
 src/middleware.ts                Astro middleware — security headers on all responses
                                   (X-Content-Type-Options, X-Frame-Options, Referrer-Policy,
@@ -533,7 +603,14 @@ src/data/quote-rules.json       Quote rules: cost-per-mile (£0.45), charge-out 
                                   airport rates (15 areas × 9 airports), city lookup,
                                   base postcodes with lat/lng, bank holidays 2026-2027,
                                   service questions with showWhen, toggleLabels, luggage, wheelchair
-src/data/competitors.json        4 competitors with URLs and service tiers (National Express, Arriva, HCT, Go Goodwins)
+src/data/competitors.json        8 competitors (4 direct: Green Destinations, HATS Group, Travel SOS, Smart Kids Group;
+                                  4 indirect: AJ Travel, HS2 Travel, Aziz Coach Service, Aston Manor Coaches)
+src/data/compliance-records.json MOT records (vehicle reg, test dates, results, expiry) and DBS records
+                                  (driver names, DBS numbers, issue/expiry dates, auto-computed status)
+src/data/social-drafts.json      Social media drafts (platform, content, status, blogSlug, blogTitle)
+src/data/blog-drafts.json        AI-generated blog drafts from content calendar topics
+src/data/notifications.json      Centralised notification store (type, title, summary, priority, status, actionUrl)
+src/data/proposed-fixes.json     Agent-proposed code fixes (file, description, diff, status)
 src/data/quote-log.json         Empty placeholder (actual log at data/quote-log.jsonl, gitignored)
 src/data/reports/pricing-report.json  AI-generated weekly pricing report (recommendations, tier analysis)
 src/data/reports/security-report.json  Daily security scan report (auth, headers, leakage, SSL)
@@ -541,6 +618,8 @@ src/data/reports/seo-report.json      Daily SEO scan report (sitemap, meta, link
 src/data/reports/marketing-report.json Weekly marketing analysis (gaps, ideas, social, newsletter)
 src/data/reports/competitor-report.json Weekly competitor crawl (pages, changes, AI analysis)
 src/data/reports/performance-report.json Daily performance/uptime (health, admin, APIs, SSL)
+src/data/reports/compliance-check-report.json Daily compliance check report (MOT/DBS expiry alerts)
+src/data/reports/meta-report.json      Monthly meta agent health report (agent assessments, recommendations, cost)
 src/data/reports/history.json          90-day grade history for all agents (A-F scale)
 src/data/reports/competitor-hashes.json Content hash tracking for competitor change detection
 src/data/area-data/areas.json   25 areas with metadata (slug, council, population, distance, region, services)
@@ -607,12 +686,19 @@ OSRM                → Real driving distance and duration via router.project-os
 - Vehicle tiers 1-48 pax with per-tier minimums
 - Weekly market research agent (GitHub Actions cron)
 - Pricing intelligence admin with AI recommendations + Test This panel
-- 5 automated monitoring agents (security, SEO, marketing, competitor, performance)
-- Monitoring admin dashboard with 6-agent card grid, grade history, trend indicators
+- 7 automated monitoring agents (security, SEO, marketing, competitor, performance, compliance check, meta agent)
+- Monitoring admin dashboard with 9-agent card grid, grade history, trend indicators, Agent Health tab
 - Email reports via Resend (all agents except performance on success-only)
-- Competitor crawling with content hash change detection (4 competitors)
+- Competitor crawling with content hash change detection (8 competitors)
 - GitHub issue creation on critical security findings
 - Security headers middleware on all responses (CSP, HSTS, X-Frame-Options, etc.)
+- Centralised notification system with admin notification centre and bell badge
+- AI blog auto-drafting from content calendar topics
+- Remediation agent: AI-proposed code fixes from monitoring reports
+- MOT & DBS compliance record management with CSV import, expiry tracking, auto-notifications
+- Social media draft management: AI generation, blog auto-publish hook, LinkedIn/Facebook publishing
+- Meta agent: monthly AI health assessment of all agents
+- Command Centre dashboard: key metrics, pending notifications, agent status, quick actions
 
 ### Needs Environment Variables to Activate ⚙️
 | Feature | Env Vars Required | Status |
@@ -624,8 +710,8 @@ OSRM                → Real driving distance and duration via router.project-os
 | Email notifications | `RESEND_API_KEY`, `DASHBOARD_SECRET` | Code complete, needs tokens |
 | AI content features | `LLM_PROVIDER`, `LLM_MODEL`, `LLM_API_KEY` | Code complete, needs API key |
 | Admin auth | Cloudflare Zero Trust config | Code complete, needs CF config |
-| Facebook publishing | `FACEBOOK_PAGE_ID`, `FACEBOOK_ACCESS_TOKEN` | Script built, needs tokens |
-| LinkedIn publishing | `LINKEDIN_ORG_ID`, `LINKEDIN_ACCESS_TOKEN` | Script built, needs tokens |
+| Facebook publishing | `FACEBOOK_PAGE_ID`, `FACEBOOK_ACCESS_TOKEN` | Script + admin API built, needs tokens |
+| LinkedIn publishing | `LINKEDIN_ORG_ID`, `LINKEDIN_ACCESS_TOKEN` | Script + admin API built, needs tokens |
 | Market research agent | `LLM_API_KEY` (GitHub repo secret) | Workflow built, needs secret |
 | Monitoring agents | `LLM_API_KEY`, `SITE_URL`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL` (GitHub repo secrets) | Workflows built, need secrets |
 
@@ -756,12 +842,65 @@ GitHub Actions cron triggers:
       → saveReport() + updateHistory()
       → sendReportEmail() ONLY on grade D/F (failures only)
 
+  → compliance-check-agent.mjs (daily 7am)
+      → Reads compliance-records.json → checks MOT/DBS expiry dates
+      → Creates notifications for expired/expiring records (weekly dedup)
+      → Updates DBS statuses in-place → NO AI
+      → saveReport() + updateHistory()
+
+  → meta-agent.mjs (monthly 1st 8am)
+      → Reads all agent scripts + latest reports → detects missed runs
+      → callHaiku() health assessment, recommendations, cost estimate
+      → Creates notification + sendReportEmail()
+      → saveReport() + updateHistory()
+
   → All workflows: git add reports → git commit → git push → Railway auto-deploy
 
 Admin review:
-  → /admin/monitoring → 6-agent card grid with grades + trends
+  → /admin/monitoring → 9-agent card grid with grades + trends
     → Expandable report details per agent
+    → Agent Health tab (meta agent analysis)
     → 90-day grade history table
+```
+
+### Social Media Publishing (Current)
+```
+Auto (on blog publish):
+  → POST /api/admin/blog-drafts (publish action)
+    → generateBlogSocialDrafts() creates LinkedIn + Facebook drafts
+    → Drafts saved to social-drafts.json (status: draft)
+    → Notification created for marketing team
+
+Manual:
+  → /admin/social → create post (platform, topic, brief)
+    → POST /api/admin/social → generateManualDraft() via Haiku
+    → Draft appears in list → edit/rewrite → approve
+
+Publishing:
+  → /admin/social → approve draft → click "Publish"
+    → POST /api/admin/social/publish-linkedin (or publish-facebook)
+    → LinkedIn: UGC Post API / Facebook: Graph API /{pageId}/feed
+    → Draft marked as published with timestamp
+```
+
+### Compliance Records Pipeline (Current)
+```
+Data entry:
+  → /admin/compliance-records → add MOT/DBS records manually or via CSV import
+    → POST /api/admin/compliance-records
+    → Records saved to compliance-records.json
+
+Daily monitoring (7:00 UTC):
+  → scripts/compliance-check-agent.mjs (GitHub Actions cron)
+    → Reads compliance-records.json
+    → Checks expiry dates: expired (critical), 7-day (high), 14-day (medium), 30-day (low)
+    → Creates notifications (weekly dedup per record)
+    → Updates DBS statuses in-place (valid/expiring/expired)
+    → Saves report → updates grade history
+
+Public display:
+  → /compliance → computes MOT pass rate + DBS compliance % from records
+    → Never exposes fleet size — percentages only
 ```
 
 ### Contact Form (Current)
@@ -833,7 +972,7 @@ WEB3FORMS_API_KEY=                          # Contact form submissions
 GA4_MEASUREMENT_ID=                         # Google Analytics 4
 GOOGLE_SEARCH_CONSOLE_VERIFICATION=         # Search Console
 
-# === SOCIAL MEDIA (future) ===
+# === SOCIAL MEDIA ===
 FACEBOOK_PAGE_ID=
 FACEBOOK_ACCESS_TOKEN=
 LINKEDIN_ORG_ID=
@@ -856,11 +995,11 @@ RAILWAY_TOKEN=
 | Category | Current | Planned |
 |----------|---------|---------|
 | Public pages | 55+ routes | — |
-| Internal tools | 2 + admin dashboard (9 routes) | — |
-| API endpoints | 16 | — |
+| Internal tools | 2 + admin dashboard (13 routes) | — |
+| API endpoints | 27 | — |
 | Components | 27 | — |
-| Library modules | 11 | — |
-| Data files | 22 | — |
+| Library modules | 14 | — |
+| Data files | 28 | — |
 | Blog posts (published) | 16 | 40+ |
 | Blog posts (planned) | 24 | 24 (in content calendar) |
 | Social media templates | 10 | — |
@@ -868,8 +1007,8 @@ RAILWAY_TOKEN=
 | Local SEO area pages | 25 | — |
 | Service pages | 8 | — |
 | JSON-LD schemas | 4 types (LocalBusiness, Service, FAQPage, BreadcrumbList) | — |
-| CI/CD workflows | 9 (Lighthouse, broken links, deploy validation, market research, security, SEO, marketing, competitor, performance) | — |
-| Scripts | 10 (image-audit, download-media, migrate-wordpress, market-research-agent, agent-utils, security/seo/marketing/competitor/performance-agent, run-all-agents) | — |
+| CI/CD workflows | 11 (Lighthouse, broken links, deploy validation, market research, security, SEO, marketing, competitor, performance, compliance check, meta agent) | — |
+| Scripts | 12 (image-audit, download-media, migrate-wordpress, market-research-agent, agent-utils, security/seo/marketing/competitor/performance-agent, compliance-check-agent, meta-agent, run-all-agents) | — |
 
 ---
 
@@ -883,8 +1022,9 @@ RAILWAY_TOKEN=
 | Compliance transparency | Public real-time dashboard | PDF on request |
 | Manager self-service | AI-powered content updates | Developer/agency dependency |
 | Schema markup | Full JSON-LD structured data | Basic or none |
-| Social media | Automated publishing pipeline | Manual posting |
 | Trust signals | Live accreditation display | Static logos |
 | Pricing intelligence | AI-powered weekly analysis with conversion tracking | Manual spreadsheet reviews |
-| Automated monitoring | 6 agents: security, SEO, marketing, competitor, performance, pricing | No automated monitoring |
-| Competitive intelligence | Weekly AI-powered competitor crawling with change detection | Ad-hoc manual checks |
+| Automated monitoring | 9 agents: security, SEO, marketing, competitor, performance, pricing, compliance, meta, remediation | No automated monitoring |
+| Competitive intelligence | Weekly AI-powered competitor crawling (8 competitors) with change detection | Ad-hoc manual checks |
+| Compliance tracking | Live MOT/DBS record management with expiry alerts, CSV import | Manual spreadsheets |
+| Social media | AI-generated drafts from blog + manual, LinkedIn/Facebook publishing | Manual posting |
