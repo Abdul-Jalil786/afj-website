@@ -1,0 +1,28 @@
+{
+  "competitors": [
+    {
+      "name": "National Express",
+      "url": "https://www.nationalexpress.com",
+      "tier": "national",
+      "services": ["coach hire", "airport transfers", "private hire"]
+    },
+    {
+      "name": "Arriva Transport Solutions",
+      "url": "https://www.arriva.co.uk",
+      "tier": "national",
+      "services": ["SEND transport", "patient transport", "community transport"]
+    },
+    {
+      "name": "HCT Group",
+      "url": "https://www.hctgroup.org",
+      "tier": "regional",
+      "services": ["SEND transport", "community transport", "bus services"]
+    },
+    {
+      "name": "Go Goodwins",
+      "url": "https://www.gogoodwins.co.uk",
+      "tier": "regional",
+      "services": ["minibus hire", "airport transfers", "school transport"]
+    }
+  ]
+}

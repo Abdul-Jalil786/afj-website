@@ -1,0 +1,391 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import departments from '../../data/departments.json';
+import { authenticateRequest } from '../../lib/cf-auth';
+
+const userEmail = await authenticateRequest(Astro.request);
+if (!userEmail) {
+  return new Response('<h1>Access Denied</h1><p>You must be authenticated via Cloudflare Zero Trust to access the admin dashboard.</p><p><a href="/">Return to website</a></p>', { status: 403, headers: { 'Content-Type': 'text/html' } });
+}
+
+type DeptKey = keyof typeof departments;
+let userDepartment: DeptKey = 'management';
+
+for (const [key, dept] of Object.entries(departments) as [DeptKey, typeof departments[DeptKey]][]) {
+  if (dept && typeof dept === 'object' && Array.isArray(dept.emails) && dept.emails.includes(userEmail)) {
+    userDepartment = key;
+    break;
+  }
+}
+
+const canView = userDepartment === 'management';
+
+// Load all reports
+function loadReport(name: string): any {
+  try {
+    const mod = import.meta.glob('../../data/reports/*.json', { eager: true });
+    const key = `../../data/reports/${name}`;
+    return (mod[key] as any)?.default || null;
+  } catch {
+    return null;
+  }
+}
+
+const reports: Record<string, any> = {};
+const reportFiles = ['security-report', 'seo-report', 'marketing-report', 'competitor-report', 'performance-report', 'pricing-report'];
+for (const name of reportFiles) {
+  try {
+    const mod = await import(`../../data/reports/${name}.json`);
+    reports[name] = mod.default || mod;
+  } catch {
+    reports[name] = null;
+  }
+}
+
+let history: Record<string, any[]> = {};
+try {
+  const histMod = await import('../../data/reports/history.json');
+  history = histMod.default || histMod;
+} catch { /* no history yet */ }
+
+// Agent definitions
+const agents = [
+  {
+    id: 'security',
+    name: 'Security',
+    icon: '&#128274;',
+    schedule: 'Daily 3:00 UTC',
+    reportKey: 'security-report',
+    usesAI: true,
+  },
+  {
+    id: 'seo',
+    name: 'SEO',
+    icon: '&#128269;',
+    schedule: 'Daily 4:00 UTC',
+    reportKey: 'seo-report',
+    usesAI: true,
+  },
+  {
+    id: 'marketing',
+    name: 'Marketing',
+    icon: '&#128227;',
+    schedule: 'Monday 7:00 UTC',
+    reportKey: 'marketing-report',
+    usesAI: true,
+  },
+  {
+    id: 'competitor',
+    name: 'Competitor',
+    icon: '&#127919;',
+    schedule: 'Sunday 21:00 UTC',
+    reportKey: 'competitor-report',
+    usesAI: true,
+  },
+  {
+    id: 'performance',
+    name: 'Performance',
+    icon: '&#9889;',
+    schedule: 'Daily 6:00 UTC',
+    reportKey: 'performance-report',
+    usesAI: false,
+  },
+  {
+    id: 'pricing',
+    name: 'Pricing Intelligence',
+    icon: '&#128176;',
+    schedule: 'Sunday 22:00 UTC',
+    reportKey: 'pricing-report',
+    usesAI: true,
+  },
+];
+
+function getGradeColour(grade: string): string {
+  const colours: Record<string, string> = { A: 'text-green-600 bg-green-50 border-green-200', B: 'text-lime-600 bg-lime-50 border-lime-200', C: 'text-yellow-600 bg-yellow-50 border-yellow-200', D: 'text-orange-600 bg-orange-50 border-orange-200', F: 'text-red-600 bg-red-50 border-red-200' };
+  return colours[grade] || 'text-gray-600 bg-gray-50 border-gray-200';
+}
+
+function getTrend(agentId: string): string {
+  const entries = (history as Record<string, any[]>)[agentId] || [];
+  if (entries.length < 2) return 'stable';
+  const gradeOrder: Record<string, number> = { A: 5, B: 4, C: 3, D: 2, F: 1 };
+  const recent = entries.slice(-3);
+  const first = gradeOrder[recent[0].grade] || 3;
+  const last = gradeOrder[recent[recent.length - 1].grade] || 3;
+  if (last > first) return 'improving';
+  if (last < first) return 'declining';
+  return 'stable';
+}
+
+function trendIcon(trend: string): string {
+  if (trend === 'improving') return '<span class="text-green-500" title="Improving">&#9650;</span>';
+  if (trend === 'declining') return '<span class="text-red-500" title="Declining">&#9660;</span>';
+  return '<span class="text-gray-400" title="Stable">&#9644;</span>';
+}
+---
+
+<AdminLayout title="Monitoring" userEmail={userEmail}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Monitoring Dashboard</h1>
+        <p class="text-gray-600 mt-1">Automated agents scanning security, SEO, marketing, competitors and performance</p>
+      </div>
+    </div>
+
+    {!canView ? (
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
+        <p class="text-amber-800 font-medium">You do not have permission to view monitoring data.</p>
+        <p class="text-amber-600 text-sm mt-1">Only the Management department can access this page.</p>
+      </div>
+    ) : (
+      <div>
+        <!-- Agent Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {agents.map(agent => {
+            const report = reports[agent.reportKey];
+            const hasReport = report && report.generatedAt;
+            const grade = hasReport ? (report.grade || (report.status === 'pending' ? 'P' : '?')) : '—';
+            const trend = getTrend(agent.id);
+            const generatedAt = hasReport ? new Date(report.generatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Never';
+
+            return (
+              <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow" data-agent={agent.id}>
+                <div class="p-5">
+                  <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-2xl" set:html={agent.icon} />
+                      <h3 class="text-lg font-semibold text-gray-900">{agent.name}</h3>
+                    </div>
+                    {hasReport && grade !== '—' ? (
+                      <div class={`flex items-center gap-1.5 px-3 py-1 rounded-full border font-bold text-lg ${getGradeColour(grade)}`}>
+                        {grade}
+                        <Fragment set:html={trendIcon(trend)} />
+                      </div>
+                    ) : (
+                      <span class="text-gray-400 text-sm">No data</span>
+                    )}
+                  </div>
+
+                  <div class="text-sm text-gray-500 space-y-1">
+                    <p><span class="font-medium text-gray-700">Schedule:</span> {agent.schedule}</p>
+                    <p><span class="font-medium text-gray-700">Last run:</span> {generatedAt}</p>
+                    <p><span class="font-medium text-gray-700">AI-powered:</span> {agent.usesAI ? 'Yes' : 'No'}</p>
+                  </div>
+
+                  {hasReport && (
+                    <button
+                      class="mt-4 w-full py-2 px-4 bg-afj-dark-blue text-white text-sm font-medium rounded-md hover:bg-afj-dark-blue/90 transition-colors expand-btn"
+                      data-target={`detail-${agent.id}`}
+                    >
+                      View Report
+                    </button>
+                  )}
+                </div>
+
+                {/* Expandable detail panel */}
+                {hasReport && (
+                  <div id={`detail-${agent.id}`} class="hidden border-t border-gray-200 p-5 bg-gray-50 text-sm" data-detail>
+                    {/* Security */}
+                    {agent.id === 'security' && report.counts && (
+                      <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Issue Summary</h4>
+                        <div class="flex gap-3 mb-3">
+                          <span class="px-2 py-1 rounded bg-red-100 text-red-700 text-xs font-medium">Critical: {report.counts.critical}</span>
+                          <span class="px-2 py-1 rounded bg-orange-100 text-orange-700 text-xs font-medium">High: {report.counts.high}</span>
+                          <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs font-medium">Medium: {report.counts.medium}</span>
+                          <span class="px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-medium">Low: {report.counts.low}</span>
+                        </div>
+                        {report.aiAnalysis?.summary && <p class="text-gray-700">{report.aiAnalysis.summary}</p>}
+                        {report.aiAnalysis?.recommendations?.length > 0 && (
+                          <ul class="mt-2 space-y-1 text-gray-600 list-disc list-inside">
+                            {report.aiAnalysis.recommendations.map((r: string) => <li>{r}</li>)}
+                          </ul>
+                        )}
+                      </div>
+                    )}
+
+                    {/* SEO */}
+                    {agent.id === 'seo' && (
+                      <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">SEO Overview</h4>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Pages</span><p class="font-bold">{report.sitemapCount || 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Issues</span><p class="font-bold">{report.pages?.filter((p: any) => p.issueCount > 0).length || 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Broken Links</span><p class="font-bold">{report.brokenLinks?.broken?.length || 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Avg Response</span><p class="font-bold">{report.pages?.length ? Math.round(report.pages.reduce((s: number, p: any) => s + (p.responseTime || 0), 0) / report.pages.length) : 0}ms</p></div>
+                        </div>
+                        {report.aiAnalysis?.summary && <p class="text-gray-700">{report.aiAnalysis.summary}</p>}
+                      </div>
+                    )}
+
+                    {/* Marketing */}
+                    {agent.id === 'marketing' && (
+                      <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Marketing Overview</h4>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Blog Posts</span><p class="font-bold">{report.blogCount || 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Days Since Last</span><p class="font-bold">{report.daysSinceLastBlog ?? '?'}</p></div>
+                        </div>
+                        {report.contentGaps?.length > 0 && (
+                          <div class="mb-3">
+                            <h5 class="font-medium text-gray-800 mb-1">Content Gaps</h5>
+                            <ul class="space-y-1 text-gray-600 list-disc list-inside">
+                              {report.contentGaps.slice(0, 5).map((g: any) => <li><strong>[{g.priority}]</strong> {g.topic}</li>)}
+                            </ul>
+                          </div>
+                        )}
+                        {report.blogIdeas?.length > 0 && (
+                          <div>
+                            <h5 class="font-medium text-gray-800 mb-1">Blog Ideas</h5>
+                            <ul class="space-y-1 text-gray-600 list-disc list-inside">
+                              {report.blogIdeas.slice(0, 3).map((b: any) => <li>{b.title}</li>)}
+                            </ul>
+                          </div>
+                        )}
+                        {report.overallAssessment && <p class="text-gray-700 mt-2">{report.overallAssessment}</p>}
+                      </div>
+                    )}
+
+                    {/* Competitor */}
+                    {agent.id === 'competitor' && (
+                      <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Competitor Overview</h4>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Competitors</span><p class="font-bold">{report.competitorCount || 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Changes</span><p class="font-bold">{report.changesDetected || 0}</p></div>
+                        </div>
+                        {report.changes?.length > 0 && (
+                          <div class="mb-3">
+                            <h5 class="font-medium text-gray-800 mb-1">Recent Changes</h5>
+                            <ul class="space-y-1 text-gray-600 list-disc list-inside">
+                              {report.changes.map((c: any) => <li><strong>{c.competitor}</strong> — {c.path} content changed</li>)}
+                            </ul>
+                          </div>
+                        )}
+                        {report.aiAnalysis?.summary && <p class="text-gray-700">{report.aiAnalysis.summary}</p>}
+                      </div>
+                    )}
+
+                    {/* Performance */}
+                    {agent.id === 'performance' && report.health && (
+                      <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Performance Overview</h4>
+                        <div class="grid grid-cols-3 gap-2 mb-3">
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Pages Up</span><p class="font-bold text-green-600">{report.health.pagesUp}/{report.health.totalPages}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Avg Time</span><p class="font-bold">{report.health.avgResponseTime}ms</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Max Time</span><p class="font-bold">{report.health.maxResponseTime}ms</p></div>
+                        </div>
+                        {report.health.pagesDown > 0 && (
+                          <div class="bg-red-50 border border-red-200 rounded p-3 mb-3">
+                            <p class="text-red-700 font-medium">Pages Down ({report.health.pagesDown})</p>
+                            <ul class="mt-1 space-y-1 text-red-600 list-disc list-inside">
+                              {report.health.details.filter((d: any) => !d.ok).map((d: any) => <li>{d.path} — {d.error || `HTTP ${d.status}`}</li>)}
+                            </ul>
+                          </div>
+                        )}
+                        <div class="flex gap-3 text-xs">
+                          <span class={report.adminProtection?.allProtected ? 'text-green-600' : 'text-red-600'}>
+                            Admin: {report.adminProtection?.allProtected ? 'Protected' : 'UNPROTECTED'}
+                          </span>
+                          <span class={report.ssl?.ok ? 'text-green-600' : 'text-red-600'}>
+                            SSL: {report.ssl?.ok ? 'Active' : 'ISSUE'}
+                          </span>
+                          <span class={report.contentIntegrity?.allOk ? 'text-green-600' : 'text-yellow-600'}>
+                            Content: {report.contentIntegrity?.allOk ? 'OK' : 'Issues'}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Pricing Intelligence */}
+                    {agent.id === 'pricing' && (
+                      <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Pricing Intelligence</h4>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Quotes</span><p class="font-bold">{report.quoteCount ?? 0}</p></div>
+                          <div class="bg-white rounded p-2 border"><span class="text-xs text-gray-500">Recommendations</span><p class="font-bold">{report.recommendations?.length ?? 0}</p></div>
+                        </div>
+                        {report.insights && <p class="text-gray-700">{typeof report.insights === 'string' ? report.insights.slice(0, 300) : ''}</p>}
+                        <a href="/admin/pricing-intelligence" class="inline-block mt-2 text-afj-accent hover:underline text-sm font-medium">View full report &rarr;</a>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <!-- History Chart (text-based) -->
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Grade History (last 90 days)</h2>
+
+          {Object.keys(history).length === 0 ? (
+            <p class="text-gray-500">No history data yet. Reports will appear here after agents have run.</p>
+          ) : (
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-gray-200">
+                    <th class="py-2 px-3 text-left font-medium text-gray-700">Agent</th>
+                    <th class="py-2 px-3 text-left font-medium text-gray-700">Trend</th>
+                    <th class="py-2 px-3 text-left font-medium text-gray-700">Recent Grades</th>
+                    <th class="py-2 px-3 text-left font-medium text-gray-700">Last Summary</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(history).map(([agentId, entries]) => {
+                    const agentEntries = entries as any[];
+                    if (!agentEntries || agentEntries.length === 0) return null;
+                    const recent = agentEntries.slice(-10);
+                    const trend = getTrend(agentId);
+                    const last = agentEntries[agentEntries.length - 1];
+                    const agentDef = agents.find(a => a.id === agentId);
+
+                    return (
+                      <tr class="border-b border-gray-100">
+                        <td class="py-2 px-3 font-medium text-gray-900">{agentDef?.name || agentId}</td>
+                        <td class="py-2 px-3">
+                          <Fragment set:html={trendIcon(trend)} />
+                          <span class="ml-1 text-xs text-gray-500">{trend}</span>
+                        </td>
+                        <td class="py-2 px-3">
+                          <div class="flex gap-1">
+                            {recent.map((e: any) => (
+                              <span class={`inline-block w-7 h-7 rounded text-center leading-7 text-xs font-bold border ${getGradeColour(e.grade)}`} title={e.date}>
+                                {e.grade}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td class="py-2 px-3 text-gray-600 max-w-xs truncate">{last?.summary || '—'}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+
+  <script>
+    document.querySelectorAll('.expand-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var targetId = this.getAttribute('data-target');
+        if (!targetId) return;
+        var panel = document.getElementById(targetId);
+        if (!panel) return;
+
+        var isHidden = panel.classList.contains('hidden');
+        panel.classList.toggle('hidden');
+        this.textContent = isHidden ? 'Hide Report' : 'View Report';
+      });
+    });
+  </script>
+</AdminLayout>
