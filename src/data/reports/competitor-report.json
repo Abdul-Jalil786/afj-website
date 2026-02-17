@@ -1,39 +1,120 @@
 {
-  "generatedAt": "2026-02-17T14:03:30.669Z",
+  "generatedAt": "2026-02-17T19:07:34.975Z",
   "agent": "competitor",
-  "grade": "A",
-  "competitorCount": 4,
+  "grade": "C",
+  "competitorCount": 8,
   "competitors": [
     {
-      "name": "National Express",
-      "url": "https://www.nationalexpress.com",
-      "tier": "national",
+      "name": "Green Destinations",
+      "url": "https://www.greendestinations.co.uk",
+      "tier": "direct",
       "accessible": true,
       "pages": [
         {
           "path": "/",
           "status": 200,
-          "title": "Coach Travel & Airport Transfers | National Express",
-          "description": "Book coach travel to 100's of UK towns, cities and airports with National Express coaches",
-          "contentHash": "e26549efb23c231a",
-          "contentLength": 10000
+          "title": "GREENDESTINATIONS.CO.UK for sale | Spaceship.com",
+          "description": "GREENDESTINATIONS.CO.UK is for sale on Spaceship. Secure checkout and quick transfer. See all purchase options. No hidden fees.",
+          "contentHash": "ee28aa1fe82f6ab3",
+          "contentLength": 938
         },
         {
           "path": "/services",
-          "status": 404,
-          "error": "HTTP 404"
+          "status": null,
+          "error": "fetch failed"
         },
         {
           "path": "/about",
-          "status": 404,
-          "error": "HTTP 404"
+          "status": null,
+          "error": "fetch failed"
+        },
+        {
+          "path": "/contact",
+          "status": null,
+          "error": "fetch failed"
+        }
+      ],
+      "changes": [],
+      "error": null
+    },
+    {
+      "name": "HATS Group",
+      "url": "https://www.hatsgroup.co.uk",
+      "tier": "direct",
+      "accessible": true,
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "title": null,
+          "description": null,
+          "contentHash": "6525c7cbcf52f274",
+          "contentLength": 56
+        },
+        {
+          "path": "/services",
+          "status": 200,
+          "title": null,
+          "description": null,
+          "contentHash": "6525c7cbcf52f274",
+          "contentLength": 56
+        },
+        {
+          "path": "/about",
+          "status": 200,
+          "title": null,
+          "description": null,
+          "contentHash": "6525c7cbcf52f274",
+          "contentLength": 56
         },
         {
           "path": "/contact",
           "status": 200,
-          "title": "Contact | National Express",
-          "description": "Discover the answers to our most frequently asked questions, our social media links and other general contact information",
-          "contentHash": "bcf82b2a38b8ea39",
+          "title": null,
+          "description": null,
+          "contentHash": "6525c7cbcf52f274",
+          "contentLength": 56
+        }
+      ],
+      "changes": [],
+      "error": null
+    },
+    {
+      "name": "Travel SOS",
+      "url": "https://www.travelsos.co.uk",
+      "tier": "direct",
+      "accessible": true,
+      "pages": [
+        {
+          "path": "/",
+          "status": 200,
+          "title": "Minibus Hire Birmingham | Coach or Minibus with Driver | Travel SOS",
+          "description": "Minibus hire in Birmingham to anywhere in the UK. 8 seater - 16 Seater minibuses for hire. Coach hire for corporate travel, school trips and much more.",
+          "contentHash": "fdf054794d46d52e",
+          "contentLength": 10000
+        },
+        {
+          "path": "/services",
+          "status": 200,
+          "title": "Minibus Hire Birmingham | Coach or Minibus with Driver | Travel SOS",
+          "description": "Minibus hire in Birmingham to anywhere in the UK. 8 seater - 16 Seater minibuses for hire. Coach hire for corporate travel, school trips and much more.",
+          "contentHash": "fdf054794d46d52e",
+          "contentLength": 10000
+        },
+        {
+          "path": "/about",
+          "status": 200,
+          "title": "About Us | Minibus and Coach Hire West Midlands | Travel SOS",
+          "description": "Travel SOS offers top-notch minibus and coach hire services in the UK, with a focus on safety, reliability, and customer satisfaction.",
+          "contentHash": "11243b241b427622",
+          "contentLength": 10000
+        },
+        {
+          "path": "/contact",
+          "status": 200,
+          "title": "Contact Us | Minibus Hire | Get In Touch With Travel SOS Today",
+          "description": "Please fill in the contact form below and we will get back to you within 2 hours.",
+          "contentHash": "335b3078c7355179",
           "contentLength": 10000
         }
       ],
@@ -41,111 +122,168 @@
       "error": null
     },
     {
-      "name": "Arriva Transport Solutions",
-      "url": "https://www.arriva.co.uk",
-      "tier": "national",
-      "accessible": true,
+      "name": "Smart Kids Group",
+      "url": "https://www.smartkidsgroup.co.uk",
+      "tier": "direct",
+      "accessible": false,
       "pages": [
         {
           "path": "/",
-          "status": 200,
-          "title": "Arriva",
-          "description": "Delivering for and on behalf of our clients",
-          "contentHash": "eb0c88c3dcb5325a",
-          "contentLength": 3230
+          "status": 503,
+          "error": "HTTP 503"
         },
         {
           "path": "/services",
-          "status": 404,
-          "error": "HTTP 404"
+          "status": 503,
+          "error": "HTTP 503"
         },
         {
           "path": "/about",
-          "status": 404,
-          "error": "HTTP 404"
+          "status": 503,
+          "error": "HTTP 503"
         },
         {
           "path": "/contact",
-          "status": 404,
-          "error": "HTTP 404"
+          "status": 503,
+          "error": "HTTP 503"
         }
       ],
       "changes": [],
       "error": null
     },
     {
-      "name": "HCT Group",
-      "url": "https://www.hctgroup.org",
-      "tier": "regional",
+      "name": "AJ Travel",
+      "url": "https://www.ajtravel.co.uk",
+      "tier": "indirect",
       "accessible": true,
       "pages": [
         {
           "path": "/",
           "status": 200,
-          "title": "HCTGROUP สล็อตเว็บตรง 2025 สล็อตทดลอง ฝาก-ถอนไวสุด",
-          "description": "HCTGROUP คู่มือสล็อตเว็บตรง 2025 สล็อตทดลอง สำหรับมือใหม่และเซียน: เลือกเว็บแท้ เว็บสล็อตเว็บตรง ฝากถอน True Wallet ไม่มีขั้นต่ำ เกมแตกง่าย",
-          "contentHash": "bfdf6f8b5e3d5c12",
-          "contentLength": 10000
+          "title": "AJ Travel &amp; Tours, London, Manchester, car hire, coach tours- AJ Tours &amp; Travel",
+          "description": "If you are looking for car hire or coach tours, you have come to the right place. AJ Travel &amp; Tours can help. Contact us for professional travel booking services today in London and Manchester.",
+          "contentHash": "96318400e3e2f3db",
+          "contentLength": 3179
         },
         {
           "path": "/services",
-          "status": 200,
-          "title": "HCTGROUP สล็อตเว็บตรง 2025 สล็อตทดลอง ฝาก-ถอนไวสุด",
-          "description": "HCTGROUP คู่มือสล็อตเว็บตรง 2025 สล็อตทดลอง สำหรับมือใหม่และเซียน: เลือกเว็บแท้ เว็บสล็อตเว็บตรง ฝากถอน True Wallet ไม่มีขั้นต่ำ เกมแตกง่าย",
-          "contentHash": "bfdf6f8b5e3d5c12",
-          "contentLength": 10000
+          "status": 404,
+          "error": "HTTP 404"
         },
         {
           "path": "/about",
-          "status": 200,
-          "title": "HCTGROUP สล็อตเว็บตรง 2025 สล็อตทดลอง ฝาก-ถอนไวสุด",
-          "description": "HCTGROUP คู่มือสล็อตเว็บตรง 2025 สล็อตทดลอง สำหรับมือใหม่และเซียน: เลือกเว็บแท้ เว็บสล็อตเว็บตรง ฝากถอน True Wallet ไม่มีขั้นต่ำ เกมแตกง่าย",
-          "contentHash": "bfdf6f8b5e3d5c12",
-          "contentLength": 10000
+          "status": 404,
+          "error": "HTTP 404"
         },
         {
           "path": "/contact",
           "status": 200,
-          "title": "HCTGROUP สล็อตเว็บตรง 2025 สล็อตทดลอง ฝาก-ถอนไวสุด",
-          "description": "HCTGROUP คู่มือสล็อตเว็บตรง 2025 สล็อตทดลอง สำหรับมือใหม่และเซียน: เลือกเว็บแท้ เว็บสล็อตเว็บตรง ฝากถอน True Wallet ไม่มีขั้นต่ำ เกมแตกง่าย",
-          "contentHash": "bfdf6f8b5e3d5c12",
-          "contentLength": 10000
+          "title": "Contact - AJ Tours &amp; Travel",
+          "description": null,
+          "contentHash": "8b111908d4946b51",
+          "contentLength": 2120
         }
       ],
       "changes": [],
       "error": null
     },
     {
-      "name": "Go Goodwins",
-      "url": "https://www.gogoodwins.co.uk",
-      "tier": "regional",
+      "name": "HS2 Travel",
+      "url": "https://www.hs2travel.co.uk",
+      "tier": "indirect",
       "accessible": true,
       "pages": [
         {
           "path": "/",
           "status": 200,
-          "title": "Go Goodwins Coaches North Wales",
-          "description": "We are Go Goodwins Group. Modern, and wheelchair friendly coaches across North Wales & The North West. Telephone: 01745 341 822 / TOURS - BUSES - COACHES - VINTAGE RANGE - FILM & TV",
-          "contentHash": "27ba69bd1668db1e",
-          "contentLength": 253
+          "title": null,
+          "description": null,
+          "contentHash": "6525c7cbcf52f274",
+          "contentLength": 56
         },
         {
           "path": "/services",
-          "status": 404,
-          "error": "HTTP 404"
+          "status": 200,
+          "title": null,
+          "description": null,
+          "contentHash": "6525c7cbcf52f274",
+          "contentLength": 56
         },
         {
           "path": "/about",
-          "status": 404,
-          "error": "HTTP 404"
+          "status": 200,
+          "title": null,
+          "description": null,
+          "contentHash": "6525c7cbcf52f274",
+          "contentLength": 56
         },
         {
           "path": "/contact",
           "status": 200,
-          "title": "Contact details",
-          "description": "We are Go Goodwins Group. Modern, and wheelchair friendly coaches across North Wales & The North West. Telephone: 01745 341 822 / TOURS - BUSES - COACHES - VINTAGE RANGE - FILM & TV",
-          "contentHash": "c965b5ee762c8bff",
-          "contentLength": 2398
+          "title": null,
+          "description": null,
+          "contentHash": "6525c7cbcf52f274",
+          "contentLength": 56
+        }
+      ],
+      "changes": [],
+      "error": null
+    },
+    {
+      "name": "Aziz Coach Service",
+      "url": "https://www.azizcoachservice.co.uk",
+      "tier": "indirect",
+      "accessible": false,
+      "pages": [
+        {
+          "path": "/",
+          "status": null,
+          "error": "fetch failed"
+        },
+        {
+          "path": "/services",
+          "status": null,
+          "error": "fetch failed"
+        },
+        {
+          "path": "/about",
+          "status": null,
+          "error": "fetch failed"
+        },
+        {
+          "path": "/contact",
+          "status": null,
+          "error": "fetch failed"
+        }
+      ],
+      "changes": [],
+      "error": null
+    },
+    {
+      "name": "Aston Manor Coaches",
+      "url": "https://www.astonmanorcoaches.co.uk",
+      "tier": "indirect",
+      "accessible": false,
+      "pages": [
+        {
+          "path": "/",
+          "status": null,
+          "error": "fetch failed"
+        },
+        {
+          "path": "/services",
+          "status": null,
+          "error": "fetch failed"
+        },
+        {
+          "path": "/about",
+          "status": null,
+          "error": "fetch failed"
+        },
+        {
+          "path": "/contact",
+          "status": null,
+          "error": "fetch failed"
         }
       ],
       "changes": [],
@@ -155,79 +293,130 @@
   "changesDetected": 0,
   "changes": [],
   "aiAnalysis": {
-    "summary": "AFJ Limited operates in a competitive transport market dominated by national players (National Express, Arriva) and regional operators (Go Goodwins, HCT Group). National Express and Arriva leverage scale and comprehensive UK coverage across coach, airport, and specialist services, while regional competitors focus on geographic niches. AFJ's strength lies in specialized SEND school transport and NEPTS services with regional concentration in West Midlands and Greater Manchester—segments less emphasized by larger competitors. However, data quality issues prevent full competitive assessment (HCT Group shows SEO compromise/malicious content injection, limiting analysis).",
+    "summary": "AFJ Limited operates in a fragmented but competitive UK transport market with 8 identified competitors across SEND school transport, NEPTS, minibus hire, and airport transfers. The competitive landscape shows mixed digital maturity: Travel SOS emerges as the most digitally visible direct competitor with strong SEO optimization for minibus hire in Birmingham, while Green Destinations appears dormant (domain for sale). Three competitors are inaccessible, suggesting either technical issues, inactive operations, or minimal digital presence. AJ Travel and HS2 Travel serve indirect competition in the coach/tour space. AFJ's opportunity lies in leveraging superior digital presence and service specialization (SEND/NEPTS focus) against fragmented, poorly-resourced competitors.",
     "competitorAssessments": [
       {
-        "name": "National Express",
+        "name": "Travel SOS",
         "strengths": [
-          "National brand recognition and extensive route network (100+ UK destinations)",
-          "Airport transfer expertise and established market presence",
-          "Comprehensive digital presence with organized service pages"
+          "Strong SEO optimization with clear service messaging (minibus hire, coach hire, school trips)",
+          "Well-structured website with targeted landing pages for multiple service types",
+          "Established brand presence in Birmingham and West Midlands region",
+          "Competitive positioning across 8-16 seater vehicle range",
+          "Clear value proposition (safety, reliability, customer satisfaction)"
         ],
         "weaknesses": [
-          "Likely limited focus on specialized SEND school transport market",
-          "Mass-market positioning may not address niche regional needs",
-          "Generic service offerings compared to specialized providers"
+          "Limited content depth across service pages (generic descriptions)",
+          "No apparent NEPTS or specialized SEND transport positioning",
+          "Slower response time claim (2 hours vs. industry standard)",
+          "Overlapping service range may dilute specialization advantage"
         ],
         "threat": "high"
       },
       {
-        "name": "Arriva Transport Solutions",
+        "name": "Green Destinations",
         "strengths": [
-          "National scale and 'Delivering for and on behalf of clients' suggests contract/B2B focus",
-          "Established operational infrastructure across UK",
-          "Corporate positioning suggests institutional relationships"
+          "Established domain and brand history"
         ],
         "weaknesses": [
-          "Likely enterprise-focused rather than specialized transport niches",
-          "Minimal digital differentiation visible in available pages",
-          "Generic service messaging without specialized capability clarity"
-        ],
-        "threat": "high"
-      },
-      {
-        "name": "Go Goodwins",
-        "strengths": [
-          "Regional geographic focus (North Wales, North West) with clear local presence",
-          "Modern, wheelchair-accessible fleet highlighted",
-          "Diverse service portfolio (tours, buses, coaches, heritage services, media contracts)"
-        ],
-        "weaknesses": [
-          "Limited to North Wales/North West—non-overlapping with AFJ core regions",
-          "No evident SEND school transport specialization",
-          "Smaller scale limits competitive threat to AFJ's market position"
+          "Domain actively for sale on Spaceship.com (business likely defunct or transitioning)",
+          "No active web presence or marketing activity",
+          "Complete business absence from market"
         ],
         "threat": "low"
       },
       {
-        "name": "HCT Group",
+        "name": "HATS Group",
         "strengths": [
-          "Regional presence suggests local market understanding",
-          "Established transport service infrastructure"
+          "Direct competitor tier positioning suggests local awareness"
         ],
         "weaknesses": [
-          "Website compromised with injected Thai gambling content—indicates poor security/maintenance",
-          "Unable to assess actual service offerings due to data quality issues",
-          "Potentially distracted/under-resourced if security not addressed"
+          "Zero metadata or content visible (missing title/description tags)",
+          "Poor SEO optimization and online discoverability",
+          "Inactive or poorly maintained website",
+          "No clear service messaging or value proposition"
+        ],
+        "threat": "low"
+      },
+      {
+        "name": "Smart Kids Group",
+        "strengths": [
+          "Service name suggests SEND/education transport specialization (direct overlap with AFJ)"
+        ],
+        "weaknesses": [
+          "Website inaccessible (technical failure or offline)",
+          "No digital presence or competitive marketing",
+          "Unable to assess service offerings or market positioning"
+        ],
+        "threat": "low"
+      },
+      {
+        "name": "AJ Travel",
+        "strengths": [
+          "Multi-location coverage (London, Manchester beyond AFJ's core region)",
+          "Established brand with tours and travel booking services",
+          "Broader service portfolio (car hire, coach tours)"
+        ],
+        "weaknesses": [
+          "Indirect competitor (tour-focused rather than transport-specialized)",
+          "Limited presence in AFJ's West Midlands core market",
+          "Minimal metadata optimization across pages"
+        ],
+        "threat": "medium"
+      },
+      {
+        "name": "HS2 Travel",
+        "strengths": [
+          "Accessible website presence"
+        ],
+        "weaknesses": [
+          "Zero content metadata (no visible SEO optimization)",
+          "Indirect competitor tier suggests limited market overlap",
+          "No clear service positioning or competitive messaging"
+        ],
+        "threat": "low"
+      },
+      {
+        "name": "Aziz Coach Service",
+        "strengths": [
+          "Established brand name in West Midlands coach market"
+        ],
+        "weaknesses": [
+          "Website inaccessible (indicates business dormancy or technical issues)",
+          "No active online marketing or digital presence",
+          "Unable to compete digitally with accessible operators"
+        ],
+        "threat": "low"
+      },
+      {
+        "name": "Aston Manor Coaches",
+        "strengths": [
+          "Local West Midlands heritage and brand recognition potential"
+        ],
+        "weaknesses": [
+          "Website inaccessible (same technical/operational issues as Aziz)",
+          "No active digital marketing capability",
+          "Appears dormant or significantly underinvested in online presence"
         ],
         "threat": "low"
       }
     ],
     "opportunities": [
-      "Deepen SEND school transport and NEPTS specialization—national competitors underinvest in these regulated, high-margin segments with specific compliance requirements AFJ already possesses",
-      "Expand geographic footprint eastward from West Midlands/Greater Manchester toward underserved regions (East Midlands, Yorkshire) where SEND/NEPTS demand is rising",
-      "Develop digital-first booking and parent communication platform for SEND services—most competitors show limited specialized digital experience for education transport",
-      "Target local authority procurement contracts directly—national players less agile; HCT's compromised position creates vacuum for reliability-focused regional operator",
-      "Create service bundling (SEND + private hire + executive transfers) marketed as 'integrated regional solutions' vs. commodity coach travel",
-      "Establish partnerships with special schools and local authority education departments; position as specialized partner vs. generic transport vendor"
+      "Establish dominant digital presence: 62.5% of identifiable competitors (5/8) have inaccessible or poorly optimized websites, creating SEO and content marketing opportunities for AFJ to capture organic search traffic for 'SEND transport Birmingham', 'school transport West Midlands', 'NEPTS provider' queries",
+      "Specialize in SEND/NEPTS positioning: Smart Kids Group (inaccessible) appears to be the only competitor with explicit education/SEND focus; AFJ can dominate this underserved niche with targeted content and thought leadership",
+      "Expand geographic reach: AJ Travel successfully operates across London/Manchester; AFJ can replicate this model northward (Greater Manchester already in service area) with localized service pages and SEO optimization",
+      "Service integration messaging: Travel SOS emphasizes broad minibus hire; AFJ can differentiate with integrated SEND+NEPTS+private hire positioning targeting schools and NHS commissioners with unified platform messaging",
+      "Response time competitive advantage: Publish faster-than-2-hour response time SLA in marketing materials (Travel SOS claims 2 hours) to emphasize service quality",
+      "Content marketing authority: Create detailed guides for 'how to choose school transport provider', SEND transport compliance, accessibility standards—competitors show minimal thought leadership content"
     ],
     "recommendations": [
-      "Strengthen digital presence emphasizing SEND/NEPTS expertise, compliance certifications, and regional coverage—differentiate from national generalists and compromised competitors",
-      "Conduct targeted competitive pricing analysis of National Express/Arriva in West Midlands/Greater Manchester SEND contracts to identify undercuts",
-      "Monitor HCT Group recovery; if website issues persist, approach their clients offering transition support",
-      "Invest in SEO/content marketing around 'specialized school transport,' 'NEPTS provider,' and local authority procurement keywords where national competitors have low visibility",
-      "Build case studies demonstrating AFJ reliability/compliance in SEND services—address institutional buyer risk concerns vs. larger, less-specialized competitors",
-      "Consider regional partnership strategy with local coach/transport operators to expand service footprint without capital investment"
+      "Conduct immediate technical audit of AFJ website SEO: ensure title tags, meta descriptions, and header optimization match Travel SOS quality across all service pages (SEND, NEPTS, minibus hire, airport transfers)",
+      "Develop SEND/NEPTS-specific landing pages with compliance messaging (DfE standards, safeguarding, accessibility certifications) to differentiate from generalist minibus operators like Travel SOS",
+      "Implement reputation management strategy targeting Smart Kids Group's market (if reactivated) and HATS Group's potential reactivation—establish first-mover advantage with positive reviews on Google My Business, Trustpilot",
+      "Create regional service pages for Greater Manchester and surrounding areas to capture expansion into AJ Travel's addressable market; include local testimonials and location-specific content",
+      "Monitor Green Destinations domain transfer: if acquired by competitor or reactivated, implement competitive ad strategy (branded SEM campaigns) to recapture search traffic",
+      "Develop B2B content strategy targeting schools and NHS trusts: case studies, service guarantees, compliance documentation—competitors show zero B2B marketing assets",
+      "Establish direct email outreach to inaccessible competitors' historical contacts (via cached versions, LinkedIn) to identify acquisition or partnership opportunities given their dormancy",
+      "Implement structured data (schema.org) for transport services, vehicle fleet, service area—most competitors absent; improves local search visibility and featured snippet eligibility"
     ]
   }
 }

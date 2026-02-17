@@ -15,5 +15,33 @@
   "https://www.gogoodwins.co.uk": {
     "/": "27ba69bd1668db1e",
     "/contact": "c965b5ee762c8bff"
-  }
+  },
+  "https://www.greendestinations.co.uk": {
+    "/": "ee28aa1fe82f6ab3"
+  },
+  "https://www.hatsgroup.co.uk": {
+    "/": "6525c7cbcf52f274",
+    "/services": "6525c7cbcf52f274",
+    "/about": "6525c7cbcf52f274",
+    "/contact": "6525c7cbcf52f274"
+  },
+  "https://www.travelsos.co.uk": {
+    "/": "fdf054794d46d52e",
+    "/services": "fdf054794d46d52e",
+    "/about": "11243b241b427622",
+    "/contact": "335b3078c7355179"
+  },
+  "https://www.smartkidsgroup.co.uk": {},
+  "https://www.ajtravel.co.uk": {
+    "/": "96318400e3e2f3db",
+    "/contact": "8b111908d4946b51"
+  },
+  "https://www.hs2travel.co.uk": {
+    "/": "6525c7cbcf52f274",
+    "/services": "6525c7cbcf52f274",
+    "/about": "6525c7cbcf52f274",
+    "/contact": "6525c7cbcf52f274"
+  },
+  "https://www.azizcoachservice.co.uk": {},
+  "https://www.astonmanorcoaches.co.uk": {}
 }
