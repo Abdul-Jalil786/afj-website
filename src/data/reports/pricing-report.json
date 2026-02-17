@@ -1,9 +1,25 @@
 {
-  "generatedAt": null,
-  "status": "none",
-  "periodFrom": null,
-  "periodTo": null,
+  "generatedAt": "2026-02-17T14:17:51.829Z",
+  "status": "pending",
+  "periodFrom": "2026-02-10",
+  "periodTo": "2026-02-17",
   "quoteCount": 0,
+  "convertedCount": 0,
+  "conversionRate": 0,
+  "averageQuoteValue": 0,
+  "serviceBreakdown": {},
+  "topRoutes": [],
   "recommendations": [],
-  "insights": null
+  "tierAnalysis": {},
+  "minimumFloorAnalysis": {
+    "private-hire": {
+      "assessment": "Insufficient data",
+      "recommendation": "Collect more quotes before adjusting"
+    },
+    "airport": {
+      "assessment": "Insufficient data",
+      "recommendation": "Collect more quotes before adjusting"
+    }
+  },
+  "insights": "Only 0 quotes received in the period 2026-02-10 to 2026-02-17. At least 5 quotes are needed for meaningful analysis. Current pricing configuration appears reasonable as a baseline. Recommend focusing on increasing quote volume through marketing before making pricing adjustments."
 }
