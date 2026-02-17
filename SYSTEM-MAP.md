@@ -105,7 +105,7 @@ Chronological record of every major feature, based on git history.
 - `scripts/image-audit.mjs` — Image optimization audit (scan >500KB, WebP conversion via sharp)
 - Accessibility fixes: skip-to-content link, ServiceCard alt text, Footer ARIA, CookieBanner focus management
 
-### Phase 9.6 — Accessibility Hardening (2026-02-16) ← LATEST
+### Phase 9.6 — Accessibility Hardening (2026-02-16)
 - **Desktop dropdown keyboard support** — Header.astro Services dropdown now opens with Enter/Space/ArrowDown, navigates with ArrowUp/ArrowDown, closes with Escape; `aria-haspopup` and `aria-expanded` attributes added to trigger link; focus traps within dropdown, focusout closes it
 - **Mobile menu Escape handler** — pressing Escape closes mobile menu and restores focus to hamburger button
 - **Color contrast fix** — Footer bottom bar changed from `text-gray-400` to `text-gray-300` for WCAG AA compliance on dark background
@@ -186,7 +186,7 @@ Chronological record of every major feature, based on git history.
 - **Competitive protection** — school names removed from area pages; replaced with regional SEND capability statements (e.g. "specialist SEND transport across the West Midlands"). Company-wide stats only (700+ students, 18+ years). Hospital names kept (public knowledge).
 - **Contact form service pre-fill** — enterprise portal CTA links to `/contact?service=Service+Name`; ContactForm.astro reads the `service` URL parameter and pre-fills the message textarea with "I would like to request a consultation for [Service Name]."
 
-### Phase 10 — Full Codebase Audit & Cleanup (2026-02-16/17) ← LATEST
+### Phase 10 — Full Codebase Audit & Cleanup (2026-02-16/17)
 Systematic audit of the entire codebase covering pricing, security, admin, accessibility, SEO, and project structure.
 
 **Pricing fixes (12 issues):**
@@ -251,7 +251,48 @@ Systematic audit of the entire codebase covering pricing, security, admin, acces
 **Dependency audit:**
 - 5 moderate lodash vulnerabilities (dev-only, @astrojs/check chain) — accepted risk
 
-### Phase 11 — Future Integration (PLANNED, pending Telemex)
+### Phase 11 — Pricing Intelligence System (2026-02-17) ← LATEST
+Complete pipeline for quote tracking, conversion analytics, and AI-powered pricing recommendations.
+
+**Quote Logging:**
+- `src/lib/quote-log.ts` — append-only JSONL logger (mirrors audit-log.ts pattern, 5MB rotation)
+- All website quotes (`/api/quote/estimate`) and James-chat quotes (`/api/chat`) logged automatically
+- Log path: `data/quote-log.jsonl` (gitignored, persists on Railway)
+- Privacy: first 4 chars of postcodes only, no IPs
+
+**Conversion Tracking (`/admin/conversions`):**
+- Dashboard metrics: weekly/monthly quotes, conversion rate, avg value, top routes, busiest days
+- Filterable table: date range, service, source (website/james-chat/phone), status
+- Slide-out panel: mark converted (booking value, customer name) or lost (reason)
+- Manual phone booking entry form
+- API: `GET /api/admin/conversions` (filtered log + metrics), `PUT` (convert/lose), `POST` (phone booking)
+
+**Vehicle Tiers 1-48 Passengers:**
+- New bands: "1-4" (Saloon car) and "34-48" (Full-size coach) for private-hire and airport
+- Per-tier multipliers: { "1-4": 0.85, "5-8": 1.0, "9-16": 1.3, "17-24": 1.6, "25-33": 2.0, "34-48": 2.8 }
+- Per-tier minimum booking floors (backward-compatible typeof check for number vs object)
+- Admin pricing page updated: per-tier minimum inputs, expanded preview dropdown
+
+**Weekly Market Research Agent:**
+- `scripts/market-research-agent.mjs` — standalone Node.js script (no Astro runtime needed)
+- Reads `quote-rules.json` + `data/quote-log.jsonl` (last 7 days)
+- Calls Anthropic Haiku for structured analysis (recommendations, tier analysis, minimum floor analysis)
+- Saves to `src/data/reports/pricing-report.json`
+- Handles <5 quotes gracefully (baseline report without AI call)
+- `.github/workflows/market-research.yml` — Sunday 22:00 UTC cron + manual trigger
+- Requires `LLM_API_KEY` as GitHub repository secret
+
+**Pricing Intelligence Admin (`/admin/pricing-intelligence`):**
+- Latest report header with status badge (pending/reviewed)
+- Key metrics: quotes, converted, conversion rate, average value
+- AI market insights section
+- Recommendations list with priority badges (high/medium/low) and type tags
+- "Test This" panel: 5 standard test journeys, side-by-side current vs recommended pricing
+- Approve/reject workflow per recommendation (persisted via GitHub API)
+- Tier analysis and minimum floor analysis sections
+- API: `GET /api/admin/pricing-report` (read), `PUT` (approve/reject)
+
+### Phase 12 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
 - Parent notification system (real-time transport updates)
 - Fleet performance dashboard with live data
@@ -302,6 +343,8 @@ LIVE ROUTES:
 /admin/pages                    NL page update interface (describe change → AI diff → apply)
 /admin/approvals                Pending content approval queue
 /admin/pricing                  Pricing configuration portal (management only)
+/admin/conversions              Quote conversion tracking (management only)
+/admin/pricing-intelligence     AI pricing recommendations (management only)
 /admin/compliance               Compliance data editor (operations + management only)
 /admin/testimonials             AI testimonial/case study creator
 ```
@@ -322,6 +365,11 @@ POST /api/admin/approval        Approval workflow (GET list, POST submit, PUT ap
 GET  /api/admin/pricing         Read current pricing config from quote-rules.json
 POST /api/admin/pricing         Update pricing config via GitHub API
 POST /api/admin/compliance      Update compliance data via GitHub API
+GET  /api/admin/conversions     Quote log with filters + computed metrics
+PUT  /api/admin/conversions     Mark quote as converted or lost
+POST /api/admin/conversions     Manual phone booking entry
+GET  /api/admin/pricing-report  Read latest AI pricing report
+PUT  /api/admin/pricing-report  Approve/reject recommendation
 ```
 
 ### Components (27)
@@ -384,6 +432,8 @@ src/lib/
   github.ts                     Shared GitHub API utility (getFileContent, createOrUpdateFile, deleteFile,
                                   listDirectory, updateFileContent, encodeBase64, decodeBase64)
   audit-log.ts                  Append-only JSON lines audit log (data/audit-log.jsonl, 5MB rotation)
+  quote-log.ts                  Quote logging (append-only JSONL, 5MB rotation, fire-and-forget)
+                                  appendQuoteLog, readQuoteLog, updateQuoteLogEntry, generateQuoteId
   quote-engine.ts               Quote estimation engine — cost-per-mile + charge-out-rate model,
                                   three-tier return pricing (split/wait/separate), OSRM + Postcodes.io,
                                   deadhead rolled into journey, DVSA breaks, multi-stop chaining,
@@ -409,6 +459,8 @@ src/data/quote-rules.json       Quote rules: cost-per-mile (£0.45), charge-out 
                                   airport rates (15 areas × 9 airports), city lookup,
                                   base postcodes with lat/lng, bank holidays 2026-2027,
                                   service questions with showWhen, toggleLabels, luggage, wheelchair
+src/data/quote-log.json         Empty placeholder (actual log at data/quote-log.jsonl, gitignored)
+src/data/reports/pricing-report.json  AI-generated weekly pricing report (recommendations, tier analysis)
 src/data/area-data/areas.json   25 areas with metadata (slug, council, population, distance, region, services)
 src/data/area-data/schools.json 3-5 SEND schools per area with postcodes (not imported by area pages — competitive protection)
 src/data/area-data/hospitals.json 2-3 hospitals/clinics per area with NHS trust names
@@ -468,6 +520,11 @@ OSRM                → Real driving distance and duration via router.project-os
 - Public compliance dashboard
 - AI testimonial/case study generator
 - Social media publishing scripts (Facebook, LinkedIn)
+- Quote logging (website + James-chat, async fire-and-forget)
+- Conversion tracking admin with metrics dashboard
+- Vehicle tiers 1-48 pax with per-tier minimums
+- Weekly market research agent (GitHub Actions cron)
+- Pricing intelligence admin with AI recommendations + Test This panel
 
 ### Needs Environment Variables to Activate ⚙️
 | Feature | Env Vars Required | Status |
@@ -481,6 +538,7 @@ OSRM                → Real driving distance and duration via router.project-os
 | Admin auth | Cloudflare Zero Trust config | Code complete, needs CF config |
 | Facebook publishing | `FACEBOOK_PAGE_ID`, `FACEBOOK_ACCESS_TOKEN` | Script built, needs tokens |
 | LinkedIn publishing | `LINKEDIN_ORG_ID`, `LINKEDIN_ACCESS_TOKEN` | Script built, needs tokens |
+| Market research agent | `LLM_API_KEY` (GitHub repo secret) | Workflow built, needs secret |
 
 ### Not Yet Built 🔨
 | Feature | Priority | Phase | Dependencies |
@@ -547,6 +605,31 @@ Admin → /admin/pricing (Cloudflare Zero Trust) → edits cost/rate/thresholds/
   → Save Changes → POST /api/admin/pricing
     → Merges into quote-rules.json → GitHub API commit → Railway auto-deploy
   → Test Quote Preview → POST /api/quote/estimate with current saved values
+```
+
+### Pricing Intelligence Pipeline (Current)
+```
+Website/Chat quotes → POST /api/quote/estimate or /api/chat
+  → quote-log.ts appends to data/quote-log.jsonl (async, fire-and-forget)
+
+Weekly (Sunday 22:00 UTC via GitHub Actions):
+  → scripts/market-research-agent.mjs
+    → Reads quote-rules.json (current pricing) + quote-log.jsonl (last 7 days)
+    → Calls Anthropic Haiku with structured analysis prompt
+    → Generates recommendations, tier analysis, minimum floor analysis
+    → Saves to src/data/reports/pricing-report.json
+    → Git commit + push → Railway auto-deploy
+
+Admin review:
+  → /admin/pricing-intelligence → view recommendations + metrics
+    → "Test This" → runs 5 standard journeys via /api/quote/estimate
+    → Approve → PUT /api/admin/pricing-report (marks approved)
+    → Reject → PUT /api/admin/pricing-report (marks rejected + optional reason)
+
+Manual conversion tracking:
+  → /admin/conversions → view all quotes
+    → Mark converted (booking value) or lost (reason) → PUT /api/admin/conversions
+    → Add phone booking → POST /api/admin/conversions
 ```
 
 ### Contact Form (Current)
@@ -634,11 +717,11 @@ RAILWAY_TOKEN=
 | Category | Current | Planned |
 |----------|---------|---------|
 | Public pages | 55+ routes | — |
-| Internal tools | 2 + admin dashboard (6 routes) | — |
-| API endpoints | 11 | — |
+| Internal tools | 2 + admin dashboard (8 routes) | — |
+| API endpoints | 16 | — |
 | Components | 27 | — |
-| Library modules | 9 | — |
-| Data files | 12 | — |
+| Library modules | 10 | — |
+| Data files | 14 | — |
 | Blog posts (published) | 16 | 40+ |
 | Blog posts (planned) | 24 | 24 (in content calendar) |
 | Social media templates | 10 | — |
@@ -646,8 +729,8 @@ RAILWAY_TOKEN=
 | Local SEO area pages | 25 | — |
 | Service pages | 8 | — |
 | JSON-LD schemas | 4 types (LocalBusiness, Service, FAQPage, BreadcrumbList) | — |
-| CI/CD workflows | 3 (Lighthouse, broken links, deploy validation) | — |
-| Scripts | 3 (image-audit, download-media, migrate-wordpress) | — |
+| CI/CD workflows | 4 (Lighthouse, broken links, deploy validation, market research) | — |
+| Scripts | 4 (image-audit, download-media, migrate-wordpress, market-research-agent) | — |
 
 ---
 
@@ -663,3 +746,4 @@ RAILWAY_TOKEN=
 | Schema markup | Full JSON-LD structured data | Basic or none |
 | Social media | Automated publishing pipeline | Manual posting |
 | Trust signals | Live accreditation display | Static logos |
+| Pricing intelligence | AI-powered weekly analysis with conversion tracking | Manual spreadsheet reviews |
