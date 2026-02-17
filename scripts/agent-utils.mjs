@@ -174,7 +174,7 @@ export async function sendReportEmail(subject, htmlBody) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'AFJ Monitoring <monitoring@afjltd.co.uk>',
+        from: 'AFJ Monitoring <onboarding@resend.dev>',
         to: [NOTIFICATION_EMAIL],
         subject,
         html: htmlBody,
