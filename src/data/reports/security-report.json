@@ -1,1 +1,171 @@
-{}
+{
+  "generatedAt": "2026-02-17T14:02:47.224Z",
+  "agent": "security",
+  "grade": "D",
+  "counts": {
+    "critical": 0,
+    "high": 4,
+    "medium": 0,
+    "low": 0
+  },
+  "authEnforcement": [
+    {
+      "endpoint": "/api/admin/pricing",
+      "status": 403,
+      "protected": true,
+      "severity": "ok"
+    },
+    {
+      "endpoint": "/api/admin/compliance",
+      "status": 403,
+      "protected": true,
+      "severity": "ok"
+    },
+    {
+      "endpoint": "/api/admin/approval",
+      "status": 403,
+      "protected": true,
+      "severity": "ok"
+    },
+    {
+      "endpoint": "/api/admin/pricing-report",
+      "status": 403,
+      "protected": true,
+      "severity": "ok"
+    },
+    {
+      "endpoint": "/api/admin/conversions",
+      "status": 403,
+      "protected": true,
+      "severity": "ok"
+    }
+  ],
+  "securityHeaders": [
+    {
+      "page": "/",
+      "headers": {
+        "x-content-type-options": null,
+        "x-frame-options": null,
+        "strict-transport-security": null,
+        "content-security-policy": null,
+        "referrer-policy": null,
+        "permissions-policy": null
+      },
+      "missingRequired": [
+        "x-content-type-options",
+        "x-frame-options"
+      ],
+      "missingRecommended": [
+        "strict-transport-security",
+        "content-security-policy",
+        "referrer-policy",
+        "permissions-policy"
+      ],
+      "severity": "high"
+    },
+    {
+      "page": "/services/send-transport",
+      "headers": {
+        "x-content-type-options": null,
+        "x-frame-options": null,
+        "strict-transport-security": null,
+        "content-security-policy": null,
+        "referrer-policy": null,
+        "permissions-policy": null
+      },
+      "missingRequired": [
+        "x-content-type-options",
+        "x-frame-options"
+      ],
+      "missingRecommended": [
+        "strict-transport-security",
+        "content-security-policy",
+        "referrer-policy",
+        "permissions-policy"
+      ],
+      "severity": "high"
+    },
+    {
+      "page": "/admin",
+      "headers": {
+        "x-content-type-options": null,
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": null,
+        "content-security-policy": null,
+        "referrer-policy": "same-origin",
+        "permissions-policy": null
+      },
+      "missingRequired": [
+        "x-content-type-options"
+      ],
+      "missingRecommended": [
+        "strict-transport-security",
+        "content-security-policy",
+        "permissions-policy"
+      ],
+      "severity": "high"
+    },
+    {
+      "page": "/quote",
+      "headers": {
+        "x-content-type-options": null,
+        "x-frame-options": null,
+        "strict-transport-security": null,
+        "content-security-policy": null,
+        "referrer-policy": null,
+        "permissions-policy": null
+      },
+      "missingRequired": [
+        "x-content-type-options",
+        "x-frame-options"
+      ],
+      "missingRecommended": [
+        "strict-transport-security",
+        "content-security-policy",
+        "referrer-policy",
+        "permissions-policy"
+      ],
+      "severity": "high"
+    }
+  ],
+  "infoLeakage": [
+    {
+      "endpoint": "/api/quote/estimate",
+      "status": 400,
+      "leaks": [],
+      "severity": "ok"
+    },
+    {
+      "endpoint": "/api/contact/submit",
+      "status": 400,
+      "leaks": [],
+      "severity": "ok"
+    },
+    {
+      "endpoint": "/api/ai/draft",
+      "status": 401,
+      "leaks": [],
+      "severity": "ok"
+    }
+  ],
+  "ssl": {
+    "url": "https://afj-staging.ascendtechgroup.co.uk",
+    "isHttps": true,
+    "status": 200,
+    "severity": "ok"
+  },
+  "aiAnalysis": {
+    "summary": "AFJ Limited's staging environment demonstrates strong authentication controls with all admin endpoints properly protected (403 responses), and SSL/TLS is correctly implemented. However, the application has significant security gaps in HTTP response headers across multiple pages. Four pages are missing critical security headers including X-Content-Type-Options and X-Frame-Options, which are essential for preventing MIME-sniffing attacks and clickjacking vulnerabilities. Additionally, recommended security headers like Strict-Transport-Security, Content-Security-Policy, and Permissions-Policy are absent across the entire application, leaving the platform vulnerable to various client-side attacks.",
+    "recommendations": [
+      "Immediately implement X-Content-Type-Options: nosniff header on all pages to prevent MIME-type sniffing attacks",
+      "Add X-Frame-Options: SAMEORIGIN (or DENY if not using iframes) to all pages to prevent clickjacking, currently only implemented on /admin",
+      "Deploy Strict-Transport-Security header with appropriate max-age value (minimum 31536000) to enforce HTTPS and prevent downgrade attacks",
+      "Implement Content-Security-Policy header with a restrictive policy tailored to the application's needs to mitigate XSS vulnerabilities",
+      "Add Referrer-Policy header (recommend 'strict-origin-when-cross-origin') to protect user privacy and prevent sensitive data leakage",
+      "Configure Permissions-Policy to restrict access to browser features and APIs that the application doesn't require",
+      "Apply these headers globally via web server configuration (nginx/Apache) or application framework middleware to ensure consistency across all endpoints",
+      "Conduct a security audit of the application's input validation and output encoding practices given the high number of missing CSP headers"
+    ],
+    "riskLevel": "high"
+  }
+}
