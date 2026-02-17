@@ -19,5 +19,12 @@
       "grade": "A",
       "summary": "4 competitors, 0 changes"
     }
+  ],
+  "marketing": [
+    {
+      "date": "2026-02-17",
+      "grade": "B",
+      "summary": "16 posts, NaNd since last"
+    }
   ]
 }
