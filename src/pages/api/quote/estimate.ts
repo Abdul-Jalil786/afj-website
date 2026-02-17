@@ -4,6 +4,7 @@ import type { APIRoute } from 'astro';
 import { estimateQuote } from '../../../lib/quote-engine';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '../../../lib/rate-limit';
 import { validateBodySize } from '../../../lib/validate-body';
+import { appendQuoteLog, generateQuoteId, truncateLocation } from '../../../lib/quote-log';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -52,6 +53,34 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const estimate = await estimateQuote(service, answers);
+
+    // Log quote asynchronously — never block the response
+    const returnType: 'one-way' | 'same-day' | 'different-day' =
+      answers.returnJourney !== 'yes' ? 'one-way'
+        : answers.returnType === 'no' ? 'different-day'
+        : 'same-day';
+
+    appendQuoteLog({
+      id: generateQuoteId(),
+      timestamp: new Date().toISOString(),
+      service,
+      pickup: truncateLocation(answers.pickupPostcode || ''),
+      destination: truncateLocation(answers.destinationPostcode || answers.airport || ''),
+      passengers: answers.passengers || '',
+      date: answers.date || '',
+      time: answers.time || '',
+      returnType,
+      quoteLow: estimate.low,
+      quoteHigh: estimate.high,
+      quoteTotal: estimate.total,
+      source: 'website',
+      converted: false,
+      convertedAt: null,
+      convertedValue: null,
+      lostReason: null,
+      customerName: null,
+      notes: null,
+    }).catch(() => {});
 
     return new Response(
       JSON.stringify({ success: true, estimate }),

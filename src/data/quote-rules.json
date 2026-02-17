@@ -11,10 +11,12 @@
         { "id": "date", "label": "Date of travel", "inputType": "date", "required": true },
         { "id": "time", "label": "Pickup time", "inputType": "time", "required": true },
         { "id": "passengers", "label": "Number of passengers", "inputType": "select", "required": true, "options": [
-          { "value": "1-8", "label": "1\u20138 passengers" },
-          { "value": "9-16", "label": "9\u201316 passengers" },
-          { "value": "17-24", "label": "17\u201324 passengers" },
-          { "value": "25-33", "label": "25\u201333 passengers" }
+          { "value": "1-4", "label": "1\u20134 passengers (Saloon car)" },
+          { "value": "5-8", "label": "5\u20138 passengers (MPV / large car)" },
+          { "value": "9-16", "label": "9\u201316 passengers (Minibus)" },
+          { "value": "17-24", "label": "17\u201324 passengers (Large minibus)" },
+          { "value": "25-33", "label": "25\u201333 passengers (Coach)" },
+          { "value": "34-48", "label": "34\u201348 passengers (Full-size coach)" }
         ]},
         { "id": "luggage", "label": "Luggage", "inputType": "select", "required": false, "options": [
           { "value": "none", "label": "No luggage" },
@@ -55,10 +57,12 @@
         { "id": "date", "label": "Date of travel", "inputType": "date", "required": true },
         { "id": "time", "label": "Pickup time", "inputType": "time", "required": true },
         { "id": "passengers", "label": "Number of passengers", "inputType": "select", "required": true, "options": [
-          { "value": "1-8", "label": "1\u20138 passengers" },
-          { "value": "9-16", "label": "9\u201316 passengers" },
-          { "value": "17-24", "label": "17\u201324 passengers" },
-          { "value": "25-33", "label": "25\u201333 passengers" }
+          { "value": "1-4", "label": "1\u20134 passengers (Saloon car)" },
+          { "value": "5-8", "label": "5\u20138 passengers (MPV / large car)" },
+          { "value": "9-16", "label": "9\u201316 passengers (Minibus)" },
+          { "value": "17-24", "label": "17\u201324 passengers (Large minibus)" },
+          { "value": "25-33", "label": "25\u201333 passengers (Coach)" },
+          { "value": "34-48", "label": "34\u201348 passengers (Full-size coach)" }
         ]},
         { "id": "direction", "label": "Are you being picked up from the airport (arrival) or dropped off (departure)?", "inputType": "toggle", "required": false, "toggleLabels": { "no": "Departure", "yes": "Arrival" } },
         { "id": "vehicleClass", "label": "Vehicle class", "inputType": "select", "required": false, "options": [
@@ -109,14 +113,14 @@
   },
   "pricing": {
     "private-hire": {
-      "passengerMultipliers": { "1-8": 1.0, "9-16": 1.3, "17-24": 1.6, "25-33": 2.0 },
+      "passengerMultipliers": { "1-4": 0.85, "5-8": 1.0, "9-16": 1.3, "17-24": 1.6, "25-33": 2.0, "34-48": 2.8 },
       "averageSpeedMph": 40,
       "stopWaitingMinutes": 10,
       "regularDiscountPercent": 10,
       "rangeSpread": 0.2
     },
     "airport": {
-      "passengerMultipliers": { "1-8": 1.0, "9-16": 1.5, "17-24": 2.0, "25-33": 2.5 },
+      "passengerMultipliers": { "1-4": 0.85, "5-8": 1.0, "9-16": 1.5, "17-24": 2.0, "25-33": 2.5, "34-48": 3.5 },
       "meetGreetSurcharge": 25,
       "returnMultiplier": 1.75,
       "arrivalWaitingMinutes": 45,
@@ -142,8 +146,8 @@
     "2027-12-27", "2027-12-28"
   ],
   "minimumBooking": {
-    "private-hire": 35,
-    "airport": 45
+    "private-hire": { "1-4": 25, "5-8": 35, "9-16": 55, "17-24": 85, "25-33": 120, "34-48": 180 },
+    "airport": { "1-4": 35, "5-8": 45, "9-16": 65, "17-24": 95, "25-33": 130, "34-48": 200 }
   },
   "distanceMatrix": {
     "B":  { "B": 5, "M": 85, "CV": 20, "WS": 10, "WV": 15, "DY": 10, "ST": 45, "DE": 42, "NG": 52, "TF": 30, "SY": 48, "LE": 43, "S": 80, "LS": 120, "LDN": 120 },

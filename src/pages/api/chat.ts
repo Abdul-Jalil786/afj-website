@@ -8,6 +8,7 @@ import { estimateQuote } from '../../lib/quote-engine';
 import { checkRateLimit, RATE_LIMITS } from '../../lib/rate-limit';
 import { validateBodySize } from '../../lib/validate-body';
 import { logChatMessage } from '../../lib/chat-log';
+import { appendQuoteLog, generateQuoteId, truncateLocation } from '../../lib/quote-log';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 const MAX_MESSAGE_LENGTH = 500;
@@ -94,6 +95,34 @@ async function processQuoteRequest(reply: string): Promise<string> {
     const quoteData = JSON.parse(match[1]);
     const { service, answers } = mapQuoteRequest(quoteData);
     const estimate = await estimateQuote(service, answers);
+
+    // Log the James-chat quote asynchronously
+    const returnType: 'one-way' | 'same-day' | 'different-day' =
+      !quoteData.return ? 'one-way'
+        : (quoteData.returnDate && quoteData.date && quoteData.returnDate !== quoteData.date) ? 'different-day'
+        : 'same-day';
+
+    appendQuoteLog({
+      id: generateQuoteId(),
+      timestamp: new Date().toISOString(),
+      service,
+      pickup: truncateLocation(String(quoteData.pickup || '')),
+      destination: truncateLocation(String(quoteData.destination || '')),
+      passengers: answers.passengers || '',
+      date: String(quoteData.date || ''),
+      time: String(quoteData.time || ''),
+      returnType,
+      quoteLow: estimate.low,
+      quoteHigh: estimate.high,
+      quoteTotal: estimate.high, // chat quotes don't expose total
+      source: 'james-chat',
+      converted: false,
+      convertedAt: null,
+      convertedValue: null,
+      lostReason: null,
+      customerName: null,
+      notes: null,
+    }).catch(() => {});
 
     // Only expose the price range — never internal cost breakdowns
     const quoteReply = `Based on your journey details, the estimated cost would be around £${estimate.low} to £${estimate.high}. This is an estimate and the final price may vary. Would you like to proceed? You can contact us at info@afjltd.co.uk or call 0121 689 1000, or use our full quote wizard at /quote for more options!`;

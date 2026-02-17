@@ -90,20 +90,29 @@ const canEdit = userDepartment === 'management';
           </div>
         </div>
 
-        <!-- Section 3: Minimum Booking Floors -->
+        <!-- Section 3: Minimum Booking Floors (Per-Tier) -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-4">Minimum Booking Floors</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Private hire minimum (&pound;)</label>
-              <input type="number" step="1" min="0" id="minPrivateHire" value={quoteRules.minimumBooking['private-hire']}
-                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Airport transfer minimum (&pound;)</label>
-              <input type="number" step="1" min="0" id="minAirport" value={quoteRules.minimumBooking.airport}
-                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
-            </div>
+          <p class="text-xs text-gray-500 mb-3">Per-tier minimums by passenger band</p>
+          <h3 class="text-sm font-medium text-gray-700 mb-2">Private Hire</h3>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-4">
+            {Object.entries((quoteRules.minimumBooking['private-hire'] as any) || {}).map(([band, val]) => (
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">{band} pax</label>
+                <input type="number" step="1" min="0" data-min-service="private-hire" data-min-band={band} value={val as number}
+                  class="min-floor w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent" />
+              </div>
+            ))}
+          </div>
+          <h3 class="text-sm font-medium text-gray-700 mb-2">Airport Transfers</h3>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            {Object.entries((quoteRules.minimumBooking.airport as any) || {}).map(([band, val]) => (
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">{band} pax</label>
+                <input type="number" step="1" min="0" data-min-service="airport" data-min-band={band} value={val as number}
+                  class="min-floor w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent" />
+              </div>
+            ))}
           </div>
         </div>
 
@@ -215,10 +224,12 @@ const canEdit = userDepartment === 'management';
             <div>
               <label class="block text-xs font-medium text-gray-500 mb-1">Passengers</label>
               <select id="previewPax" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white">
-                <option value="1-8">1-8</option>
+                <option value="1-4">1-4</option>
+                <option value="5-8">5-8</option>
                 <option value="9-16">9-16</option>
                 <option value="17-24">17-24</option>
                 <option value="25-33">25-33</option>
+                <option value="34-48">34-48</option>
               </select>
             </div>
             <div>
@@ -282,11 +293,15 @@ const canEdit = userDepartment === 'management';
     document.querySelectorAll('.pax-mult').forEach(function (inp) {
       initialValues['pax-' + inp.dataset.paxBand] = inp.value;
     });
+    document.querySelectorAll('.min-floor').forEach(function (inp) {
+      initialValues['min-' + inp.dataset.minService + '-' + inp.dataset.minBand] = inp.value;
+    });
 
     // Highlight changed fields
     function highlightChanges() {
       document.querySelectorAll('input[type="number"]').forEach(function (inp) {
         var key = inp.id || ('pax-' + (inp.dataset.paxBand || ''));
+        if (inp.classList.contains('min-floor')) key = 'min-' + inp.dataset.minService + '-' + inp.dataset.minBand;
         var initial = initialValues[key];
         if (initial !== undefined && inp.value !== initial) {
           inp.classList.add('border-amber-400', 'bg-amber-50');
@@ -359,10 +374,16 @@ const canEdit = userDepartment === 'management';
         driverWagePerHour: parseFloat(document.getElementById('driverWagePerHour').value),
         deadheadThresholdMiles: parseInt(document.getElementById('deadheadThresholdMiles').value),
         minGapForSplitReturnHours: parseFloat(document.getElementById('minGapForSplitReturnHours').value),
-        minimumBooking: {
-          'private-hire': parseInt(document.getElementById('minPrivateHire').value),
-          airport: parseInt(document.getElementById('minAirport').value),
-        },
+        minimumBooking: (function() {
+          var mins = {};
+          document.querySelectorAll('.min-floor').forEach(function(inp) {
+            var svc = inp.dataset.minService;
+            var band = inp.dataset.minBand;
+            if (!mins[svc]) mins[svc] = {};
+            mins[svc][band] = parseInt(inp.value) || 0;
+          });
+          return mins;
+        })(),
         passengerMultipliers: paxMults,
         surcharges: {
           earlyMorning: { before: '07:00', percent: parseInt(document.getElementById('surEarlyMorning').value), label: 'Early morning' },

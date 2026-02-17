@@ -1,0 +1,34 @@
+name: Weekly Market Research
+
+on:
+  schedule:
+    # Every Sunday at 22:00 UTC
+    - cron: '0 22 * * 0'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run market research agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_MODEL: claude-haiku-4-5-20251001
+        run: node scripts/market-research-agent.mjs
+
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/reports/pricing-report.json
+          git diff --cached --quiet || git commit -m "chore: weekly pricing intelligence report"
+          git push

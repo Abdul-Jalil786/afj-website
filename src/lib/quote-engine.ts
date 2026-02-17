@@ -291,7 +291,7 @@ export async function estimateQuote(
 ): Promise<QuoteEstimate> {
   const pricing = (quoteRules.pricing as Record<string, any>)[service];
   const svcConfig = (quoteRules.services as Record<string, any>)[service];
-  const minimums = (quoteRules.minimumBooking as Record<string, number>) || {};
+  const minimums = (quoteRules.minimumBooking as Record<string, number | Record<string, number>>) || {};
 
   if (!pricing || !svcConfig || svcConfig.type !== 'instant') {
     throw new Error(`No pricing available for service: ${service}`);
@@ -362,7 +362,7 @@ export async function estimateQuote(
       ? await getDeadheadFromBase(answers.destinationPostcode)
       : { miles: 0, minutes: 0 };
 
-    const passengerKey = answers.passengers || '1-8';
+    const passengerKey = answers.passengers || '5-8';
     const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;
 
     if (answers.returnJourney === 'yes') {
@@ -554,7 +554,7 @@ export async function estimateQuote(
       executiveUpgrade = true;
     }
 
-    const passengerKey = answers.passengers || '1-8';
+    const passengerKey = answers.passengers || '5-8';
     const passengerMult = pricing.passengerMultipliers[passengerKey] ?? 1.0;
     journeyCost = baseRate * passengerMult;
     journeyMiles = 0;
@@ -652,10 +652,19 @@ export async function estimateQuote(
 
   let total = round2(afterSurcharge - (regularDiscountAmt || 0));
 
-  // Minimum booking floor
+  // Minimum booking floor — supports per-tier objects or flat numbers (backward compat)
   let minimumApplied = false;
-  const minimum = minimums[service];
-  if (minimum) {
+  const minimumConfig = minimums[service];
+  let minimum = 0;
+  if (minimumConfig) {
+    if (typeof minimumConfig === 'number') {
+      minimum = minimumConfig;
+    } else if (typeof minimumConfig === 'object') {
+      const passengerKey = answers.passengers || '5-8';
+      minimum = (minimumConfig as Record<string, number>)[passengerKey] ?? 0;
+    }
+  }
+  if (minimum > 0) {
     if (returnTypeVal === 'separate' && returnJourneyCost != null) {
       // Different-day: apply minimum floor per-leg, not combined
       let adjustment = 0;
