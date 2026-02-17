@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T14:27:46.888Z",
+  "generatedAt": "2026-02-17T14:37:39.942Z",
   "agent": "security",
   "grade": "D",
   "counts": {
@@ -155,16 +155,15 @@
     "severity": "ok"
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's staging environment demonstrates strong authentication controls with all admin endpoints properly protected (403 responses), and SSL/TLS is correctly implemented. However, critical security headers are missing across all scanned pages, creating significant vulnerabilities to clickjacking, MIME-type sniffing, XSS attacks, and other client-side exploits. The absence of Content-Security-Policy, X-Frame-Options on most pages, and HSTS headers represents the primary security gap that must be addressed immediately.",
+    "summary": "AFJ Limited's staging environment demonstrates strong authentication controls with all admin endpoints properly protected (403 responses), and SSL/TLS encryption is correctly implemented. However, critical security header deficiencies exist across all scanned pages. The absence of X-Content-Type-Options and X-Frame-Options headers on public-facing pages exposes the application to MIME-sniffing and clickjacking attacks. Additionally, missing HSTS, CSP, Referrer-Policy, and Permissions-Policy headers leave the application vulnerable to protocol downgrade attacks, XSS/injection attacks, and unauthorized API access via third-party sites.",
     "recommendations": [
-      "Implement X-Content-Type-Options: nosniff header site-wide to prevent MIME-type sniffing attacks",
-      "Add X-Frame-Options: SAMEORIGIN (or DENY if no framing needed) to all pages, particularly public-facing endpoints like /quote and /services/send-transport",
-      "Deploy a comprehensive Content-Security-Policy header to mitigate XSS vulnerabilities, especially given user input on quote and contact forms",
-      "Enable Strict-Transport-Security (HSTS) with appropriate max-age value to enforce HTTPS across all pages and subdomains",
-      "Add Referrer-Policy: strict-origin-when-cross-origin to protect user privacy and prevent sensitive URL parameter leakage",
-      "Include Permissions-Policy header to restrict access to browser features (camera, microphone, geolocation, etc.)",
-      "Configure these headers in your reverse proxy (nginx/Apache) or application framework rather than ad-hoc per-page",
-      "Verify header deployment across production environment with same security scan"
+      "Immediately add X-Content-Type-Options: nosniff and X-Frame-Options: SAMEORIGIN headers to all pages (minimum requirement), especially public endpoints like / and /quote",
+      "Implement Strict-Transport-Security (HSTS) header with max-age=31536000 to enforce HTTPS-only connections and prevent downgrade attacks",
+      "Deploy a Content-Security-Policy (CSP) header to mitigate XSS and injection vulnerabilities; start with a restrictive policy and refine based on application dependencies",
+      "Add Referrer-Policy: strict-origin-when-cross-origin to prevent sensitive referrer information leakage to third-party sites",
+      "Configure Permissions-Policy to restrict access to sensitive browser APIs (camera, microphone, geolocation, etc.) that could be exploited",
+      "Apply all recommended headers consistently across the entire application, not just admin panels; use a centralized middleware approach for standardization",
+      "Document and test the header configuration in a development environment before production deployment to ensure no functionality is broken"
     ],
     "riskLevel": "high"
   }
