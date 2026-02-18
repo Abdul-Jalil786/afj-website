@@ -422,6 +422,10 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - Agent name → script mapping: security→security-agent.mjs, seo→seo-agent.mjs, remediation→remediation-agent.mjs, marketing→marketing-agent.mjs, competitor→competitor-agent.mjs, performance→performance-agent.mjs, pricing→market-research-agent.mjs, compliance→compliance-check-agent.mjs, meta→meta-agent.mjs
 - Simple in-memory lock prevents overlapping runs (returns 409 if another agent is already running)
 - UI: loading spinner with pulse animation, all other Run Now buttons disabled while one runs, page reloads on success to show fresh report, error alert on failure
+- **Report persistence fix** — Railway filesystem resets on redeploy, so agent reports written to disk would be lost. After script execution, `run-agent.ts` reads all output files from disk and commits each to GitHub via `updateFileContent()` from `src/lib/github.ts`. This triggers a Railway redeploy with the new data baked in.
+  - Per-agent files: security→`security-report.json`, seo→`seo-report.json`, remediation→`remediation-report.json`+`proposed-fixes.json`, marketing→`marketing-report.json`+`blog-drafts.json`, competitor→`competitor-report.json`+`competitor-hashes.json`, performance→`performance-report.json`, pricing→`pricing-report.json`, compliance→`compliance-check-report.json`+`compliance-dedup.json`+`compliance-records.json`, meta→`meta-report.json`
+  - Shared files committed after every run: `src/data/reports/history.json`, `src/data/notifications.json`
+  - Response includes `committedFiles` count; individual file commit failures are logged but don't fail the response
 
 ### Phase 13 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
