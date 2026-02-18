@@ -308,7 +308,7 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 
 **SEO Agent (daily 4:00 UTC):**
 - `scripts/seo-agent.mjs` + `.github/workflows/seo-agent.yml`
-- Fetches sitemap-index.xml → crawls all sitemap URLs → checks each page for: HTTP status, title/description/OG meta tags, canonical, JSON-LD schema, response time
+- Fetches sitemap-index.xml → rewrites all extracted URLs to match SITE_URL origin (Astro generates sitemap with production domain, but agent may run against staging) → crawls all sitemap URLs → checks each page for: HTTP status, title/description/OG meta tags, canonical, JSON-LD schema, response time
 - Checks broken internal links (samples 30 unique paths from first 5 pages)
 - AI analysis via Haiku: summary, recommendations, quick wins
 - Always emails report via Resend
@@ -426,6 +426,7 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
   - Per-agent files: security→`security-report.json`, seo→`seo-report.json`, remediation→`remediation-report.json`+`proposed-fixes.json`, marketing→`marketing-report.json`+`blog-drafts.json`, competitor→`competitor-report.json`+`competitor-hashes.json`, performance→`performance-report.json`, pricing→`pricing-report.json`, compliance→`compliance-check-report.json`+`compliance-dedup.json`+`compliance-records.json`, meta→`meta-report.json`
   - Shared files committed after every run: `src/data/reports/history.json`, `src/data/notifications.json`
   - Response includes `committedFiles` count; individual file commit failures are logged but don't fail the response
+- **SEO agent sitemap URL rewrite** — Astro generates sitemap-index.xml with the production domain (`site` in astro.config.mjs) regardless of where the site is served. When SITE_URL is a staging domain, the SEO agent now rewrites all URLs extracted from sitemaps to use SITE_URL's origin before crawling. Applies to sub-sitemap URLs and page URLs in all three extraction points.
 
 ### Phase 13 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
