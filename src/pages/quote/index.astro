@@ -221,15 +221,14 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
             <h2 class="text-xl font-bold text-gray-900" id="step2Title">Tell us more</h2>
           </div>
 
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div id="questionsContainer" class="space-y-5"></div>
-            <button
-              id="getEstimateBtn"
-              class="mt-6 w-full bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors"
-            >
-              Get My Estimate
-            </button>
-          </div>
+          <div id="questionsContainer" class="space-y-4"></div>
+          <button
+            id="getEstimateBtn"
+            class="mt-6 w-full bg-afj-accent text-white font-bold py-4 px-6 rounded-xl hover:bg-afj-green transition-all text-lg inline-flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+          >
+            Get My Estimate
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
         </div>
 
         <!-- STEP 3: Estimate Display -->
@@ -316,12 +315,31 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
                     <div class="mt-2">
                       <p class="text-sm font-medium text-gray-900 truncate" id="routeDest">--</p>
                       <p class="text-xs text-gray-500" id="routeDestInfo"></p>
+                      <p class="text-xs text-teal-600 font-medium mt-0.5" id="routeDestArrival"></p>
                     </div>
                     <div id="routeReturnLabel" class="hidden mt-2">
                       <p class="text-sm font-medium text-gray-900">Return to pickup</p>
                       <p class="text-xs text-gray-500" id="routeReturnTime">--</p>
+                      <p class="text-xs text-teal-600 font-medium mt-0.5" id="routeReturnArrival"></p>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <!-- Arrival Times -->
+              <div id="arrivalTimesWrap" class="mb-5 hidden">
+                <div class="bg-teal-50 border border-teal-100 rounded-lg p-4">
+                  <div class="flex flex-wrap gap-6 justify-center text-center">
+                    <div id="arrivalOutbound">
+                      <p class="text-xs text-teal-600 font-medium mb-1">Est. arrival at destination</p>
+                      <p class="text-2xl font-bold text-teal-700" id="arrivalOutboundTime">--</p>
+                    </div>
+                    <div id="arrivalReturn" class="hidden">
+                      <p class="text-xs text-teal-600 font-medium mb-1">Est. arrival back</p>
+                      <p class="text-2xl font-bold text-teal-700" id="arrivalReturnTime">--</p>
+                    </div>
+                  </div>
+                  <p class="text-xs text-teal-500 text-center mt-2">Based on estimated journey duration</p>
                 </div>
               </div>
 
@@ -789,6 +807,180 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     animation: scaleIn 0.4s ease-out forwards;
   }
 
+  /* --- Form sections --- */
+  .form-section {
+    background: white;
+    border-radius: 0.75rem;
+    border: 1px solid #E5E7EB;
+    overflow: hidden;
+  }
+  .form-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid #F3F4F6;
+    background: #F9FAFB;
+  }
+  .form-section-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, rgba(56,161,105,0.1), rgba(49,130,206,0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .form-section-icon svg {
+    width: 1rem;
+    height: 1rem;
+    color: #38A169;
+  }
+  .form-section-title {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: #1A202C;
+    margin: 0;
+  }
+  .form-section-body {
+    padding: 1.25rem;
+  }
+  .form-section-body > * + * {
+    margin-top: 1rem;
+  }
+
+  /* --- Return journey selector --- */
+  .return-option {
+    border: 2px solid #E5E7EB;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .return-option:hover {
+    border-color: #38A169;
+  }
+  .return-option.active {
+    border-color: #38A169;
+    background: #F0FFF4;
+  }
+  .return-option-radio {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    border: 2px solid #D1D5DB;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+  .return-option.active .return-option-radio {
+    border-color: #38A169;
+  }
+  .return-option.active .return-option-radio::after {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #38A169;
+  }
+  .return-option-fields {
+    display: none;
+    margin-top: 0.75rem;
+    padding-left: 0.75rem;
+    border-left: 3px solid #38A169;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .return-option.active .return-option-fields {
+    display: block;
+  }
+
+  /* --- Direction cards (airport) --- */
+  .direction-card {
+    flex: 1;
+    border: 2px solid #E5E7EB;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    min-width: 130px;
+  }
+  .direction-card:hover {
+    border-color: #38A169;
+  }
+  .direction-card.active {
+    border-color: #38A169;
+    background: #F0FFF4;
+  }
+  .direction-card-emoji {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .direction-card-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #1A202C;
+  }
+  .direction-card-subtitle {
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: 0.125rem;
+  }
+
+  /* --- Validation states --- */
+  .field-error input,
+  .field-error select {
+    border-color: #E53E3E !important;
+  }
+  .field-error-msg {
+    color: #E53E3E;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  .field-valid input,
+  .field-valid select {
+    border-color: #38A169 !important;
+  }
+
+  /* --- Multi-stop add button --- */
+  .multistop-add {
+    border: 2px dashed #D1D5DB;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    color: #718096;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+  }
+  .multistop-add:hover {
+    border-color: #38A169;
+    color: #38A169;
+  }
+
+  /* --- Suggested default label --- */
+  .suggested-label {
+    font-size: 0.6875rem;
+    color: #38A169;
+    font-weight: 500;
+    margin-left: 0.375rem;
+  }
+
   /* --- Mobile optimisation --- */
   @media (max-width: 640px) {
     .toggle-btn {
@@ -818,6 +1010,22 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
   var currentAnswers = {};
   var currentEstimate = null;
   var stopCount = 0;
+
+  /* --- Section configs for grouped form --- */
+  var sectionConfigs = {
+    'private-hire': [
+      { id: 'route', title: 'Your Route', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z', fields: ['pickupPostcode', 'destinationPostcode'], hasMultiStop: true },
+      { id: 'when', title: 'When & Who', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', fields: ['date', 'time', 'passengers'] },
+      { id: 'return', title: 'Return Journey', icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4', isReturnSelector: true },
+      { id: 'extras', title: 'Extras', icon: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4', fields: ['luggage', 'wheelchair', 'regularBooking', 'regularFrequency'] }
+    ],
+    'airport': [
+      { id: 'transfer', title: 'Your Transfer', icon: 'M12 19l-2-6L3 11l1.5-2 5.5 1L12 4l2 6 5.5-1L21 11l-7 2-2 6z', iconFill: true, fields: ['airport', 'pickupPostcode'], labelOverrides: { pickupPostcode: 'Home or hotel postcode' }, hasDirectionCards: true },
+      { id: 'when', title: 'When & Who', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', fields: ['date', 'time', 'passengers'] },
+      { id: 'flight', title: 'Flight Details', icon: 'M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z', fields: ['flightNumber', 'meetGreet', 'vehicleClass'] },
+      { id: 'extras', title: 'Extras', icon: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4', fields: ['luggage', 'wheelchair', 'returnJourney'] }
+    ]
+  };
 
   var step1 = document.getElementById('step1');
   var stepEnterprise = document.getElementById('stepEnterprise');
@@ -1008,7 +1216,7 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
         document.getElementById('enterpriseError').classList.add('hidden');
         showStep('stepEnterprise');
       } else {
-        buildQuestions(selectedService);
+        buildGroupedQuestions(selectedService);
         showStep('step2');
       }
     });
@@ -1116,65 +1324,329 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     });
   }
 
-  function buildQuestions(serviceKey) {
+  /* --- Render a single question field --- */
+  function renderQuestionField(container, q, defaults, labelOverrides) {
+    var div = document.createElement('div');
+    var required = q.required ? ' <span class="text-afj-red">*</span>' : '';
+    var displayLabel = (labelOverrides && labelOverrides[q.id]) || q.label;
+    var defaultVal = defaults && defaults[q.id];
+    var suggestedLabel = defaultVal ? '<span class="suggested-label">(suggested)</span>' : '';
+    var labelHtml = '<label class="block text-sm font-medium text-afj-text mb-1">' + displayLabel + required + suggestedLabel + '</label>';
+    var inputHtml = '';
+    var inputClass = 'quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
+
+    if (q.showWhen) {
+      var key = Object.keys(q.showWhen)[0];
+      div.setAttribute('data-show-when', key + ':' + q.showWhen[key]);
+      div.classList.add('hidden');
+    }
+
+    if (q.inputType === 'select') {
+      inputHtml = '<select data-qid="' + q.id + '" data-type="select"' + (q.required ? ' data-required="true"' : '') + ' class="' + inputClass + ' bg-white">';
+      inputHtml += '<option value="">Select...</option>';
+      q.options.forEach(function (opt) {
+        var selected = defaultVal === opt.value ? ' selected' : '';
+        inputHtml += '<option value="' + opt.value + '"' + selected + '>' + opt.label + '</option>';
+      });
+      inputHtml += '</select>';
+    } else if (q.inputType === 'text') {
+      var autoOff = q.id.toLowerCase().indexOf('postcode') !== -1 ? ' autocomplete="off"' : '';
+      inputHtml = '<input type="text" data-qid="' + q.id + '" data-type="text"' + (q.required ? ' data-required="true"' : '') + autoOff + ' placeholder="' + (q.placeholder || '') + '" class="' + inputClass + '" />';
+    } else if (q.inputType === 'date') {
+      var today = new Date().toISOString().split('T')[0];
+      var dateVal = defaultVal || '';
+      inputHtml = '<input type="date" data-qid="' + q.id + '" data-type="date"' + (q.required ? ' data-required="true"' : '') + ' min="' + today + '"' + (dateVal ? ' value="' + dateVal + '"' : '') + ' class="' + inputClass + '" />';
+    } else if (q.inputType === 'time') {
+      inputHtml = '<input type="time" data-qid="' + q.id + '" data-type="time"' + (q.required ? ' data-required="true"' : '') + ' class="' + inputClass + '" />';
+    } else if (q.inputType === 'toggle') {
+      var noLabel = q.toggleLabels ? q.toggleLabels.no : 'No';
+      var yesLabel = q.toggleLabels ? q.toggleLabels.yes : 'Yes';
+      inputHtml =
+        '<div class="flex flex-wrap gap-2" data-qid="' + q.id + '" data-type="toggle">' +
+        '<button type="button" class="toggle-btn active" data-value="no">' + noLabel + '</button>' +
+        '<button type="button" class="toggle-btn" data-value="yes">' + yesLabel + '</button>' +
+        '</div>';
+    }
+
+    div.innerHTML = labelHtml + inputHtml;
+    container.appendChild(div);
+  }
+
+  /* --- Return journey 3-option card selector --- */
+  function buildReturnSelector(container) {
+    var today = new Date().toISOString().split('T')[0];
+    var inputClass = 'quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
+
+    var html = '<div class="space-y-2" id="returnSelector">';
+
+    html += '<div class="return-option active" data-return-value="one-way">';
+    html += '<div class="return-option-radio"></div>';
+    html += '<div class="flex-1"><p class="text-sm font-medium text-gray-900">One-way only</p>';
+    html += '<p class="text-xs text-gray-500 mt-0.5">No return journey needed</p></div></div>';
+
+    html += '<div class="return-option" data-return-value="same-day">';
+    html += '<div class="return-option-radio"></div>';
+    html += '<div class="flex-1"><p class="text-sm font-medium text-gray-900">Return same day</p>';
+    html += '<p class="text-xs text-gray-500 mt-0.5">Come back later today</p>';
+    html += '<div class="return-option-fields">';
+    html += '<label class="block text-sm font-medium text-afj-text mb-1">Return pickup time <span class="text-afj-red">*</span></label>';
+    html += '<input type="time" data-qid="returnPickupTime" data-type="time" class="' + inputClass + '" />';
+    html += '</div></div></div>';
+
+    html += '<div class="return-option" data-return-value="different-day">';
+    html += '<div class="return-option-radio"></div>';
+    html += '<div class="flex-1"><p class="text-sm font-medium text-gray-900">Return different day</p>';
+    html += '<p class="text-xs text-gray-500 mt-0.5">Come back on another date</p>';
+    html += '<div class="return-option-fields"><div class="space-y-3">';
+    html += '<div><label class="block text-sm font-medium text-afj-text mb-1">Return date <span class="text-afj-red">*</span></label>';
+    html += '<input type="date" data-qid="returnDate" data-type="date" min="' + today + '" class="' + inputClass + '" /></div>';
+    html += '<div><label class="block text-sm font-medium text-afj-text mb-1">Return pickup time <span class="text-afj-red">*</span></label>';
+    html += '<input type="time" data-qid="returnPickupTimeDiff" data-type="time" class="' + inputClass + '" /></div>';
+    html += '</div></div></div></div>';
+
+    html += '</div>';
+    container.innerHTML = html;
+
+    var options = container.querySelectorAll('.return-option');
+    options.forEach(function (opt) {
+      opt.addEventListener('click', function (e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
+        options.forEach(function (o) { o.classList.remove('active'); });
+        opt.classList.add('active');
+      });
+    });
+  }
+
+  /* --- Airport direction visual cards --- */
+  function buildDirectionCards(container) {
+    var wrapper = document.createElement('div');
+    wrapper.className = 'mt-1';
+    wrapper.innerHTML = '<label class="block text-sm font-medium text-afj-text mb-2">Transfer direction</label>';
+
+    var cards = document.createElement('div');
+    cards.className = 'flex gap-3';
+    cards.id = 'directionCards';
+    cards.innerHTML =
+      '<div class="direction-card" data-value="no">' +
+      '<div class="direction-card-emoji">\uD83D\uDE97 \u2192 \u2708\uFE0F</div>' +
+      '<div class="direction-card-title">Going to airport</div>' +
+      '<div class="direction-card-subtitle">Departure drop-off</div></div>' +
+      '<div class="direction-card active" data-value="yes">' +
+      '<div class="direction-card-emoji">\u2708\uFE0F \u2192 \uD83D\uDE97</div>' +
+      '<div class="direction-card-title">Coming from airport</div>' +
+      '<div class="direction-card-subtitle">Arrival pickup</div></div>';
+
+    wrapper.appendChild(cards);
+    container.appendChild(wrapper);
+
+    cards.querySelectorAll('.direction-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        cards.querySelectorAll('.direction-card').forEach(function (c) { c.classList.remove('active'); });
+        card.classList.add('active');
+      });
+    });
+  }
+
+  /* --- Multi-stop UI --- */
+  function buildMultiStopUI(container) {
+    var stopsSection = document.createElement('div');
+    stopsSection.id = 'stopsSection';
+    stopsSection.className = 'mt-2';
+    stopsSection.innerHTML =
+      '<div id="stopsContainer" class="space-y-2"></div>' +
+      '<button type="button" id="addStopBtn" class="multistop-add mt-2">' +
+      '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>' +
+      'Add a stop along the way <span class="text-xs text-gray-400 ml-1">(max 2)</span></button>';
+    container.appendChild(stopsSection);
+
+    document.getElementById('addStopBtn').addEventListener('click', function () {
+      if (stopCount >= 2) return;
+      stopCount++;
+      var stopId = 'stop' + stopCount;
+
+      var stopWrap = document.createElement('div');
+      stopWrap.className = 'flex items-center gap-2';
+      stopWrap.dataset.stopId = stopId;
+
+      var label = document.createElement('span');
+      label.className = 'text-xs text-gray-400 font-medium flex-shrink-0 w-12';
+      label.textContent = 'Via ' + stopCount;
+
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.dataset.qid = stopId;
+      inp.dataset.type = 'text';
+      inp.placeholder = 'Stop ' + stopCount + ' postcode or city';
+      inp.autocomplete = 'off';
+      inp.className = 'quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
+
+      var rmBtn = document.createElement('button');
+      rmBtn.type = 'button';
+      rmBtn.className = 'text-gray-400 hover:text-red-500 transition-colors text-xl font-bold px-2 flex-shrink-0';
+      rmBtn.innerHTML = '&times;';
+      rmBtn.addEventListener('click', function () {
+        stopWrap.remove();
+        stopCount--;
+        if (stopCount < 2) document.getElementById('addStopBtn').classList.remove('hidden');
+        var remaining = document.getElementById('stopsContainer').querySelectorAll('[data-stop-id]');
+        remaining.forEach(function (el, i) {
+          var num = i + 1;
+          el.dataset.stopId = 'stop' + num;
+          var rinp = el.querySelector('input');
+          if (rinp) { rinp.dataset.qid = 'stop' + num; rinp.placeholder = 'Stop ' + num + ' postcode or city'; }
+          var rlabel = el.querySelector('span');
+          if (rlabel) rlabel.textContent = 'Via ' + num;
+        });
+      });
+
+      stopWrap.appendChild(label);
+      stopWrap.appendChild(inp);
+      stopWrap.appendChild(rmBtn);
+      document.getElementById('stopsContainer').appendChild(stopWrap);
+
+      attachAutocomplete(inp);
+      var acWrap = inp.closest('.autocomplete-wrap');
+      if (acWrap) acWrap.classList.add('flex-1', 'min-w-0');
+
+      if (stopCount >= 2) document.getElementById('addStopBtn').classList.add('hidden');
+    });
+  }
+
+  /* --- Real-time blur validation --- */
+  function setupValidation(container) {
+    container.querySelectorAll('.quiz-input').forEach(function (input) {
+      input.addEventListener('blur', function () {
+        var qid = input.dataset.qid || '';
+        var required = input.dataset.required === 'true';
+        var val = input.value.trim();
+        var wrapper = input.closest('div');
+
+        if (wrapper) {
+          wrapper.classList.remove('field-error', 'field-valid');
+          var existingMsg = wrapper.querySelector('.field-error-msg');
+          if (existingMsg) existingMsg.remove();
+        }
+
+        if (required && !val) {
+          if (wrapper) {
+            wrapper.classList.add('field-error');
+            var msg = document.createElement('p');
+            msg.className = 'field-error-msg';
+            msg.textContent = 'This field is required';
+            wrapper.appendChild(msg);
+          }
+        } else if (val && qid.toLowerCase().indexOf('postcode') !== -1) {
+          var isValid = /^[A-Z]{1,2}\d/i.test(val) || /^[A-Za-z]{2,}/.test(val);
+          if (!isValid) {
+            if (wrapper) {
+              wrapper.classList.add('field-error');
+              var msg2 = document.createElement('p');
+              msg2.className = 'field-error-msg';
+              msg2.textContent = 'Enter a valid UK postcode or city name';
+              wrapper.appendChild(msg2);
+            }
+          } else if (required) {
+            if (wrapper) wrapper.classList.add('field-valid');
+          }
+        } else if (val && input.type === 'date') {
+          var todayStr = new Date().toISOString().split('T')[0];
+          if (val < todayStr) {
+            if (wrapper) {
+              wrapper.classList.add('field-error');
+              var msg3 = document.createElement('p');
+              msg3.className = 'field-error-msg';
+              msg3.textContent = 'Date must be today or later';
+              wrapper.appendChild(msg3);
+            }
+          } else if (required) {
+            if (wrapper) wrapper.classList.add('field-valid');
+          }
+        } else if (required && val) {
+          if (wrapper) wrapper.classList.add('field-valid');
+        }
+      });
+
+      input.addEventListener('input', function () {
+        var wrapper = input.closest('div');
+        if (wrapper) {
+          wrapper.classList.remove('field-error');
+          var existingMsg = wrapper.querySelector('.field-error-msg');
+          if (existingMsg) existingMsg.remove();
+        }
+      });
+    });
+  }
+
+  /* --- Main grouped question builder --- */
+  function buildGroupedQuestions(serviceKey) {
     var svc = quoteRules.services[serviceKey];
     if (!svc || !svc.questions) return;
 
-    document.getElementById('step2Title').textContent = svc.label + ' — Details';
+    document.getElementById('step2Title').textContent = svc.label + ' \u2014 Details';
 
     var container = document.getElementById('questionsContainer');
     container.innerHTML = '';
 
-    svc.questions.forEach(function (q) {
-      var div = document.createElement('div');
-      var required = q.required ? ' <span class="text-afj-red">*</span>' : '';
-      var labelHtml = '<label class="block text-sm font-medium text-afj-text mb-1">' + q.label + required + '</label>';
-      var inputHtml = '';
-      var inputClass = 'quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
+    var sections = sectionConfigs[serviceKey];
+    if (!sections) return;
 
-      if (q.showWhen) {
-        var key = Object.keys(q.showWhen)[0];
-        div.setAttribute('data-show-when', key + ':' + q.showWhen[key]);
-        div.classList.add('hidden');
-      }
+    var questionsMap = {};
+    svc.questions.forEach(function (q) { questionsMap[q.id] = q; });
 
-      if (q.inputType === 'select') {
-        inputHtml =
-          '<select data-qid="' + q.id + '" data-type="select"' + (q.required ? ' data-required="true"' : '') + ' class="' + inputClass + ' bg-white">' +
-          '<option value="">Select...</option>' +
-          q.options.map(function (opt) {
-            return '<option value="' + opt.value + '">' + opt.label + '</option>';
-          }).join('') +
-          '</select>';
-      } else if (q.inputType === 'text') {
-        var autoOff = q.id.toLowerCase().indexOf('postcode') !== -1 ? ' autocomplete="off"' : '';
-        inputHtml = '<input type="text" data-qid="' + q.id + '" data-type="text"' + (q.required ? ' data-required="true"' : '') + autoOff + ' placeholder="' + (q.placeholder || '') + '" class="' + inputClass + '" />';
-      } else if (q.inputType === 'date') {
-        var today = new Date().toISOString().split('T')[0];
-        inputHtml = '<input type="date" data-qid="' + q.id + '" data-type="date"' + (q.required ? ' data-required="true"' : '') + ' min="' + today + '" class="' + inputClass + '" />';
-      } else if (q.inputType === 'time') {
-        inputHtml = '<input type="time" data-qid="' + q.id + '" data-type="time"' + (q.required ? ' data-required="true"' : '') + ' class="' + inputClass + '" />';
-      } else if (q.inputType === 'toggle') {
-        var yesFirst = q.id === 'returnType';
-        var noLabel = q.toggleLabels ? q.toggleLabels.no : 'No';
-        var yesLabel = q.toggleLabels ? q.toggleLabels.yes : 'Yes';
-        if (yesFirst) {
-          inputHtml =
-            '<div class="flex flex-wrap gap-2" data-qid="' + q.id + '" data-type="toggle">' +
-            '<button type="button" class="toggle-btn active" data-value="yes">' + yesLabel + '</button>' +
-            '<button type="button" class="toggle-btn" data-value="no">' + noLabel + '</button>' +
-            '</div>';
-        } else {
-          inputHtml =
-            '<div class="flex flex-wrap gap-2" data-qid="' + q.id + '" data-type="toggle">' +
-            '<button type="button" class="toggle-btn active" data-value="no">' + noLabel + '</button>' +
-            '<button type="button" class="toggle-btn" data-value="yes">' + yesLabel + '</button>' +
-            '</div>';
+    // Smart defaults
+    var defaults = {};
+    var now = new Date();
+    var dayOfWeek = now.getDay();
+    var daysUntilSat = (6 - dayOfWeek + 7) % 7;
+    if (daysUntilSat === 0) daysUntilSat = 7;
+    var nextSat = new Date(now.getTime() + daysUntilSat * 86400000);
+    var y = String(nextSat.getFullYear());
+    var mo = String(nextSat.getMonth() + 1);
+    if (mo.length < 2) mo = '0' + mo;
+    var d = String(nextSat.getDate());
+    if (d.length < 2) d = '0' + d;
+    defaults.date = y + '-' + mo + '-' + d;
+    defaults.passengers = '5-8';
+    defaults.luggage = 'light';
+
+    stopCount = 0;
+
+    sections.forEach(function (section) {
+      var sectionEl = document.createElement('div');
+      sectionEl.className = 'form-section';
+
+      var header = document.createElement('div');
+      header.className = 'form-section-header';
+      header.innerHTML =
+        '<div class="form-section-icon"><svg fill="' + (section.iconFill ? 'currentColor' : 'none') + '" stroke="' + (section.iconFill ? 'none' : 'currentColor') + '" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="' + section.icon + '"/></svg></div>' +
+        '<h3 class="form-section-title">' + section.title + '</h3>';
+      sectionEl.appendChild(header);
+
+      var body = document.createElement('div');
+      body.className = 'form-section-body';
+
+      if (section.isReturnSelector) {
+        buildReturnSelector(body);
+      } else {
+        if (section.fields) {
+          section.fields.forEach(function (fieldId) {
+            var q = questionsMap[fieldId];
+            if (!q) return;
+            renderQuestionField(body, q, defaults, section.labelOverrides);
+          });
+        }
+
+        if (section.hasDirectionCards) {
+          buildDirectionCards(body);
+        }
+
+        if (section.hasMultiStop) {
+          buildMultiStopUI(body);
         }
       }
 
-      div.innerHTML = labelHtml + inputHtml;
-      container.appendChild(div);
+      sectionEl.appendChild(body);
+      container.appendChild(sectionEl);
     });
 
     // Bind toggle handlers
@@ -1195,7 +1667,7 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
       });
     });
 
-    // Attach autocomplete to postcode/city fields
+    // Attach autocomplete to postcode fields
     container.querySelectorAll('input[data-type="text"]').forEach(function (input) {
       var qid = input.dataset.qid || '';
       if (qid.toLowerCase().indexOf('postcode') !== -1) {
@@ -1203,79 +1675,8 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
       }
     });
 
-    // Multi-stop UI for private-hire
-    stopCount = 0;
-    if (serviceKey === 'private-hire') {
-      var destEl = container.querySelector('[data-qid="destinationPostcode"]');
-      if (destEl) {
-        var destDiv = destEl;
-        while (destDiv.parentNode !== container) {
-          destDiv = destDiv.parentNode;
-        }
-
-        var stopsSection = document.createElement('div');
-        stopsSection.id = 'stopsSection';
-        stopsSection.innerHTML =
-          '<div id="stopsContainer" class="space-y-2"></div>' +
-          '<button type="button" id="addStopBtn" class="text-sm text-afj-accent hover:text-afj-green font-medium mt-1 inline-flex items-center gap-1">' +
-          '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>' +
-          'Add a stop (max 2)</button>';
-
-        destDiv.after(stopsSection);
-
-        document.getElementById('addStopBtn').addEventListener('click', function () {
-          if (stopCount >= 2) return;
-          stopCount++;
-          var stopId = 'stop' + stopCount;
-
-          var stopWrap = document.createElement('div');
-          stopWrap.className = 'flex items-center gap-2';
-          stopWrap.dataset.stopId = stopId;
-
-          var label = document.createElement('span');
-          label.className = 'text-xs text-gray-400 font-medium flex-shrink-0 w-12';
-          label.textContent = 'Via ' + stopCount;
-
-          var inp = document.createElement('input');
-          inp.type = 'text';
-          inp.dataset.qid = stopId;
-          inp.dataset.type = 'text';
-          inp.placeholder = 'Stop ' + stopCount + ' postcode or city';
-          inp.autocomplete = 'off';
-          inp.className = 'quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
-
-          var rmBtn = document.createElement('button');
-          rmBtn.type = 'button';
-          rmBtn.className = 'text-gray-400 hover:text-red-500 transition-colors text-xl font-bold px-2 flex-shrink-0';
-          rmBtn.innerHTML = '&times;';
-          rmBtn.addEventListener('click', function () {
-            stopWrap.remove();
-            stopCount--;
-            if (stopCount < 2) document.getElementById('addStopBtn').classList.remove('hidden');
-            var remaining = document.getElementById('stopsContainer').querySelectorAll('[data-stop-id]');
-            remaining.forEach(function (el, i) {
-              var num = i + 1;
-              el.dataset.stopId = 'stop' + num;
-              var rinp = el.querySelector('input');
-              if (rinp) { rinp.dataset.qid = 'stop' + num; rinp.placeholder = 'Stop ' + num + ' postcode or city'; }
-              var rlabel = el.querySelector('span');
-              if (rlabel) rlabel.textContent = 'Via ' + num;
-            });
-          });
-
-          stopWrap.appendChild(label);
-          stopWrap.appendChild(inp);
-          stopWrap.appendChild(rmBtn);
-          document.getElementById('stopsContainer').appendChild(stopWrap);
-
-          attachAutocomplete(inp);
-          var acWrap = inp.closest('.autocomplete-wrap');
-          if (acWrap) acWrap.classList.add('flex-1', 'min-w-0');
-
-          if (stopCount >= 2) document.getElementById('addStopBtn').classList.add('hidden');
-        });
-      }
-    }
+    // Setup validation
+    setupValidation(container);
   }
 
   function isHiddenConditional(el) {
@@ -1289,6 +1690,9 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
 
     document.querySelectorAll('#questionsContainer .quiz-input').forEach(function (input) {
       if (isHiddenConditional(input)) return;
+      // Skip inputs inside inactive return options
+      var returnOption = input.closest('.return-option');
+      if (returnOption && !returnOption.classList.contains('active')) return;
 
       var qid = input.dataset.qid;
       var required = input.dataset.required === 'true';
@@ -1313,16 +1717,61 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
       }
     });
 
-    // Same-day return: returnPickupTime required
-    if (answers.returnJourney === 'yes' && answers.returnType !== 'no' && !answers.returnPickupTime) {
-      var rptInput = document.querySelector('[data-qid="returnPickupTime"]');
-      if (rptInput && !isHiddenConditional(rptInput)) {
-        valid = false;
-        rptInput.style.borderColor = '#E53E3E';
+    // Return selector (private-hire 3-option cards)
+    var returnSelector = document.getElementById('returnSelector');
+    if (returnSelector) {
+      var activeReturn = returnSelector.querySelector('.return-option.active');
+      if (activeReturn) {
+        var returnVal = activeReturn.dataset.returnValue;
+        if (returnVal === 'one-way') {
+          answers.returnJourney = 'no';
+        } else if (returnVal === 'same-day') {
+          answers.returnJourney = 'yes';
+          answers.returnType = 'yes';
+          if (!answers.returnPickupTime) {
+            var rptInput = activeReturn.querySelector('[data-qid="returnPickupTime"]');
+            if (rptInput && rptInput.value) {
+              answers.returnPickupTime = rptInput.value;
+            } else {
+              valid = false;
+              if (rptInput) rptInput.style.borderColor = '#E53E3E';
+            }
+          }
+        } else if (returnVal === 'different-day') {
+          answers.returnJourney = 'yes';
+          answers.returnType = 'no';
+          if (!answers.returnDate) {
+            var rdInput = activeReturn.querySelector('[data-qid="returnDate"]');
+            if (rdInput && rdInput.value) {
+              answers.returnDate = rdInput.value;
+            } else {
+              valid = false;
+              if (rdInput) rdInput.style.borderColor = '#E53E3E';
+            }
+          }
+          var rtInput = activeReturn.querySelector('[data-qid="returnPickupTimeDiff"]');
+          if (rtInput && rtInput.value) {
+            answers.returnPickupTime = rtInput.value;
+          } else {
+            valid = false;
+            if (rtInput) rtInput.style.borderColor = '#E53E3E';
+          }
+        }
+      }
+      // Clean up internal-only key
+      delete answers.returnPickupTimeDiff;
+    }
+
+    // Direction cards (airport)
+    var dirCards = document.getElementById('directionCards');
+    if (dirCards) {
+      var activeDir = dirCards.querySelector('.direction-card.active');
+      if (activeDir) {
+        answers.direction = activeDir.dataset.value;
       }
     }
 
-    // Return time must be >= 30 min after outbound
+    // Return time validation (same-day: must be >= 30 min after outbound)
     if (answers.returnJourney === 'yes' && answers.returnType !== 'no' && answers.returnPickupTime && answers.time) {
       var outParts = answers.time.split(':');
       var retParts = answers.returnPickupTime.split(':');
@@ -1330,29 +1779,88 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
       var retMin = parseInt(retParts[0]) * 60 + parseInt(retParts[1]);
       if (retMin - outMin < 30) {
         valid = false;
-        var rptEl = document.querySelector('[data-qid="returnPickupTime"]');
-        if (rptEl) rptEl.style.borderColor = '#E53E3E';
-        var msgId = 'returnTimeMsg';
-        var existing = document.getElementById(msgId);
-        if (!existing) {
-          var msg = document.createElement('p');
-          msg.id = msgId;
-          msg.className = 'text-afj-red text-xs mt-1';
-          msg.setAttribute('aria-live', 'polite');
-          msg.setAttribute('aria-atomic', 'true');
-          msg.textContent = 'Return pickup must be at least 30 minutes after the outbound time.';
-          var rptWrap = rptEl.closest('.autocomplete-wrap') || rptEl;
-          rptWrap.parentNode.appendChild(msg);
-        } else {
-          existing.classList.remove('hidden');
+        var rptEl = returnSelector ? returnSelector.querySelector('.return-option.active [data-qid="returnPickupTime"]') : null;
+        if (rptEl) {
+          rptEl.style.borderColor = '#E53E3E';
+          var msgId = 'returnTimeMsg';
+          var existing = document.getElementById(msgId);
+          if (!existing) {
+            var msg = document.createElement('p');
+            msg.id = msgId;
+            msg.className = 'text-afj-red text-xs mt-1';
+            msg.textContent = 'Return pickup must be at least 30 min after outbound time.';
+            rptEl.parentNode.appendChild(msg);
+          }
         }
       } else {
         var existingMsg = document.getElementById('returnTimeMsg');
-        if (existingMsg) existingMsg.classList.add('hidden');
+        if (existingMsg) existingMsg.remove();
       }
     }
 
     return valid ? answers : null;
+  }
+
+  // --- Arrival time helpers ---
+  function addMinutesToTime(timeStr, minutes) {
+    if (!timeStr || !minutes) return null;
+    var parts = timeStr.split(':');
+    var hours = parseInt(parts[0]);
+    var mins = parseInt(parts[1]);
+    var totalMins = hours * 60 + mins + minutes;
+    var nextDay = totalMins >= 1440;
+    if (nextDay) totalMins = totalMins % 1440;
+    var newHours = Math.floor(totalMins / 60);
+    var newMins = totalMins % 60;
+    var hStr = String(newHours);
+    if (hStr.length < 2) hStr = '0' + hStr;
+    var mStr = String(newMins);
+    if (mStr.length < 2) mStr = '0' + mStr;
+    return { time: hStr + ':' + mStr, nextDay: nextDay };
+  }
+
+  function formatTimeDisplay(time24) {
+    if (!time24) return '';
+    var parts = time24.split(':');
+    var h = parseInt(parts[0]);
+    var m = parseInt(parts[1]);
+    var period = h >= 12 ? 'pm' : 'am';
+    var h12 = h % 12;
+    if (h12 === 0) h12 = 12;
+    var mStr = String(m);
+    if (mStr.length < 2) mStr = '0' + mStr;
+    return h12 + ':' + mStr + period;
+  }
+
+  function renderArrivalTimes(answers, est) {
+    var wrap = document.getElementById('arrivalTimesWrap');
+    var outboundTime = document.getElementById('arrivalOutboundTime');
+    var returnEl = document.getElementById('arrivalReturn');
+    var returnTime = document.getElementById('arrivalReturnTime');
+    if (!wrap) return;
+
+    var hasArrival = false;
+    returnEl.classList.add('hidden');
+
+    if (answers.time && est.journeyMinutes) {
+      var outArr = addMinutesToTime(answers.time, est.journeyMinutes);
+      if (outArr) {
+        outboundTime.textContent = '~' + formatTimeDisplay(outArr.time) + (outArr.nextDay ? ' (next day)' : '');
+        hasArrival = true;
+      }
+    }
+
+    if (answers.returnJourney === 'yes' && answers.returnPickupTime && est.returnMinutes) {
+      var retArr = addMinutesToTime(answers.returnPickupTime, est.returnMinutes);
+      if (retArr) {
+        returnTime.textContent = '~' + formatTimeDisplay(retArr.time) + (retArr.nextDay ? ' (next day)' : '');
+        returnEl.classList.remove('hidden');
+        hasArrival = true;
+      }
+    }
+
+    if (hasArrival) wrap.classList.remove('hidden');
+    else wrap.classList.add('hidden');
   }
 
   // --- Render estimate data ---
@@ -1450,16 +1958,20 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     var stopLabelsEl = document.getElementById('routeStopLabels');
     var returnDots = document.getElementById('routeReturnDots');
     var returnLabel = document.getElementById('routeReturnLabel');
+    var destArrival = document.getElementById('routeDestArrival');
+    var returnArrival = document.getElementById('routeReturnArrival');
 
     // Reset
     stopDotsEl.innerHTML = '';
     stopLabelsEl.innerHTML = '';
     returnDots.classList.add('hidden');
     returnLabel.classList.add('hidden');
+    if (destArrival) destArrival.textContent = '';
+    if (returnArrival) returnArrival.textContent = '';
 
     // Pickup
     document.getElementById('routePickup').textContent = answers.pickupPostcode || '';
-    document.getElementById('routePickupTime').textContent = answers.time ? 'Pickup at ' + answers.time : '';
+    document.getElementById('routePickupTime').textContent = answers.time ? 'Pickup at ' + formatTimeDisplay(answers.time) : '';
 
     // Destination
     var dest = answers.destinationPostcode || '';
@@ -1478,6 +1990,14 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     }
     document.getElementById('routeDestInfo').textContent = destInfo;
 
+    // Outbound arrival time
+    if (answers.time && est.journeyMinutes && destArrival) {
+      var outArr = addMinutesToTime(answers.time, est.journeyMinutes);
+      if (outArr) {
+        destArrival.textContent = 'Arrive ~' + formatTimeDisplay(outArr.time) + (outArr.nextDay ? ' (next day)' : '');
+      }
+    }
+
     // Stops
     if (answers.stop1) {
       stopDotsEl.innerHTML += '<div class="w-2 h-2 rounded-full bg-gray-400 my-1 mx-auto"></div><div class="w-0.5 flex-1 bg-gray-300 min-h-[1rem] mx-auto"></div>';
@@ -1493,9 +2013,17 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
       returnDots.classList.remove('hidden');
       returnLabel.classList.remove('hidden');
       var retTime = '';
-      if (answers.returnPickupTime) retTime = 'Return at ' + answers.returnPickupTime;
+      if (answers.returnPickupTime) retTime = 'Return at ' + formatTimeDisplay(answers.returnPickupTime);
       if (answers.returnDate) retTime += (retTime ? ' on ' : '') + answers.returnDate;
       document.getElementById('routeReturnTime').textContent = retTime;
+
+      // Return arrival time
+      if (answers.returnPickupTime && est.returnMinutes && returnArrival) {
+        var retArr = addMinutesToTime(answers.returnPickupTime, est.returnMinutes);
+        if (retArr) {
+          returnArrival.textContent = 'Arrive back ~' + formatTimeDisplay(retArr.time) + (retArr.nextDay ? ' (next day)' : '');
+        }
+      }
     }
 
     visual.classList.remove('hidden');
@@ -1538,6 +2066,7 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
           renderDiscount(data.estimate);
           renderIncludes(data.estimate);
           renderRouteTimeline(currentAnswers, data.estimate);
+          renderArrivalTimes(currentAnswers, data.estimate);
 
           document.getElementById('estimateLoading').classList.add('hidden');
           document.getElementById('estimateContent').classList.remove('hidden');
