@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T02:14:44.280Z",
+  "generatedAt": "2026-02-18T05:23:47.737Z",
   "agent": "seo",
   "grade": "B",
   "counts": {
@@ -18,7 +18,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 110,
       "issueCount": 1,
       "issues": [
         {
@@ -36,7 +36,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 189,
+      "responseTime": 343,
       "issueCount": 0,
       "issues": []
     },
@@ -48,7 +48,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 185,
+      "responseTime": 303,
       "issueCount": 0,
       "issues": []
     },
@@ -60,7 +60,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 187,
+      "responseTime": 302,
       "issueCount": 1,
       "issues": [
         {
@@ -78,7 +78,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 190,
+      "responseTime": 315,
       "issueCount": 1,
       "issues": [
         {
@@ -96,7 +96,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 115,
       "issueCount": 1,
       "issues": [
         {
@@ -114,7 +114,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 21,
+      "responseTime": 133,
       "issueCount": 1,
       "issues": [
         {
@@ -132,7 +132,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 22,
+      "responseTime": 313,
       "issueCount": 1,
       "issues": [
         {
@@ -150,7 +150,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 19,
+      "responseTime": 121,
       "issueCount": 1,
       "issues": [
         {
@@ -168,7 +168,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 17,
+      "responseTime": 105,
       "issueCount": 1,
       "issues": [
         {
@@ -186,7 +186,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 110,
       "issueCount": 1,
       "issues": [
         {
@@ -204,7 +204,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
+      "responseTime": 110,
       "issueCount": 1,
       "issues": [
         {
@@ -222,7 +222,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 122,
       "issueCount": 1,
       "issues": [
         {
@@ -240,7 +240,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 119,
       "issueCount": 1,
       "issues": [
         {
@@ -258,7 +258,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 18,
+      "responseTime": 120,
       "issueCount": 1,
       "issues": [
         {
@@ -276,7 +276,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 109,
       "issueCount": 1,
       "issues": [
         {
@@ -294,7 +294,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 20,
+      "responseTime": 123,
       "issueCount": 1,
       "issues": [
         {
@@ -312,7 +312,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 22,
+      "responseTime": 133,
       "issueCount": 1,
       "issues": [
         {
@@ -330,7 +330,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 21,
+      "responseTime": 129,
       "issueCount": 1,
       "issues": [
         {
@@ -348,7 +348,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 127,
       "issueCount": 1,
       "issues": [
         {
@@ -366,7 +366,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 118,
       "issueCount": 1,
       "issues": [
         {
@@ -384,7 +384,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 19,
+      "responseTime": 112,
       "issueCount": 1,
       "issues": [
         {
@@ -402,7 +402,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 19,
+      "responseTime": 107,
       "issueCount": 1,
       "issues": [
         {
@@ -420,7 +420,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 18,
+      "responseTime": 106,
       "issueCount": 1,
       "issues": [
         {
@@ -438,7 +438,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
+      "responseTime": 162,
       "issueCount": 1,
       "issues": [
         {
@@ -456,7 +456,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 18,
+      "responseTime": 112,
       "issueCount": 1,
       "issues": [
         {
@@ -474,7 +474,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 112,
       "issueCount": 1,
       "issues": [
         {
@@ -492,7 +492,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 107,
       "issueCount": 1,
       "issues": [
         {
@@ -510,7 +510,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 121,
       "issueCount": 0,
       "issues": []
     },
@@ -522,7 +522,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 104,
       "issueCount": 1,
       "issues": [
         {
@@ -540,7 +540,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 110,
       "issueCount": 0,
       "issues": []
     },
@@ -552,7 +552,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 128,
       "issueCount": 1,
       "issues": [
         {
@@ -570,7 +570,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 133,
       "issueCount": 1,
       "issues": [
         {
@@ -588,7 +588,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 133,
       "issueCount": 1,
       "issues": [
         {
@@ -606,7 +606,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 107,
       "issueCount": 1,
       "issues": [
         {
@@ -624,7 +624,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 110,
       "issueCount": 1,
       "issues": [
         {
@@ -642,7 +642,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 111,
       "issueCount": 1,
       "issues": [
         {
@@ -660,7 +660,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 107,
       "issueCount": 1,
       "issues": [
         {
@@ -678,7 +678,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 110,
       "issueCount": 1,
       "issues": [
         {
@@ -696,7 +696,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 105,
       "issueCount": 1,
       "issues": [
         {
@@ -714,7 +714,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 114,
       "issueCount": 1,
       "issues": [
         {
@@ -732,7 +732,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 114,
       "issueCount": 1,
       "issues": [
         {
@@ -750,7 +750,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 111,
       "issueCount": 1,
       "issues": [
         {
@@ -768,7 +768,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 121,
       "issueCount": 1,
       "issues": [
         {
@@ -786,7 +786,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 127,
       "issueCount": 1,
       "issues": [
         {
@@ -804,7 +804,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 109,
       "issueCount": 0,
       "issues": []
     },
@@ -816,7 +816,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 111,
       "issueCount": 0,
       "issues": []
     },
@@ -828,7 +828,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 105,
       "issueCount": 0,
       "issues": []
     },
@@ -840,7 +840,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 106,
       "issueCount": 0,
       "issues": []
     },
@@ -852,7 +852,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
+      "responseTime": 137,
       "issueCount": 0,
       "issues": []
     },
@@ -864,7 +864,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 117,
       "issueCount": 0,
       "issues": []
     },
@@ -876,7 +876,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
+      "responseTime": 110,
       "issueCount": 1,
       "issues": [
         {
@@ -894,7 +894,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 105,
       "issueCount": 1,
       "issues": [
         {
@@ -912,7 +912,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 134,
       "issueCount": 0,
       "issues": []
     },
@@ -924,7 +924,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 22,
+      "responseTime": 123,
       "issueCount": 0,
       "issues": []
     },
@@ -936,7 +936,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 110,
       "issueCount": 0,
       "issues": []
     },
@@ -948,7 +948,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 17,
+      "responseTime": 110,
       "issueCount": 1,
       "issues": [
         {
@@ -966,7 +966,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 124,
       "issueCount": 0,
       "issues": []
     },
@@ -978,7 +978,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 106,
       "issueCount": 0,
       "issues": []
     },
@@ -990,7 +990,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 27,
+      "responseTime": 105,
       "issueCount": 0,
       "issues": []
     },
@@ -1002,7 +1002,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 112,
       "issueCount": 1,
       "issues": [
         {
@@ -1020,7 +1020,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 137,
       "issueCount": 1,
       "issues": [
         {
@@ -1038,7 +1038,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 109,
       "issueCount": 0,
       "issues": []
     }
@@ -1053,20 +1053,21 @@
     ]
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's website demonstrates strong overall SEO health with no critical or high-severity issues identified across 63 pages. The primary concern is a systematic issue with meta descriptions and page titles exceeding optimal character limits, affecting 46 pages. These are predominantly low-severity issues but represent a widespread opportunity for quick optimization. The site also has a missing favicon, which is a minor technical issue that's easy to resolve.",
+    "summary": "AFJ Limited's website demonstrates excellent SEO health with no critical or high-severity issues across 63 pages. The primary concern is a systematic pattern of meta descriptions and page titles exceeding recommended character limits across 46 pages, affecting both area pages (25 locations) and blog articles (16 posts). These are low-severity issues that won't significantly impact rankings but can reduce click-through rates in search results. Additionally, a missing favicon creates a minor 404 error that should be addressed for completeness.",
     "recommendations": [
-      "Systematically audit and shorten all meta descriptions to 155-160 characters maximum, particularly targeting the 25 area pages and homepage which currently range from 202-217 characters",
-      "Review and reduce blog post titles to 50-60 characters where possible; several titles exceed 100 characters and may be truncated in search results (e.g., the 160-character 'What Councils Look For' title)",
-      "Implement a content management process to enforce character limits for titles and descriptions across the site to prevent future occurrences",
-      "Add a favicon.ico file to the root directory to eliminate the 404 error and improve site professionalism",
-      "Conduct competitor analysis on area pages to ensure descriptions are not only shorter but also more compelling and keyword-optimized for local search",
-      "Consider implementing structured data markup (Schema.org) for local business pages to enhance SERP visibility"
+      "Audit and reduce meta descriptions on all area pages (/areas/*/) to 155-160 characters maximum, prioritizing keyword placement and clear value proposition within the limit",
+      "Compress blog post titles to 55-60 characters where possible, using secondary keywords in meta descriptions instead to maintain SEO value while improving SERP appearance",
+      "Create or upload favicon.ico to the root directory to eliminate the 404 error and improve site polish",
+      "Implement a content management system constraint or editorial guideline to enforce meta description and title length limits during content creation",
+      "Monitor response time (currently 132ms is excellent) and ensure it remains below 200ms as site scales",
+      "Consider implementing structured data (Schema.org) for local business information across area pages to enhance rich snippet potential",
+      "Audit internal linking strategy across the 25 area pages to ensure proper link distribution and keyword targeting for each location"
     ],
     "quickWins": [
-      "Generate and add favicon.ico to resolve the broken link error immediately",
-      "Create a template-based approach to trim all 25 area page descriptions to 155-160 characters while maintaining key location and service information",
-      "Use automated tools or create a spreadsheet template to batch-edit blog titles, reducing the longest ones (160, 135, 131 characters) to 50-70 character versions",
-      "Audit homepage and services pages meta descriptions—trim the 163-186 character descriptions to recommended 155-160 character range"
+      "Trim 25 area page descriptions from 200-217 characters to 155-160 characters (average reduction of ~50 chars per page)",
+      "Shorten 16 blog post titles to meet Google's 55-60 character display limit, moving longer keywords to descriptions",
+      "Add favicon.ico file to site root and reference in HTML head tag to resolve 404 error immediately",
+      "Audit the homepage description (217 chars) and services pages descriptions for similar optimization"
     ]
   }
 }
