@@ -26,7 +26,7 @@ function getDepartment(email: string) {
 }
 
 async function sendEmail(to: string, subject: string, bodyHtml: string) {
-  const resendKey = import.meta.env.RESEND_API_KEY;
+  const resendKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_KEY || '';
   if (!resendKey) return;
   await fetch('https://api.resend.com/emails', {
     method: 'POST',

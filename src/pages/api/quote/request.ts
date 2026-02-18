@@ -21,7 +21,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (sizeError) return sizeError;
 
   const web3formsKey = import.meta.env.WEB3FORMS_API_KEY;
-  const resendKey = import.meta.env.RESEND_API_KEY;
+  const resendKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_KEY || '';
   const notificationEmail = import.meta.env.NOTIFICATION_EMAIL || 'info@afjltd.co.uk';
 
   try {

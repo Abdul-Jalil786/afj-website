@@ -68,24 +68,41 @@ jobs:
           SITE="${{ secrets.SITE_URL }}"
 
           # Check sitemap index exists
-          SITEMAP_STATUS=$(curl -s -o /tmp/sitemap.xml -w "%{http_code}" --max-time 15 "${SITE}/sitemap-index.xml")
+          SITEMAP_STATUS=$(curl -s -o /tmp/sitemap-index.xml -w "%{http_code}" --max-time 15 "${SITE}/sitemap-index.xml")
 
           if [ "$SITEMAP_STATUS" -ne "200" ]; then
             echo "sitemap_ok=false" >> $GITHUB_OUTPUT
-            echo "sitemap_msg=Sitemap returned status ${SITEMAP_STATUS}" >> $GITHUB_OUTPUT
+            echo "sitemap_msg=Sitemap index returned status ${SITEMAP_STATUS}" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          # Count URLs in the sitemap (rough count of <loc> tags)
+          # The index contains <loc> entries pointing to child sitemaps (e.g. sitemap-0.xml).
+          # Extract the first child sitemap URL and rewrite its origin to match SITE_URL
+          # (Astro generates sitemaps with the production domain from site config).
+          CHILD_PATH=$(grep -oP '<loc>\K[^<]+' /tmp/sitemap-index.xml | head -1 | sed 's|https\?://[^/]*||')
+          if [ -z "$CHILD_PATH" ]; then
+            echo "sitemap_ok=false" >> $GITHUB_OUTPUT
+            echo "sitemap_msg=No child sitemap found in index" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Download the actual sitemap and count page URLs
+          CHILD_STATUS=$(curl -s -o /tmp/sitemap.xml -w "%{http_code}" --max-time 15 "${SITE}${CHILD_PATH}")
+          if [ "$CHILD_STATUS" -ne "200" ]; then
+            echo "sitemap_ok=false" >> $GITHUB_OUTPUT
+            echo "sitemap_msg=Child sitemap ${CHILD_PATH} returned status ${CHILD_STATUS}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           URL_COUNT=$(grep -c "<loc>" /tmp/sitemap.xml 2>/dev/null || echo "0")
 
           # We expect at least 30 URLs (homepage + services + areas + blog + misc)
-          if [ "$URL_COUNT" -lt 5 ]; then
+          if [ "$URL_COUNT" -lt 30 ]; then
             echo "sitemap_ok=false" >> $GITHUB_OUTPUT
-            echo "sitemap_msg=Sitemap has only ${URL_COUNT} entries (expected 30+)" >> $GITHUB_OUTPUT
+            echo "sitemap_msg=Sitemap has only ${URL_COUNT} page URLs (expected 30+)" >> $GITHUB_OUTPUT
           else
             echo "sitemap_ok=true" >> $GITHUB_OUTPUT
-            echo "sitemap_msg=Sitemap valid with ${URL_COUNT} entries" >> $GITHUB_OUTPUT
+            echo "sitemap_msg=Sitemap valid with ${URL_COUNT} page URLs" >> $GITHUB_OUTPUT
           fi
 
       - name: Send failure notification via Resend
@@ -93,8 +110,10 @@ jobs:
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          SITE_URL: ${{ secrets.SITE_URL }}
         run: |
           EMAIL="${NOTIFICATION_EMAIL:-info@afjltd.co.uk}"
+          SITE="${SITE_URL:-https://www.afjltd.co.uk}"
 
           # Build failure details
           DETAILS=""
@@ -113,7 +132,7 @@ jobs:
                 \"from\": \"AFJ Deploy Monitor <noreply@afjltd.co.uk>\",
                 \"to\": [\"${EMAIL}\"],
                 \"subject\": \"AFJ Website Deploy Validation Failed\",
-                \"html\": \"<div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto'><div style='background:#E53E3E;color:white;padding:20px;border-radius:8px 8px 0 0'><h1 style='margin:0;font-size:20px'>Deploy Validation Failed</h1></div><div style='padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px'><p>The post-deploy validation for <strong>afjltd.co.uk</strong> has detected issues:</p>${DETAILS}<hr style='border:none;border-top:1px solid #e2e8f0;margin:20px 0'/><p style='font-size:12px;color:#718096'>Automated alert from deploy-validate.yml</p></div></div>\"
+                \"html\": \"<div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto'><div style='background:#E53E3E;color:white;padding:20px;border-radius:8px 8px 0 0'><h1 style='margin:0;font-size:20px'>Deploy Validation Failed</h1></div><div style='padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px'><p>The post-deploy validation for <strong>${SITE}</strong> has detected issues:</p>${DETAILS}<hr style='border:none;border-top:1px solid #e2e8f0;margin:20px 0'/><p style='font-size:12px;color:#718096'>Automated alert from deploy-validate.yml</p></div></div>\"
               }"
             echo "Notification sent to ${EMAIL}"
           else

@@ -176,7 +176,7 @@ export async function getUnreadCount(): Promise<number> {
 
 /** Send email for a notification via Resend */
 async function sendNotificationEmail(notification: Notification): Promise<void> {
-  const resendKey = import.meta.env.RESEND_API_KEY;
+  const resendKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_KEY || '';
   const toEmail = import.meta.env.NOTIFICATION_EMAIL || 'info@afjltd.co.uk';
   const siteUrl = (import.meta.env.SITE_URL || 'https://www.afjltd.co.uk').replace(/\/$/, '');
 

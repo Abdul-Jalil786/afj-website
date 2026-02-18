@@ -9,7 +9,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (sizeError) return sizeError;
 
   const secret = import.meta.env.DASHBOARD_SECRET;
-  const resendKey = import.meta.env.RESEND_API_KEY;
+  const resendKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_KEY || '';
   const notificationEmail = import.meta.env.NOTIFICATION_EMAIL || 'info@afjltd.co.uk';
 
   // Auth check — notify is only called by internal scripts, DASHBOARD_SECRET only
