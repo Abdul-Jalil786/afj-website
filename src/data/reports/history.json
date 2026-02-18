@@ -106,5 +106,12 @@
       "grade": "A",
       "summary": "12/12 up, avg 225ms"
     }
+  ],
+  "compliance": [
+    {
+      "date": "2026-02-18",
+      "grade": "A",
+      "summary": "All 0 MOT and 0 DBS records are compliant"
+    }
   ]
 }
