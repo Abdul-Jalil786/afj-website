@@ -1,7 +1,7 @@
 # SYSTEM-MAP.md — AFJ Limited Digital Platform
 
 > Living document. Updated every time a feature is built, modified, or planned.
-> Last updated: 2026-02-17
+> Last updated: 2026-02-18
 
 ---
 
@@ -367,8 +367,8 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - **Centralised notification system** (`src/lib/notifications.ts`) — createNotification, readNotifications, markAsRead, deleteNotification, stored in `src/data/notifications.json`
 - **Blog auto-drafting** (`src/lib/blog-drafter.ts`) — AI generates weekly blog drafts from content calendar, saves to `src/data/blog-drafts.json`
 - **Blog drafts API** (`src/pages/api/admin/blog-drafts.ts`) — GET list, PUT approve/reject/edit, POST publish (→ GitHub API)
-- **Remediation agent** (`scripts/remediation-agent.mjs`) — reads monitoring reports, generates proposed code fixes via Haiku, saves to `src/data/proposed-fixes.json`
-- **Proposed fixes API** (`src/pages/api/admin/proposed-fixes.ts`) — GET list, PUT approve/reject/apply
+- **Remediation agent** (`scripts/remediation-agent.mjs`) — reads security + SEO reports, pattern-matches HIGH/CRITICAL issues, generates plain English descriptions + Claude Code prompts (no AI, no code generation, no GitHub commits), auto-resolves when issues disappear, deduplicates by title
+- **Proposed fixes API** (`src/pages/api/admin/proposed-fixes.ts`) — GET list, PUT dismiss
 - Admin notification bell in AdminLayout header with unread count badge
 - `/admin/notifications` page with filterable notification list
 
@@ -504,8 +504,8 @@ POST /api/admin/social/publish-facebook  Publish to Facebook via Graph API
 GET  /api/admin/blog-drafts     List AI-generated blog drafts
 PUT  /api/admin/blog-drafts     Approve/reject/edit draft
 POST /api/admin/blog-drafts     Publish draft to GitHub
-GET  /api/admin/proposed-fixes  List agent-proposed code fixes
-PUT  /api/admin/proposed-fixes  Approve/reject/apply fix
+GET  /api/admin/proposed-fixes  List agent-proposed fixes with Claude Code prompts
+PUT  /api/admin/proposed-fixes  Dismiss fix
 ```
 
 ### Components (27)
@@ -611,7 +611,7 @@ src/data/compliance-records.json MOT records (vehicle reg, test dates, results, 
 src/data/social-drafts.json      Social media drafts (platform, content, status, blogSlug, blogTitle)
 src/data/blog-drafts.json        AI-generated blog drafts from content calendar topics
 src/data/notifications.json      Centralised notification store (type, title, summary, priority, status, actionUrl)
-src/data/proposed-fixes.json     Agent-proposed code fixes (file, description, diff, status)
+src/data/proposed-fixes.json     Agent-proposed fixes (title, description, claudeCodePrompt, status: pending/resolved/dismissed)
 src/data/quote-log.json         Empty placeholder (actual log at data/quote-log.jsonl, gitignored)
 src/data/reports/pricing-report.json  AI-generated weekly pricing report (recommendations, tier analysis)
 src/data/reports/security-report.json  Daily security scan report (auth, headers, leakage, SSL)
@@ -695,7 +695,7 @@ OSRM                → Real driving distance and duration via router.project-os
 - Security headers middleware on all responses (CSP, HSTS, X-Frame-Options, etc.)
 - Centralised notification system with admin notification centre and bell badge
 - AI blog auto-drafting from content calendar topics
-- Remediation agent: AI-proposed code fixes from monitoring reports
+- Remediation agent: pattern-based issue detection → Claude Code prompts (no AI, no auto-apply)
 - MOT & DBS compliance record management with CSV import, expiry tracking, auto-notifications
 - Social media draft management: AI generation, blog auto-publish hook, LinkedIn/Facebook publishing
 - Meta agent: monthly AI health assessment of all agents
@@ -1025,7 +1025,7 @@ RAILWAY_TOKEN=
 | Schema markup | Full JSON-LD structured data | Basic or none |
 | Trust signals | Live accreditation display | Static logos |
 | Pricing intelligence | AI-powered weekly analysis with conversion tracking | Manual spreadsheet reviews |
-| Automated monitoring | 9 agents: security, SEO, marketing, competitor, performance, pricing, compliance, meta, remediation | No automated monitoring |
+| Automated monitoring | 9 agents: security, SEO, marketing, competitor, performance, pricing, compliance, meta, remediation (prompt-based) | No automated monitoring |
 | Competitive intelligence | Weekly AI-powered competitor crawling (8 competitors) with change detection | Ad-hoc manual checks |
 | Compliance tracking | Live MOT/DBS record management with expiry alerts, CSV import | Manual spreadsheets |
 | Social media | AI-generated drafts from blog + manual, LinkedIn/Facebook publishing | Manual posting |

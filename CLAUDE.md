@@ -16,7 +16,7 @@
 - Command centre dashboard: admin home rebuilt with key metrics, action cards, agent status strip, quick actions sidebar
 - Centralised notification system with admin bell icon, email alerts, /admin/notifications page
 - Blog auto-drafting with inline AI editing, diff view, edit history, publish via GitHub API
-- Security/SEO remediation agent (daily 5am, auto-generates code fix proposals for admin approval)
+- Security/SEO remediation agent (daily 5am, generates Claude Code prompts for manual fixing — no AI, no auto-apply)
 - Pricing intelligence system (quote tracking, conversion analytics, market research agent, recommendations)
 - 9 monitoring agents (security, SEO, remediation, marketing, competitor, performance, pricing, compliance, meta) with email reports
 - Security headers middleware on all routes
@@ -195,7 +195,7 @@ scripts/
 ├── agent-utils.mjs                 # Shared: callHaiku, sendReportEmail, saveReport, createNotification, etc.
 ├── security-agent.mjs              # Daily 3am
 ├── seo-agent.mjs                   # Daily 4am
-├── remediation-agent.mjs           # Daily 5am (generates fix proposals)
+├── remediation-agent.mjs           # Daily 5am (generates Claude Code prompts, no AI)
 ├── performance-agent.mjs           # Daily 6am (no AI)
 ├── compliance-check-agent.mjs      # Daily 7am (no AI, pure date logic, expiry warnings)
 ├── marketing-agent.mjs             # Weekly Mon 7am (+ auto-drafts top 2 blog ideas)
@@ -260,7 +260,7 @@ Website/Chat quotes → quote-log.jsonl → market-research-agent (weekly)
 |-------|----------|-----|-------|
 | Security | Daily 3am | Yes | Always |
 | SEO | Daily 4am | Yes | Always |
-| Remediation | Daily 5am | Yes | On fixes found |
+| Remediation | Daily 5am | No | On fixes found |
 | Performance | Daily 6am | No | Failures only |
 | Compliance | Daily 7am | No | On expiring/expired |
 | Marketing | Mon 7am | Yes | Always |
@@ -271,7 +271,7 @@ Website/Chat quotes → quote-log.jsonl → market-research-agent (weekly)
 Shared utils: scripts/agent-utils.mjs (callHaiku, sendReportEmail, saveReport, createNotification, gradeFromIssues, etc.)
 Grading: A (no issues) → F (critical). Reports in src/data/reports/. History capped at 90 days.
 Dashboard: /admin/monitoring — 9-agent card grid with expandable reports, grade history, Proposed Fixes tab, and Agent Health tab.
-Remediation reads security + SEO reports → generates code fix proposals → stores in proposed-fixes.json → admin approves/rejects → auto-applies via GitHub API.
+Remediation reads security + SEO reports → pattern-matches HIGH/CRITICAL issues → generates plain English descriptions + ready-to-paste Claude Code prompts → stores in proposed-fixes.json. Admin copies prompt into Claude Code to fix safely. No AI, no auto-apply, no GitHub commits. Auto-resolves when issues disappear from reports. Deduplicates by title.
 Compliance agent: pure date logic (no AI, no cost). Reads compliance-records.json, checks MOT/DBS expiry dates, creates notifications for items expiring within 30/14/7 days, weekly dedup.
 Meta agent: reads all agent scripts + reports, AI analysis via Haiku (~£0.03/run), generates health assessments, recommendations, cost estimates.
 Workflow commit step: all 9 agent workflows use a robust git conflict handler — stash, pull --rebase, stash pop, retry push with delay. Prevents failures when concurrent agents write to shared files (notifications.json, history.json).
