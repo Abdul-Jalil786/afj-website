@@ -160,12 +160,15 @@ export const PUT: APIRoute = async ({ request }) => {
           JSON.stringify({ success: true, data: { fix, applied: true } }),
           { status: 200, headers: { 'Content-Type': 'application/json' } },
         );
-      } catch (err) {
-        // Approved but failed to apply — admin can apply manually
+      } catch (err: any) {
+        // Approved but failed to apply — log and return error details
+        const errorMsg = err?.message || String(err);
+        console.error(`[proposed-fixes] GitHub apply failed for fix "${fix.id}" (${fix.file}):`, errorMsg);
+        console.error(`[proposed-fixes] GITHUB_TOKEN set: ${!!process.env.GITHUB_TOKEN}, GITHUB_REPO set: ${!!process.env.GITHUB_REPO}`);
         return new Response(
           JSON.stringify({
             success: true,
-            data: { fix, applied: false, applyError: 'Failed to apply via GitHub API. Apply manually.' },
+            data: { fix, applied: false, error: `GitHub commit failed: ${errorMsg}` },
           }),
           { status: 200, headers: { 'Content-Type': 'application/json' } },
         );

@@ -578,8 +578,8 @@ function trendIcon(trend: string): string {
         <div id="panelFixes" class:list={[activeTab !== 'fixes' && 'hidden']}>
           <div class="mb-4 flex flex-wrap gap-3">
             <select id="fixFilterStatus" class="px-3 py-2 border border-gray-300 rounded-md text-sm">
-              <option value="">All statuses</option>
-              <option value="pending" selected>Pending</option>
+              <option value="" selected>All statuses</option>
+              <option value="pending">Pending</option>
               <option value="approved">Approved</option>
               <option value="applied">Applied</option>
               <option value="rejected">Rejected</option>
@@ -777,7 +777,7 @@ function trendIcon(trend: string): string {
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data.success) {
-            var msg = data.data.applied ? 'Fix approved and applied!' : 'Fix approved. Apply manually if needed.';
+            var msg = data.data.applied ? 'Fix approved and applied!' : ('Fix approved but not applied. ' + (data.data.error || 'Apply manually if needed.'));
             alert(msg);
             document.getElementById('fixModal').classList.add('hidden');
             loadFixes();
