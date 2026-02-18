@@ -123,6 +123,7 @@ export function rateLimitResponse(resetAt: number): Response {
 // Pre-configured rate limit settings
 export const RATE_LIMITS = {
   contact: { maxRequests: 5, windowMs: 15 * 60 * 1000 },    // 5 per 15 min
+  quoteRequest: { maxRequests: 5, windowMs: 15 * 60 * 1000 }, // 5 per 15 min
   quote: { maxRequests: 30, windowMs: 15 * 60 * 1000 },      // 30 per 15 min
   chatPerMinute: { maxRequests: 5, windowMs: 60 * 1000 },    // 5 per IP per minute
   chatPerHour: { maxRequests: 30, windowMs: 60 * 60 * 1000 }, // 30 per IP per hour
