@@ -1,3 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /image-library
+Disallow: /content-calendar
+
 Sitemap: https://www.afjltd.co.uk/sitemap-index.xml
