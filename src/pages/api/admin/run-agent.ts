@@ -225,7 +225,15 @@ export const POST: APIRoute = async ({ request }) => {
     const output = await new Promise<string>((resolve, reject) => {
       exec(`node ${script}`, {
         timeout: 120_000,
-        env: { ...process.env },
+        env: {
+          ...process.env,
+          RESEND_API_KEY: process.env.RESEND_KEY || import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY || '',
+          NOTIFICATION_EMAIL: import.meta.env.NOTIFICATION_EMAIL || process.env.NOTIFICATION_EMAIL || '',
+          LLM_API_KEY: import.meta.env.LLM_API_KEY || process.env.LLM_API_KEY || '',
+          SITE_URL: import.meta.env.SITE_URL || process.env.SITE_URL || '',
+          GITHUB_TOKEN: import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN || '',
+          GITHUB_REPO: import.meta.env.GITHUB_REPO || process.env.GITHUB_REPO || '',
+        },
         maxBuffer: 1024 * 1024,
       }, (error, stdout, stderr) => {
         if (error) {
