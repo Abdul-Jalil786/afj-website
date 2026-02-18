@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T12:22:47.109Z",
+  "generatedAt": "2026-02-18T17:09:01.991Z",
   "agent": "security",
   "grade": "D",
   "counts": {
@@ -155,16 +155,15 @@
     "severity": "ok"
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's staging environment demonstrates solid API authentication controls with all admin endpoints properly protected (403 responses). However, critical security headers are missing across multiple pages, creating vulnerabilities to clickjacking, MIME-type sniffing, and XSS attacks. HTTPS is correctly implemented. The main risk stems from inconsistent security header implementation, with only the admin page partially configured (3 of 6 headers present) while public-facing pages lack essential protections.",
+    "summary": "AFJ Limited's security posture shows strong authentication controls with all admin endpoints properly protected (403 status), and SSL/TLS encryption is correctly implemented. However, critical security headers are missing across multiple pages, creating vulnerabilities to clickjacking, MIME-type sniffing, and cross-site scripting attacks. The absence of Content-Security-Policy, X-Content-Type-Options, and HSTS headers on public-facing pages (/, /services/send-transport, /quote) represents the most significant security gap requiring immediate remediation.",
     "recommendations": [
       "Immediately add X-Content-Type-Options: nosniff header to all pages to prevent MIME-type sniffing attacks",
-      "Add X-Frame-Options: DENY (or SAMEORIGIN if third-party embedding is required) to all pages to prevent clickjacking",
-      "Implement Strict-Transport-Security header (e.g., max-age=31536000; includeSubDomains) to enforce HTTPS",
-      "Deploy Content-Security-Policy header with restrictive defaults (e.g., default-src 'self') to mitigate XSS and injection attacks",
-      "Add Referrer-Policy header (recommended: strict-origin-when-cross-origin) to limit sensitive referrer information leakage",
-      "Add Permissions-Policy header to disable unnecessary browser features and APIs",
-      "Implement centralized security header middleware to ensure consistent application across all endpoints",
-      "Verify admin endpoints require proper role-based access control beyond HTTP 403 responses"
+      "Implement X-Frame-Options: SAMEORIGIN (or DENY if no frame embedding needed) on all pages to prevent clickjacking; currently missing on 3 of 4 scanned pages",
+      "Deploy a strict Content-Security-Policy header across all endpoints to mitigate XSS attacks, particularly important for service and quote pages handling user data",
+      "Enable HTTP Strict-Transport-Security (HSTS) with max-age=31536000 to enforce HTTPS and prevent downgrade attacks",
+      "Add Referrer-Policy and Permissions-Policy headers to restrict unnecessary data leakage and browser feature access",
+      "Conduct a full audit of all application pages (not just the 4 scanned) to ensure consistent header implementation site-wide",
+      "Implement automated security header validation in your CI/CD pipeline to prevent regression"
     ],
     "riskLevel": "high"
   }
