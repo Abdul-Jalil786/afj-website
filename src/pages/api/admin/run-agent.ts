@@ -5,7 +5,6 @@ import { exec } from 'child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { authenticateRequest } from '../../../lib/cf-auth';
-import { updateFileContent } from '../../../lib/github';
 import departments from '../../../data/departments.json';
 
 const AGENT_SCRIPTS: Record<string, string> = {
@@ -60,28 +59,117 @@ function readLocalFile(relativePath: string): string | null {
   }
 }
 
-/** Commit changed files to GitHub so they persist across Railway deploys */
+/** GitHub API helper for Git Trees batch commit */
+function ghApi(repo: string, token: string) {
+  const base = `https://api.github.com/repos/${repo}`;
+  const hdrs = {
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json',
+  };
+
+  return {
+    async getRef(branch: string): Promise<string> {
+      const res = await fetch(`${base}/git/refs/heads/${branch}`, { headers: hdrs });
+      if (!res.ok) throw new Error(`getRef failed: ${res.status}`);
+      const data = await res.json();
+      return (data as any).object.sha;
+    },
+
+    async createBlob(content: string): Promise<string> {
+      const res = await fetch(`${base}/git/blobs`, {
+        method: 'POST',
+        headers: hdrs,
+        body: JSON.stringify({ content: Buffer.from(content).toString('base64'), encoding: 'base64' }),
+      });
+      if (!res.ok) throw new Error(`createBlob failed: ${res.status}`);
+      const data = await res.json();
+      return (data as any).sha;
+    },
+
+    async createTree(baseTree: string, files: { path: string; sha: string }[]): Promise<string> {
+      const tree = files.map(f => ({ path: f.path, mode: '100644' as const, type: 'blob' as const, sha: f.sha }));
+      const res = await fetch(`${base}/git/trees`, {
+        method: 'POST',
+        headers: hdrs,
+        body: JSON.stringify({ base_tree: baseTree, tree }),
+      });
+      if (!res.ok) throw new Error(`createTree failed: ${res.status}`);
+      const data = await res.json();
+      return (data as any).sha;
+    },
+
+    async createCommit(message: string, treeSha: string, parentSha: string): Promise<string> {
+      const res = await fetch(`${base}/git/commits`, {
+        method: 'POST',
+        headers: hdrs,
+        body: JSON.stringify({ message, tree: treeSha, parents: [parentSha] }),
+      });
+      if (!res.ok) throw new Error(`createCommit failed: ${res.status}`);
+      const data = await res.json();
+      return (data as any).sha;
+    },
+
+    async updateRef(branch: string, commitSha: string): Promise<void> {
+      const res = await fetch(`${base}/git/refs/heads/${branch}`, {
+        method: 'PATCH',
+        headers: hdrs,
+        body: JSON.stringify({ sha: commitSha }),
+      });
+      if (!res.ok) throw new Error(`updateRef failed: ${res.status}`);
+    },
+  };
+}
+
+/**
+ * Batch-commit all changed report files in a single GitHub commit.
+ * Uses Git Trees API: create blobs → create tree → create commit → update ref.
+ * One commit = one Railway deployment instead of N commits = N deployments.
+ */
 async function commitReports(agent: string): Promise<number> {
+  const token = import.meta.env.GITHUB_TOKEN;
+  const repo = import.meta.env.GITHUB_REPO;
+  if (!token || !repo) {
+    console.error('GITHUB_TOKEN or GITHUB_REPO not set — skipping report commit');
+    return 0;
+  }
+
   const filesToCommit = [...(AGENT_FILES[agent] || []), ...SHARED_FILES];
-  let committed = 0;
+  const files: { path: string; content: string }[] = [];
 
   for (const filePath of filesToCommit) {
     const content = readLocalFile(filePath);
-    if (!content) continue;
-
-    try {
-      await updateFileContent(
-        filePath,
-        content,
-        `chore: ${agent} agent report (run from admin dashboard)`,
-      );
-      committed++;
-    } catch (err) {
-      console.error(`Failed to commit ${filePath}:`, err instanceof Error ? err.message : err);
-    }
+    if (content) files.push({ path: filePath, content });
   }
 
-  return committed;
+  if (files.length === 0) return 0;
+
+  const api = ghApi(repo, token);
+
+  // 1. Get current HEAD SHA of main
+  const headSha = await api.getRef('main');
+
+  // 2. Create blobs for each file
+  const treeEntries: { path: string; sha: string }[] = [];
+  for (const file of files) {
+    const blobSha = await api.createBlob(file.content);
+    treeEntries.push({ path: file.path, sha: blobSha });
+  }
+
+  // 3. Create tree based on current HEAD
+  const treeSha = await api.createTree(headSha, treeEntries);
+
+  // 4. Create commit
+  const commitSha = await api.createCommit(
+    `chore: ${agent} agent report (run from admin dashboard)`,
+    treeSha,
+    headSha,
+  );
+
+  // 5. Update main ref
+  await api.updateRef('main', commitSha);
+
+  return files.length;
 }
 
 export const POST: APIRoute = async ({ request }) => {
