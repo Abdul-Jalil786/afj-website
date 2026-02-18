@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T19:27:38.324Z",
+  "generatedAt": "2026-02-18T06:48:22.060Z",
   "agent": "performance",
   "grade": "A",
   "counts": {
@@ -12,90 +12,90 @@
     "totalPages": 12,
     "pagesUp": 12,
     "pagesDown": 0,
-    "avgResponseTime": 163,
-    "maxResponseTime": 659,
+    "avgResponseTime": 225,
+    "maxResponseTime": 805,
     "details": [
       {
         "path": "/",
         "status": 200,
-        "responseTime": 659,
+        "responseTime": 805,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/about",
         "status": 200,
-        "responseTime": 103,
+        "responseTime": 121,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/contact",
         "status": 200,
-        "responseTime": 143,
+        "responseTime": 375,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/services/send-transport",
         "status": 200,
-        "responseTime": 110,
+        "responseTime": 119,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/services/patient-transport",
         "status": 200,
-        "responseTime": 157,
+        "responseTime": 429,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/services/private-hire",
         "status": 200,
-        "responseTime": 118,
+        "responseTime": 121,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/services/airport-transfers",
         "status": 200,
-        "responseTime": 112,
+        "responseTime": 119,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/quote",
         "status": 200,
-        "responseTime": 101,
+        "responseTime": 120,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/compliance",
         "status": 200,
-        "responseTime": 113,
+        "responseTime": 123,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/blog",
         "status": 200,
-        "responseTime": 112,
+        "responseTime": 119,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/areas",
         "status": 200,
-        "responseTime": 114,
+        "responseTime": 123,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/faq",
         "status": 200,
-        "responseTime": 119,
+        "responseTime": 124,
         "ok": true,
         "severity": "ok"
       }
@@ -139,7 +139,7 @@
         "path": "/api/compliance/status",
         "method": "GET",
         "status": 200,
-        "responseTime": 584,
+        "responseTime": 738,
         "ok": true,
         "severity": "ok"
       }
