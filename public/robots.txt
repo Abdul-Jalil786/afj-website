@@ -5,4 +5,4 @@ Disallow: /api/
 Disallow: /image-library
 Disallow: /content-calendar
 
-Sitemap: https://www.afjltd.co.uk/sitemap-index.xml
+Sitemap: https://afj-staging.ascendtechgroup.co.uk/sitemap-index.xml
