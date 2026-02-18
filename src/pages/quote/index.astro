@@ -169,18 +169,6 @@ const jsonLD = {
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8">
           <p class="text-sm font-medium text-gray-500 mb-5 text-center" id="estimateServiceLabel"></p>
 
-          <!-- Itemised breakdown -->
-          <div id="estimateBreakdown" class="mb-6">
-            <div id="breakdownLines" class="space-y-2"></div>
-            <div class="border-t border-gray-200 mt-3 pt-3">
-              <div id="breakdownSubtotal" class="flex justify-between text-sm font-medium text-gray-700"></div>
-            </div>
-            <div id="breakdownAdjustments" class="mt-2 space-y-1"></div>
-            <div class="border-t-2 border-gray-300 mt-3 pt-3">
-              <div id="breakdownTotal" class="flex justify-between text-base font-bold text-gray-900"></div>
-            </div>
-          </div>
-
           <!-- Price range -->
           <div class="text-center py-4 bg-green-50 rounded-lg mb-4">
             <div class="flex items-center justify-center gap-3">
@@ -858,98 +846,8 @@ const jsonLD = {
     return valid ? answers : null;
   }
 
-  // Format miles and minutes into a readable note string
-  function formatMilesTime(miles, minutes) {
-    if (!miles) return null;
-    var note = miles + ' miles';
-    if (minutes) {
-      var hrs = Math.floor(minutes / 60);
-      var mins = minutes % 60;
-      note += ' \u00B7 approx. ' + (hrs > 0 ? hrs + 'h ' + mins + 'm' : mins + ' min');
-    }
-    return note;
-  }
-
-  // Render itemised breakdown in Step 3
-  function renderBreakdown(est) {
-    var lines = document.getElementById('breakdownLines');
-    lines.innerHTML = '';
-
-    function addLine(label, amount, note) {
-      var div = document.createElement('div');
-      div.className = 'flex justify-between items-start text-sm';
-      var leftHtml = note
-        ? '<div><span class="text-gray-600">' + label + '</span><br><span class="text-xs text-gray-400">' + note + '</span></div>'
-        : '<span class="text-gray-600">' + label + '</span>';
-      div.innerHTML = leftHtml + '<span class="text-gray-900 font-medium tabular-nums">\u00A3' + Math.round(amount) + '</span>';
-      lines.appendChild(div);
-    }
-
-    // Journey line — always shown
-    addLine('Journey', est.journeyCost, formatMilesTime(est.journeyMiles, est.journeyMinutes));
-
-    // Return line — depends on return type
-    if (est.returnJourneyCost) {
-      if (est.returnType === 'split') {
-        addLine('Separate return collection', est.returnJourneyCost, formatMilesTime(est.returnMiles, est.returnMinutes));
-      } else {
-        addLine('Return journey', est.returnJourneyCost, formatMilesTime(est.returnMiles, est.returnMinutes));
-      }
-    }
-
-    // Waiting time — same-day wait only
-    if (est.waitingCost) addLine('Driver waiting time', est.waitingCost, est.waitingHours + ' hours');
-
-    // DVSA break
-    if (est.dvsaBreakCost) addLine('DVSA driver break (45 min)', est.dvsaBreakCost);
-
-    // Additional stops
-    if (est.additionalStopsCost) addLine(est.numberOfStops + ' additional stop' + (est.numberOfStops > 1 ? 's' : ''), est.additionalStopsCost);
-
-    // Airport-specific
-    if (est.meetGreetCost) addLine('Meet & greet', est.meetGreetCost);
-    if (est.airportArrivalCost) addLine('Arrival waiting (45 min)', est.airportArrivalCost);
-
-    // Return message for split returns
-    if (est.returnMessage) {
-      var msgDiv = document.createElement('div');
-      msgDiv.className = 'mt-3 text-xs text-green-700 bg-green-50 rounded px-3 py-2';
-      msgDiv.textContent = est.returnMessage;
-      lines.appendChild(msgDiv);
-    }
-
-    // Subtotal
-    document.getElementById('breakdownSubtotal').innerHTML =
-      '<span>Subtotal</span><span class="tabular-nums">\u00A3' + Math.round(est.subtotal) + '</span>';
-
-    // Adjustments (surcharges, discounts)
-    var adj = document.getElementById('breakdownAdjustments');
-    adj.innerHTML = '';
-
-    if (est.surchargeCost) {
-      var sLabel = est.surchargeLabels ? est.surchargeLabels.join(', ') : 'Surcharge';
-      var surDiv = document.createElement('div');
-      surDiv.className = 'flex justify-between text-sm text-amber-700';
-      surDiv.innerHTML = '<span>' + sLabel + '</span><span class="tabular-nums">+\u00A3' + Math.round(est.surchargeCost) + '</span>';
-      adj.appendChild(surDiv);
-    }
-
-    if (est.regularDiscountAmount) {
-      var discLabel = est.returnType === 'separate'
-        ? 'Regular booking discount on both legs (\u2212' + est.regularDiscountPercent + '%)'
-        : 'Regular booking discount (\u2212' + est.regularDiscountPercent + '%)';
-      var discDiv = document.createElement('div');
-      discDiv.className = 'flex justify-between text-sm text-green-700';
-      discDiv.innerHTML = '<span>' + discLabel + '</span><span class="tabular-nums">\u2212\u00A3' + Math.round(est.regularDiscountAmount) + '</span>';
-      adj.appendChild(discDiv);
-    }
-
-    // Total
-    var totalLabel = est.minimumApplied ? 'Estimated total (minimum rate)' : 'Estimated total';
-    document.getElementById('breakdownTotal').innerHTML =
-      '<span>' + totalLabel + '</span><span class="tabular-nums">\u00A3' + Math.round(est.total) + '</span>';
-
-    // Flags
+  // Render flags (heavy luggage, wheelchair, executive) in Step 3
+  function renderFlags(est) {
     var flagsEl = document.getElementById('estimateFlags');
     flagsEl.innerHTML = '';
     var hasFlags = false;
@@ -991,10 +889,10 @@ const jsonLD = {
           currentEstimate = data.estimate;
           var svc = quoteRules.services[selectedService];
           document.getElementById('estimateServiceLabel').textContent = svc.label;
-          renderBreakdown(data.estimate);
           document.getElementById('estimateLow').textContent = '\u00A3' + data.estimate.low;
           document.getElementById('estimateHigh').textContent = '\u00A3' + data.estimate.high;
           document.getElementById('estimatePerUnit').textContent = data.estimate.perUnit;
+          renderFlags(data.estimate);
           showStep('step3');
         } else {
           alert(data.error || 'Failed to calculate estimate.');
