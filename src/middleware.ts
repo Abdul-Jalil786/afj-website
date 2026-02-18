@@ -26,3 +26,14 @@ export const onRequest = defineMiddleware((context, next) => {
   context.response.headers.set('referrer-policy', 'strict-origin-when-cross-origin');
   return next();
 });
+
+// Auto-fix applied: Add missing security headers: x-content-type-options, x-frame-options
+export const onRequest: MiddlewareHandler = (context, next) => {
+  const response = next();
+  
+  return response.then((res) => {
+    res.headers.set('x-content-type-options', 'nosniff');
+    res.headers.set('x-frame-options', 'DENY');
+    return res;
+  });
+};
