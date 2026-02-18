@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T19:07:11.574Z",
+  "generatedAt": "2026-02-18T01:56:49.768Z",
   "agent": "security",
   "grade": "D",
   "counts": {
@@ -155,16 +155,16 @@
     "severity": "ok"
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's staging environment demonstrates adequate authentication controls with all admin endpoints properly protected (403 responses), and SSL/TLS is correctly implemented. However, the security posture is significantly weakened by widespread absence of critical security headers across multiple pages. Four pages are missing essential headers like X-Content-Type-Options and X-Frame-Options, which are fundamental defenses against MIME-type sniffing and clickjacking attacks. Additionally, recommended security headers (HSTS, CSP, Referrer-Policy, Permissions-Policy) are almost entirely absent, leaving the application vulnerable to various client-side attacks.",
+    "summary": "AFJ Limited's staging environment demonstrates strong foundational security with proper authentication controls and HTTPS implementation, but suffers from significant deficiencies in HTTP security headers across all scanned pages. All five admin API endpoints correctly return 403 status codes, indicating proper access controls are in place. However, critical security headers are missing from public-facing pages, leaving the application vulnerable to clickjacking, MIME-type sniffing, and cross-site scripting attacks. The absence of Content Security Policy (CSP) and Strict-Transport-Security (HSTS) headers represents the most pressing concern, as these provide essential defense-in-depth protections.",
     "recommendations": [
-      "Immediately implement X-Content-Type-Options: nosniff on all pages to prevent MIME-type sniffing attacks",
-      "Add X-Frame-Options: SAMEORIGIN (or DENY) to all pages to prevent clickjacking; note that /admin already has this correctly configured",
-      "Configure Strict-Transport-Security header with appropriate max-age (recommend 31536000) to enforce HTTPS across all pages",
-      "Implement Content-Security-Policy header with restrictive directives appropriate to your application architecture to mitigate XSS and injection attacks",
-      "Add Referrer-Policy header (recommend 'strict-origin-when-cross-origin') to control referrer information leakage",
-      "Enable Permissions-Policy header to restrict browser features and APIs that could be exploited",
-      "Apply these headers consistently across all pages, especially sensitive areas like /admin and /quote",
-      "Implement header security as part of your web server configuration (nginx/Apache) rather than application-level for consistency"
+      "Immediately implement X-Content-Type-Options: nosniff header across all pages to prevent MIME-type sniffing attacks",
+      "Add X-Frame-Options: SAMEORIGIN to all pages (currently only present on /admin) to prevent clickjacking; use DENY if embedding is not required",
+      "Deploy Strict-Transport-Security header with appropriate max-age (e.g., max-age=31536000; includeSubDomains) to enforce HTTPS and prevent downgrade attacks",
+      "Implement a strict Content-Security-Policy header tailored to application requirements, starting with default-src 'self' and progressively opening only necessary directives",
+      "Add Referrer-Policy: strict-origin-when-cross-origin to protect user privacy and prevent information leakage",
+      "Include Permissions-Policy header to restrict browser features and APIs (geolocation, microphone, camera, etc.) that the application doesn't require",
+      "Conduct a full security header audit across the production environment to ensure parity with staging improvements",
+      "Implement automated security header validation in CI/CD pipeline to prevent regression"
     ],
     "riskLevel": "high"
   }
