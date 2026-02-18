@@ -17,5 +17,12 @@
       "grade": "F",
       "summary": "No sitemap found"
     }
+  ],
+  "security": [
+    {
+      "date": "2026-02-18",
+      "grade": "D",
+      "summary": "0C 4H 0M 0L"
+    }
   ]
 }
