@@ -1,6 +1,6 @@
 /**
  * GET  /api/admin/proposed-fixes          — list all proposed fixes
- * PUT  /api/admin/proposed-fixes          — approve or reject a fix
+ * PUT  /api/admin/proposed-fixes          — dismiss a fix
  *
  * Auth: CF JWT or DASHBOARD_SECRET. Management only.
  */
@@ -11,8 +11,6 @@ import type { APIRoute } from 'astro';
 import { authenticateRequest } from '../../../lib/cf-auth';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { createOrUpdateFile, getFileContent } from '../../../lib/github';
-import { createNotification } from '../../../lib/notifications';
 
 const FIXES_PATH = join(process.cwd(), 'src', 'data', 'proposed-fixes.json');
 
@@ -23,16 +21,12 @@ interface ProposedFix {
   severity: string;
   title: string;
   description: string;
-  file: string;
-  currentCode: string;
-  proposedCode: string;
-  diffSummary: string;
-  status: 'pending' | 'approved' | 'applied' | 'rejected';
+  claudeCodePrompt: string;
+  status: 'pending' | 'dismissed' | 'resolved';
   createdAt: string;
-  approvedAt: string | null;
-  appliedAt: string | null;
-  rejectedAt: string | null;
-  rejectedReason: string | null;
+  resolvedAt?: string | null;
+  dismissedAt?: string | null;
+  dismissedReason?: string | null;
 }
 
 interface FixesStore {
@@ -80,9 +74,8 @@ export const GET: APIRoute = async ({ request, url }) => {
         fixes,
         counts: {
           pending: store.fixes.filter((f) => f.status === 'pending').length,
-          approved: store.fixes.filter((f) => f.status === 'approved').length,
-          applied: store.fixes.filter((f) => f.status === 'applied').length,
-          rejected: store.fixes.filter((f) => f.status === 'rejected').length,
+          resolved: store.fixes.filter((f) => f.status === 'resolved').length,
+          dismissed: store.fixes.filter((f) => f.status === 'dismissed').length,
         },
       },
     }),
@@ -127,64 +120,10 @@ export const PUT: APIRoute = async ({ request }) => {
     });
   }
 
-  if (action === 'approve') {
-    fix.status = 'approved';
-    fix.approvedAt = new Date().toISOString();
-    await writeFixes(store);
-
-    // Try to apply the fix via GitHub API
-    if (fix.file && fix.file !== 'unknown' && fix.proposedCode) {
-      try {
-        // Read current file
-        const current = await getFileContent(fix.file);
-        let newContent = current.content;
-
-        if (fix.currentCode && newContent.includes(fix.currentCode)) {
-          newContent = newContent.replace(fix.currentCode, fix.proposedCode);
-        } else {
-          // If we can't find the exact code to replace, append as a comment
-          newContent += `\n// Auto-fix applied: ${fix.title}\n${fix.proposedCode}\n`;
-        }
-
-        await createOrUpdateFile(fix.file, {
-          content: newContent,
-          message: `fix: ${fix.title} (auto-remediation)`,
-          sha: current.sha,
-        });
-
-        fix.status = 'applied';
-        fix.appliedAt = new Date().toISOString();
-        await writeFixes(store);
-
-        return new Response(
-          JSON.stringify({ success: true, data: { fix, applied: true } }),
-          { status: 200, headers: { 'Content-Type': 'application/json' } },
-        );
-      } catch (err: any) {
-        // Approved but failed to apply — log and return error details
-        const errorMsg = err?.message || String(err);
-        console.error(`[proposed-fixes] GitHub apply failed for fix "${fix.id}" (${fix.file}):`, errorMsg);
-        console.error(`[proposed-fixes] GITHUB_TOKEN set: ${!!process.env.GITHUB_TOKEN}, GITHUB_REPO set: ${!!process.env.GITHUB_REPO}`);
-        return new Response(
-          JSON.stringify({
-            success: true,
-            data: { fix, applied: false, error: `GitHub commit failed: ${errorMsg}` },
-          }),
-          { status: 200, headers: { 'Content-Type': 'application/json' } },
-        );
-      }
-    }
-
-    return new Response(
-      JSON.stringify({ success: true, data: { fix, applied: false } }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
-    );
-  }
-
-  if (action === 'reject') {
-    fix.status = 'rejected';
-    fix.rejectedAt = new Date().toISOString();
-    fix.rejectedReason = reason || null;
+  if (action === 'dismiss') {
+    fix.status = 'dismissed';
+    (fix as any).dismissedAt = new Date().toISOString();
+    (fix as any).dismissedReason = reason || null;
     await writeFixes(store);
 
     return new Response(JSON.stringify({ success: true, data: { fix } }), {
@@ -193,7 +132,7 @@ export const PUT: APIRoute = async ({ request }) => {
     });
   }
 
-  return new Response(JSON.stringify({ success: false, error: 'Invalid action. Use approve or reject.' }), {
+  return new Response(JSON.stringify({ success: false, error: 'Invalid action. Use dismiss.' }), {
     status: 400,
     headers: { 'Content-Type': 'application/json' },
   });
