@@ -228,14 +228,23 @@ function trendIcon(trend: string): string {
                     <p><span class="font-medium text-gray-700">AI-powered:</span> {agent.usesAI ? 'Yes' : 'No'}</p>
                   </div>
 
-                  {hasReport && (
+                  <div class="mt-4 flex gap-2">
+                    {hasReport && (
+                      <button
+                        class="flex-1 py-2 px-4 bg-afj-dark-blue text-white text-sm font-medium rounded-md hover:bg-afj-dark-blue/90 transition-colors expand-btn"
+                        data-target={`detail-${agent.id}`}
+                      >
+                        View Report
+                      </button>
+                    )}
                     <button
-                      class="mt-4 w-full py-2 px-4 bg-afj-dark-blue text-white text-sm font-medium rounded-md hover:bg-afj-dark-blue/90 transition-colors expand-btn"
-                      data-target={`detail-${agent.id}`}
+                      class="flex-1 py-2 px-4 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors run-agent-btn"
+                      data-agent-id={agent.id}
+                      data-agent-name={agent.name}
                     >
-                      View Report
+                      Run Now
                     </button>
-                  )}
+                  </div>
                 </div>
 
                 {/* Expandable detail panel */}
@@ -804,6 +813,73 @@ function trendIcon(trend: string): string {
         if (btn.getAttribute('data-tab') === 'fixes') {
           setTimeout(loadFixes, 100);
         }
+      });
+    });
+
+    // ── Run Now buttons ──
+    var allRunBtns = document.querySelectorAll('.run-agent-btn');
+
+    function setAllRunBtnsDisabled(disabled) {
+      allRunBtns.forEach(function(btn) {
+        btn.disabled = disabled;
+        if (disabled && !btn.classList.contains('running')) {
+          btn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+      });
+    }
+
+    allRunBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var agentId = btn.getAttribute('data-agent-id');
+        var agentName = btn.getAttribute('data-agent-name');
+        if (!agentId) return;
+
+        // Set running state
+        var originalText = btn.textContent;
+        btn.textContent = 'Running...';
+        btn.classList.add('running', 'animate-pulse');
+        btn.disabled = true;
+        setAllRunBtnsDisabled(true);
+
+        fetch('/api/admin/run-agent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ agent: agentId }),
+        })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.success) {
+              btn.textContent = 'Done!';
+              btn.classList.remove('animate-pulse', 'bg-green-600', 'hover:bg-green-700');
+              btn.classList.add('bg-green-700');
+              // Reload the page after a short delay to show updated report
+              setTimeout(function() { window.location.reload(); }, 1500);
+            } else {
+              btn.textContent = 'Failed';
+              btn.classList.remove('animate-pulse', 'bg-green-600', 'hover:bg-green-700');
+              btn.classList.add('bg-red-600');
+              alert(agentName + ' agent failed: ' + (data.error || 'Unknown error'));
+              setTimeout(function() {
+                btn.textContent = originalText;
+                btn.classList.remove('bg-red-600', 'running');
+                btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                setAllRunBtnsDisabled(false);
+                allRunBtns.forEach(function(b) { b.classList.remove('opacity-50', 'cursor-not-allowed'); });
+              }, 3000);
+            }
+          })
+          .catch(function() {
+            btn.textContent = 'Error';
+            btn.classList.remove('animate-pulse', 'bg-green-600', 'hover:bg-green-700');
+            btn.classList.add('bg-red-600');
+            setTimeout(function() {
+              btn.textContent = originalText;
+              btn.classList.remove('bg-red-600', 'running');
+              btn.classList.add('bg-green-600', 'hover:bg-green-700');
+              setAllRunBtnsDisabled(false);
+              allRunBtns.forEach(function(b) { b.classList.remove('opacity-50', 'cursor-not-allowed'); });
+            }, 3000);
+          });
       });
     });
   </script>
