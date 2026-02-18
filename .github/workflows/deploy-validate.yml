@@ -4,6 +4,12 @@ on:
   # Trigger after push to main (Railway auto-deploys on push)
   push:
     branches: [main]
+    paths-ignore:
+      - 'src/data/reports/**'
+      - 'src/data/notifications.json'
+      - 'src/data/proposed-fixes.json'
+      - 'src/data/blog-drafts.json'
+      - 'src/data/social-drafts.json'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -18,7 +24,7 @@ jobs:
       - name: Check key pages return 200
         id: page_checks
         run: |
-          SITE="https://www.afjltd.co.uk"
+          SITE="${{ secrets.SITE_URL }}"
           PAGES=(
             "/"
             "/blog"
@@ -59,7 +65,7 @@ jobs:
       - name: Check sitemap
         id: sitemap_check
         run: |
-          SITE="https://www.afjltd.co.uk"
+          SITE="${{ secrets.SITE_URL }}"
 
           # Check sitemap index exists
           SITEMAP_STATUS=$(curl -s -o /tmp/sitemap.xml -w "%{http_code}" --max-time 15 "${SITE}/sitemap-index.xml")
