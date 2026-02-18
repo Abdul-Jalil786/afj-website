@@ -218,39 +218,68 @@ function calculateSurcharges(date: string, time: string): { percent: number; lab
  * Uses hardcoded base lat/lng first (no API call needed), then OSRM for driving route.
  * Falls back to distance matrix if OSRM fails.
  */
-async function getDeadheadFromBase(pickupPostcode: string): Promise<{ miles: number; minutes: number }> {
-  const bases = (quoteRules as any).bases as { name: string; postcode: string; lat: number; lng: number }[];
-  if (!bases || !bases.length) return { miles: 0, minutes: 0 };
+interface BaseInfo { name: string; postcode: string; lat: number; lng: number }
+interface DeadheadResult { miles: number; minutes: number; base: BaseInfo }
 
-  const pickupCoords = await fetchCoords(pickupPostcode);
-  if (!pickupCoords) {
+async function getDeadheadFromBase(postcode: string): Promise<DeadheadResult> {
+  const bases = (quoteRules as any).bases as BaseInfo[];
+  const fallbackBase = bases?.[0] || { name: 'Birmingham', postcode: 'B7 4JD', lat: 52.4912, lng: -1.8876 };
+  if (!bases || !bases.length) return { miles: 0, minutes: 0, base: fallbackBase };
+
+  const coords = await fetchCoords(postcode);
+  if (!coords) {
     // Fallback: use matrix distance from B (Birmingham primary base)
-    const pickupArea = extractArea(pickupPostcode);
-    const miles = lookupDistance('B', pickupArea);
+    const area = extractArea(postcode);
+    const miles = lookupDistance('B', area);
     const avgSpeedMph = (quoteRules.pricing as any)['private-hire']?.averageSpeedMph || 40;
-    return { miles, minutes: Math.round((miles / avgSpeedMph) * 60) };
+    return { miles, minutes: Math.round((miles / avgSpeedMph) * 60), base: fallbackBase };
   }
 
   // Use hardcoded base coords — no API call needed for base geocoding
   let best: { miles: number; minutes: number } | null = null;
+  let bestBase: BaseInfo = fallbackBase;
 
   for (const base of bases) {
     if (base.lat && base.lng) {
-      const result = await fetchDrivingMiles(base.lat, base.lng, pickupCoords.lat, pickupCoords.lng);
+      const result = await fetchDrivingMiles(base.lat, base.lng, coords.lat, coords.lng);
       if (result && result.miles > 0) {
         const rounded = { miles: Math.round(result.miles), minutes: Math.round(result.minutes) };
         if (!best || rounded.miles < best.miles) {
           best = rounded;
+          bestBase = base;
         }
       }
     }
   }
 
-  if (best) return best;
+  if (best) return { ...best, base: bestBase };
 
   // Fallback: matrix from Birmingham
-  const pickupArea = extractArea(pickupPostcode);
-  const miles = lookupDistance('B', pickupArea);
+  const area = extractArea(postcode);
+  const miles = lookupDistance('B', area);
+  const avgSpeedMph = (quoteRules.pricing as any)['private-hire']?.averageSpeedMph || 40;
+  return { miles, minutes: Math.round((miles / avgSpeedMph) * 60), base: fallbackBase };
+}
+
+/**
+ * Calculate driving distance from a postcode to a specific base.
+ * Used to get destination→homeBase distance (ensuring same base as pickup).
+ */
+async function getDistanceToBase(
+  postcode: string,
+  base: BaseInfo,
+): Promise<{ miles: number; minutes: number }> {
+  const coords = await fetchCoords(postcode);
+  if (coords) {
+    const result = await fetchDrivingMiles(coords.lat, coords.lng, base.lat, base.lng);
+    if (result && result.miles > 0) {
+      return { miles: Math.round(result.miles), minutes: Math.round(result.minutes) };
+    }
+  }
+  // Fallback: distance matrix
+  const fromArea = extractArea(postcode);
+  const toArea = extractArea(base.postcode);
+  const miles = lookupDistance(fromArea, toArea);
   const avgSpeedMph = (quoteRules.pricing as any)['private-hire']?.averageSpeedMph || 40;
   return { miles, minutes: Math.round((miles / avgSpeedMph) * 60) };
 }
@@ -353,13 +382,13 @@ export async function estimateQuote(
       );
     }
 
-    // Get deadhead from nearest base
-    const deadhead = await getDeadheadFromBase(answers.pickupPostcode || '');
-    const deadheadApplies = deadhead.miles > deadheadThreshold;
+    // Home base = nearest base to pickup (driver starts and returns here)
+    const pickupDeadhead = await getDeadheadFromBase(answers.pickupPostcode || '');
+    const homeBase = pickupDeadhead.base;
 
-    // Also get deadhead from destination to base (for return legs)
-    const destDeadhead = answers.destinationPostcode
-      ? await getDeadheadFromBase(answers.destinationPostcode)
+    // Distance from destination back to the SAME home base
+    const destToBase = answers.destinationPostcode
+      ? await getDistanceToBase(answers.destinationPostcode, homeBase)
       : { miles: 0, minutes: 0 };
 
     const passengerKey = answers.passengers || '5-8';
@@ -377,21 +406,13 @@ export async function estimateQuote(
         // Two completely separate bookings priced independently
         returnTypeVal = 'separate';
 
-        // Outbound: base→pickup→destination→base (deadhead rolled into total)
-        let outboundMiles = coreDistance.miles;
-        let outboundMinutes = coreDistance.minutes;
-        if (deadheadApplies) {
-          outboundMiles += deadhead.miles + destDeadhead.miles;
-          outboundMinutes += deadhead.minutes + destDeadhead.minutes;
-        }
+        // Outbound: homeBase→pickup→destination→homeBase
+        const outboundMiles = pickupDeadhead.miles + coreDistance.miles + destToBase.miles;
+        const outboundMinutes = pickupDeadhead.minutes + coreDistance.minutes + destToBase.minutes;
 
-        // Return: base→destination→pickup→base (reverse route, same core distance)
-        let returnMiles = coreDistance.miles;
-        let returnMin = coreDistance.minutes;
-        if (deadheadApplies) {
-          returnMiles += destDeadhead.miles + deadhead.miles;
-          returnMin += destDeadhead.minutes + deadhead.minutes;
-        }
+        // Return: homeBase→destination→pickup→homeBase (reverse route)
+        const returnMiles = destToBase.miles + coreDistance.miles + pickupDeadhead.miles;
+        const returnMin = destToBase.minutes + coreDistance.minutes + pickupDeadhead.minutes;
 
         journeyCost = calculateLegCost(outboundMiles, outboundMinutes) * passengerMult;
         journeyMiles = outboundMiles;
@@ -416,7 +437,8 @@ export async function estimateQuote(
           gapHours = rawWaitingMin > 0 ? rawWaitingMin / 60 : 0;
         }
 
-        const canSplit = !deadheadApplies || deadhead.miles <= deadheadThreshold;
+        // Split allowed when destination is close enough to base for driver to return between legs
+        const canSplit = destToBase.miles <= deadheadThreshold;
         const gapLongEnough = gapHours >= minGapForSplit;
 
         if (canSplit && gapLongEnough) {
@@ -425,21 +447,13 @@ export async function estimateQuote(
           returnTypeVal = 'split';
           returnMessage = 'Your return will be handled as a separate collection \u2014 no waiting charges apply';
 
-          // Leg 1: base → pickup → destination → base
-          let leg1Miles = coreDistance.miles;
-          let leg1Minutes = coreDistance.minutes;
-          if (deadheadApplies) {
-            leg1Miles += deadhead.miles + destDeadhead.miles;
-            leg1Minutes += deadhead.minutes + destDeadhead.minutes;
-          }
+          // Leg 1: homeBase → pickup → destination → homeBase
+          const leg1Miles = pickupDeadhead.miles + coreDistance.miles + destToBase.miles;
+          const leg1Minutes = pickupDeadhead.minutes + coreDistance.minutes + destToBase.minutes;
 
-          // Leg 2: base → destination → pickup → base
-          let leg2Miles = coreDistance.miles;
-          let leg2Minutes = coreDistance.minutes;
-          if (deadheadApplies) {
-            leg2Miles += destDeadhead.miles + deadhead.miles;
-            leg2Minutes += destDeadhead.minutes + deadhead.minutes;
-          }
+          // Leg 2: homeBase → destination → pickup → homeBase
+          const leg2Miles = destToBase.miles + coreDistance.miles + pickupDeadhead.miles;
+          const leg2Minutes = destToBase.minutes + coreDistance.minutes + pickupDeadhead.minutes;
 
           const totalMiles = leg1Miles + leg2Miles;
           const totalMinutes = leg1Minutes + leg2Minutes;
@@ -460,24 +474,21 @@ export async function estimateQuote(
           // Driver stays at destination with vehicle
           returnTypeVal = 'wait';
 
-          // Route: base → pickup → destination → (wait) → destination → pickup → base
-          let totalMiles = coreDistance.miles * 2; // out and back
-          let totalDrivingMinutes = coreDistance.minutes * 2;
+          // Route: homeBase → pickup → destination → (wait) → destination → pickup → homeBase
+          const totalMiles = pickupDeadhead.miles + (coreDistance.miles * 2) + pickupDeadhead.miles;
+          const totalDrivingMinutes = pickupDeadhead.minutes + (coreDistance.minutes * 2) + pickupDeadhead.minutes;
 
-          if (deadheadApplies) {
-            totalMiles += deadhead.miles + destDeadhead.miles; // base→pickup + destination→base
-            totalDrivingMinutes += deadhead.minutes + destDeadhead.minutes;
-          }
-
+          // Outbound leg: homeBase → pickup → destination
           journeyCost = calculateLegCost(
-            coreDistance.miles + (deadheadApplies ? deadhead.miles : 0),
-            coreDistance.minutes + (deadheadApplies ? deadhead.minutes : 0),
+            pickupDeadhead.miles + coreDistance.miles,
+            pickupDeadhead.minutes + coreDistance.minutes,
           ) * passengerMult;
-          journeyMiles = coreDistance.miles + (deadheadApplies ? deadhead.miles : 0);
-          journeyMinutes = coreDistance.minutes + (deadheadApplies ? deadhead.minutes : 0);
+          journeyMiles = pickupDeadhead.miles + coreDistance.miles;
+          journeyMinutes = pickupDeadhead.minutes + coreDistance.minutes;
 
-          const returnCoreMiles = coreDistance.miles + (deadheadApplies ? destDeadhead.miles : 0);
-          const returnCoreMin = coreDistance.minutes + (deadheadApplies ? destDeadhead.minutes : 0);
+          // Return leg: destination → pickup → homeBase
+          const returnCoreMiles = coreDistance.miles + pickupDeadhead.miles;
+          const returnCoreMin = coreDistance.minutes + pickupDeadhead.minutes;
           returnJourneyCost = calculateLegCost(returnCoreMiles, returnCoreMin) * passengerMult;
           returnMilesVal = returnCoreMiles;
           returnMinutesVal = returnCoreMin;
@@ -506,15 +517,9 @@ export async function estimateQuote(
       }
     } else {
       // ── ONE-WAY TRIP ──
-      // Route: base → pickup → destination → base
-      let totalMiles = coreDistance.miles;
-      let totalMinutes = coreDistance.minutes;
-
-      if (deadheadApplies) {
-        // Round-trip deadhead: base→pickup + destination→base
-        totalMiles += deadhead.miles + destDeadhead.miles;
-        totalMinutes += deadhead.minutes + destDeadhead.minutes;
-      }
+      // Route: homeBase → pickup → destination → homeBase
+      const totalMiles = pickupDeadhead.miles + coreDistance.miles + destToBase.miles;
+      const totalMinutes = pickupDeadhead.minutes + coreDistance.minutes + destToBase.minutes;
 
       journeyCost = calculateLegCost(totalMiles, totalMinutes) * passengerMult;
       journeyMiles = totalMiles;

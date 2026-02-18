@@ -76,10 +76,10 @@ const canEdit = userDepartment === 'management';
           <h2 class="text-lg font-semibold text-gray-900 mb-4">Operational Thresholds</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Deadhead threshold (miles)</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Split return threshold (miles)</label>
               <input type="number" step="1" min="0" id="deadheadThresholdMiles" value={quoteRules.deadheadThresholdMiles}
                 class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-afj-accent focus:border-afj-accent" />
-              <p class="text-xs text-gray-400 mt-1">Pickup distance from base before deadhead is charged</p>
+              <p class="text-xs text-gray-400 mt-1">Max destination-to-base distance for driver to return between same-day return legs</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Min gap for split return (hours)</label>
