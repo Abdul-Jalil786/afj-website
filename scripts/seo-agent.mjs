@@ -15,6 +15,20 @@ import {
 
 // ── Fetch and parse sitemap ──
 
+// Astro generates sitemap URLs using the `site` config (production domain),
+// but the agent may run against a staging domain. Rewrite all extracted URLs
+// so they point at SITE_URL regardless of what the sitemap contains.
+const SITE_ORIGIN = new URL(SITE_URL).origin;
+
+function rewriteUrl(url) {
+  try {
+    const parsed = new URL(url);
+    return `${SITE_ORIGIN}${parsed.pathname}${parsed.search}${parsed.hash}`;
+  } catch {
+    return url;
+  }
+}
+
 async function fetchSitemap() {
   const urls = [];
 
@@ -23,14 +37,14 @@ async function fetchSitemap() {
     const indexRes = await fetchWithTimeout(`${SITE_URL}/sitemap-index.xml`);
     if (indexRes.ok) {
       const indexXml = await indexRes.text();
-      const sitemapUrls = [...indexXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+      const sitemapUrls = [...indexXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => rewriteUrl(m[1]));
 
       for (const sitemapUrl of sitemapUrls) {
         try {
           const res = await fetchWithTimeout(sitemapUrl);
           if (res.ok) {
             const xml = await res.text();
-            const pageUrls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+            const pageUrls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => rewriteUrl(m[1]));
             urls.push(...pageUrls);
           }
         } catch { /* skip failed sub-sitemap */ }
@@ -43,7 +57,7 @@ async function fetchSitemap() {
       const res = await fetchWithTimeout(`${SITE_URL}/sitemap.xml`);
       if (res.ok) {
         const xml = await res.text();
-        const pageUrls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+        const pageUrls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => rewriteUrl(m[1]));
         urls.push(...pageUrls);
       }
     } catch { /* no sitemap found */ }
