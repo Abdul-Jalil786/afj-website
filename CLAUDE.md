@@ -19,7 +19,7 @@
 - Security/SEO remediation agent (daily 5am, generates Claude Code prompts for manual fixing — no AI, no auto-apply)
 - Pricing intelligence system (quote tracking, conversion analytics, market research agent, recommendations)
 - 9 monitoring agents (security, SEO, remediation, marketing, competitor, performance, pricing, compliance, meta) with email reports
-- Run Now buttons on monitoring dashboard — trigger any agent on-demand via `/api/admin/run-agent` (management only, single-agent lock, 120s timeout). After execution, reports are committed to GitHub via API so they persist across Railway deploys.
+- Run Now buttons on monitoring dashboard — trigger any agent on-demand via `/api/admin/run-agent` (management only, single-agent lock, 120s timeout). After execution, all report files are batch-committed to GitHub in a single commit via Git Trees API (1 commit = 1 Railway deploy, not N).
 - Security headers middleware on all routes (CSP tightened: `unsafe-eval` removed)
 - robots.txt blocks /admin/, /api/, /image-library, /content-calendar (sitemap points to staging domain)
 - Rate limiting on all public endpoints including /api/compliance/status
@@ -274,7 +274,7 @@ Website/Chat quotes → quote-log.jsonl → market-research-agent (weekly)
 Shared utils: scripts/agent-utils.mjs (callHaiku, sendReportEmail, saveReport, createNotification, gradeFromIssues, etc.)
 Grading: A (no issues) → F (critical). Reports in src/data/reports/. History capped at 90 days.
 SEO agent rewrites all sitemap URLs to match SITE_URL origin before crawling (Astro generates sitemaps with the production domain from `site` config, but the agent may run against staging).
-Dashboard: /admin/monitoring — 9-agent card grid with expandable reports, grade history, Proposed Fixes tab, and Agent Health tab. Each card has a "Run Now" button to trigger the agent on-demand (POST /api/admin/run-agent, management only, 120s timeout, single-agent lock prevents overlapping runs). After execution, run-agent reads all output files from disk and commits them to GitHub via `updateFileContent()` — agent-specific report files + shared `history.json` + `notifications.json`. This ensures reports persist across Railway deploys (Railway filesystem resets on redeploy).
+Dashboard: /admin/monitoring — 9-agent card grid with expandable reports, grade history, Proposed Fixes tab, and Agent Health tab. Each card has a "Run Now" button to trigger the agent on-demand (POST /api/admin/run-agent, management only, 120s timeout, single-agent lock prevents overlapping runs). After execution, run-agent reads all output files from disk and batch-commits them to GitHub in a single commit via the Git Trees API (blobs → tree → commit → update ref). This ensures reports persist across Railway deploys and produces exactly 1 deployment per Run Now click.
 Remediation reads security + SEO reports → pattern-matches HIGH/CRITICAL issues → generates plain English descriptions + ready-to-paste Claude Code prompts → stores in proposed-fixes.json. Admin copies prompt into Claude Code to fix safely. No AI, no auto-apply, no GitHub commits. Auto-resolves when issues disappear from reports. Deduplicates by title.
 Compliance agent: pure date logic (no AI, no cost). Reads compliance-records.json, checks MOT/DBS expiry dates, creates notifications for items expiring within 30/14/7 days, weekly dedup.
 Meta agent: reads all agent scripts + reports, AI analysis via Haiku (~£0.03/run), generates health assessments, recommendations, cost estimates.
