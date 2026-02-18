@@ -16,6 +16,16 @@ const jsonLD = {
   description:
     'Get an instant estimated quote for private minibus hire and airport transfers from AFJ Limited. Enterprise quotes available for SEND transport, patient transport and fleet services.',
 };
+
+/* Service icon SVG paths keyed by service ID */
+const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean }> = {
+  'private-hire': { viewBox: '0 0 24 24', d: 'M8 17a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm8 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM3 11l1.5-5A2 2 0 016.4 4h11.2a2 2 0 011.9 1.4L21 11M3 11v6a1 1 0 001 1h1m-2-7h18m0 0v6a1 1 0 01-1 1h-1m0 0H6' },
+  'airport': { viewBox: '0 0 24 24', d: 'M12 19l-2-6L3 11l1.5-2 5.5 1L12 4l2 6 5.5-1L21 11l-7 2-2 6z', fill: true },
+  'send-transport': { viewBox: '0 0 24 24', d: 'M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422A12.083 12.083 0 0121 12.75V18a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-5.25c0-1.24.38-2.45 1.084-3.476L12 14z' },
+  'nepts': { viewBox: '0 0 24 24', d: 'M12 4v6m0 0v6m0-6h6m-6 0H6M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+  'executive': { viewBox: '0 0 24 24', d: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' },
+  'fleet-maintenance': { viewBox: '0 0 24 24', d: 'M11.42 15.17l-5.1-5.1a2 2 0 010-2.83l.7-.7a2 2 0 012.83 0l.71.7 2.83-2.83-.71-.7a4 4 0 00-5.66 0l-.7.7a4 4 0 000 5.66l5.1 5.1a1 1 0 001.42-1.42zM21.07 4.22a4 4 0 00-5.66 0l-.7.7a4 4 0 000 5.66l5.1 5.1a1 1 0 001.42-1.42l-5.1-5.1a2 2 0 010-2.83l.7-.7a2 2 0 012.83 0l.71.7a1 1 0 001.42-1.42l-.71-.7z' },
+};
 ---
 
 <PageLayout
@@ -34,360 +44,656 @@ const jsonLD = {
         </p>
       </div>
 
-      <!-- Progress Steps (hidden for enterprise flow) -->
-      <div class="flex items-center justify-center gap-2 mb-10" id="progressBar">
+      <!-- Progress Steps -->
+      <div class="flex items-center justify-center max-w-md mx-auto mb-10" id="progressBar">
         <div class="step-indicator active" data-step="1">
-          <span class="step-number">1</span>
+          <span class="step-circle">
+            <span class="step-number">1</span>
+            <svg class="step-check" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+          </span>
           <span class="step-label hidden sm:inline">Service</span>
         </div>
-        <div class="step-line"></div>
+        <div class="step-line-track"><div class="step-line-fill"></div></div>
         <div class="step-indicator" data-step="2">
-          <span class="step-number">2</span>
+          <span class="step-circle">
+            <span class="step-number">2</span>
+            <svg class="step-check" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+          </span>
           <span class="step-label hidden sm:inline">Details</span>
         </div>
-        <div class="step-line"></div>
+        <div class="step-line-track"><div class="step-line-fill"></div></div>
         <div class="step-indicator" data-step="3">
-          <span class="step-number">3</span>
+          <span class="step-circle">
+            <span class="step-number">3</span>
+            <svg class="step-check" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+          </span>
           <span class="step-label hidden sm:inline">Estimate</span>
         </div>
-        <div class="step-line"></div>
+        <div class="step-line-track"><div class="step-line-fill"></div></div>
         <div class="step-indicator" data-step="4">
-          <span class="step-number">4</span>
+          <span class="step-circle">
+            <span class="step-number">4</span>
+            <svg class="step-check" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+          </span>
           <span class="step-label hidden sm:inline">Contact</span>
         </div>
       </div>
 
-      <!-- STEP 1: Service Selection -->
-      <div id="step1" class="wizard-step">
-        <h2 class="text-xl font-bold text-gray-900 mb-6 text-center">Which service do you need?</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="serviceGrid">
-          {Object.entries(quoteRules.services).map(([key, svc]) => (
-            <button
-              class="service-card bg-white rounded-lg border-2 border-gray-200 p-5 text-left hover:border-afj-accent hover:shadow-md transition-all group relative"
-              data-service={key}
-              data-type={(svc as any).type}
-            >
-              <span
-                class:list={[
-                  'absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full',
-                  (svc as any).type === 'instant'
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-blue-100 text-blue-700',
-                ]}
-              >
-                {(svc as any).type === 'instant' ? 'Instant Quote' : 'Enterprise / Contract'}
-              </span>
-              <div class="flex items-start gap-3 pr-20">
-                <div class="w-10 h-10 bg-afj-accent/10 rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-afj-accent/20 transition-colors">
-                  <svg class="w-5 h-5 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                  </svg>
+      <!-- Steps wrapper for transitions -->
+      <div class="steps-wrapper">
+
+        <!-- STEP 1: Service Selection -->
+        <div id="step1" class="wizard-step active-step">
+          <h2 class="text-xl font-bold text-gray-900 mb-6 text-center">Which service do you need?</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="serviceGrid">
+            {Object.entries(quoteRules.services).map(([key, svc]) => {
+              const icon = serviceIcons[key];
+              return (
+                <button
+                  class="service-card"
+                  data-service={key}
+                  data-type={(svc as any).type}
+                >
+                  <span
+                    class:list={[
+                      'absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1',
+                      (svc as any).type === 'instant'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-blue-100 text-blue-700',
+                    ]}
+                  >
+                    {(svc as any).type === 'instant' && (
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    )}
+                    {(svc as any).type === 'instant' ? 'Instant Quote' : 'Enterprise'}
+                  </span>
+                  <div class="flex items-start gap-4 pr-24">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-afj-accent/10 to-afj-green/10 flex items-center justify-center flex-shrink-0 group-hover:from-afj-accent/20 group-hover:to-afj-green/20 transition-all">
+                      {icon && (
+                        <svg class="w-5 h-5 text-afj-accent" fill={icon.fill ? 'currentColor' : 'none'} stroke={icon.fill ? 'none' : 'currentColor'} viewBox={icon.viewBox}>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={icon.d} />
+                        </svg>
+                      )}
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-gray-900 group-hover:text-afj-accent transition-colors">{(svc as any).label}</h3>
+                      <p class="text-sm text-gray-500 mt-1">{(svc as any).description}</p>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <!-- STEP ENTERPRISE: Inline Enquiry Form -->
+        <div id="stepEnterprise" class="wizard-step">
+          <div class="flex items-center gap-3 mb-6">
+            <button id="backEnterprise" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h2 class="text-xl font-bold text-gray-900" id="enterpriseTitle">Enterprise Service</h2>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
+            <div class="flex items-center gap-4 mb-6 pb-5 border-b border-gray-100">
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-gray-900" id="enterpriseServiceName"></h3>
+                <p class="text-sm text-gray-500" id="enterpriseDescription"></p>
+              </div>
+            </div>
+
+            <form id="enterpriseForm" class="space-y-4">
+              <div>
+                <label for="ent-org" class="block text-sm font-medium text-afj-text mb-1">Organisation Name <span class="text-afj-red">*</span></label>
+                <input type="text" id="ent-org" required placeholder="e.g. Birmingham City Council" class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent" />
+              </div>
+              <div>
+                <label for="ent-type" class="block text-sm font-medium text-afj-text mb-1">Organisation Type</label>
+                <select id="ent-type" class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text bg-white focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent">
+                  <option value="">Select...</option>
+                  <option value="council">Local Authority / Council</option>
+                  <option value="nhs">NHS Trust</option>
+                  <option value="school">School / Academy</option>
+                  <option value="charity">Charity</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="ent-name" class="block text-sm font-medium text-afj-text mb-1">Contact Name <span class="text-afj-red">*</span></label>
+                  <input type="text" id="ent-name" required placeholder="Your full name" class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent" />
                 </div>
                 <div>
-                  <h3 class="font-semibold text-gray-900 group-hover:text-afj-accent transition-colors">{(svc as any).label}</h3>
-                  <p class="text-sm text-gray-500 mt-1">{(svc as any).description}</p>
+                  <label for="ent-email" class="block text-sm font-medium text-afj-text mb-1">Email <span class="text-afj-red">*</span></label>
+                  <input type="email" id="ent-email" required placeholder="your.email@org.uk" class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent" />
+                  <p class="form-error text-afj-red text-xs mt-1 hidden" data-for="ent-email">Please enter a valid email address.</p>
                 </div>
               </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <!-- STEP ENTERPRISE: Portal CTA for contract services -->
-      <div id="stepEnterprise" class="wizard-step hidden">
-        <div class="flex items-center gap-3 mb-6">
-          <button id="backEnterprise" class="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <h2 class="text-xl font-bold text-gray-900" id="enterpriseTitle">Enterprise Service</h2>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-5">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-          </div>
-          <h3 class="text-2xl font-bold text-gray-900 mb-3" id="enterpriseServiceName"></h3>
-          <p class="text-gray-600 max-w-md mx-auto mb-8" id="enterpriseDescription"></p>
-
-          <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <a
-              id="enterpriseContactLink"
-              href="/contact"
-              class="flex-1 bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors text-center"
-            >
-              Request E-Portal Access
-            </a>
-            <a
-              href="tel:01216891000"
-              class="flex-1 border-2 border-afj-accent text-afj-accent font-semibold py-3 px-6 rounded-lg hover:bg-afj-accent hover:text-white transition-colors text-center"
-            >
-              Or call us on 0121 689 1000
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 2: Service-Specific Questions -->
-      <div id="step2" class="wizard-step hidden">
-        <div class="flex items-center gap-3 mb-6">
-          <button id="back2" class="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <h2 class="text-xl font-bold text-gray-900" id="step2Title">Tell us more</h2>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div id="questionsContainer" class="space-y-5"></div>
-          <button
-            id="getEstimateBtn"
-            class="mt-6 w-full bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors"
-          >
-            Get My Estimate
-          </button>
-        </div>
-      </div>
-
-      <!-- STEP 3: Estimate Display -->
-      <div id="step3" class="wizard-step hidden">
-        <div class="flex items-center gap-3 mb-6">
-          <button id="back3" class="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <h2 class="text-xl font-bold text-gray-900">Your Estimated Quote</h2>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8">
-          <p class="text-sm font-medium text-gray-500 mb-5 text-center" id="estimateServiceLabel"></p>
-
-          <!-- Price range -->
-          <div class="text-center py-4 bg-green-50 rounded-lg mb-4">
-            <div class="flex items-center justify-center gap-3">
-              <span class="text-3xl sm:text-4xl font-bold text-afj-green" id="estimateLow"></span>
-              <span class="text-xl text-gray-400">&ndash;</span>
-              <span class="text-3xl sm:text-4xl font-bold text-afj-green" id="estimateHigh"></span>
-            </div>
-            <p class="text-sm text-gray-500 mt-1" id="estimatePerUnit"></p>
-          </div>
-
-          <!-- Flags -->
-          <div id="estimateFlags" class="flex flex-wrap gap-2 justify-center mb-4 hidden"></div>
-
-          <div class="bg-blue-50 rounded-lg p-4 text-left">
-            <div class="flex gap-3">
-              <svg class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p class="text-sm text-blue-800">
-                This is an indicative estimate based on typical requirements. Your final quote may differ depending on specific route details, scheduling and accessibility needs. Contact us for an exact price.
-              </p>
-            </div>
-          </div>
-
-          <div class="mt-6 flex flex-col sm:flex-row gap-3">
-            <button
-              id="requestQuoteBtn"
-              class="flex-1 bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors"
-            >
-              Request Exact Quote
-            </button>
-            <a
-              href="tel:01216891000"
-              class="flex-1 border-2 border-afj-accent text-afj-accent font-semibold py-3 px-6 rounded-lg hover:bg-afj-accent hover:text-white transition-colors text-center"
-            >
-              Call 0121 689 1000
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 4: Contact Form -->
-      <div id="step4" class="wizard-step hidden">
-        <div class="flex items-center gap-3 mb-6">
-          <button id="back4" class="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <h2 class="text-xl font-bold text-gray-900">Request Your Exact Quote</h2>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <p class="text-sm text-gray-600 mb-5">
-            Fill in your details and we will send you an exact quote within 24 hours.
-          </p>
-
-          <form id="quoteForm" class="space-y-4" novalidate>
-            <input type="hidden" id="formService" value="" />
-            <input type="hidden" id="formEstimate" value="" />
-            <input type="hidden" id="formAnswers" value="" />
-
-            <div>
-              <label for="quote-name" class="block text-sm font-medium text-afj-text mb-1">Full Name <span class="text-afj-red">*</span></label>
-              <input
-                type="text"
-                id="quote-name"
-                required
-                placeholder="Your full name"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label for="quote-email" class="block text-sm font-medium text-afj-text mb-1">Email Address <span class="text-afj-red">*</span></label>
-              <input
-                type="email"
-                id="quote-email"
-                required
-                placeholder="your.email@example.com"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
-              />
-              <p class="form-error text-afj-red text-xs mt-1 hidden" aria-live="polite" aria-atomic="true" data-for="quote-email">Please enter a valid email address.</p>
-            </div>
-
-            <div>
-              <label for="quote-phone" class="block text-sm font-medium text-afj-text mb-1">Phone</label>
-              <input
-                type="tel"
-                id="quote-phone"
-                placeholder="07400 123456"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
-              />
-            </div>
-
-            <fieldset>
-              <legend class="block text-sm font-medium text-afj-text mb-2">How would you like to be contacted? <span class="text-afj-red">*</span></legend>
-              <div class="flex gap-2" id="contactPrefGroup">
-                <label class="contact-pref-btn active">
-                  <input type="radio" name="contactPreference" value="phone" checked class="sr-only" />
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                  Phone
-                </label>
-                <label class="contact-pref-btn">
-                  <input type="radio" name="contactPreference" value="email" class="sr-only" />
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                  Email
-                </label>
-                <label class="contact-pref-btn">
-                  <input type="radio" name="contactPreference" value="whatsapp" class="sr-only" />
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-                  WhatsApp
-                </label>
+              <div>
+                <label for="ent-phone" class="block text-sm font-medium text-afj-text mb-1">Phone</label>
+                <input type="tel" id="ent-phone" placeholder="07400 123456" class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent" />
               </div>
-            </fieldset>
+              <div>
+                <label for="ent-details" class="block text-sm font-medium text-afj-text mb-1">Brief Description of Requirements</label>
+                <textarea id="ent-details" rows="3" placeholder="Number of routes, students/patients, locations, start date..." class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent resize-y"></textarea>
+              </div>
+              <button type="submit" id="enterpriseSubmitBtn" class="w-full bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors">
+                Submit Enterprise Enquiry
+              </button>
+            </form>
 
-            <div>
-              <label for="quote-details" class="block text-sm font-medium text-afj-text mb-1">Additional Details</label>
-              <textarea
-                id="quote-details"
-                rows="3"
-                placeholder="Any specific requirements, dates, or questions"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent resize-y"
-              ></textarea>
-            </div>
-
-            <button
-              type="submit"
-              id="submitQuoteBtn"
-              class="w-full bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors"
-            >
-              Send Quote Request
-            </button>
-          </form>
-
-          <div id="quoteSuccess" class="hidden" role="alert">
-            <div class="text-center mb-6">
-              <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div id="enterpriseSuccess" class="hidden text-center py-6">
+              <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-7 h-7 text-green-600 success-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 class="text-2xl font-bold text-gray-900">Quote Request Sent</h3>
-              <p class="text-gray-600 mt-2">
-                Thank you! A member of our team will contact you via
-                <strong id="successContactMethod">phone</strong> within 24 hours.
-              </p>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">Enquiry Sent</h3>
+              <p class="text-gray-600">Thank you! Our contracts team will be in touch within 24 hours.</p>
             </div>
-            <p class="text-sm text-gray-500 text-center mb-6">
-              We have sent a confirmation to <strong id="successEmail"></strong>.
-            </p>
-            <div class="bg-gray-50 rounded-lg p-5 text-center">
-              <p class="text-sm font-medium text-gray-700 mb-3">Stay connected with AFJ Limited</p>
-              <div class="flex flex-col sm:flex-row justify-center gap-3">
-                <a href="https://uk.linkedin.com/company/afj-ltd" target="_blank" rel="noopener"
-                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#0A66C2] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
-                  Follow on LinkedIn
-                </a>
-                <a href="https://www.facebook.com/AFJTravel/" target="_blank" rel="noopener"
-                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#1877F2] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
-                  Follow on Facebook
-                </a>
-              </div>
+
+            <div id="enterpriseError" class="hidden bg-red-50 text-red-700 rounded-lg p-4 text-sm mt-4" role="alert">
+              Sorry, there was an error. Please try again or call us directly.
             </div>
-            <div class="text-center mt-6">
-              <a href="/" class="text-afj-accent hover:text-afj-green font-medium text-sm">Back to homepage</a>
+
+            <div class="text-center mt-5 pt-4 border-t border-gray-100">
+              <p class="text-sm text-gray-500">Or call our contracts team: <a href="tel:01216891000" class="text-afj-accent font-semibold hover:text-afj-green transition-colors">0121 689 1000</a></p>
             </div>
-          </div>
-          <div id="quoteError" class="hidden bg-red-50 text-red-700 rounded-lg p-4 text-sm mt-4" role="alert">
-            Sorry, there was an error sending your request. Please try again or call us on 0121 689 1000.
           </div>
         </div>
-      </div>
+
+        <!-- STEP 2: Service-Specific Questions -->
+        <div id="step2" class="wizard-step">
+          <div class="flex items-center gap-3 mb-6">
+            <button id="back2" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h2 class="text-xl font-bold text-gray-900" id="step2Title">Tell us more</h2>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div id="questionsContainer" class="space-y-5"></div>
+            <button
+              id="getEstimateBtn"
+              class="mt-6 w-full bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors"
+            >
+              Get My Estimate
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Estimate Display -->
+        <div id="step3" class="wizard-step">
+          <div class="flex items-center gap-3 mb-6">
+            <button id="back3" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h2 class="text-xl font-bold text-gray-900">Your Estimated Quote</h2>
+          </div>
+
+          <!-- Skeleton loading state -->
+          <div id="estimateLoading" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
+              <div class="animate-pulse">
+                <div class="h-4 bg-gray-200 rounded w-1/3 mx-auto mb-6"></div>
+                <div class="bg-gray-50 rounded-lg p-5 mb-4">
+                  <div class="grid grid-cols-3 gap-4">
+                    <div class="h-8 bg-gray-200 rounded"></div>
+                    <div class="h-8 bg-gray-200 rounded"></div>
+                    <div class="h-8 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-6 mb-4">
+                  <div class="flex items-center justify-center gap-3">
+                    <div class="h-10 bg-green-200 rounded w-24"></div>
+                    <div class="h-6 bg-gray-200 rounded w-4"></div>
+                    <div class="h-10 bg-green-200 rounded w-24"></div>
+                  </div>
+                </div>
+                <div class="h-3 bg-gray-200 rounded w-2/3 mx-auto mb-3"></div>
+                <div class="h-3 bg-gray-200 rounded w-1/2 mx-auto"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actual estimate content -->
+          <div id="estimateContent" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
+              <p class="text-sm font-medium text-gray-500 mb-5 text-center" id="estimateServiceLabel"></p>
+
+              <!-- Journey Summary -->
+              <div id="journeySummary" class="mb-5 hidden">
+                <div class="bg-gray-50 rounded-lg p-4 sm:p-5">
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+                    <div>
+                      <p class="text-2xl font-bold text-afj-green" id="summaryDistance">--</p>
+                      <p class="text-xs text-gray-500">miles</p>
+                    </div>
+                    <div>
+                      <p class="text-2xl font-bold text-afj-green" id="summaryDuration">--</p>
+                      <p class="text-xs text-gray-500">est. travel time</p>
+                    </div>
+                    <div id="summaryReturnWrap" class="hidden col-span-2 sm:col-span-1">
+                      <p class="text-sm font-semibold text-gray-700" id="summaryReturnType">--</p>
+                      <p class="text-xs text-gray-500">return type</p>
+                    </div>
+                  </div>
+                  <p id="summaryReturnMsg" class="mt-3 text-sm text-gray-600 text-center hidden"></p>
+                </div>
+              </div>
+
+              <!-- Route Timeline -->
+              <div id="routeVisual" class="mb-5 hidden">
+                <div class="flex items-stretch gap-4 px-2">
+                  <div class="flex flex-col items-center" id="routeDots">
+                    <div class="w-3 h-3 rounded-full bg-afj-accent flex-shrink-0"></div>
+                    <div class="w-0.5 flex-1 bg-gray-300 min-h-[1.5rem]"></div>
+                    <div id="routeStopDots"></div>
+                    <div class="w-3 h-3 rounded-full bg-afj-green flex-shrink-0"></div>
+                    <div id="routeReturnDots" class="hidden">
+                      <div class="w-0.5 h-5 bg-gray-300 mx-auto"></div>
+                      <div class="w-3 h-3 rounded-full border-2 border-afj-accent bg-white mx-auto"></div>
+                    </div>
+                  </div>
+                  <div class="flex flex-col justify-between py-0.5 min-w-0">
+                    <div class="mb-2">
+                      <p class="text-sm font-medium text-gray-900 truncate" id="routePickup">--</p>
+                      <p class="text-xs text-gray-500" id="routePickupTime">--</p>
+                    </div>
+                    <div id="routeStopLabels"></div>
+                    <div class="mt-2">
+                      <p class="text-sm font-medium text-gray-900 truncate" id="routeDest">--</p>
+                      <p class="text-xs text-gray-500" id="routeDestInfo"></p>
+                    </div>
+                    <div id="routeReturnLabel" class="hidden mt-2">
+                      <p class="text-sm font-medium text-gray-900">Return to pickup</p>
+                      <p class="text-xs text-gray-500" id="routeReturnTime">--</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Price range -->
+              <div class="text-center py-5 bg-green-50 rounded-lg mb-4">
+                <div class="flex items-center justify-center gap-3">
+                  <span class="text-3xl sm:text-4xl font-bold text-afj-green" id="estimateLow"></span>
+                  <span class="text-xl text-gray-400">&ndash;</span>
+                  <span class="text-3xl sm:text-4xl font-bold text-afj-green" id="estimateHigh"></span>
+                </div>
+                <p class="text-sm text-gray-500 mt-1" id="estimatePerUnit"></p>
+              </div>
+
+              <!-- Flags -->
+              <div id="estimateFlags" class="flex flex-wrap gap-2 justify-center mb-3 hidden"></div>
+
+              <!-- Surcharge labels -->
+              <div id="estimateSurcharges" class="flex flex-wrap gap-2 justify-center mb-4 hidden"></div>
+
+              <!-- Discount badge -->
+              <div id="estimateDiscount" class="flex justify-center mb-4 hidden">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                  <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                  <span id="discountText"></span>
+                </span>
+              </div>
+
+              <!-- What's included -->
+              <div class="bg-green-50 rounded-lg p-5 text-left mb-5">
+                <h4 class="text-sm font-semibold text-green-800 mb-3">What's included</h4>
+                <ul class="space-y-2 text-sm text-green-700">
+                  <li class="flex items-start gap-2">
+                    <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Professional, DBS-checked driver
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Vehicle and fuel costs
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Fully insured journey
+                  </li>
+                  <li id="includesWheelchair" class="flex items-start gap-2 hidden">
+                    <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Wheelchair-accessible vehicle
+                  </li>
+                  <li id="includesMeetGreet" class="flex items-start gap-2 hidden">
+                    <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Meet and greet service
+                  </li>
+                </ul>
+                <p class="text-xs text-gray-500 mt-3">
+                  This is an indicative estimate. Your final quote may differ depending on specific route details and accessibility needs.
+                </p>
+              </div>
+
+              <!-- CTAs -->
+              <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                <button
+                  id="requestQuoteBtn"
+                  class="flex-1 bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors"
+                >
+                  Request Exact Quote
+                </button>
+                <a
+                  href="tel:01216891000"
+                  class="flex-1 border-2 border-afj-accent text-afj-accent font-semibold py-3 px-6 rounded-lg hover:bg-afj-accent hover:text-white transition-colors text-center"
+                >
+                  Call 0121 689 1000
+                </a>
+              </div>
+
+              <!-- Trust signals -->
+              <div class="pt-5 border-t border-gray-100">
+                <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-gray-500">
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    DBS-checked drivers
+                  </span>
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Reply within 24h
+                  </span>
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    700+ students daily
+                  </span>
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Fully insured fleet
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Contact Form -->
+        <div id="step4" class="wizard-step">
+          <div class="flex items-center gap-3 mb-6">
+            <button id="back4" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h2 class="text-xl font-bold text-gray-900">Request Your Exact Quote</h2>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <p class="text-sm text-gray-600 mb-5">
+              Fill in your details and we will send you an exact quote within 24 hours.
+            </p>
+
+            <form id="quoteForm" class="space-y-4" novalidate>
+              <input type="hidden" id="formService" value="" />
+              <input type="hidden" id="formEstimate" value="" />
+              <input type="hidden" id="formAnswers" value="" />
+
+              <div>
+                <label for="quote-name" class="block text-sm font-medium text-afj-text mb-1">Full Name <span class="text-afj-red">*</span></label>
+                <input
+                  type="text"
+                  id="quote-name"
+                  required
+                  placeholder="Your full name"
+                  class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label for="quote-email" class="block text-sm font-medium text-afj-text mb-1">Email Address <span class="text-afj-red">*</span></label>
+                <input
+                  type="email"
+                  id="quote-email"
+                  required
+                  placeholder="your.email@example.com"
+                  class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
+                />
+                <p class="form-error text-afj-red text-xs mt-1 hidden" aria-live="polite" aria-atomic="true" data-for="quote-email">Please enter a valid email address.</p>
+              </div>
+
+              <div>
+                <label for="quote-phone" class="block text-sm font-medium text-afj-text mb-1">Phone</label>
+                <input
+                  type="tel"
+                  id="quote-phone"
+                  placeholder="07400 123456"
+                  class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent"
+                />
+                <p class="form-error text-afj-red text-xs mt-1 hidden" aria-live="polite" aria-atomic="true" data-for="quote-phone">Please enter a valid UK phone number.</p>
+              </div>
+
+              <fieldset>
+                <legend class="block text-sm font-medium text-afj-text mb-2">How would you like to be contacted? <span class="text-afj-red">*</span></legend>
+                <div class="flex flex-wrap gap-2" id="contactPrefGroup">
+                  <label class="contact-pref-btn active">
+                    <input type="radio" name="contactPreference" value="phone" checked class="sr-only" />
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                    Phone
+                  </label>
+                  <label class="contact-pref-btn">
+                    <input type="radio" name="contactPreference" value="email" class="sr-only" />
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    Email
+                  </label>
+                  <label class="contact-pref-btn">
+                    <input type="radio" name="contactPreference" value="whatsapp" class="sr-only" />
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                    WhatsApp
+                  </label>
+                </div>
+              </fieldset>
+
+              <div>
+                <label for="quote-details" class="block text-sm font-medium text-afj-text mb-1">Additional Details</label>
+                <textarea
+                  id="quote-details"
+                  rows="3"
+                  placeholder="Any specific requirements, dates, or questions"
+                  class="quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent resize-y"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                id="submitQuoteBtn"
+                class="w-full bg-afj-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-afj-green transition-colors"
+              >
+                Send Quote Request
+              </button>
+            </form>
+
+            <!-- Testimonial -->
+            <div class="mt-5 pt-4 border-t border-gray-100">
+              <div class="flex items-start gap-3">
+                <div class="flex gap-0.5 flex-shrink-0 mt-0.5">
+                  <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-600 italic leading-relaxed">"Booked AFJ Travel for a group outing — the booking process was easy and the price was very reasonable. Driver was professional and on time."</p>
+                  <p class="text-xs text-gray-400 mt-1 font-medium">— Group Hire Customer</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="quoteSuccess" class="hidden" role="alert">
+              <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 success-check-icon">
+                  <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path class="success-check-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900">Quote Request Sent</h3>
+                <p class="text-gray-600 mt-2">
+                  Thank you! A member of our team will contact you via
+                  <strong id="successContactMethod">phone</strong> within 24 hours.
+                </p>
+              </div>
+              <p class="text-sm text-gray-500 text-center mb-6">
+                We have sent a confirmation to <strong id="successEmail"></strong>.
+              </p>
+              <div class="bg-gray-50 rounded-lg p-5 text-center">
+                <p class="text-sm font-medium text-gray-700 mb-3">Stay connected with AFJ Limited</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-3">
+                  <a href="https://uk.linkedin.com/company/afj-ltd" target="_blank" rel="noopener"
+                     class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#0A66C2] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
+                    Follow on LinkedIn
+                  </a>
+                  <a href="https://www.facebook.com/AFJTravel/" target="_blank" rel="noopener"
+                     class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#1877F2] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+                    Follow on Facebook
+                  </a>
+                </div>
+              </div>
+              <div class="text-center mt-6">
+                <a href="/" class="text-afj-accent hover:text-afj-green font-medium text-sm">Back to homepage</a>
+              </div>
+            </div>
+            <div id="quoteError" class="hidden bg-red-50 text-red-700 rounded-lg p-4 text-sm mt-4" role="alert">
+              Sorry, there was an error sending your request. Please try again or call us on 0121 689 1000.
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /steps-wrapper -->
     </div>
   </section>
 </PageLayout>
 
 <style>
+  /* --- Progress bar --- */
   .step-indicator {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.375rem;
+    gap: 0.25rem;
     color: #9CA3AF;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+  }
+  .step-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    background: #E5E7EB;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #9CA3AF;
+    transition: all 0.3s ease;
+  }
+  .step-check {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+  }
+  .step-indicator.active .step-circle {
+    background: #38A169;
+    color: white;
+    box-shadow: 0 0 0 4px rgba(56, 161, 105, 0.15);
   }
   .step-indicator.active {
     color: #38A169;
   }
-  .step-indicator.active .step-number {
-    background-color: #38A169;
+  .step-indicator.completed .step-circle {
+    background: #38A169;
     color: white;
   }
   .step-indicator.completed .step-number {
-    background-color: #38A169;
-    color: white;
+    display: none;
+  }
+  .step-indicator.completed .step-check {
+    display: block;
   }
   .step-indicator.completed {
     color: #38A169;
   }
-  .step-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 9999px;
-    background-color: #E5E7EB;
-    font-weight: 600;
-    font-size: 0.75rem;
+  .step-line-track {
+    flex: 1;
+    height: 3px;
+    background: #E5E7EB;
+    margin: 0 0.5rem;
+    border-radius: 2px;
+    overflow: hidden;
+    align-self: flex-start;
+    margin-top: 1.125rem;
   }
-  .step-line {
-    width: 2rem;
-    height: 2px;
-    background-color: #E5E7EB;
+  .step-line-fill {
+    width: 0%;
+    height: 100%;
+    background: #38A169;
+    transition: width 0.4s ease;
+  }
+
+  /* --- Step transitions --- */
+  .steps-wrapper {
+    position: relative;
+  }
+  .wizard-step {
+    display: none;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .wizard-step.active-step {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wizard-step {
+      transition: none;
+    }
+    .step-line-fill {
+      transition: none;
+    }
+    .step-circle {
+      transition: none;
+    }
+  }
+
+  /* --- Service cards --- */
+  .service-card {
+    position: relative;
+    background: white;
+    border-radius: 0.75rem;
+    border: 2px solid #E5E7EB;
+    padding: 1.25rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .service-card:hover {
+    border-color: #38A169;
+    box-shadow: 0 4px 12px rgba(56, 161, 105, 0.08);
+    transform: translateY(-1px);
   }
   .service-card.selected {
     border-color: #38A169;
-    background-color: #F0FFF4;
+    background: linear-gradient(135deg, #F0FFF4 0%, #FFFFFF 100%);
+    box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.12);
   }
+
+  /* --- Form elements --- */
   .toggle-btn {
     padding: 0.625rem 1.25rem;
     border: 2px solid #E5E7EB;
@@ -407,6 +713,30 @@ const jsonLD = {
     background-color: #F0FFF4;
     color: #276749;
   }
+  .contact-pref-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.625rem 1.25rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4A5568;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .contact-pref-btn:hover {
+    border-color: #38A169;
+  }
+  .contact-pref-btn.active {
+    border-color: #38A169;
+    background-color: #F0FFF4;
+    color: #276749;
+  }
+
+  /* --- Autocomplete --- */
   .autocomplete-wrap {
     position: relative;
   }
@@ -439,27 +769,46 @@ const jsonLD = {
     background-color: #F0FFF4;
     color: #276749;
   }
-  .contact-pref-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.625rem 1.25rem;
-    border: 2px solid #E5E7EB;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #4A5568;
-    background: white;
-    cursor: pointer;
-    transition: all 0.15s ease;
+
+  /* --- Skeleton loading --- */
+  @keyframes shimmer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
   }
-  .contact-pref-btn:hover {
-    border-color: #38A169;
+  .animate-pulse > * {
+    animation: shimmer 1.5s ease-in-out infinite;
   }
-  .contact-pref-btn.active {
-    border-color: #38A169;
-    background-color: #F0FFF4;
-    color: #276749;
+
+  /* --- Success animation --- */
+  @keyframes scaleIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .success-check-icon {
+    animation: scaleIn 0.4s ease-out forwards;
+  }
+
+  /* --- Mobile optimisation --- */
+  @media (max-width: 640px) {
+    .toggle-btn {
+      padding: 0.75rem 1rem;
+      min-height: 44px;
+      font-size: 0.9375rem;
+    }
+    .contact-pref-btn {
+      padding: 0.75rem 1rem;
+      min-height: 44px;
+      flex: 1;
+    }
+    .quiz-input,
+    select.quiz-input {
+      font-size: 16px;
+      min-height: 48px;
+    }
+    .service-card {
+      padding: 1rem;
+    }
   }
 </style>
 
@@ -519,13 +868,11 @@ const jsonLD = {
   }
 
   function attachAutocomplete(inputEl) {
-    // Wrap input in a relative container
     var wrap = document.createElement('div');
     wrap.className = 'autocomplete-wrap';
     inputEl.parentNode.insertBefore(wrap, inputEl);
     wrap.appendChild(inputEl);
 
-    // Create dropdown list
     var list = document.createElement('div');
     list.className = 'autocomplete-list';
     list.setAttribute('role', 'listbox');
@@ -537,7 +884,7 @@ const jsonLD = {
       list.innerHTML = '';
       highlightIdx = -1;
       if (!items.length) { list.classList.remove('open'); return; }
-      items.forEach(function (text, i) {
+      items.forEach(function (text) {
         var item = document.createElement('div');
         item.className = 'autocomplete-item';
         item.setAttribute('role', 'option');
@@ -591,16 +938,20 @@ const jsonLD = {
     });
   }
 
+  // --- Step management ---
   function hideAllSteps() {
-    allSteps.forEach(function (el) { el.classList.add('hidden'); });
+    allSteps.forEach(function (el) { el.classList.remove('active-step'); });
   }
 
   function showStep(id) {
     hideAllSteps();
     var el = document.getElementById(id);
-    if (el) el.classList.remove('hidden');
+    // Small delay to allow CSS transition out
+    setTimeout(function () {
+      if (el) el.classList.add('active-step');
+    }, 30);
 
-    // Update progress bar for instant flow
+    // Update progress bar
     var stepMap = { step1: 1, step2: 2, step3: 3, step4: 4 };
     var num = stepMap[id] || 0;
 
@@ -614,48 +965,139 @@ const jsonLD = {
         if (s === num) ind.classList.add('active');
         if (s < num) ind.classList.add('completed');
       });
+      // Animate fill lines
+      var tracks = progressBar.querySelectorAll('.step-line-track');
+      tracks.forEach(function (track, i) {
+        var fill = track.querySelector('.step-line-fill');
+        fill.style.width = (i < num - 1) ? '100%' : '0%';
+      });
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Step 1: service selection
+  // --- Step 1: service selection ---
   document.querySelectorAll('.service-card').forEach(function (card) {
     card.addEventListener('click', function () {
       document.querySelectorAll('.service-card').forEach(function (c) { c.classList.remove('selected'); });
       card.classList.add('selected');
-      selectedService = card.dataset.service;
-      currentAnswers = {};
 
+      // Reset state for new service
+      currentAnswers = {};
+      currentEstimate = null;
+      stopCount = 0;
+      var form = document.getElementById('quoteForm');
+      if (form) form.reset();
+      document.getElementById('quoteSuccess').classList.add('hidden');
+      document.getElementById('quoteError').classList.add('hidden');
+      document.getElementById('quoteForm').style.display = '';
+
+      selectedService = card.dataset.service;
       var svc = quoteRules.services[selectedService];
       if (!svc) return;
 
       if (svc.type === 'enterprise') {
-        // Show enterprise CTA
         document.getElementById('enterpriseTitle').textContent = svc.label;
         document.getElementById('enterpriseServiceName').textContent = svc.label;
         document.getElementById('enterpriseDescription').textContent =
-          'Our ' + svc.label + ' contracts are tailored to your organisation\u2019s specific requirements. If you are a local authority, NHS trust, or organisation, request access to our e-portal for detailed pricing and service specifications.';
-        document.getElementById('enterpriseContactLink').href = '/contact?service=' + encodeURIComponent(svc.label);
+          'Tailored ' + svc.label.toLowerCase() + ' contracts for local authorities, NHS trusts and organisations.';
+        // Reset enterprise form
+        document.getElementById('enterpriseForm').reset();
+        document.getElementById('enterpriseForm').style.display = '';
+        document.getElementById('enterpriseSuccess').classList.add('hidden');
+        document.getElementById('enterpriseError').classList.add('hidden');
         showStep('stepEnterprise');
       } else {
-        // Show instant questions
         buildQuestions(selectedService);
         showStep('step2');
       }
     });
   });
 
-  // Evaluate showWhen conditions and show/hide conditional fields
+  // --- Enterprise form submission ---
+  document.getElementById('enterpriseForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var orgEl = document.getElementById('ent-org');
+    var nameEl = document.getElementById('ent-name');
+    var emailEl = document.getElementById('ent-email');
+    var valid = true;
+
+    if (!orgEl.value.trim()) { orgEl.style.borderColor = '#E53E3E'; valid = false; }
+    else { orgEl.style.borderColor = ''; }
+
+    if (!nameEl.value.trim()) { nameEl.style.borderColor = '#E53E3E'; valid = false; }
+    else { nameEl.style.borderColor = ''; }
+
+    if (!emailEl.value || !emailEl.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      emailEl.style.borderColor = '#E53E3E';
+      var errEl = document.querySelector('[data-for="ent-email"]');
+      if (errEl) errEl.classList.remove('hidden');
+      valid = false;
+    } else {
+      emailEl.style.borderColor = '';
+      var errEl2 = document.querySelector('[data-for="ent-email"]');
+      if (errEl2) errEl2.classList.add('hidden');
+    }
+
+    if (!valid) return;
+
+    var btn = document.getElementById('enterpriseSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    var orgType = document.getElementById('ent-type').value;
+    var phone = document.getElementById('ent-phone').value.trim();
+    var details = document.getElementById('ent-details').value.trim();
+    var svc = quoteRules.services[selectedService];
+
+    var summary = 'Service: ' + svc.label;
+    summary += '\nOrganisation: ' + orgEl.value.trim();
+    if (orgType) summary += '\nType: ' + orgType;
+    if (details) summary += '\nRequirements: ' + details;
+
+    var payload = {
+      name: nameEl.value.trim(),
+      email: emailEl.value.trim(),
+      phone: phone,
+      contactPreference: 'email',
+      message: details,
+      service: svc.label + ' (Enterprise Enquiry)',
+      estimate: 'Bespoke — to be quoted',
+      answersSummary: summary,
+    };
+
+    fetch('/api/quote/request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.success) {
+          document.getElementById('enterpriseForm').style.display = 'none';
+          document.getElementById('enterpriseSuccess').classList.remove('hidden');
+        } else {
+          document.getElementById('enterpriseError').classList.remove('hidden');
+        }
+      })
+      .catch(function () {
+        document.getElementById('enterpriseError').classList.remove('hidden');
+      })
+      .finally(function () {
+        btn.disabled = false;
+        btn.textContent = 'Submit Enterprise Enquiry';
+      });
+  });
+
+  // --- Conditional field visibility ---
   function reevaluateVisibility(container) {
     var conditionals = container.querySelectorAll('[data-show-when]');
     conditionals.forEach(function (div) {
-      var rule = div.dataset.showWhen; // e.g. "returnJourney:yes"
+      var rule = div.dataset.showWhen;
       var parts = rule.split(':');
       var fieldId = parts[0];
       var expectedVal = parts[1];
 
-      // Get current value of the referenced field
       var currentVal = '';
       var toggleGroup = container.querySelector('[data-qid="' + fieldId + '"][data-type="toggle"]');
       if (toggleGroup) {
@@ -688,9 +1130,8 @@ const jsonLD = {
       var required = q.required ? ' <span class="text-afj-red">*</span>' : '';
       var labelHtml = '<label class="block text-sm font-medium text-afj-text mb-1">' + q.label + required + '</label>';
       var inputHtml = '';
-      var inputClass = 'w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
+      var inputClass = 'quiz-input w-full px-4 py-3 border border-gray-300 rounded-lg text-afj-text focus:outline-none focus:ring-2 focus:ring-afj-accent focus:border-transparent';
 
-      // Mark conditional fields with data-show-when and hide initially
       if (q.showWhen) {
         var key = Object.keys(q.showWhen)[0];
         div.setAttribute('data-show-when', key + ':' + q.showWhen[key]);
@@ -699,7 +1140,7 @@ const jsonLD = {
 
       if (q.inputType === 'select') {
         inputHtml =
-          '<select data-qid="' + q.id + '" data-type="select"' + (q.required ? ' data-required="true"' : '') + ' class="quiz-input ' + inputClass + ' bg-white">' +
+          '<select data-qid="' + q.id + '" data-type="select"' + (q.required ? ' data-required="true"' : '') + ' class="' + inputClass + ' bg-white">' +
           '<option value="">Select...</option>' +
           q.options.map(function (opt) {
             return '<option value="' + opt.value + '">' + opt.label + '</option>';
@@ -707,24 +1148,25 @@ const jsonLD = {
           '</select>';
       } else if (q.inputType === 'text') {
         var autoOff = q.id.toLowerCase().indexOf('postcode') !== -1 ? ' autocomplete="off"' : '';
-        inputHtml = '<input type="text" data-qid="' + q.id + '" data-type="text"' + (q.required ? ' data-required="true"' : '') + autoOff + ' placeholder="' + (q.placeholder || '') + '" class="quiz-input ' + inputClass + '" />';
+        inputHtml = '<input type="text" data-qid="' + q.id + '" data-type="text"' + (q.required ? ' data-required="true"' : '') + autoOff + ' placeholder="' + (q.placeholder || '') + '" class="' + inputClass + '" />';
       } else if (q.inputType === 'date') {
-        inputHtml = '<input type="date" data-qid="' + q.id + '" data-type="date"' + (q.required ? ' data-required="true"' : '') + ' class="quiz-input ' + inputClass + '" />';
+        var today = new Date().toISOString().split('T')[0];
+        inputHtml = '<input type="date" data-qid="' + q.id + '" data-type="date"' + (q.required ? ' data-required="true"' : '') + ' min="' + today + '" class="' + inputClass + '" />';
       } else if (q.inputType === 'time') {
-        inputHtml = '<input type="time" data-qid="' + q.id + '" data-type="time"' + (q.required ? ' data-required="true"' : '') + ' class="quiz-input ' + inputClass + '" />';
+        inputHtml = '<input type="time" data-qid="' + q.id + '" data-type="time"' + (q.required ? ' data-required="true"' : '') + ' class="' + inputClass + '" />';
       } else if (q.inputType === 'toggle') {
         var yesFirst = q.id === 'returnType';
         var noLabel = q.toggleLabels ? q.toggleLabels.no : 'No';
         var yesLabel = q.toggleLabels ? q.toggleLabels.yes : 'Yes';
         if (yesFirst) {
           inputHtml =
-            '<div class="flex gap-2" data-qid="' + q.id + '" data-type="toggle">' +
+            '<div class="flex flex-wrap gap-2" data-qid="' + q.id + '" data-type="toggle">' +
             '<button type="button" class="toggle-btn active" data-value="yes">' + yesLabel + '</button>' +
             '<button type="button" class="toggle-btn" data-value="no">' + noLabel + '</button>' +
             '</div>';
         } else {
           inputHtml =
-            '<div class="flex gap-2" data-qid="' + q.id + '" data-type="toggle">' +
+            '<div class="flex flex-wrap gap-2" data-qid="' + q.id + '" data-type="toggle">' +
             '<button type="button" class="toggle-btn active" data-value="no">' + noLabel + '</button>' +
             '<button type="button" class="toggle-btn" data-value="yes">' + yesLabel + '</button>' +
             '</div>';
@@ -735,7 +1177,7 @@ const jsonLD = {
       container.appendChild(div);
     });
 
-    // Bind toggle click handlers and re-evaluate conditional visibility on change
+    // Bind toggle handlers
     container.querySelectorAll('[data-type="toggle"]').forEach(function (group) {
       group.querySelectorAll('.toggle-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -746,14 +1188,14 @@ const jsonLD = {
       });
     });
 
-    // Re-evaluate on select changes too
+    // Re-evaluate on select changes
     container.querySelectorAll('select.quiz-input').forEach(function (sel) {
       sel.addEventListener('change', function () {
         reevaluateVisibility(container);
       });
     });
 
-    // Attach autocomplete to postcode/city text inputs
+    // Attach autocomplete to postcode/city fields
     container.querySelectorAll('input[data-type="text"]').forEach(function (input) {
       var qid = input.dataset.qid || '';
       if (qid.toLowerCase().indexOf('postcode') !== -1) {
@@ -766,7 +1208,6 @@ const jsonLD = {
     if (serviceKey === 'private-hire') {
       var destEl = container.querySelector('[data-qid="destinationPostcode"]');
       if (destEl) {
-        // Walk up to find the question wrapper (direct child of container)
         var destDiv = destEl;
         while (destDiv.parentNode !== container) {
           destDiv = destDiv.parentNode;
@@ -776,7 +1217,9 @@ const jsonLD = {
         stopsSection.id = 'stopsSection';
         stopsSection.innerHTML =
           '<div id="stopsContainer" class="space-y-2"></div>' +
-          '<button type="button" id="addStopBtn" class="text-sm text-afj-accent hover:text-afj-green font-medium mt-1">+ Add a stop</button>';
+          '<button type="button" id="addStopBtn" class="text-sm text-afj-accent hover:text-afj-green font-medium mt-1 inline-flex items-center gap-1">' +
+          '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>' +
+          'Add a stop (max 2)</button>';
 
         destDiv.after(stopsSection);
 
@@ -788,6 +1231,10 @@ const jsonLD = {
           var stopWrap = document.createElement('div');
           stopWrap.className = 'flex items-center gap-2';
           stopWrap.dataset.stopId = stopId;
+
+          var label = document.createElement('span');
+          label.className = 'text-xs text-gray-400 font-medium flex-shrink-0 w-12';
+          label.textContent = 'Via ' + stopCount;
 
           var inp = document.createElement('input');
           inp.type = 'text';
@@ -811,15 +1258,17 @@ const jsonLD = {
               el.dataset.stopId = 'stop' + num;
               var rinp = el.querySelector('input');
               if (rinp) { rinp.dataset.qid = 'stop' + num; rinp.placeholder = 'Stop ' + num + ' postcode or city'; }
+              var rlabel = el.querySelector('span');
+              if (rlabel) rlabel.textContent = 'Via ' + num;
             });
           });
 
+          stopWrap.appendChild(label);
           stopWrap.appendChild(inp);
           stopWrap.appendChild(rmBtn);
           document.getElementById('stopsContainer').appendChild(stopWrap);
 
           attachAutocomplete(inp);
-          // Make autocomplete wrapper flex-friendly
           var acWrap = inp.closest('.autocomplete-wrap');
           if (acWrap) acWrap.classList.add('flex-1', 'min-w-0');
 
@@ -829,7 +1278,6 @@ const jsonLD = {
     }
   }
 
-  // Check if an element is inside a hidden showWhen wrapper
   function isHiddenConditional(el) {
     var parent = el.closest('[data-show-when]');
     return parent && parent.classList.contains('hidden');
@@ -839,8 +1287,7 @@ const jsonLD = {
     var answers = {};
     var valid = true;
 
-    // Collect from text, date, time, select inputs (skip hidden conditional fields)
-    document.querySelectorAll('.quiz-input').forEach(function (input) {
+    document.querySelectorAll('#questionsContainer .quiz-input').forEach(function (input) {
       if (isHiddenConditional(input)) return;
 
       var qid = input.dataset.qid;
@@ -857,10 +1304,8 @@ const jsonLD = {
       if (val) answers[qid] = val;
     });
 
-    // Collect from toggle groups (skip hidden conditional fields)
-    document.querySelectorAll('[data-type="toggle"]').forEach(function (group) {
+    document.querySelectorAll('#questionsContainer [data-type="toggle"]').forEach(function (group) {
       if (isHiddenConditional(group)) return;
-
       var qid = group.dataset.qid;
       var activeBtn = group.querySelector('.toggle-btn.active');
       if (activeBtn) {
@@ -868,7 +1313,7 @@ const jsonLD = {
       }
     });
 
-    // For same-day return, returnPickupTime is effectively required
+    // Same-day return: returnPickupTime required
     if (answers.returnJourney === 'yes' && answers.returnType !== 'no' && !answers.returnPickupTime) {
       var rptInput = document.querySelector('[data-qid="returnPickupTime"]');
       if (rptInput && !isHiddenConditional(rptInput)) {
@@ -877,7 +1322,7 @@ const jsonLD = {
       }
     }
 
-    // Same-day return: return pickup time must be at least 30 minutes after outbound time
+    // Return time must be >= 30 min after outbound
     if (answers.returnJourney === 'yes' && answers.returnType !== 'no' && answers.returnPickupTime && answers.time) {
       var outParts = answers.time.split(':');
       var retParts = answers.returnPickupTime.split(':');
@@ -887,7 +1332,6 @@ const jsonLD = {
         valid = false;
         var rptEl = document.querySelector('[data-qid="returnPickupTime"]');
         if (rptEl) rptEl.style.borderColor = '#E53E3E';
-        // Show or create validation message
         var msgId = 'returnTimeMsg';
         var existing = document.getElementById(msgId);
         if (!existing) {
@@ -911,7 +1355,7 @@ const jsonLD = {
     return valid ? answers : null;
   }
 
-  // Render flags (heavy luggage, wheelchair, executive) in Step 3
+  // --- Render estimate data ---
   function renderFlags(est) {
     var flagsEl = document.getElementById('estimateFlags');
     flagsEl.innerHTML = '';
@@ -932,7 +1376,132 @@ const jsonLD = {
     else flagsEl.classList.add('hidden');
   }
 
-  // Step 2: get estimate
+  function renderJourneySummary(est) {
+    var summary = document.getElementById('journeySummary');
+    var hasSummary = false;
+
+    if (est.distanceMiles) {
+      document.getElementById('summaryDistance').textContent = est.distanceMiles;
+      hasSummary = true;
+    }
+    if (est.durationMinutes) {
+      var mins = est.durationMinutes;
+      var hrs = Math.floor(mins / 60);
+      var rem = mins % 60;
+      document.getElementById('summaryDuration').textContent = hrs > 0 ? hrs + 'h ' + rem + 'min' : rem + ' min';
+      hasSummary = true;
+    }
+
+    var returnWrap = document.getElementById('summaryReturnWrap');
+    var returnMsg = document.getElementById('summaryReturnMsg');
+    returnWrap.classList.add('hidden');
+    returnMsg.classList.add('hidden');
+
+    if (est.returnType) {
+      var returnLabels = { split: 'Separate collection', wait: 'Driver waits', separate: 'Different day' };
+      document.getElementById('summaryReturnType').textContent = returnLabels[est.returnType] || est.returnType;
+      returnWrap.classList.remove('hidden');
+      hasSummary = true;
+    }
+    if (est.returnMessage) {
+      returnMsg.textContent = est.returnMessage;
+      returnMsg.classList.remove('hidden');
+    }
+
+    if (hasSummary) summary.classList.remove('hidden');
+    else summary.classList.add('hidden');
+  }
+
+  function renderSurcharges(est) {
+    var el = document.getElementById('estimateSurcharges');
+    el.innerHTML = '';
+    if (est.surchargeLabels && est.surchargeLabels.length) {
+      est.surchargeLabels.forEach(function (label) {
+        el.innerHTML += '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">' + label + '</span>';
+      });
+      el.classList.remove('hidden');
+    } else {
+      el.classList.add('hidden');
+    }
+  }
+
+  function renderDiscount(est) {
+    var el = document.getElementById('estimateDiscount');
+    if (est.regularDiscountPercent) {
+      document.getElementById('discountText').textContent = est.regularDiscountPercent + '% regular booking discount applied';
+      el.classList.remove('hidden');
+    } else {
+      el.classList.add('hidden');
+    }
+  }
+
+  function renderIncludes(est) {
+    var wheelchair = document.getElementById('includesWheelchair');
+    var meetGreet = document.getElementById('includesMeetGreet');
+    if (est.wheelchairRequired) wheelchair.classList.remove('hidden');
+    else wheelchair.classList.add('hidden');
+    if (est.meetGreetCost) meetGreet.classList.remove('hidden');
+    else meetGreet.classList.add('hidden');
+  }
+
+  function renderRouteTimeline(answers, est) {
+    var visual = document.getElementById('routeVisual');
+    var stopDotsEl = document.getElementById('routeStopDots');
+    var stopLabelsEl = document.getElementById('routeStopLabels');
+    var returnDots = document.getElementById('routeReturnDots');
+    var returnLabel = document.getElementById('routeReturnLabel');
+
+    // Reset
+    stopDotsEl.innerHTML = '';
+    stopLabelsEl.innerHTML = '';
+    returnDots.classList.add('hidden');
+    returnLabel.classList.add('hidden');
+
+    // Pickup
+    document.getElementById('routePickup').textContent = answers.pickupPostcode || '';
+    document.getElementById('routePickupTime').textContent = answers.time ? 'Pickup at ' + answers.time : '';
+
+    // Destination
+    var dest = answers.destinationPostcode || '';
+    if (answers.airport) {
+      var airportNames = { BHX: 'Birmingham Airport', MAN: 'Manchester Airport', EMA: 'East Midlands Airport', LHR: 'London Heathrow', LGW: 'London Gatwick', LTN: 'London Luton', STN: 'London Stansted', BRS: 'Bristol Airport', LPL: 'Liverpool Airport' };
+      dest = airportNames[answers.airport] || answers.airport;
+    }
+    document.getElementById('routeDest').textContent = dest;
+    var destInfo = '';
+    if (est.distanceMiles) destInfo = est.distanceMiles + ' miles';
+    if (est.durationMinutes) {
+      var m = est.durationMinutes;
+      var h = Math.floor(m / 60);
+      var r = m % 60;
+      destInfo += (destInfo ? ' \u00B7 ' : '') + (h > 0 ? h + 'h ' + r + 'min' : r + ' min');
+    }
+    document.getElementById('routeDestInfo').textContent = destInfo;
+
+    // Stops
+    if (answers.stop1) {
+      stopDotsEl.innerHTML += '<div class="w-2 h-2 rounded-full bg-gray-400 my-1 mx-auto"></div><div class="w-0.5 flex-1 bg-gray-300 min-h-[1rem] mx-auto"></div>';
+      stopLabelsEl.innerHTML += '<div class="my-1"><p class="text-xs text-gray-500">Via: ' + answers.stop1 + '</p></div>';
+    }
+    if (answers.stop2) {
+      stopDotsEl.innerHTML += '<div class="w-2 h-2 rounded-full bg-gray-400 my-1 mx-auto"></div><div class="w-0.5 flex-1 bg-gray-300 min-h-[1rem] mx-auto"></div>';
+      stopLabelsEl.innerHTML += '<div class="my-1"><p class="text-xs text-gray-500">Via: ' + answers.stop2 + '</p></div>';
+    }
+
+    // Return
+    if (answers.returnJourney === 'yes') {
+      returnDots.classList.remove('hidden');
+      returnLabel.classList.remove('hidden');
+      var retTime = '';
+      if (answers.returnPickupTime) retTime = 'Return at ' + answers.returnPickupTime;
+      if (answers.returnDate) retTime += (retTime ? ' on ' : '') + answers.returnDate;
+      document.getElementById('routeReturnTime').textContent = retTime;
+    }
+
+    visual.classList.remove('hidden');
+  }
+
+  // --- Step 2: get estimate ---
   document.getElementById('getEstimateBtn').addEventListener('click', function () {
     var answers = collectAnswers();
     if (!answers) return;
@@ -942,6 +1511,11 @@ const jsonLD = {
     var btn = document.getElementById('getEstimateBtn');
     btn.disabled = true;
     btn.textContent = 'Calculating...';
+
+    // Show Step 3 with skeleton loading
+    document.getElementById('estimateLoading').classList.remove('hidden');
+    document.getElementById('estimateContent').classList.add('hidden');
+    showStep('step3');
 
     fetch('/api/quote/estimate', {
       method: 'POST',
@@ -957,13 +1531,24 @@ const jsonLD = {
           document.getElementById('estimateLow').textContent = '\u00A3' + data.estimate.low;
           document.getElementById('estimateHigh').textContent = '\u00A3' + data.estimate.high;
           document.getElementById('estimatePerUnit').textContent = data.estimate.perUnit;
+
           renderFlags(data.estimate);
-          showStep('step3');
+          renderJourneySummary(data.estimate);
+          renderSurcharges(data.estimate);
+          renderDiscount(data.estimate);
+          renderIncludes(data.estimate);
+          renderRouteTimeline(currentAnswers, data.estimate);
+
+          document.getElementById('estimateLoading').classList.add('hidden');
+          document.getElementById('estimateContent').classList.remove('hidden');
         } else {
+          // Go back to step 2 on error
+          showStep('step2');
           alert(data.error || 'Failed to calculate estimate.');
         }
       })
       .catch(function () {
+        showStep('step2');
         alert('Something went wrong. Please try again.');
       })
       .finally(function () {
@@ -972,13 +1557,12 @@ const jsonLD = {
       });
   });
 
-  // Step 3: request exact quote
+  // --- Step 3: request exact quote ---
   document.getElementById('requestQuoteBtn').addEventListener('click', function () {
     var svc = quoteRules.services[selectedService];
     document.getElementById('formService').value = svc.label;
     document.getElementById('formEstimate').value = '\u00A3' + currentEstimate.low + ' \u2013 \u00A3' + currentEstimate.high + ' ' + currentEstimate.perUnit;
 
-    // Build answers summary
     var lines = [];
     if (svc.questions) {
       svc.questions.forEach(function (q) {
@@ -992,7 +1576,6 @@ const jsonLD = {
         }
       });
     }
-    // Include stop information if present
     if (currentAnswers.stop1) lines.push('Stop 1: ' + currentAnswers.stop1);
     if (currentAnswers.stop2) lines.push('Stop 2: ' + currentAnswers.stop2);
     document.getElementById('formAnswers').value = lines.join('\n');
@@ -1000,13 +1583,13 @@ const jsonLD = {
     showStep('step4');
   });
 
-  // Back buttons
+  // --- Back buttons ---
   document.getElementById('backEnterprise').addEventListener('click', function () { showStep('step1'); });
   document.getElementById('back2').addEventListener('click', function () { showStep('step1'); });
   document.getElementById('back3').addEventListener('click', function () { showStep('step2'); });
   document.getElementById('back4').addEventListener('click', function () { showStep('step3'); });
 
-  // Contact preference toggle
+  // --- Contact preference toggle ---
   var prefGroup = document.getElementById('contactPrefGroup');
   if (prefGroup) {
     prefGroup.querySelectorAll('.contact-pref-btn').forEach(function (label) {
@@ -1017,13 +1600,14 @@ const jsonLD = {
     });
   }
 
-  // Step 4: submit form via server API
+  // --- Step 4: submit form ---
   var quoteForm = document.getElementById('quoteForm');
   quoteForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
     var emailEl = document.getElementById('quote-email');
     var nameEl = document.getElementById('quote-name');
+    var phoneEl = document.getElementById('quote-phone');
     var successEl = document.getElementById('quoteSuccess');
     var errorEl = document.getElementById('quoteError');
     var submitBtn = document.getElementById('submitQuoteBtn');
@@ -1035,11 +1619,29 @@ const jsonLD = {
 
     if (!nameEl.value.trim()) {
       valid = false;
+      nameEl.style.borderColor = '#E53E3E';
+    } else {
+      nameEl.style.borderColor = '';
     }
 
     if (!emailEl.value || !emailEl.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       quoteForm.querySelector('[data-for="quote-email"]').classList.remove('hidden');
+      emailEl.style.borderColor = '#E53E3E';
       valid = false;
+    } else {
+      emailEl.style.borderColor = '';
+    }
+
+    // Phone validation (optional but must be valid UK if provided)
+    if (phoneEl.value.trim()) {
+      var cleaned = phoneEl.value.replace(/[\s\-\(\)]/g, '');
+      if (!/^(\+44|0)[0-9]{9,10}$/.test(cleaned)) {
+        quoteForm.querySelector('[data-for="quote-phone"]').classList.remove('hidden');
+        phoneEl.style.borderColor = '#E53E3E';
+        valid = false;
+      } else {
+        phoneEl.style.borderColor = '';
+      }
     }
 
     if (!valid) return;
@@ -1053,7 +1655,7 @@ const jsonLD = {
     var payload = {
       name: nameEl.value.trim(),
       email: emailEl.value.trim(),
-      phone: (document.getElementById('quote-phone').value || '').trim(),
+      phone: (phoneEl.value || '').trim(),
       contactPreference: contactPref,
       message: (document.getElementById('quote-details').value || '').trim(),
       service: document.getElementById('formService').value,
@@ -1073,7 +1675,7 @@ const jsonLD = {
           document.getElementById('successContactMethod').textContent = prefLabels[contactPref] || 'phone';
           document.getElementById('successEmail').textContent = payload.email;
           successEl.classList.remove('hidden');
-          quoteForm.classList.add('hidden');
+          quoteForm.style.display = 'none';
         } else {
           errorEl.classList.remove('hidden');
         }
