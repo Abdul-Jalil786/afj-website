@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T12:12:36.448Z",
+  "generatedAt": "2026-02-18T12:14:30.374Z",
   "agent": "security",
   "grade": "D",
   "counts": {
@@ -155,15 +155,15 @@
     "severity": "ok"
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's staging environment demonstrates strong authentication controls with all admin endpoints properly protected (403 responses), and SSL/TLS is correctly implemented. However, the security posture is significantly undermined by missing critical HTTP security headers across multiple pages. Four pages are missing essential headers like X-Content-Type-Options and X-Frame-Options, which protect against MIME-sniffing attacks and clickjacking respectively. Additionally, recommended security headers (HSTS, CSP, Referrer-Policy, Permissions-Policy) are absent site-wide, leaving the application vulnerable to common web exploits.",
+    "summary": "AFJ Limited's staging environment demonstrates solid foundational security with proper authentication controls on admin endpoints and HTTPS enforcement. However, the application has significant vulnerabilities related to missing HTTP security headers across all scanned pages. Four high-severity issues exist: critical security headers (X-Content-Type-Options, X-Frame-Options) are absent from most pages, and recommended headers (HSTS, CSP, Referrer-Policy, Permissions-Policy) are universally missing. These omissions expose the application to clickjacking, MIME-sniffing attacks, and man-in-the-middle threats, particularly concerning for a transport company handling sensitive business data.",
     "recommendations": [
-      "Immediately implement X-Content-Type-Options: nosniff and X-Frame-Options: SAMEORIGIN headers on all pages, including /, /services/send-transport, /quote, and /admin",
-      "Deploy Strict-Transport-Security (HSTS) header with a minimum max-age of 31536000 seconds to enforce HTTPS across all sessions",
-      "Implement a comprehensive Content-Security-Policy (CSP) header to mitigate XSS attacks and control resource loading origins",
-      "Add Referrer-Policy: strict-origin-when-cross-origin to protect user privacy and prevent referrer leakage",
-      "Configure Permissions-Policy header to restrict access to browser APIs (camera, microphone, geolocation, etc.)",
-      "Review and standardize security header configuration across all environments (staging/production) using middleware or server configuration",
-      "Consider implementing a Web Application Firewall (WAF) as an additional layer of protection"
+      "Immediately implement X-Content-Type-Options: nosniff across all pages to prevent MIME-sniffing attacks",
+      "Add X-Frame-Options: SAMEORIGIN (or DENY if not embedding in iframes) to all pages to prevent clickjacking—currently only present on /admin",
+      "Configure Strict-Transport-Security header (HSTS) with a minimum max-age of 31536000 seconds to enforce HTTPS and prevent downgrade attacks",
+      "Implement a Content-Security-Policy (CSP) header to restrict resource loading and mitigate XSS vulnerabilities, especially important for the quote and transport service pages handling user input",
+      "Add Referrer-Policy: strict-origin-when-cross-origin to control referrer information leakage across requests",
+      "Include Permissions-Policy header to restrict access to sensitive browser features (camera, microphone, geolocation)",
+      "Apply all recommended headers consistently across the entire application via web server configuration or middleware to ensure no pages are missed"
     ],
     "riskLevel": "high"
   }
