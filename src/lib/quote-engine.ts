@@ -1,5 +1,35 @@
 import quoteRules from '../data/quote-rules.json';
 
+/**
+ * Deep-merge two objects. Arrays and primitives in `overrides` replace `base`.
+ * Nested objects are merged recursively.
+ */
+function deepMerge(base: any, overrides: any): any {
+  const result = { ...base };
+  for (const key of Object.keys(overrides)) {
+    if (
+      overrides[key] &&
+      typeof overrides[key] === 'object' &&
+      !Array.isArray(overrides[key]) &&
+      base[key] &&
+      typeof base[key] === 'object' &&
+      !Array.isArray(base[key])
+    ) {
+      result[key] = deepMerge(base[key], overrides[key]);
+    } else {
+      result[key] = overrides[key];
+    }
+  }
+  return result;
+}
+
+/**
+ * Active config — set by estimateQuote() when config overrides are provided
+ * (for admin live preview). Defaults to the on-disk quote-rules.json.
+ * Safe: Node.js is single-threaded, no concurrent interleaving.
+ */
+let activeConfig: typeof quoteRules = quoteRules;
+
 export interface QuoteEstimate {
   low: number;
   high: number;
@@ -58,12 +88,12 @@ function extractArea(input: string): string {
     const area = match[1];
     // Map London postcodes to a single LDN key
     if (LONDON_AREAS.has(area)) return 'LDN';
-    if (area in quoteRules.distanceMatrix) return area;
+    if (area in activeConfig.distanceMatrix) return area;
   }
 
   // Try city name lookup
   const lower = input.trim().toLowerCase();
-  const cityArea = (quoteRules.cityLookup as Record<string, string>)[lower];
+  const cityArea = (activeConfig.cityLookup as Record<string, string>)[lower];
   if (cityArea) return cityArea;
 
   return 'default';
@@ -73,7 +103,7 @@ function extractArea(input: string): string {
  * Look up distance between two postcode areas in miles (hardcoded fallback).
  */
 function lookupDistance(fromArea: string, toArea: string): number {
-  const matrix = quoteRules.distanceMatrix as Record<string, Record<string, number>>;
+  const matrix = activeConfig.distanceMatrix as Record<string, Record<string, number>>;
   const fromRow = matrix[fromArea] || matrix['default'];
   const distance = fromRow[toArea] ?? fromRow['default'] ?? 50;
   // 50-mile fallback for unknown postcode areas — log so we can identify missing mappings
@@ -151,7 +181,7 @@ async function getDistance(pickup: string, destination: string): Promise<{ miles
   const fromArea = extractArea(pickup);
   const toArea = extractArea(destination);
   const miles = lookupDistance(fromArea, toArea);
-  const avgSpeedMph = (quoteRules.pricing as any)['private-hire']?.averageSpeedMph || 40;
+  const avgSpeedMph = (activeConfig.pricing as any)['private-hire']?.averageSpeedMph || 40;
   return { miles, minutes: Math.round((miles / avgSpeedMph) * 60) };
 }
 
@@ -168,8 +198,8 @@ function parseTimeToMinutes(time: string): number {
  * Surcharges stack additively: time-of-day + day-of-week or bank holiday.
  */
 function calculateSurcharges(date: string, time: string): { percent: number; labels: string[] } {
-  const surcharges = quoteRules.surcharges as Record<string, any>;
-  const bankHolidays = quoteRules.bankHolidays as string[];
+  const surcharges = activeConfig.surcharges as Record<string, any>;
+  const bankHolidays = activeConfig.bankHolidays as string[];
   let totalPercent = 0;
   const labels: string[] = [];
 
@@ -222,7 +252,7 @@ interface BaseInfo { name: string; postcode: string; lat: number; lng: number }
 interface DeadheadResult { miles: number; minutes: number; base: BaseInfo }
 
 async function getDeadheadFromBase(postcode: string): Promise<DeadheadResult> {
-  const bases = (quoteRules as any).bases as BaseInfo[];
+  const bases = (activeConfig as any).bases as BaseInfo[];
   const fallbackBase = bases?.[0] || { name: 'Birmingham', postcode: 'B7 4JD', lat: 52.4912, lng: -1.8876 };
   if (!bases || !bases.length) return { miles: 0, minutes: 0, base: fallbackBase };
 
@@ -231,7 +261,7 @@ async function getDeadheadFromBase(postcode: string): Promise<DeadheadResult> {
     // Fallback: use matrix distance from B (Birmingham primary base)
     const area = extractArea(postcode);
     const miles = lookupDistance('B', area);
-    const avgSpeedMph = (quoteRules.pricing as any)['private-hire']?.averageSpeedMph || 40;
+    const avgSpeedMph = (activeConfig.pricing as any)['private-hire']?.averageSpeedMph || 40;
     return { miles, minutes: Math.round((miles / avgSpeedMph) * 60), base: fallbackBase };
   }
 
@@ -257,7 +287,7 @@ async function getDeadheadFromBase(postcode: string): Promise<DeadheadResult> {
   // Fallback: matrix from Birmingham
   const area = extractArea(postcode);
   const miles = lookupDistance('B', area);
-  const avgSpeedMph = (quoteRules.pricing as any)['private-hire']?.averageSpeedMph || 40;
+  const avgSpeedMph = (activeConfig.pricing as any)['private-hire']?.averageSpeedMph || 40;
   return { miles, minutes: Math.round((miles / avgSpeedMph) * 60), base: fallbackBase };
 }
 
@@ -280,7 +310,7 @@ async function getDistanceToBase(
   const fromArea = extractArea(postcode);
   const toArea = extractArea(base.postcode);
   const miles = lookupDistance(fromArea, toArea);
-  const avgSpeedMph = (quoteRules.pricing as any)['private-hire']?.averageSpeedMph || 40;
+  const avgSpeedMph = (activeConfig.pricing as any)['private-hire']?.averageSpeedMph || 40;
   return { miles, minutes: Math.round((miles / avgSpeedMph) * 60) };
 }
 
@@ -288,7 +318,7 @@ async function getDistanceToBase(
  * Look up airport base rate from a postcode area.
  */
 function lookupAirportRate(area: string, airportCode: string): number {
-  const rates = quoteRules.airportRates as Record<string, Record<string, number>>;
+  const rates = activeConfig.airportRates as Record<string, Record<string, number>>;
   const areaRates = rates[area] || rates['default'];
   return areaRates[airportCode] ?? rates['default'][airportCode] ?? 200;
 }
@@ -302,8 +332,8 @@ function round2(n: number): number {
  * Calculate a cost-based price for a leg using costPerMile + chargeOutRatePerHour.
  */
 function calculateLegCost(miles: number, minutes: number): number {
-  const costPerMile = (quoteRules as any).costPerMile ?? 0.45;
-  const chargeOutRate = (quoteRules as any).chargeOutRatePerHour ?? 17;
+  const costPerMile = (activeConfig as any).costPerMile ?? 0.45;
+  const chargeOutRate = (activeConfig as any).chargeOutRatePerHour ?? 17;
   const hours = minutes / 60;
   return (miles * costPerMile) + (hours * chargeOutRate);
 }
@@ -317,10 +347,15 @@ function calculateLegCost(miles: number, minutes: number): number {
 export async function estimateQuote(
   service: string,
   answers: Record<string, string>,
+  configOverrides?: Record<string, any>,
 ): Promise<QuoteEstimate> {
-  const pricing = (quoteRules.pricing as Record<string, any>)[service];
-  const svcConfig = (quoteRules.services as Record<string, any>)[service];
-  const minimums = (quoteRules.minimumBooking as Record<string, number | Record<string, number>>) || {};
+  // Apply config overrides for admin live preview, reset in finally block
+  if (configOverrides) activeConfig = deepMerge(quoteRules, configOverrides);
+  try {
+
+  const pricing = (activeConfig.pricing as Record<string, any>)[service];
+  const svcConfig = (activeConfig.services as Record<string, any>)[service];
+  const minimums = (activeConfig.minimumBooking as Record<string, number | Record<string, number>>) || {};
 
   if (!pricing || !svcConfig || svcConfig.type !== 'instant') {
     throw new Error(`No pricing available for service: ${service}`);
@@ -351,10 +386,10 @@ export async function estimateQuote(
   let durationMinutes: number | undefined;
 
   if (service === 'private-hire') {
-    const chargeOutRate = (quoteRules as any).chargeOutRatePerHour ?? 17;
-    const deadheadThreshold = (quoteRules as any).deadheadThresholdMiles ?? 30;
-    const minGapForSplit = (quoteRules as any).minGapForSplitReturnHours ?? 5;
-    const dvsa = (quoteRules as any).dvsa || {};
+    const chargeOutRate = (activeConfig as any).chargeOutRatePerHour ?? 17;
+    const deadheadThreshold = (activeConfig as any).deadheadThresholdMiles ?? 30;
+    const minGapForSplit = (activeConfig as any).minGapForSplitReturnHours ?? 5;
+    const dvsa = (activeConfig as any).dvsa || {};
 
     // Collect intermediate stops (filter out empty/blank values)
     const stops: string[] = [];
@@ -578,7 +613,7 @@ export async function estimateQuote(
 
     // Arrival waiting cost
     if (answers.direction === 'yes') {
-      const airportChargeOutRate = (quoteRules as any).chargeOutRatePerHour ?? 17;
+      const airportChargeOutRate = (activeConfig as any).chargeOutRatePerHour ?? 17;
       airportArrivalCostVal = ((pricing.arrivalWaitingMinutes ?? 45) / 60) * airportChargeOutRate;
     }
   } else {
@@ -733,4 +768,9 @@ export async function estimateQuote(
     heavyLuggage: answers.luggage === 'heavy' || undefined,
     wheelchairRequired: answers.wheelchair === 'yes' || undefined,
   };
+
+  } finally {
+    // Always reset to on-disk config after each call
+    activeConfig = quoteRules;
+  }
 }

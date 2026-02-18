@@ -104,6 +104,20 @@ export const POST: APIRoute = async ({ request }) => {
       updated.dvsa = { ...updated.dvsa, ...body.dvsa };
     }
 
+    // Airport rates matrix
+    if (body.airportRates) {
+      updated.airportRates = body.airportRates;
+    }
+
+    // Airport pricing parameters (multipliers, meet & greet, return multiplier, etc.)
+    if (body.airportPricing) {
+      updated.pricing = { ...updated.pricing };
+      (updated.pricing as any).airport = {
+        ...(updated.pricing as any).airport,
+        ...body.airportPricing,
+      };
+    }
+
     const content = JSON.stringify(updated, null, 2) + '\n';
     await updateFileContent(
       'src/data/quote-rules.json',
