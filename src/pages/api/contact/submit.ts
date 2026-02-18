@@ -76,21 +76,26 @@ export const POST: APIRoute = async ({ request }) => {
         </div>
       `.trim();
 
-      await fetch('https://api.resend.com/emails', {
+      const notifyRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${resendKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'AFJ Website <onboarding@resend.dev>',
+          from: 'AFJ Website <noreply@afjltd.co.uk>',
           to: [notificationEmail],
           subject: `New Enquiry from ${escapeHtml(name || email)}`,
           html: notifyHtml,
         }),
       }).catch((err) => {
-        console.error('Notification email error:', err);
+        console.error('Notification email network error:', err);
+        return null;
       });
+      if (notifyRes && !notifyRes.ok) {
+        const errBody = await notifyRes.text().catch(() => '');
+        console.error('Notification email failed:', notifyRes.status, errBody);
+      }
     }
 
     // 3. Send auto-response to the customer
@@ -130,21 +135,26 @@ export const POST: APIRoute = async ({ request }) => {
         </div>
       `.trim();
 
-      await fetch('https://api.resend.com/emails', {
+      const autoRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${resendKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'AFJ Limited <onboarding@resend.dev>',
+          from: 'AFJ Limited <noreply@afjltd.co.uk>',
           to: [email],
           subject: 'Thank you for contacting AFJ Limited',
           html: autoResponseHtml,
         }),
       }).catch((err) => {
-        console.error('Auto-response email error:', err);
+        console.error('Auto-response email network error:', err);
+        return null;
       });
+      if (autoRes && !autoRes.ok) {
+        const errBody = await autoRes.text().catch(() => '');
+        console.error('Auto-response email failed:', autoRes.status, errBody);
+      }
     }
 
     return new Response(

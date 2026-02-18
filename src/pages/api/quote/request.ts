@@ -98,21 +98,26 @@ export const POST: APIRoute = async ({ request }) => {
         </div>
       `.trim();
 
-      await fetch('https://api.resend.com/emails', {
+      const notifyRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${resendKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'AFJ Website <onboarding@resend.dev>',
+          from: 'AFJ Website <noreply@afjltd.co.uk>',
           to: [notificationEmail],
           subject: `Quote Request from ${escapeHtml(name)}`,
           html: notifyHtml,
         }),
       }).catch((err) => {
-        console.error('Team notification email error:', err);
+        console.error('Team notification email network error:', err);
+        return null;
       });
+      if (notifyRes && !notifyRes.ok) {
+        const errBody = await notifyRes.text().catch(() => '');
+        console.error('Team notification email failed:', notifyRes.status, errBody);
+      }
     }
 
     // 3. Send customer confirmation email via Resend
@@ -159,21 +164,26 @@ export const POST: APIRoute = async ({ request }) => {
         </div>
       `.trim();
 
-      await fetch('https://api.resend.com/emails', {
+      const custRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${resendKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'AFJ Limited <onboarding@resend.dev>',
+          from: 'AFJ Limited <noreply@afjltd.co.uk>',
           to: [email],
           subject: 'Your Quote Request — AFJ Limited',
           html: customerHtml,
         }),
       }).catch((err) => {
-        console.error('Customer confirmation email error:', err);
+        console.error('Customer confirmation email network error:', err);
+        return null;
       });
+      if (custRes && !custRes.ok) {
+        const errBody = await custRes.text().catch(() => '');
+        console.error('Customer confirmation email failed:', custRes.status, errBody);
+      }
     }
 
     return new Response(

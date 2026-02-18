@@ -6,7 +6,7 @@
  * compliance expiries, social drafts, conversion milestones, agent criticals.
  *
  * Storage: src/data/notifications.json (committed to repo)
- * Email: Resend (onboarding@resend.dev until afjltd.co.uk domain verified)
+ * Email: Resend (noreply@afjltd.co.uk until afjltd.co.uk domain verified)
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -219,7 +219,7 @@ async function sendNotificationEmail(notification: Notification): Promise<void> 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'AFJ Notifications <onboarding@resend.dev>',
+        from: 'AFJ Notifications <noreply@afjltd.co.uk>',
         to: [toEmail],
         subject,
         html,

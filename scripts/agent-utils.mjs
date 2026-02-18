@@ -174,7 +174,7 @@ export async function sendReportEmail(subject, htmlBody) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'AFJ Monitoring <onboarding@resend.dev>',
+        from: 'AFJ Monitoring <noreply@afjltd.co.uk>',
         to: [NOTIFICATION_EMAIL],
         subject,
         html: htmlBody,
@@ -319,7 +319,7 @@ async function sendNotificationEmail(notification) {
     method: 'POST',
     headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from: 'AFJ Notifications <onboarding@resend.dev>',
+      from: 'AFJ Notifications <noreply@afjltd.co.uk>',
       to: [NOTIFICATION_EMAIL],
       subject,
       html,

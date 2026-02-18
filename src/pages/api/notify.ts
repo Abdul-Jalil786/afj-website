@@ -60,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'AFJ Content Calendar <onboarding@resend.dev>',
+        from: 'AFJ Content Calendar <noreply@afjltd.co.uk>',
         to: [notificationEmail],
         subject: `AFJ Content Due: ${escapeHtml(title)}`,
         html: emailBody,

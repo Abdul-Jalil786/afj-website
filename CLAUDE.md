@@ -71,7 +71,8 @@
 ### Go-Live
 - Staging: afj-staging.ascendtechgroup.co.uk (current)
 - Production: www.afjltd.co.uk (switch when admin agrees ready)
-- When going live: update SITE_URL, NOTIFICATION_EMAIL (→ jay@afjltd.co.uk), verify afjltd.co.uk in Resend, update Resend sender from onboarding@resend.dev to noreply@afjltd.co.uk, change robots.txt Sitemap URL back to afjltd.co.uk, update astro.config.mjs `site` to afjltd.co.uk
+- When going live: update SITE_URL, NOTIFICATION_EMAIL (→ jay@afjltd.co.uk), change robots.txt Sitemap URL back to afjltd.co.uk, update astro.config.mjs `site` to afjltd.co.uk
+- Resend domain verified: afjltd.co.uk — all emails now sent from noreply@afjltd.co.uk
 
 ---
 
@@ -287,7 +288,7 @@ Workflow commit step: all 9 agent workflows use a robust git conflict handler �
 Live and hooked into all agents. Every system that needs admin attention routes through here.
 - Types: blog-draft, pricing-recommendation, security-fix, seo-fix, compliance-expiry, social-draft, conversion-milestone, agent-critical
 - Storage: src/data/notifications.json (capped at 200)
-- Email via Resend on every notification (from onboarding@resend.dev, temporary)
+- Email via Resend on every notification (from noreply@afjltd.co.uk)
 - Bell icon in admin header with unread badge + dropdown (latest 10)
 - /admin/notifications — full list with type/status/priority filters, grouped by date, bulk mark-as-read
 - API: GET/PUT /api/admin/notifications
@@ -359,6 +360,6 @@ NOTIFICATION_EMAIL                   # jay.shakeel@gmail.com
 | Blog not appearing | Clear Railway cache. Check frontmatter (title, date, description, image required). |
 | CF Zero Trust loop | Check access policy email domain. Ensure URL includes path prefix. |
 | API returns 500 | Check Railway logs. Usually missing env var. |
-| Agent email not sending | Check Resend logs. Must use onboarding@resend.dev until domain verified. |
+| Agent email not sending | Check Resend logs. Domain verified: afjltd.co.uk, sender: noreply@afjltd.co.uk |
 | Agent push conflict | Fixed: git pull --rebase before push in all workflows. |
 | TTS returns 401 | OpenAI permission issue. Try "All" permissions on API key. |
