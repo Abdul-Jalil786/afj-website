@@ -142,6 +142,19 @@
       "readAt": null,
       "actedAt": null,
       "emailSent": true
+    },
+    {
+      "id": "n_1771394081_095",
+      "type": "seo-fix",
+      "title": "50 SEO issues found",
+      "summary": "Claude Code prompts ready for 50 SEO fixes. Copy and paste to fix.",
+      "actionUrl": "/admin/monitoring?tab=fixes",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-02-18T05:54:41.809Z",
+      "readAt": null,
+      "actedAt": null,
+      "emailSent": true
     }
   ]
 }
