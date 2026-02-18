@@ -361,7 +361,7 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - Referrer-Policy: strict-origin-when-cross-origin
 - Permissions-Policy: camera=(), microphone=(), geolocation=()
 - Strict-Transport-Security: max-age=31536000; includeSubDomains
-- Content-Security-Policy: allowlists for Google Analytics, Google Tag Manager, Cloudflare CDN, Google Fonts, Web3Forms, Postcodes.io, OSRM, Anthropic API, OpenAI API, Google reCAPTCHA iframe
+- Content-Security-Policy: `'unsafe-inline'` (required by Astro/GA4, no `'unsafe-eval'`), allowlists for Google Analytics, Google Tag Manager, Cloudflare CDN, Google Fonts, Web3Forms, Postcodes.io, OSRM, Anthropic API, OpenAI API, Google reCAPTCHA iframe
 
 ### Phase 12.2 — Notification System, Blog Auto-Drafting, Remediation Agent (2026-02-17)
 - **Centralised notification system** (`src/lib/notifications.ts`) — createNotification, readNotifications, markAsRead, deleteNotification, stored in `src/data/notifications.json`
@@ -372,7 +372,7 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - Admin notification bell in AdminLayout header with unread count badge
 - `/admin/notifications` page with filterable notification list
 
-### Phase 12.3 — Compliance Management, Social Publishing, Meta Agent, Command Centre (2026-02-17) ← LATEST
+### Phase 12.3 — Compliance Management, Social Publishing, Meta Agent, Command Centre (2026-02-17)
 
 **Compliance Data Management:**
 - `src/data/compliance-records.json` — MOT and DBS record storage (vehicle reg, test dates, results, expiry; driver names, DBS numbers, issue/expiry dates, status)
@@ -410,6 +410,11 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - AdminLayout nav updated with "Social" and "Fleet & DBS" links
 - `scripts/run-all-agents.mjs` — Updated to include compliance + meta agents
 - `/admin/monitoring` — Added Compliance Check and Meta Agent cards, Agent Health tab with overview/assessments/recommendations/cost
+
+### Phase 12.4 — Security Hardening (2026-02-18) ← LATEST
+- **robots.txt updated** — `Disallow: /admin/`, `Disallow: /api/`, `Disallow: /image-library`, `Disallow: /content-calendar`. Sitemap URL set to staging domain (change back to afjltd.co.uk at go-live).
+- **CSP tightened** — Removed `'unsafe-eval'` from `script-src` directive in `src/middleware.ts`. `'unsafe-inline'` retained (required by Astro inline scripts and GA4). No source maps in production build.
+- **Rate limiting on compliance endpoint** — `/api/compliance/status` now rate-limited at 30 req/15min per IP (was the only public endpoint without rate limiting). Uses existing `RATE_LIMITS.quote` pattern from `src/lib/rate-limit.ts`.
 
 ### Phase 13 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
@@ -483,7 +488,7 @@ POST /api/ai/page-edit          AI page content update (NL → diff)
 POST /api/ai/testimonial        AI testimonial/case study from raw feedback
 POST /api/ai/seo-generate       AI SEO meta title, description, keywords generation
 POST /api/quote/estimate        Intelligent quote estimation (rule-based, public)
-GET  /api/compliance/status     Compliance dashboard data (public, cached)
+GET  /api/compliance/status     Compliance dashboard data (public, cached, rate-limited)
 POST /api/admin/approval        Approval workflow (GET list, POST submit, PUT approve/reject)
 GET  /api/admin/pricing         Read current pricing config from quote-rules.json
 POST /api/admin/pricing         Update pricing config via GitHub API
@@ -923,6 +928,7 @@ Customer → /contact → fills form (name, email, phone, message)
 | `/api/*` (programmatic) | `DASHBOARD_SECRET` header | Automated scripts, Claude Code |
 | `/api/contact/submit` | Rate limited (5/15min per IP) | Public |
 | `/api/quote/estimate` | Rate limited (30/15min per IP) + field validation | Public |
+| `/api/compliance/status` | Rate limited (30/15min per IP) | Public |
 | `/image-library` | Cloudflare Zero Trust | Jay only |
 | `/content-calendar` | Cloudflare Zero Trust | Jay only |
 | All other routes | Public | Everyone |
@@ -930,6 +936,7 @@ Customer → /contact → fills form (name, email, phone, message)
 All API endpoints validate request body size (50KB default, 200KB for large content).
 All admin API endpoints use `authenticateRequest()` from `src/lib/cf-auth.ts`.
 All responses include security headers via `src/middleware.ts` (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy).
+`public/robots.txt` blocks `/admin/`, `/api/`, `/image-library`, `/content-calendar` from crawlers. No source maps in production build.
 
 ### Secret Management
 - All secrets stored as Railway environment variables (never committed to repo)

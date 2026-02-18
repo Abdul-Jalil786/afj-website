@@ -19,14 +19,16 @@
 - Security/SEO remediation agent (daily 5am, generates Claude Code prompts for manual fixing — no AI, no auto-apply)
 - Pricing intelligence system (quote tracking, conversion analytics, market research agent, recommendations)
 - 9 monitoring agents (security, SEO, remediation, marketing, competitor, performance, pricing, compliance, meta) with email reports
-- Security headers middleware on all routes
+- Security headers middleware on all routes (CSP tightened: `unsafe-eval` removed)
+- robots.txt blocks /admin/, /api/, /image-library, /content-calendar (sitemap points to staging domain)
+- Rate limiting on all public endpoints including /api/compliance/status
 - Vehicle tiers expanded to 1-48 passengers with per-tier minimums
 - James AI chat assistant with voice input, OpenAI TTS, auto-knowledge, quote calculator
 
 **In progress / next:**
 - (nothing currently in progress)
 
-**Do NOT touch:** ContactForm, BaseLayout GA4, SEOHead, redirects, Content calendar, Social Impact Report components, Hero slider logic, Header navigation structure, Component subdirectory structure, github.ts shared utility, Notification bell in AdminLayout header, Compliance records API + agent, Social drafter lib + API
+**Do NOT touch:** ContactForm, BaseLayout GA4, SEOHead, redirects, Content calendar, Social Impact Report components, Hero slider logic, Header navigation structure, Component subdirectory structure, github.ts shared utility, Notification bell in AdminLayout header, Compliance records API + agent, Social drafter lib + API, Security headers middleware (stable), robots.txt (stable)
 
 ---
 
@@ -68,7 +70,7 @@
 ### Go-Live
 - Staging: afj-staging.ascendtechgroup.co.uk (current)
 - Production: www.afjltd.co.uk (switch when admin agrees ready)
-- When going live: update SITE_URL, NOTIFICATION_EMAIL (→ jay@afjltd.co.uk), verify afjltd.co.uk in Resend, update Resend sender from onboarding@resend.dev to noreply@afjltd.co.uk
+- When going live: update SITE_URL, NOTIFICATION_EMAIL (→ jay@afjltd.co.uk), verify afjltd.co.uk in Resend, update Resend sender from onboarding@resend.dev to noreply@afjltd.co.uk, change robots.txt Sitemap URL back to afjltd.co.uk, update astro.config.mjs `site` to afjltd.co.uk
 
 ---
 
