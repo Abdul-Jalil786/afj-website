@@ -343,7 +343,7 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 
 **Admin Dashboard (`/admin/monitoring`):**
 - Management-only page with 9-agent card grid (security, SEO, marketing, competitor, performance, pricing intelligence, compliance check, meta agent, remediation)
-- Each card: grade badge (A-F with colour), trend indicator (improving/stable/declining), schedule, last run, AI-powered flag, expandable report details
+- Each card: grade badge (A-F with colour), trend indicator (improving/stable/declining), schedule, last run, AI-powered flag, expandable report details, "Run Now" button
 - Agent Health tab: overview, per-agent assessments, recommendations, cost estimate (from meta agent)
 - 90-day grade history table at bottom with recent grades and summaries
 - AdminLayout nav updated with Monitoring link
@@ -411,10 +411,17 @@ Complete pipeline for quote tracking, conversion analytics, and AI-powered prici
 - `scripts/run-all-agents.mjs` — Updated to include compliance + meta agents
 - `/admin/monitoring` — Added Compliance Check and Meta Agent cards, Agent Health tab with overview/assessments/recommendations/cost
 
-### Phase 12.4 — Security Hardening (2026-02-18) ← LATEST
+### Phase 12.4 — Security Hardening (2026-02-18)
 - **robots.txt updated** — `Disallow: /admin/`, `Disallow: /api/`, `Disallow: /image-library`, `Disallow: /content-calendar`. Sitemap URL set to staging domain (change back to afjltd.co.uk at go-live).
 - **CSP tightened** — Removed `'unsafe-eval'` from `script-src` directive in `src/middleware.ts`. `'unsafe-inline'` retained (required by Astro inline scripts and GA4). No source maps in production build.
 - **Rate limiting on compliance endpoint** — `/api/compliance/status` now rate-limited at 30 req/15min per IP (was the only public endpoint without rate limiting). Uses existing `RATE_LIMITS.quote` pattern from `src/lib/rate-limit.ts`.
+
+### Phase 12.5 — Run Agents from Admin Dashboard (2026-02-18) ← LATEST
+- **Run Now buttons** on every agent card in `/admin/monitoring` — trigger any of the 9 agents on-demand
+- **`POST /api/admin/run-agent`** — new endpoint: accepts `{ agent: 'security' | 'seo' | 'remediation' | ... }`, management only, uses `child_process.exec` to run the corresponding script with 120s timeout
+- Agent name → script mapping: security→security-agent.mjs, seo→seo-agent.mjs, remediation→remediation-agent.mjs, marketing→marketing-agent.mjs, competitor→competitor-agent.mjs, performance→performance-agent.mjs, pricing→market-research-agent.mjs, compliance→compliance-check-agent.mjs, meta→meta-agent.mjs
+- Simple in-memory lock prevents overlapping runs (returns 409 if another agent is already running)
+- UI: loading spinner with pulse animation, all other Run Now buttons disabled while one runs, page reloads on success to show fresh report, error alert on failure
 
 ### Phase 13 — Future Integration (PLANNED, pending Telemex)
 - Council self-service portal with route and student data
@@ -511,6 +518,7 @@ PUT  /api/admin/blog-drafts     Approve/reject/edit draft
 POST /api/admin/blog-drafts     Publish draft to GitHub
 GET  /api/admin/proposed-fixes  List agent-proposed fixes with Claude Code prompts
 PUT  /api/admin/proposed-fixes  Dismiss fix
+POST /api/admin/run-agent       Run agent on-demand (management only, 120s timeout, single-agent lock)
 ```
 
 ### Components (27)
@@ -693,7 +701,7 @@ OSRM                → Real driving distance and duration via router.project-os
 - Weekly market research agent (GitHub Actions cron)
 - Pricing intelligence admin with AI recommendations + Test This panel
 - 7 automated monitoring agents (security, SEO, marketing, competitor, performance, compliance check, meta agent)
-- Monitoring admin dashboard with 9-agent card grid, grade history, trend indicators, Agent Health tab
+- Monitoring admin dashboard with 9-agent card grid, grade history, trend indicators, Agent Health tab, Run Now buttons
 - Email reports via Resend (all agents except performance on success-only)
 - Competitor crawling with content hash change detection (8 competitors)
 - GitHub issue creation on critical security findings
@@ -865,6 +873,7 @@ GitHub Actions cron triggers:
 Admin review:
   → /admin/monitoring → 9-agent card grid with grades + trends
     → Expandable report details per agent
+    → "Run Now" button per card → POST /api/admin/run-agent → child_process.exec (120s timeout, single-agent lock)
     → Agent Health tab (meta agent analysis)
     → 90-day grade history table
 ```
@@ -1004,7 +1013,7 @@ RAILWAY_TOKEN=
 |----------|---------|---------|
 | Public pages | 55+ routes | — |
 | Internal tools | 2 + admin dashboard (13 routes) | — |
-| API endpoints | 27 | — |
+| API endpoints | 28 | — |
 | Components | 27 | — |
 | Library modules | 14 | — |
 | Data files | 28 | — |
@@ -1032,7 +1041,7 @@ RAILWAY_TOKEN=
 | Schema markup | Full JSON-LD structured data | Basic or none |
 | Trust signals | Live accreditation display | Static logos |
 | Pricing intelligence | AI-powered weekly analysis with conversion tracking | Manual spreadsheet reviews |
-| Automated monitoring | 9 agents: security, SEO, marketing, competitor, performance, pricing, compliance, meta, remediation (prompt-based) | No automated monitoring |
+| Automated monitoring | 9 agents: security, SEO, marketing, competitor, performance, pricing, compliance, meta, remediation (prompt-based) + on-demand Run Now from admin | No automated monitoring |
 | Competitive intelligence | Weekly AI-powered competitor crawling (8 competitors) with change detection | Ad-hoc manual checks |
 | Compliance tracking | Live MOT/DBS record management with expiry alerts, CSV import | Manual spreadsheets |
 | Social media | AI-generated drafts from blog + manual, LinkedIn/Facebook publishing | Manual posting |
