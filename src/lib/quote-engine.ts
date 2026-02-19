@@ -338,6 +338,15 @@ function calculateLegCost(miles: number, minutes: number): number {
   return (miles * costPerMile) + (hours * chargeOutRate);
 }
 
+const VEHICLE_LABELS: Record<string, string> = {
+  '1-4': 'car hire with driver estimate',
+  '5-8': 'MPV hire with driver estimate',
+  '9-16': 'minibus hire with driver estimate',
+  '17-24': 'minicoach hire with driver estimate',
+  '25-33': 'minicoach hire with driver estimate',
+  '34-48': 'coach hire with driver estimate',
+};
+
 /**
  * Calculate an estimated price range for Private Hire or Airport Transfers.
  * Private hire uses a cost-based model (costPerMile + chargeOutRatePerHour).
@@ -743,7 +752,9 @@ export async function estimateQuote(
     low,
     high,
     currency: 'GBP',
-    perUnit: svcConfig.perUnit,
+    perUnit: (service === 'private-hire' && answers.passengers && VEHICLE_LABELS[answers.passengers])
+      ? VEHICLE_LABELS[answers.passengers]
+      : svcConfig.perUnit,
     distanceMiles,
     durationMinutes,
     returnType: returnTypeVal,
