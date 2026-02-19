@@ -104,14 +104,41 @@ export const PUT: APIRoute = async ({ request }) => {
 
   const { action, id, reason } = body;
 
-  if (!id || !action) {
-    return new Response(JSON.stringify({ success: false, error: 'id and action required' }), {
+  if (!action) {
+    return new Response(JSON.stringify({ success: false, error: 'action required' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
   const store = await readFixes();
+
+  if (action === 'dismiss-all') {
+    const now = new Date().toISOString();
+    const dismissReason = reason || 'Bulk dismissed';
+    let count = 0;
+    for (const f of store.fixes) {
+      if (f.status === 'pending') {
+        f.status = 'dismissed';
+        (f as any).dismissedAt = now;
+        (f as any).dismissedReason = dismissReason;
+        count++;
+      }
+    }
+    await writeFixes(store);
+    return new Response(JSON.stringify({ success: true, data: { dismissed: count } }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  if (!id) {
+    return new Response(JSON.stringify({ success: false, error: 'id required for this action' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   const fix = store.fixes.find((f) => f.id === id);
   if (!fix) {
     return new Response(JSON.stringify({ success: false, error: 'Fix not found' }), {
@@ -132,7 +159,7 @@ export const PUT: APIRoute = async ({ request }) => {
     });
   }
 
-  return new Response(JSON.stringify({ success: false, error: 'Invalid action. Use dismiss.' }), {
+  return new Response(JSON.stringify({ success: false, error: 'Invalid action. Use dismiss or dismiss-all.' }), {
     status: 400,
     headers: { 'Content-Type': 'application/json' },
   });
