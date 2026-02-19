@@ -1,7 +1,7 @@
 # CLAUDE.md — AFJ Limited Digital Platform
 
 > Primary instruction file for Claude Code. Read ENTIRE file before making changes.
-> Last updated: 2026-02-18
+> Last updated: 2026-02-19
 
 ---
 
@@ -25,6 +25,8 @@
 - Rate limiting on all public endpoints including /api/compliance/status
 - Vehicle tiers expanded to 1-48 passengers with per-tier minimums
 - James AI chat assistant with voice input, OpenAI TTS, auto-knowledge, quote calculator
+- SEO remediation: all meta descriptions under 160 chars, blog titles under 60 chars (with ` | AFJ` suffix), favicon fixed, blog descriptions rewritten (no more truncated "...")
+- Proposed fixes bulk dismiss: "Dismiss All Pending" button on monitoring dashboard, `dismiss-all` API action, default filter set to Pending
 
 **In progress / next:**
 - (nothing currently in progress)
