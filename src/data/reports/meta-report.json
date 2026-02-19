@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T19:27:53.204Z",
+  "generatedAt": "2026-02-19T07:56:02.940Z",
   "grade": "A",
   "overallHealth": "healthy",
   "summary": "8 agents configured. 0 have missed recent runs. 0 scripts missing.",
@@ -21,25 +21,25 @@
       "name": "remediation",
       "health": "healthy",
       "assessment": "Running normally",
-      "trend": "unknown"
+      "trend": "stable"
     },
     {
       "name": "performance",
       "health": "healthy",
       "assessment": "Running normally",
-      "trend": "unknown"
+      "trend": "stable"
     },
     {
       "name": "compliance",
       "health": "healthy",
       "assessment": "Running normally",
-      "trend": "unknown"
+      "trend": "stable"
     },
     {
       "name": "marketing",
       "health": "healthy",
       "assessment": "Running normally",
-      "trend": "stable"
+      "trend": "unknown"
     },
     {
       "name": "competitor",
@@ -69,31 +69,51 @@
       "scriptExists": true,
       "scriptLines": 303,
       "lastReport": {
-        "generatedAt": "2026-02-17T19:07:11.574Z",
+        "generatedAt": "2026-02-19T06:53:19.631Z",
         "grade": "D",
         "summary": null
       },
       "lastGrade": "D",
-      "lastRunDate": "2026-02-17T19:07:11.574Z",
+      "lastRunDate": "2026-02-19T06:53:19.631Z",
       "recentGrades": [
         {
-          "date": "2026-02-17",
+          "date": "2026-02-18",
           "grade": "D"
         },
         {
-          "date": "2026-02-17",
+          "date": "2026-02-18",
           "grade": "D"
         },
         {
-          "date": "2026-02-17",
+          "date": "2026-02-18",
           "grade": "D"
         },
         {
-          "date": "2026-02-17",
+          "date": "2026-02-18",
           "grade": "D"
         },
         {
-          "date": "2026-02-17",
+          "date": "2026-02-18",
+          "grade": "D"
+        },
+        {
+          "date": "2026-02-18",
+          "grade": "D"
+        },
+        {
+          "date": "2026-02-18",
+          "grade": "D"
+        },
+        {
+          "date": "2026-02-18",
+          "grade": "D"
+        },
+        {
+          "date": "2026-02-19",
+          "grade": "D"
+        },
+        {
+          "date": "2026-02-19",
           "grade": "D"
         }
       ],
@@ -105,22 +125,54 @@
       "schedule": "Daily 4:00 UTC",
       "usesAI": true,
       "scriptExists": true,
-      "scriptLines": 321,
+      "scriptLines": 335,
       "lastReport": {
-        "generatedAt": "2026-02-17T19:07:18.786Z",
-        "grade": "F",
+        "generatedAt": "2026-02-19T07:49:53.933Z",
+        "grade": "A",
         "summary": null
       },
-      "lastGrade": "F",
-      "lastRunDate": "2026-02-17T19:07:18.786Z",
+      "lastGrade": "A",
+      "lastRunDate": "2026-02-19T07:49:53.933Z",
       "recentGrades": [
         {
-          "date": "2026-02-17",
+          "date": "2026-02-18",
           "grade": "F"
         },
         {
-          "date": "2026-02-17",
-          "grade": "F"
+          "date": "2026-02-18",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-18",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-18",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-19",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-19",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-19",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-19",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-19",
+          "grade": "A"
+        },
+        {
+          "date": "2026-02-19",
+          "grade": "A"
         }
       ],
       "daysSinceLastRun": 0,
@@ -131,12 +183,37 @@
       "schedule": "Daily 5:00 UTC",
       "usesAI": true,
       "scriptExists": true,
-      "scriptLines": 370,
-      "lastReport": null,
-      "lastGrade": null,
-      "lastRunDate": null,
-      "recentGrades": [],
-      "daysSinceLastRun": null,
+      "scriptLines": 356,
+      "lastReport": {
+        "generatedAt": "2026-02-19T05:52:44.695Z",
+        "grade": "B",
+        "summary": null
+      },
+      "lastGrade": "B",
+      "lastRunDate": "2026-02-19T05:52:44.695Z",
+      "recentGrades": [
+        {
+          "date": "2026-02-17",
+          "grade": "A"
+        },
+        {
+          "date": "2026-02-17",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-18",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-18",
+          "grade": "B"
+        },
+        {
+          "date": "2026-02-19",
+          "grade": "B"
+        }
+      ],
+      "daysSinceLastRun": 0,
       "missedRuns": false
     },
     {
@@ -146,10 +223,23 @@
       "scriptExists": true,
       "scriptLines": 316,
       "lastReport": {
+        "generatedAt": "2026-02-19T06:45:39.026Z",
+        "grade": "A",
         "summary": null
       },
-      "recentGrades": [],
-      "daysSinceLastRun": null,
+      "lastGrade": "A",
+      "lastRunDate": "2026-02-19T06:45:39.026Z",
+      "recentGrades": [
+        {
+          "date": "2026-02-18",
+          "grade": "A"
+        },
+        {
+          "date": "2026-02-19",
+          "grade": "A"
+        }
+      ],
+      "daysSinceLastRun": 0,
       "missedRuns": false
     },
     {
@@ -159,15 +249,19 @@
       "scriptExists": true,
       "scriptLines": 298,
       "lastReport": {
-        "generatedAt": "2026-02-17T19:06:56.163Z",
+        "generatedAt": "2026-02-19T07:46:10.926Z",
         "grade": "A",
         "summary": "All 0 MOT and 0 DBS records are compliant"
       },
       "lastGrade": "A",
-      "lastRunDate": "2026-02-17T19:06:56.163Z",
+      "lastRunDate": "2026-02-19T07:46:10.926Z",
       "recentGrades": [
         {
-          "date": "2026-02-17",
+          "date": "2026-02-18",
+          "grade": "A"
+        },
+        {
+          "date": "2026-02-19",
           "grade": "A"
         }
       ],
@@ -187,17 +281,8 @@
       },
       "lastGrade": "B",
       "lastRunDate": "2026-02-17T19:07:57.363Z",
-      "recentGrades": [
-        {
-          "date": "2026-02-17",
-          "grade": "B"
-        },
-        {
-          "date": "2026-02-17",
-          "grade": "B"
-        }
-      ],
-      "daysSinceLastRun": 0,
+      "recentGrades": [],
+      "daysSinceLastRun": 1,
       "missedRuns": false
     },
     {
@@ -207,19 +292,19 @@
       "scriptExists": true,
       "scriptLines": 273,
       "lastReport": {
-        "generatedAt": "2026-02-17T19:07:34.975Z",
+        "generatedAt": "2026-02-19T06:58:55.690Z",
         "grade": "C",
         "summary": null
       },
       "lastGrade": "C",
-      "lastRunDate": "2026-02-17T19:07:34.975Z",
+      "lastRunDate": "2026-02-19T06:58:55.690Z",
       "recentGrades": [
         {
-          "date": "2026-02-17",
-          "grade": "A"
+          "date": "2026-02-19",
+          "grade": "C"
         },
         {
-          "date": "2026-02-17",
+          "date": "2026-02-19",
           "grade": "C"
         }
       ],
@@ -238,7 +323,7 @@
       },
       "lastRunDate": "2026-02-17T19:07:47.546Z",
       "recentGrades": [],
-      "daysSinceLastRun": 0,
+      "daysSinceLastRun": 1,
       "missedRuns": false
     }
   ]
