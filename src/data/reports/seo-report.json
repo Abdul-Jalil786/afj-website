@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-19T07:25:16.280Z",
+  "generatedAt": "2026-02-19T07:26:52.572Z",
   "agent": "seo",
   "grade": "B",
   "counts": {
@@ -18,7 +18,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 20,
       "issueCount": 1,
       "issues": [
         {
@@ -36,7 +36,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 189,
+      "responseTime": 212,
       "issueCount": 0,
       "issues": []
     },
@@ -48,7 +48,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 187,
+      "responseTime": 213,
       "issueCount": 0,
       "issues": []
     },
@@ -60,7 +60,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 23,
+      "responseTime": 212,
       "issueCount": 0,
       "issues": []
     },
@@ -72,7 +72,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 53,
+      "responseTime": 208,
       "issueCount": 0,
       "issues": []
     },
@@ -84,7 +84,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 17,
       "issueCount": 0,
       "issues": []
     },
@@ -96,7 +96,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 22,
       "issueCount": 0,
       "issues": []
     },
@@ -108,7 +108,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 179,
+      "responseTime": 23,
       "issueCount": 0,
       "issues": []
     },
@@ -120,7 +120,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 39,
       "issueCount": 0,
       "issues": []
     },
@@ -132,7 +132,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 32,
+      "responseTime": 178,
       "issueCount": 1,
       "issues": [
         {
@@ -150,7 +150,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 33,
       "issueCount": 1,
       "issues": [
         {
@@ -168,7 +168,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 20,
       "issueCount": 0,
       "issues": []
     },
@@ -180,7 +180,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 21,
       "issueCount": 0,
       "issues": []
     },
@@ -192,7 +192,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 24,
       "issueCount": 0,
       "issues": []
     },
@@ -204,7 +204,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 17,
+      "responseTime": 23,
       "issueCount": 0,
       "issues": []
     },
@@ -216,7 +216,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 20,
       "issueCount": 0,
       "issues": []
     },
@@ -228,7 +228,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 17,
+      "responseTime": 23,
       "issueCount": 0,
       "issues": []
     },
@@ -240,7 +240,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 17,
       "issueCount": 0,
       "issues": []
     },
@@ -252,7 +252,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 9,
+      "responseTime": 30,
       "issueCount": 0,
       "issues": []
     },
@@ -264,7 +264,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 27,
       "issueCount": 0,
       "issues": []
     },
@@ -294,7 +294,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 17,
       "issueCount": 1,
       "issues": [
         {
@@ -312,7 +312,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 18,
       "issueCount": 0,
       "issues": []
     },
@@ -324,7 +324,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 22,
       "issueCount": 0,
       "issues": []
     },
@@ -336,7 +336,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
+      "responseTime": 21,
       "issueCount": 0,
       "issues": []
     },
@@ -348,7 +348,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 17,
       "issueCount": 0,
       "issues": []
     },
@@ -360,7 +360,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 17,
       "issueCount": 0,
       "issues": []
     },
@@ -372,7 +372,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 28,
       "issueCount": 1,
       "issues": [
         {
@@ -390,7 +390,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 30,
       "issueCount": 0,
       "issues": []
     },
@@ -402,7 +402,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 23,
+      "responseTime": 30,
       "issueCount": 1,
       "issues": [
         {
@@ -420,7 +420,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 27,
       "issueCount": 0,
       "issues": []
     },
@@ -432,7 +432,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 22,
       "issueCount": 1,
       "issues": [
         {
@@ -450,7 +450,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 21,
       "issueCount": 1,
       "issues": [
         {
@@ -468,7 +468,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
+      "responseTime": 19,
       "issueCount": 1,
       "issues": [
         {
@@ -486,7 +486,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 16,
       "issueCount": 1,
       "issues": [
         {
@@ -504,7 +504,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 25,
       "issueCount": 0,
       "issues": []
     },
@@ -516,7 +516,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 19,
       "issueCount": 1,
       "issues": [
         {
@@ -534,7 +534,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 25,
       "issueCount": 0,
       "issues": []
     },
@@ -546,7 +546,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 9,
+      "responseTime": 20,
       "issueCount": 1,
       "issues": [
         {
@@ -564,7 +564,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 25,
       "issueCount": 0,
       "issues": []
     },
@@ -576,7 +576,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 17,
       "issueCount": 1,
       "issues": [
         {
@@ -594,7 +594,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 17,
+      "responseTime": 19,
       "issueCount": 0,
       "issues": []
     },
@@ -606,7 +606,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 20,
       "issueCount": 1,
       "issues": [
         {
@@ -624,7 +624,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 16,
       "issueCount": 1,
       "issues": [
         {
@@ -642,7 +642,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 17,
       "issueCount": 0,
       "issues": []
     },
@@ -654,7 +654,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 17,
       "issueCount": 0,
       "issues": []
     },
@@ -666,7 +666,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 38,
+      "responseTime": 20,
       "issueCount": 0,
       "issues": []
     },
@@ -678,7 +678,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 17,
       "issueCount": 0,
       "issues": []
     },
@@ -690,7 +690,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 28,
       "issueCount": 0,
       "issues": []
     },
@@ -702,7 +702,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 27,
       "issueCount": 0,
       "issues": []
     },
@@ -714,7 +714,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 18,
       "issueCount": 0,
       "issues": []
     },
@@ -726,7 +726,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 24,
       "issueCount": 1,
       "issues": [
         {
@@ -744,7 +744,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 12,
+      "responseTime": 17,
       "issueCount": 0,
       "issues": []
     },
@@ -756,7 +756,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 18,
       "issueCount": 0,
       "issues": []
     },
@@ -768,7 +768,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 20,
       "issueCount": 0,
       "issues": []
     },
@@ -780,7 +780,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 17,
       "issueCount": 0,
       "issues": []
     },
@@ -792,7 +792,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 19,
       "issueCount": 0,
       "issues": []
     },
@@ -804,7 +804,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 21,
       "issueCount": 0,
       "issues": []
     },
@@ -816,7 +816,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 28,
       "issueCount": 0,
       "issues": []
     },
@@ -828,7 +828,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
+      "responseTime": 26,
       "issueCount": 0,
       "issues": []
     },
@@ -840,7 +840,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 16,
       "issueCount": 1,
       "issues": [
         {
@@ -858,7 +858,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 21,
       "issueCount": 1,
       "issues": [
         {
@@ -876,7 +876,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 10,
+      "responseTime": 18,
       "issueCount": 0,
       "issues": []
     }
@@ -886,21 +886,20 @@
     "broken": []
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's website is in excellent health with no critical or high-severity issues detected across 63 pages. All 19 identified issues are low-severity meta tag optimizations related to title and description lengths exceeding recommended character limits. The site has zero broken links and a healthy average response time of 22ms, indicating strong technical performance and user experience.",
+    "summary": "AFJ Limited's website demonstrates excellent SEO health with no critical or high-severity issues identified across 63 pages. The 19 low-severity issues are primarily meta description and page title length optimizations that, while minor, can be quickly addressed to improve search engine display and click-through rates. With zero broken links and a solid 36ms average response time, the technical foundation is strong.",
     "recommendations": [
-      "Reduce meta description lengths on area pages (Kidderminster, Leamington Spa, Stoke-on-Trent, Sutton Coldfield, Wolverhampton) to 155-160 characters; currently 162-164 chars",
-      "Optimize meta description on homepage to under 155 characters (currently 217 chars) - consider highlighting unique value proposition more concisely",
-      "Review and shorten meta descriptions for /quote/ (181 chars) and /social-impact/ (186 chars) pages to align with Google's display standards",
-      "Trim page titles on all blog posts to under 60 characters; currently ranging from 66-74 characters - prioritize primary keywords within this limit",
-      "Implement a meta tag character limit checklist in your CMS workflow to prevent future issues during content updates",
-      "Monitor search performance metrics for affected pages post-optimization to measure impact on CTR and organic visibility"
+      "Audit and trim all meta descriptions to stay within the 155-160 character limit (Google typically displays 120-158 chars on desktop). Prioritize homepage and local area pages which currently exceed 160+ characters",
+      "Reduce blog post titles to 55-60 characters maximum to ensure full visibility in search results. Focus on the 10 blog articles currently exceeding 66+ characters",
+      "Implement a character count validation tool in your CMS to prevent future meta description and title length violations during content creation",
+      "Review meta descriptions to ensure they include relevant keywords naturally while staying within limits",
+      "Monitor search console to identify which optimized pages receive improved click-through rates post-implementation"
     ],
     "quickWins": [
-      "Edit homepage meta description: remove 62 excess characters while maintaining key benefits messaging",
-      "Batch-edit 5 area page descriptions: trim each by 7-9 characters by removing redundant modifiers or restructuring sentences",
-      "Reduce blog post titles by prioritizing 2-3 primary keywords within 60-character limit across 10 affected articles",
-      "Shorten /quote/ description by 26 characters and /social-impact/ by 31 characters through sentence restructuring",
-      "Audit and update meta descriptions for /services/vehicle-conversions/ (161 chars) to meet standards"
+      "Homepage: Trim meta description from 217 to ~155 characters while preserving key messaging about AFJ's transport services",
+      "Local area pages (Kidderminster, Leamington Spa, Stoke-on-Trent, Sutton Coldfield, Wolverhampton): Reduce descriptions to 155-160 chars - all currently 162-164 chars",
+      "Blog titles: Shorten 10 articles by 8-15 characters each (e.g., 'Navigating the Challenges of Staff Retention in UK Transport Sector Insights and Strategies' → focus on primary topic)",
+      "Quote and Services pages: Trim meta descriptions to recommended length (currently 161-181 chars)",
+      "Social Impact page: Reduce 186-character description to ~155 characters"
     ]
   }
 }
