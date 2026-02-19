@@ -109,7 +109,7 @@ async function run() {
     `You are a marketing strategist for AFJ Limited (${SITE_URL}), a UK transport company based in Birmingham.
 Services: SEND school transport, non-emergency patient transport (NEPTS), private minibus hire, airport transfers, executive hire, fleet maintenance, driver training, vehicle conversions.
 Clients: Birmingham City Council, Manchester City Council, Sandwell Council, NHS trusts, schools, private customers.
-700+ students daily, 47+ drivers.
+2,000+ students daily, 47+ drivers.
 
 Analyse the current content and provide marketing recommendations.
 Output ONLY valid JSON:
@@ -186,7 +186,7 @@ Output ONLY valid JSON:
         const draftContent = await callHaiku(
           `You are a content writer for AFJ Limited, a Birmingham-based UK transport company.
 Services: SEND school transport, NEPTS, private minibus hire, airport transfers, executive hire, fleet maintenance, driver training, vehicle conversions.
-700+ students daily, 47+ drivers, 18+ years of service.
+2,000+ students daily, 47+ drivers, 18+ years of service.
 
 Write a blog post in markdown format.
 

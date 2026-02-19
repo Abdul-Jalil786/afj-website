@@ -81,7 +81,7 @@ Requirements:
 
 const MANUAL_LINKEDIN_PROMPT = `You are a social media manager for AFJ Limited, a Birmingham-based transport company.
 Services: SEND school transport, NEPTS, private minibus hire, airport transfers, executive hire, fleet maintenance, driver training, vehicle conversions.
-700+ students daily, 47+ drivers, CQC rated "Good".
+2,000+ students daily, 47+ drivers, CQC rated "Good".
 
 Write a LinkedIn post based on the topic/brief below.
 
@@ -96,7 +96,7 @@ Requirements:
 
 const MANUAL_FACEBOOK_PROMPT = `You are a social media manager for AFJ Limited, a Birmingham-based transport company.
 Services: SEND school transport, NEPTS, private minibus hire, airport transfers, executive hire, fleet maintenance, driver training, vehicle conversions.
-700+ students daily, 47+ drivers, CQC rated "Good".
+2,000+ students daily, 47+ drivers, CQC rated "Good".
 
 Write a Facebook post based on the topic/brief below.
 

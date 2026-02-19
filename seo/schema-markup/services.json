@@ -4,7 +4,7 @@
     "@type": "Service",
     "serviceType": "Home to School Transport",
     "name": "SEND Home to School Transport",
-    "description": "Over 700 students transported daily. DBS-checked drivers and passenger assistants provide safe, reliable SEND school transport across Birmingham and Manchester. Council-accredited with wheelchair-accessible 16-seater minibuses.",
+    "description": "Over 2,000 students transported daily. DBS-checked drivers and passenger assistants provide safe, reliable SEND school transport across the North West and West Midlands. Council-accredited with wheelchair-accessible 16-seater minibuses.",
     "provider": { "@id": "https://www.afjltd.co.uk/#organization" },
     "areaServed": ["Birmingham", "Manchester", "West Midlands", "North West"],
     "url": "https://www.afjltd.co.uk/services/send-transport/"

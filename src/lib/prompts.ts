@@ -23,7 +23,7 @@ You are writing content for AFJ Limited, a Birmingham-based transport company es
 - Data-driven where possible — use specific numbers
 
 ### Key Stats (use where relevant)
-- 700+ students transported daily
+- 2,000+ students transported daily
 - 18+ years of service (established 2006)
 - 47+ professional drivers, all DBS-checked
 - CQC rated "Good"

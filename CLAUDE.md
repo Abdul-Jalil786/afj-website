@@ -40,7 +40,7 @@
 | **Company** | AFJ Limited |
 | **Website** | https://www.afjltd.co.uk (staging: afj-staging.ascendtechgroup.co.uk) |
 | **Industry** | Transport — SEND, NEPTS, private hire, fleet services |
-| **Scale** | 700+ students daily, 47+ drivers |
+| **Scale** | 2,000+ students daily, 47+ drivers |
 | **Facebook** | https://www.facebook.com/AFJTravel/ |
 | **LinkedIn** | https://www.linkedin.com/company/afj-ltd/ |
 

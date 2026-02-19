@@ -55,7 +55,7 @@ export async function generateDraft(opts: {
 }): Promise<BlogDraft> {
   const system = `You are a content writer for AFJ Limited, a Birmingham-based UK transport company.
 Services: SEND school transport, non-emergency patient transport (NEPTS), private minibus hire, airport transfers, executive hire, fleet maintenance, driver training, vehicle conversions.
-700+ students daily, 47+ drivers, 18+ years of service. CQC rated "Good".
+2,000+ students daily, 47+ drivers, 18+ years of service. CQC rated "Good".
 
 Write a blog post in markdown format.
 
