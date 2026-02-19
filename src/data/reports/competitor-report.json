@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T19:07:34.975Z",
+  "generatedAt": "2026-02-19T06:53:43.119Z",
   "agent": "competitor",
   "grade": "C",
   "competitorCount": 8,
@@ -90,7 +90,7 @@
           "status": 200,
           "title": "Minibus Hire Birmingham | Coach or Minibus with Driver | Travel SOS",
           "description": "Minibus hire in Birmingham to anywhere in the UK. 8 seater - 16 Seater minibuses for hire. Coach hire for corporate travel, school trips and much more.",
-          "contentHash": "fdf054794d46d52e",
+          "contentHash": "ad8ddb8c0362d1b7",
           "contentLength": 10000
         },
         {
@@ -98,7 +98,7 @@
           "status": 200,
           "title": "Minibus Hire Birmingham | Coach or Minibus with Driver | Travel SOS",
           "description": "Minibus hire in Birmingham to anywhere in the UK. 8 seater - 16 Seater minibuses for hire. Coach hire for corporate travel, school trips and much more.",
-          "contentHash": "fdf054794d46d52e",
+          "contentHash": "3dd5442d690c9c42",
           "contentLength": 10000
         },
         {
@@ -106,7 +106,7 @@
           "status": 200,
           "title": "About Us | Minibus and Coach Hire West Midlands | Travel SOS",
           "description": "Travel SOS offers top-notch minibus and coach hire services in the UK, with a focus on safety, reliability, and customer satisfaction.",
-          "contentHash": "11243b241b427622",
+          "contentHash": "512b781d883afbd8",
           "contentLength": 10000
         },
         {
@@ -114,7 +114,7 @@
           "status": 200,
           "title": "Contact Us | Minibus Hire | Get In Touch With Travel SOS Today",
           "description": "Please fill in the contact form below and we will get back to you within 2 hours.",
-          "contentHash": "335b3078c7355179",
+          "contentHash": "919df37d6b00a0be",
           "contentLength": 10000
         }
       ],
@@ -290,133 +290,174 @@
       "error": null
     }
   ],
-  "changesDetected": 0,
-  "changes": [],
+  "changesDetected": 4,
+  "changes": [
+    {
+      "competitor": "Travel SOS",
+      "url": "https://www.travelsos.co.uk/",
+      "path": "/",
+      "oldHash": "fdf054794d46d52e",
+      "newHash": "ad8ddb8c0362d1b7"
+    },
+    {
+      "competitor": "Travel SOS",
+      "url": "https://www.travelsos.co.uk/services",
+      "path": "/services",
+      "oldHash": "fdf054794d46d52e",
+      "newHash": "3dd5442d690c9c42"
+    },
+    {
+      "competitor": "Travel SOS",
+      "url": "https://www.travelsos.co.uk/about",
+      "path": "/about",
+      "oldHash": "11243b241b427622",
+      "newHash": "512b781d883afbd8"
+    },
+    {
+      "competitor": "Travel SOS",
+      "url": "https://www.travelsos.co.uk/contact",
+      "path": "/contact",
+      "oldHash": "335b3078c7355179",
+      "newHash": "919df37d6b00a0be"
+    }
+  ],
   "aiAnalysis": {
-    "summary": "AFJ Limited operates in a fragmented but competitive UK transport market with 8 identified competitors across SEND school transport, NEPTS, minibus hire, and airport transfers. The competitive landscape shows mixed digital maturity: Travel SOS emerges as the most digitally visible direct competitor with strong SEO optimization for minibus hire in Birmingham, while Green Destinations appears dormant (domain for sale). Three competitors are inaccessible, suggesting either technical issues, inactive operations, or minimal digital presence. AJ Travel and HS2 Travel serve indirect competition in the coach/tour space. AFJ's opportunity lies in leveraging superior digital presence and service specialization (SEND/NEPTS focus) against fragmented, poorly-resourced competitors.",
+    "summary": "The competitive landscape reveals a fragmented market with Travel SOS emerging as the most visible and active direct competitor in the Birmingham minibus hire space. Green Destinations appears to be a dormant domain currently for sale, while HATS Group and other competitors have minimal online presence with sparse metadata. Travel SOS has recently undergone significant website updates across all major pages, indicating active market engagement. Several competitors (Smart Kids Group, Aziz Coach Service, Aston Manor Coaches) are inaccessible, suggesting either technical issues or inactive operations. This presents AFJ Limited with an opportunity to establish stronger digital differentiation in the underserved SEND transport and NEPTS niches where competitor focus appears limited.",
     "competitorAssessments": [
       {
         "name": "Travel SOS",
         "strengths": [
-          "Strong SEO optimization with clear service messaging (minibus hire, coach hire, school trips)",
-          "Well-structured website with targeted landing pages for multiple service types",
-          "Established brand presence in Birmingham and West Midlands region",
-          "Competitive positioning across 8-16 seater vehicle range",
-          "Clear value proposition (safety, reliability, customer satisfaction)"
+          "Clear geographic focus on Birmingham and UK-wide coverage",
+          "Well-optimized service pages with specific fleet sizing (8-16 seater)",
+          "Recent website updates indicating active business development",
+          "Strong SEO presence with descriptive meta content",
+          "Positioned for school trips and corporate travel",
+          "Responsive customer service promise (2-hour response)"
         ],
         "weaknesses": [
-          "Limited content depth across service pages (generic descriptions)",
-          "No apparent NEPTS or specialized SEND transport positioning",
-          "Slower response time claim (2 hours vs. industry standard)",
-          "Overlapping service range may dilute specialization advantage"
+          "No clear specialization in SEND or NEPTS services",
+          "Generic minibus hire positioning without regulatory compliance messaging",
+          "Limited service differentiation from general coach hire operators",
+          "No apparent emphasis on specialized training or safeguarding"
         ],
         "threat": "high"
       },
       {
-        "name": "Green Destinations",
+        "name": "HATS Group",
         "strengths": [
-          "Established domain and brand history"
+          "Direct competitor tier classification indicates local relevance",
+          "Domain established and accessible"
         ],
         "weaknesses": [
-          "Domain actively for sale on Spaceship.com (business likely defunct or transitioning)",
-          "No active web presence or marketing activity",
-          "Complete business absence from market"
+          "Minimal online presence with no meta data or content visible",
+          "Appears to lack professional website content",
+          "No clear service articulation or market positioning",
+          "Likely low digital marketing investment"
         ],
         "threat": "low"
       },
       {
-        "name": "HATS Group",
+        "name": "Green Destinations",
         "strengths": [
-          "Direct competitor tier positioning suggests local awareness"
+          "Domain currently for sale, may indicate transition or exit"
         ],
         "weaknesses": [
-          "Zero metadata or content visible (missing title/description tags)",
-          "Poor SEO optimization and online discoverability",
-          "Inactive or poorly maintained website",
-          "No clear service messaging or value proposition"
+          "Domain is actively being sold through Spaceship.com",
+          "No active business presence detected",
+          "Complete market withdrawal in progress",
+          "Zero competitive threat in near term"
         ],
         "threat": "low"
       },
       {
         "name": "Smart Kids Group",
         "strengths": [
-          "Service name suggests SEND/education transport specialization (direct overlap with AFJ)"
+          "Name suggests SEND market focus (potential niche specialist)"
         ],
         "weaknesses": [
-          "Website inaccessible (technical failure or offline)",
-          "No digital presence or competitive marketing",
-          "Unable to assess service offerings or market positioning"
+          "Website inaccessible - technical issues or inactive",
+          "No indexable content or market visibility",
+          "Appears dormant or severely underinvested",
+          "Cannot assess service offerings or competitive positioning"
         ],
         "threat": "low"
       },
       {
         "name": "AJ Travel",
         "strengths": [
-          "Multi-location coverage (London, Manchester beyond AFJ's core region)",
-          "Established brand with tours and travel booking services",
-          "Broader service portfolio (car hire, coach tours)"
+          "Multi-city presence (London, Manchester) indicates scale",
+          "Established brand with coach tours and car hire offerings",
+          "Professional branding and service diversity"
         ],
         "weaknesses": [
-          "Indirect competitor (tour-focused rather than transport-specialized)",
-          "Limited presence in AFJ's West Midlands core market",
-          "Minimal metadata optimization across pages"
+          "Indirect competitor tier - not primary rival",
+          "Geographic focus on London/Manchester reduces West Midlands overlap",
+          "Generic travel services without SEND/NEPTS specialization",
+          "Limited page metadata suggests minimal optimization"
         ],
         "threat": "medium"
       },
       {
         "name": "HS2 Travel",
         "strengths": [
-          "Accessible website presence"
+          "Established domain with potential name recognition"
         ],
         "weaknesses": [
-          "Zero content metadata (no visible SEO optimization)",
-          "Indirect competitor tier suggests limited market overlap",
-          "No clear service positioning or competitive messaging"
+          "Minimal indexable content across all pages",
+          "No meta descriptions or titles visible",
+          "Indirect competitor tier with limited overlap",
+          "Appears underutilized or legacy domain"
         ],
         "threat": "low"
       },
       {
         "name": "Aziz Coach Service",
         "strengths": [
-          "Established brand name in West Midlands coach market"
+          "Local West Midlands positioning"
         ],
         "weaknesses": [
-          "Website inaccessible (indicates business dormancy or technical issues)",
-          "No active online marketing or digital presence",
-          "Unable to compete digitally with accessible operators"
+          "Website inaccessible - non-operational or severely neglected",
+          "Indirect competitor tier",
+          "No digital presence or market engagement detected"
         ],
         "threat": "low"
       },
       {
         "name": "Aston Manor Coaches",
         "strengths": [
-          "Local West Midlands heritage and brand recognition potential"
+          "Established local brand name"
         ],
         "weaknesses": [
-          "Website inaccessible (same technical/operational issues as Aziz)",
-          "No active digital marketing capability",
-          "Appears dormant or significantly underinvested in online presence"
+          "Website inaccessible - appears inactive",
+          "Indirect competitor tier with limited direct overlap",
+          "No observable market activity or digital engagement",
+          "Suggests market withdrawal or consolidation"
         ],
         "threat": "low"
       }
     ],
     "opportunities": [
-      "Establish dominant digital presence: 62.5% of identifiable competitors (5/8) have inaccessible or poorly optimized websites, creating SEO and content marketing opportunities for AFJ to capture organic search traffic for 'SEND transport Birmingham', 'school transport West Midlands', 'NEPTS provider' queries",
-      "Specialize in SEND/NEPTS positioning: Smart Kids Group (inaccessible) appears to be the only competitor with explicit education/SEND focus; AFJ can dominate this underserved niche with targeted content and thought leadership",
-      "Expand geographic reach: AJ Travel successfully operates across London/Manchester; AFJ can replicate this model northward (Greater Manchester already in service area) with localized service pages and SEO optimization",
-      "Service integration messaging: Travel SOS emphasizes broad minibus hire; AFJ can differentiate with integrated SEND+NEPTS+private hire positioning targeting schools and NHS commissioners with unified platform messaging",
-      "Response time competitive advantage: Publish faster-than-2-hour response time SLA in marketing materials (Travel SOS claims 2 hours) to emphasize service quality",
-      "Content marketing authority: Create detailed guides for 'how to choose school transport provider', SEND transport compliance, accessibility standards—competitors show minimal thought leadership content"
+      "Capitalize on Travel SOS's generic positioning by emphasizing AFJ's specialized SEND and NEPTS expertise with compliance certifications and safeguarding credentials",
+      "Develop comprehensive digital presence highlighting regulatory compliance, DBS checks, and specialized training - areas competitors show no messaging on",
+      "Target the apparent market gap in SEND transport specialization (Smart Kids Group inaccessible, others unfocused)",
+      "Leverage Greater Manchester coverage where AJ Travel has presence but AFJ appears undermarketed",
+      "Create content-rich service pages detailing vehicle specifications, driver qualifications, and NEPTS/school-specific protocols that competitors lack",
+      "Establish thought leadership in accessible transport and safeguarding to differentiate from generic minibus hire operators",
+      "Monitor Travel SOS updates for service expansion into NEPTS/SEND to preempt competitive moves",
+      "Acquire market share from dormant competitors (Green Destinations, Aston Manor, Aziz) through targeted local marketing",
+      "Develop executive hire differentiation with premium positioning absent from competitor messaging"
     ],
     "recommendations": [
-      "Conduct immediate technical audit of AFJ website SEO: ensure title tags, meta descriptions, and header optimization match Travel SOS quality across all service pages (SEND, NEPTS, minibus hire, airport transfers)",
-      "Develop SEND/NEPTS-specific landing pages with compliance messaging (DfE standards, safeguarding, accessibility certifications) to differentiate from generalist minibus operators like Travel SOS",
-      "Implement reputation management strategy targeting Smart Kids Group's market (if reactivated) and HATS Group's potential reactivation—establish first-mover advantage with positive reviews on Google My Business, Trustpilot",
-      "Create regional service pages for Greater Manchester and surrounding areas to capture expansion into AJ Travel's addressable market; include local testimonials and location-specific content",
-      "Monitor Green Destinations domain transfer: if acquired by competitor or reactivated, implement competitive ad strategy (branded SEM campaigns) to recapture search traffic",
-      "Develop B2B content strategy targeting schools and NHS trusts: case studies, service guarantees, compliance documentation—competitors show zero B2B marketing assets",
-      "Establish direct email outreach to inaccessible competitors' historical contacts (via cached versions, LinkedIn) to identify acquisition or partnership opportunities given their dormancy",
-      "Implement structured data (schema.org) for transport services, vehicle fleet, service area—most competitors absent; improves local search visibility and featured snippet eligibility"
+      "Immediately conduct technical audit of AFJ's own website against Travel SOS's standards - ensure all service pages have descriptive meta titles/descriptions and current content",
+      "Create dedicated landing pages for each service vertical (SEND, NEPTS, private hire, airport transfers, executive) with regulatory credentials and compliance certifications prominently displayed",
+      "Implement monthly competitive monitoring of Travel SOS content updates to detect service expansion into SEND/NEPTS niches and respond with superior positioning",
+      "Develop SEO strategy targeting long-tail keywords combining 'SEND transport' + 'Birmingham/Manchester' + 'DBS accredited' where competitors have minimal content",
+      "Establish customer testimonials and case studies emphasizing safeguarding, reliability, and specialized service - areas competitors show no social proof for",
+      "Consider targeted PPC campaigns against Travel SOS brand terms in key markets where they lack NEPTS/SEND specialization",
+      "Audit and address any website accessibility issues to maintain indexability advantage over inaccessible competitors (Smart Kids, Aziz, Aston Manor)",
+      "Build authority content around school transport regulations, SEND vehicle requirements, and NEPTS compliance to capture educational institution search traffic",
+      "Establish partnerships with school networks and local authorities - apparent gap in competitor positioning suggests untapped relationship-based sales channel",
+      "Monitor domain registrations for recently exiting competitors (Green Destinations, Aston Manor) to acquire relevant backlinks or domain equity if available"
     ]
   }
 }

@@ -178,5 +178,12 @@
       "grade": "A",
       "summary": "All 0 MOT and 0 DBS records are compliant"
     }
+  ],
+  "competitor": [
+    {
+      "date": "2026-02-19",
+      "grade": "C",
+      "summary": "8 competitors, 4 changes"
+    }
   ]
 }
