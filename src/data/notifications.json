@@ -285,6 +285,19 @@
       "readAt": null,
       "actedAt": null,
       "emailSent": true
+    },
+    {
+      "id": "n_1771484005_9tt",
+      "type": "agent-critical",
+      "title": "Security: 0 critical, 4 high issues",
+      "summary": "Daily security scan found 4 serious issue(s). Review and apply fixes.",
+      "actionUrl": "/admin/monitoring",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-02-19T06:53:25.252Z",
+      "readAt": null,
+      "actedAt": null,
+      "emailSent": false
     }
   ]
 }
