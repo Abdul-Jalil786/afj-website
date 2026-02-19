@@ -122,43 +122,85 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 3. Send customer confirmation email via Resend
     if (resendKey && email) {
-      const firstName = (name || '').split(' ')[0] || 'there';
       const contactAction = PREFERENCE_LABELS[preference] || 'contact you';
 
+      const customerJourneyRows = (answersSummary || '')
+        .split('\n')
+        .filter((l: string) => l.trim())
+        .map((l: string) => {
+          const parts = l.split(':');
+          const label = parts[0]?.trim() || '';
+          const value = parts.slice(1).join(':').trim() || '';
+          if (label && value) {
+            return `<tr><td style="padding: 6px 12px 6px 0; color: #718096; font-size: 14px; white-space: nowrap; vertical-align: top;">${escapeHtml(label)}</td><td style="padding: 6px 0; color: #2D3748; font-size: 14px; font-weight: 600;">${escapeHtml(value)}</td></tr>`;
+          }
+          return `<tr><td colspan="2" style="padding: 6px 0; color: #2D3748; font-size: 14px;">${escapeHtml(l)}</td></tr>`;
+        })
+        .join('');
+
       const customerHtml = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: #1A365D; color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
-            <img src="https://www.afjltd.co.uk/images/logo/afj-logo-final.png" alt="AFJ Limited" style="height: 40px; margin-bottom: 8px;" />
-            <h1 style="margin: 0; font-size: 20px;">Thank You for Your Quote Request</h1>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <div style="background: #1A365D; color: white; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
+            <img src="https://www.afjltd.co.uk/images/logo/afj-logo-final.png" alt="AFJ Limited" style="height: 48px; margin-bottom: 12px;" />
+            <h1 style="margin: 0; font-size: 22px; font-weight: 700;">Your Quote from AFJ Limited</h1>
           </div>
-          <div style="padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
-            <p style="font-size: 16px; color: #2D3748;">Hi ${escapeHtml(firstName)},</p>
-            <p style="font-size: 14px; color: #4A5568; line-height: 1.6;">
-              Thank you for requesting a quote from AFJ Limited. We have received your request and a member of our team will <strong>${contactAction}</strong> within <strong>24 hours</strong> during working days.
+          <div style="padding: 28px 24px; border: 1px solid #e2e8f0; border-top: none;">
+
+            <p style="font-size: 16px; color: #2D3748; margin: 0 0 16px;">Dear ${escapeHtml(name || 'Customer')},</p>
+            <p style="font-size: 14px; color: #4A5568; line-height: 1.7; margin: 0 0 20px;">
+              Thank you for requesting a quote from AFJ Limited. We have received your details and a member of our team will <strong>${contactAction}</strong> within <strong>24 hours</strong> during working days to discuss your requirements and confirm your booking.
             </p>
-            ${service || estimate ? `
-            <div style="background: #F0FFF4; border: 1px solid #C6F6D5; border-radius: 8px; padding: 16px; margin: 20px 0;">
-              <p style="font-size: 13px; color: #718096; margin: 0 0 4px;">Your quote summary</p>
-              ${service ? `<p style="font-size: 14px; color: #2D3748; margin: 0 0 4px;"><strong>Service:</strong> ${escapeHtml(service)}</p>` : ''}
-              ${estimate ? `<p style="font-size: 14px; color: #2D3748; margin: 0;"><strong>Estimated range:</strong> ${escapeHtml(estimate)}</p>` : ''}
+
+            ${estimate ? `
+            <div style="background: #F0FFF4; border: 1px solid #C6F6D5; border-radius: 8px; padding: 20px; margin: 0 0 20px; text-align: center;">
+              <p style="font-size: 13px; color: #718096; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;">Estimated Price</p>
+              <p style="font-size: 24px; color: #276749; font-weight: 700; margin: 0;">${escapeHtml(estimate)}</p>
             </div>
             ` : ''}
-            <p style="font-size: 14px; color: #4A5568; line-height: 1.6;">
-              In the meantime, you can reach us directly:
-            </p>
-            <ul style="font-size: 14px; color: #4A5568; line-height: 1.8; padding-left: 20px;">
-              <li>Phone: <a href="tel:01216891000" style="color: #38A169;">0121 689 1000</a></li>
-              <li>Email: <a href="mailto:info@afjltd.co.uk" style="color: #38A169;">info@afjltd.co.uk</a></li>
-            </ul>
-            <div style="text-align: center; margin: 24px 0 16px;">
-              <p style="font-size: 13px; color: #718096; margin-bottom: 12px;">Stay connected with us</p>
-              <a href="https://uk.linkedin.com/company/afj-ltd" style="display: inline-block; background: #0A66C2; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; margin: 0 4px;">Follow on LinkedIn</a>
-              <a href="https://www.facebook.com/AFJTravel/" style="display: inline-block; background: #1877F2; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; margin: 0 4px;">Follow on Facebook</a>
+
+            ${customerJourneyRows ? `
+            <div style="background: #F7FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px 20px; margin: 0 0 20px;">
+              <p style="font-size: 13px; color: #718096; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px;">Journey Details</p>
+              <table style="width: 100%; border-collapse: collapse;">${customerJourneyRows}</table>
             </div>
-            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-            <p style="font-size: 12px; color: #A0AEC0; text-align: center;">
+            ` : ''}
+
+            <div style="background: #EBF8FF; border: 1px solid #BEE3F8; border-radius: 8px; padding: 16px 20px; margin: 0 0 20px;">
+              <p style="font-size: 13px; color: #718096; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px;">What's Included</p>
+              <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #2D3748;">
+                <tr><td style="padding: 4px 0;">&#10003; Professional DBS-checked driver</td></tr>
+                <tr><td style="padding: 4px 0;">&#10003; Fuel</td></tr>
+                <tr><td style="padding: 4px 0;">&#10003; Vehicle insurance</td></tr>
+                <tr><td style="padding: 4px 0;">&#10003; Door-to-door service</td></tr>
+              </table>
+            </div>
+
+            <div style="background: #FFFFF0; border: 1px solid #FEFCBF; border-radius: 8px; padding: 16px 20px; margin: 0 0 24px;">
+              <p style="font-size: 13px; color: #718096; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;">About AFJ Limited</p>
+              <p style="font-size: 14px; color: #4A5568; line-height: 1.7; margin: 0;">
+                AFJ Limited is one of the largest SEND transport providers in the West Midlands and North West, trusted by over 4,000 parents every day to transport their children. From school runs to airport transfers, we are proud to keep communities moving safely, every single day.
+              </p>
+            </div>
+
+            <div style="background: #F7FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px 20px; margin: 0 0 20px;">
+              <p style="font-size: 14px; color: #2D3748; font-weight: 600; margin: 0 0 8px;">Questions? We're here to help.</p>
+              <p style="font-size: 14px; color: #4A5568; margin: 0; line-height: 1.7;">
+                Phone: <a href="tel:01216891000" style="color: #38A169; text-decoration: none; font-weight: 600;">0121 689 1000</a><br />
+                Email: <a href="mailto:info@afjltd.co.uk" style="color: #38A169; text-decoration: none; font-weight: 600;">info@afjltd.co.uk</a>
+              </p>
+            </div>
+
+            <div style="text-align: center; margin: 0 0 20px;">
+              <p style="font-size: 13px; color: #718096; margin: 0 0 12px;">Follow us for transport updates, safety news, and community stories</p>
+              <a href="https://uk.linkedin.com/company/afj-ltd" style="display: inline-block; background: #0A66C2; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; margin: 0 4px;">Follow on LinkedIn</a>
+              <a href="https://www.facebook.com/AFJTravel/" style="display: inline-block; background: #1877F2; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; margin: 0 4px;">Follow on Facebook</a>
+            </div>
+
+          </div>
+          <div style="padding: 16px 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; background: #F7FAFC;">
+            <p style="font-size: 12px; color: #A0AEC0; text-align: center; margin: 0;">
               AFJ Limited &middot; AFJ Business Center, 2-18 Forster Street, Nechells, Birmingham B7 4JD<br />
-              <a href="https://www.afjltd.co.uk" style="color: #38A169;">www.afjltd.co.uk</a>
+              <a href="https://www.afjltd.co.uk" style="color: #38A169; text-decoration: none;">www.afjltd.co.uk</a>
             </p>
           </div>
         </div>
