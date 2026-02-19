@@ -7,6 +7,10 @@ import { validateBodySize } from '../../../lib/validate-body';
 
 const VALID_PREFERENCES = ['phone', 'email', 'whatsapp'] as const;
 
+function titleCase(str: string): string {
+  return str.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 const PREFERENCE_LABELS: Record<string, string> = {
   phone: 'call you',
   email: 'email you',
@@ -122,31 +126,57 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 3. Send customer confirmation email via Resend
     if (resendKey && email) {
+      const siteUrl = (import.meta.env.SITE_URL || 'https://www.afjltd.co.uk').replace(/\/$/, '');
       const contactAction = PREFERENCE_LABELS[preference] || 'contact you';
+      const displayName = titleCase((name || 'Customer').toLowerCase());
+
+      // Split estimate into price range and vehicle label
+      const priceMatch = estimate?.match(/^(£[\d,]+\s*[–\-]\s*£[\d,]+)\s*(.*)$/);
+      const priceRange = priceMatch?.[1] || estimate || '';
+      const vehicleLabel = priceMatch?.[2] ? titleCase(priceMatch[2]) : '';
+
+      // Toggle value mappings for human-readable display
+      const TOGGLE_LABELS: Record<string, Record<string, string>> = {
+        'One-off or regular booking?': { yes: 'Regular', no: 'One Off' },
+        'Wheelchair accessible vehicle needed?': { yes: 'Yes', no: 'No' },
+        'Return journey?': { yes: 'Yes', no: 'No' },
+        'Same day return?': { yes: 'Yes', no: 'No' },
+      };
+      const LABEL_RENAMES: Record<string, string> = {
+        'One-off or regular booking?': 'Booking Type',
+      };
 
       const customerJourneyRows = (answersSummary || '')
         .split('\n')
         .filter((l: string) => l.trim())
         .map((l: string) => {
           const parts = l.split(':');
-          const label = parts[0]?.trim() || '';
-          const value = parts.slice(1).join(':').trim() || '';
-          if (label && value) {
-            return `<tr><td style="padding: 6px 12px 6px 0; color: #718096; font-size: 14px; white-space: nowrap; vertical-align: top;">${escapeHtml(label)}</td><td style="padding: 6px 0; color: #2D3748; font-size: 14px; font-weight: 600;">${escapeHtml(value)}</td></tr>`;
+          let label = parts[0]?.trim() || '';
+          let value = parts.slice(1).join(':').trim() || '';
+          if (!label || !value) {
+            return `<tr><td colspan="2" style="padding: 6px 0; color: #2D3748; font-size: 14px;">${escapeHtml(l)}</td></tr>`;
           }
-          return `<tr><td colspan="2" style="padding: 6px 0; color: #2D3748; font-size: 14px;">${escapeHtml(l)}</td></tr>`;
+          // Transform toggle values to human-readable labels
+          if (TOGGLE_LABELS[label]) {
+            value = TOGGLE_LABELS[label][value] || value;
+          }
+          // Rename labels for cleaner display
+          if (LABEL_RENAMES[label]) {
+            label = LABEL_RENAMES[label];
+          }
+          return `<tr><td style="padding: 6px 12px 6px 0; color: #718096; font-size: 14px; white-space: nowrap; vertical-align: top;">${escapeHtml(label)}</td><td style="padding: 6px 0; color: #2D3748; font-size: 14px; font-weight: 600;">${escapeHtml(value)}</td></tr>`;
         })
         .join('');
 
       const customerHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
           <div style="background: #1A365D; color: white; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
-            <img src="https://www.afjltd.co.uk/images/logo/afj-logo-final.png" alt="AFJ Limited" style="height: 48px; margin-bottom: 12px;" />
+            <img src="${siteUrl}/images/logo/afj-logo-final.png" alt="AFJ Limited" style="height: 48px; margin-bottom: 12px;" />
             <h1 style="margin: 0; font-size: 22px; font-weight: 700;">Your Quote from AFJ Limited</h1>
           </div>
           <div style="padding: 28px 24px; border: 1px solid #e2e8f0; border-top: none;">
 
-            <p style="font-size: 16px; color: #2D3748; margin: 0 0 16px;">Dear ${escapeHtml(name || 'Customer')},</p>
+            <p style="font-size: 16px; color: #2D3748; margin: 0 0 16px;">Dear ${escapeHtml(displayName)},</p>
             <p style="font-size: 14px; color: #4A5568; line-height: 1.7; margin: 0 0 20px;">
               Thank you for requesting a quote from AFJ Limited. We have received your details and a member of our team will <strong>${contactAction}</strong> within <strong>24 hours</strong> during working days to discuss your requirements and confirm your booking.
             </p>
@@ -154,7 +184,8 @@ export const POST: APIRoute = async ({ request }) => {
             ${estimate ? `
             <div style="background: #F0FFF4; border: 1px solid #C6F6D5; border-radius: 8px; padding: 20px; margin: 0 0 20px; text-align: center;">
               <p style="font-size: 13px; color: #718096; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;">Estimated Price</p>
-              <p style="font-size: 24px; color: #276749; font-weight: 700; margin: 0;">${escapeHtml(estimate)}</p>
+              <p style="font-size: 28px; color: #276749; font-weight: 700; margin: 0;">${escapeHtml(priceRange)}</p>
+              ${vehicleLabel ? `<p style="font-size: 14px; color: #4A5568; margin: 6px 0 0; font-weight: 600;">${escapeHtml(vehicleLabel)}</p>` : ''}
             </div>
             ` : ''}
 
@@ -176,8 +207,8 @@ export const POST: APIRoute = async ({ request }) => {
             </div>
 
             <div style="background: #FFFFF0; border: 1px solid #FEFCBF; border-radius: 8px; padding: 16px 20px; margin: 0 0 24px;">
-              <p style="font-size: 13px; color: #718096; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px;">About AFJ Limited</p>
-              <p style="font-size: 14px; color: #4A5568; line-height: 1.7; margin: 0;">
+              <p style="font-size: 14px; color: #2D3748; font-weight: 700; margin: 0 0 8px;">About AFJ Limited</p>
+              <p style="font-size: 14px; color: #2D3748; font-weight: 600; line-height: 1.7; margin: 0;">
                 AFJ Limited is one of the largest SEND transport providers in the West Midlands and North West, trusted by over 4,000 parents every day to transport their children. From school runs to airport transfers, we are proud to keep communities moving safely, every single day.
               </p>
             </div>
@@ -191,7 +222,7 @@ export const POST: APIRoute = async ({ request }) => {
             </div>
 
             <div style="text-align: center; margin: 0 0 20px;">
-              <p style="font-size: 13px; color: #718096; margin: 0 0 12px;">Follow us for transport updates, safety news, and community stories</p>
+              <p style="font-size: 13px; color: #718096; font-weight: 700; margin: 0 0 12px;">Follow us for transport updates, safety news, and community stories</p>
               <a href="https://uk.linkedin.com/company/afj-ltd" style="display: inline-block; background: #0A66C2; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; margin: 0 4px;">Follow on LinkedIn</a>
               <a href="https://www.facebook.com/AFJTravel/" style="display: inline-block; background: #1877F2; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; margin: 0 4px;">Follow on Facebook</a>
             </div>
