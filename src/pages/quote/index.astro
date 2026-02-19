@@ -38,8 +38,8 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     <div class="container-wide max-w-3xl">
       <!-- Header -->
       <div class="text-center mb-10">
-        <h1 class="text-afj-green mb-3">Get a Quote</h1>
-        <p class="text-afj-secondary text-lg max-w-2xl mx-auto">
+        <h1 class="text-afj-green mb-3" id="pageTitle">Get a Quote</h1>
+        <p class="text-afj-secondary text-lg max-w-2xl mx-auto" id="pageSubtitle">
           Select a service below. Private hire and airport transfers receive an instant estimate. Enterprise services connect you with our contracts team.
         </p>
       </div>
@@ -270,7 +270,7 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
           <!-- Actual estimate content -->
           <div id="estimateContent" class="hidden">
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
-              <p class="text-sm font-medium text-gray-500 mb-5 text-center" id="estimateServiceLabel"></p>
+              <p class="text-lg font-bold text-gray-900 mb-5 text-center" id="estimateServiceLabel"></p>
 
               <!-- Journey Summary -->
               <div id="journeySummary" class="mb-5 hidden">
@@ -1216,6 +1216,20 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
       });
     }
 
+    // Update page header based on step
+    var pageTitle = document.getElementById('pageTitle');
+    var pageSubtitle = document.getElementById('pageSubtitle');
+    if (id === 'step3') {
+      pageTitle.textContent = 'Your Quote Estimate';
+      pageSubtitle.textContent = 'Thank you for your details. Based on the information provided, here is your estimated quote.';
+    } else if (id === 'step4') {
+      pageTitle.textContent = 'Request Your Quote';
+      pageSubtitle.textContent = 'Complete your details below and we will get back to you with a final quote.';
+    } else {
+      pageTitle.textContent = 'Get a Quote';
+      pageSubtitle.textContent = 'Select a service below. Private hire and airport transfers receive an instant estimate. Enterprise services connect you with our contracts team.';
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1649,8 +1663,8 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     var d = String(nextSat.getDate());
     if (d.length < 2) d = '0' + d;
     defaults.date = y + '-' + mo + '-' + d;
-    defaults.passengers = '5-8';
-    defaults.luggage = 'light';
+    defaults.passengers = '9-16';
+    defaults.luggage = 'none';
 
     stopCount = 0;
 
@@ -1931,14 +1945,15 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     var summary = document.getElementById('journeySummary');
     var hasSummary = false;
 
-    if (est.distanceMiles) {
-      document.getElementById('summaryDistance').textContent = est.distanceMiles;
+    var displayMiles = est.coreJourneyMiles || est.distanceMiles;
+    var displayMins = est.coreJourneyMinutes || est.durationMinutes;
+    if (displayMiles) {
+      document.getElementById('summaryDistance').textContent = displayMiles;
       hasSummary = true;
     }
-    if (est.durationMinutes) {
-      var mins = est.durationMinutes;
-      var hrs = Math.floor(mins / 60);
-      var rem = mins % 60;
+    if (displayMins) {
+      var hrs = Math.floor(displayMins / 60);
+      var rem = displayMins % 60;
       document.getElementById('summaryDuration').textContent = hrs > 0 ? hrs + 'h ' + rem + 'min' : rem + ' min';
       hasSummary = true;
     }
@@ -2107,7 +2122,7 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
 
           renderFlags(data.estimate);
           renderJourneySummary(data.estimate);
-          renderSurcharges(data.estimate);
+          // Surcharge labels hidden — percentage is already baked into the price range
           renderDiscount(data.estimate);
           renderIncludes(data.estimate);
           renderRouteTimeline(currentAnswers, data.estimate);
