@@ -1,6 +1,6 @@
 ---
 title: "Tech Making Transport Safer for Vulnerable People"
-description: "Transport safety is crucial, especially for people who are more at risk—like children, the elderly, people with disabilities, and those with fewer resou..."
+description: "How technology improves transport safety for vulnerable people. GPS tracking, driver assistance systems, real-time monitoring and accessibility tools."
 pubDate: 2024-11-27
 author: "AFJ Limited"
 image: "/images/blog/technology-transport-safety.webp"

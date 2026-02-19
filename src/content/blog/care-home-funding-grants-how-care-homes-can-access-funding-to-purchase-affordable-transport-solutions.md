@@ -1,6 +1,6 @@
 ---
 title: "Care Home Funding & Grants for Transport Solutions"
-description: "Funding is one of the most significant challenges faced by care homes today. With rising operational costs, many care homes are under financial strain, ..."
+description: "Guide to funding and grants for care home transport. How to access local authority, national and charity funding for accessible minibuses."
 pubDate: 2024-09-12
 author: "AFJ Limited"
 image: "/images/blog/care-home-funding.webp"

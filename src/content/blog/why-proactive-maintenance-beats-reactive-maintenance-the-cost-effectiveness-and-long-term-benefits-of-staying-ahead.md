@@ -1,6 +1,6 @@
 ---
 title: "Why Proactive Beats Reactive Maintenance"
-description: "When it comes to vehicle maintenance, many drivers fall into one of two categories: proactive or reactive. While reactive maintenance might seem conveni..."
+description: "Why proactive vehicle maintenance saves money and prevents breakdowns. Comparing costs, safety benefits and long-term advantages of regular servicing."
 pubDate: 2024-11-13
 author: "AFJ Limited"
 image: "/images/blog/proactive-maintenance.webp"

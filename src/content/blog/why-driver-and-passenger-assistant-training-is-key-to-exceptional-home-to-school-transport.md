@@ -1,6 +1,6 @@
 ---
 title: "Why Driver & PA Training is Key to School Transport"
-description: "Home to School Transport HTST is more than just moving students from one place to another—it’s about ensuring a safe, reliable, and comfortable journey ..."
+description: "Why driver and passenger assistant training is essential for safe school transport. Safeguarding, SEND awareness, emergency response and communication."
 pubDate: 2025-03-24
 author: "AFJ Limited"
 image: "/images/blog/driver-pa-training.webp"

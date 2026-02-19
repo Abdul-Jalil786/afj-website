@@ -1,6 +1,6 @@
 ---
 title: "5 Keys to Reliable Home-to-School Transport in the UK"
-description: "Ensuring safe and reliable home to school transport for students is a vital responsibility for local authorities, city councils and schools across the U..."
+description: "Five essential strategies for reliable home-to-school transport in the UK. Compliance, vehicle maintenance, trained drivers and route planning."
 pubDate: 2024-08-05
 author: "AFJ Limited"
 image: "/images/blog/home-to-school-transport-keys.webp"

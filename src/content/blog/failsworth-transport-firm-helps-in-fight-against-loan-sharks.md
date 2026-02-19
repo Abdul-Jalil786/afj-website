@@ -1,6 +1,6 @@
 ---
 title: "Failsworth Firm Helps Fight Against Loan Sharks"
-description: "A locally-based community transport company is getting on board with the fight against loan sharks, helping to raising awareness and displaying flyers o..."
+description: "AFJ partners with the England Illegal Money Lending Team to raise awareness about loan sharks through community outreach and vehicle campaigns."
 pubDate: 2024-03-26
 author: "AFJ Limited"
 image: "/images/blog/loan-sharks-awareness.webp"

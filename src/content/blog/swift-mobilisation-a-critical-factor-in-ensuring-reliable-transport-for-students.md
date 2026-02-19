@@ -1,6 +1,6 @@
 ---
 title: "Swift Mobilisation: Reliable Transport for Students"
-description: "For local authorities and educational institutions responsible for providing transportation services to Special Educational Needs and Disabilities SEND ..."
+description: "Why swift mobilisation is critical for SEND transport. How rapid deployment ensures reliable, safe school transport for students with additional needs."
 pubDate: 2024-10-31
 author: "AFJ Limited"
 image: "/images/blog/swift-mobilisation.webp"

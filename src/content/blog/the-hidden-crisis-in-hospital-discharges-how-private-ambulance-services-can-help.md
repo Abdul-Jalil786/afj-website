@@ -1,6 +1,6 @@
 ---
 title: "Hospital Discharge Crisis: How Private Ambulances Help"
-description: "In the UK, hospital discharge management is often an overlooked yet critical part of healthcare efficiency. When not handled properly, it leads to opera..."
+description: "How private ambulance services solve the UK hospital discharge crisis. Reducing bed-blocking, easing NHS pressure and improving patient outcomes."
 pubDate: 2025-02-07
 author: "AFJ Limited"
 image: "/images/blog/hospital-discharges.webp"

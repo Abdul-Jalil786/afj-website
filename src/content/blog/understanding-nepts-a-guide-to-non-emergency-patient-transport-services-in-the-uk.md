@@ -1,6 +1,6 @@
 ---
 title: "Understanding NEPTS: UK Patient Transport Guide"
-description: "Navigating the healthcare system can be complex, especially when it comes to patient transport in the UK.  For millions of patients, getting to and from..."
+description: "Complete guide to Non-Emergency Patient Transport Services in the UK. Eligibility, costs, providers and how to arrange NEPTS for medical appointments."
 pubDate: 2024-08-02
 author: "AFJ Limited"
 image: "/images/blog/afj-ambulance.webp"

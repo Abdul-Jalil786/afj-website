@@ -1,6 +1,6 @@
 ---
 title: "What Councils Look for in School Transport Providers"
-description: "Home to School Transport HTST is more than just a logistical service—it is a critical lifeline that directly influences students' ability to access educ..."
+description: "Ten key factors councils evaluate when choosing home-to-school transport providers. SEND processes, safety, safeguarding, fleet quality and more."
 pubDate: 2024-12-23
 author: "AFJ Limited"
 image: "/images/blog/councils-hts-providers.webp"

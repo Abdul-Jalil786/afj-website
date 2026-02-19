@@ -1,6 +1,6 @@
 ---
 title: "Businesses Changing Lives Through CSR"
-description: "Corporate Social Responsibility CSR is the moral compass guiding modern businesses. CSR is more than a trend; it’s a commitment to making a positive imp..."
+description: "How businesses use Corporate Social Responsibility to drive positive change. AFJ's CSR initiatives in community outreach, health and the environment."
 pubDate: 2024-03-12
 author: "AFJ Limited"
 image: "/images/blog/businesses-csr.webp"

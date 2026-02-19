@@ -1,6 +1,6 @@
 ---
 title: "The Environmental Impact of Poor Vehicle Maintenance"
-description: "As the UK intensifies efforts to achieve its ambitious net-zero emissions targets, every industry and individual has a role to play in reducing environm..."
+description: "How poor vehicle maintenance increases emissions, fuel waste and pollution. Why regular servicing matters for the environment and your fleet."
 pubDate: 2025-01-13
 author: "AFJ Limited"
 image: "/images/blog/environmental-vehicle-maintenance.webp"

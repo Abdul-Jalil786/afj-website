@@ -1,6 +1,6 @@
 ---
 title: "Why Private Minibus Hire is a Game-Changer"
-description: "Group travel, whether for a family vacation, a corporate retreat, a school trip, or a fun day out with friends, can be an exciting adventure. However, c..."
+description: "Why private minibus hire is the smart choice for group travel. Cost-effective, comfortable and flexible transport for corporate events, trips and days out."
 pubDate: 2024-09-04
 author: "AFJ Limited"
 image: "/images/blog/private-minibus-hire.webp"

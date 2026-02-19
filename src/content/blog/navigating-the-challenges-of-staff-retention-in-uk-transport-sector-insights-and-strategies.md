@@ -1,6 +1,6 @@
 ---
 title: "Staff Retention in UK Transport: Insights & Strategies"
-description: "Attracting and retaining skilled workers in the UK's transport sector is vital for ensuring consistent, high-quality service delivery, especially as the..."
+description: "Practical strategies for retaining staff in the UK transport sector. Tackling high turnover through competitive pay, training and work-life balance."
 pubDate: 2024-11-14
 author: "AFJ Limited"
 image: "/images/blog/staff-retention-transport.webp"
