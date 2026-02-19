@@ -42,6 +42,7 @@ const VALID_AGENTS = Object.keys(AGENT_SCRIPTS);
 
 // Simple in-memory lock — only one agent at a time
 let runningAgent: string | null = null;
+let lastRunResult: { agent: string; status: string; committedFiles?: number; error?: string; finishedAt?: string } | null = null;
 
 function getUserDepartment(email: string): string {
   for (const [key, dept] of Object.entries(departments)) {
@@ -172,6 +173,25 @@ async function commitReports(agent: string): Promise<number> {
   return files.length;
 }
 
+export const GET: APIRoute = async ({ request }) => {
+  const userEmail = await authenticateRequest(request);
+  if (!userEmail) {
+    return new Response(JSON.stringify({ success: false, error: 'Unauthorised' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  return new Response(
+    JSON.stringify({
+      success: true,
+      running: runningAgent,
+      lastResult: lastRunResult,
+    }),
+    { status: 200, headers: { 'Content-Type': 'application/json' } },
+  );
+};
+
 export const POST: APIRoute = async ({ request }) => {
   const userEmail = await authenticateRequest(request);
   if (!userEmail) {
@@ -219,30 +239,30 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   runningAgent = agent;
+  lastRunResult = null;
   const script = AGENT_SCRIPTS[agent];
 
-  try {
-    const output = await new Promise<string>((resolve, reject) => {
-      exec(`node ${script}`, {
-        timeout: 120_000,
-        env: {
-          ...process.env,
-          RESEND_API_KEY: process.env.RESEND_KEY || import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY || '',
-          NOTIFICATION_EMAIL: import.meta.env.NOTIFICATION_EMAIL || process.env.NOTIFICATION_EMAIL || '',
-          LLM_API_KEY: import.meta.env.LLM_API_KEY || process.env.LLM_API_KEY || '',
-          SITE_URL: import.meta.env.SITE_URL || process.env.SITE_URL || '',
-          GITHUB_TOKEN: import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN || '',
-          GITHUB_REPO: import.meta.env.GITHUB_REPO || process.env.GITHUB_REPO || '',
-        },
-        maxBuffer: 1024 * 1024,
-      }, (error, stdout, stderr) => {
-        if (error) {
-          reject(new Error(stderr || error.message));
-        } else {
-          resolve(stdout);
-        }
-      });
-    });
+  // Fire-and-forget: start agent in background, return immediately to avoid 502 timeouts
+  const child = exec(`node ${script}`, {
+    timeout: 120_000,
+    env: {
+      ...process.env,
+      RESEND_API_KEY: process.env.RESEND_KEY || import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY || '',
+      NOTIFICATION_EMAIL: import.meta.env.NOTIFICATION_EMAIL || process.env.NOTIFICATION_EMAIL || '',
+      LLM_API_KEY: import.meta.env.LLM_API_KEY || process.env.LLM_API_KEY || '',
+      SITE_URL: import.meta.env.SITE_URL || process.env.SITE_URL || '',
+      GITHUB_TOKEN: import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN || '',
+      GITHUB_REPO: import.meta.env.GITHUB_REPO || process.env.GITHUB_REPO || '',
+    },
+    maxBuffer: 1024 * 1024,
+  }, async (error, _stdout, stderr) => {
+    if (error) {
+      const message = stderr || error.message;
+      console.error(`Agent ${agent} run failed:`, message);
+      lastRunResult = { agent, status: 'failed', error: message.slice(0, 500), finishedAt: new Date().toISOString() };
+      runningAgent = null;
+      return;
+    }
 
     // Commit report files to GitHub so they persist across Railway deploys
     let committedFiles = 0;
@@ -252,18 +272,13 @@ export const POST: APIRoute = async ({ request }) => {
       console.error(`Failed to commit reports for ${agent}:`, err instanceof Error ? err.message : err);
     }
 
+    lastRunResult = { agent, status: 'completed', committedFiles, finishedAt: new Date().toISOString() };
     runningAgent = null;
-    return new Response(
-      JSON.stringify({ success: true, agent, committedFiles, output: output.slice(-2000) }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
-    );
-  } catch (err) {
-    runningAgent = null;
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error(`Agent ${agent} run failed:`, message);
-    return new Response(
-      JSON.stringify({ success: false, error: `Agent failed: ${message.slice(0, 500)}` }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
-    );
-  }
+    console.log(`Agent ${agent} completed — ${committedFiles} files committed`);
+  });
+
+  return new Response(
+    JSON.stringify({ success: true, agent, status: 'started', message: `${agent} agent started in background` }),
+    { status: 202, headers: { 'Content-Type': 'application/json' } },
+  );
 };

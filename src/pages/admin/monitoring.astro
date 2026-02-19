@@ -856,6 +856,42 @@ function trendIcon(trend: string): string {
       });
     }
 
+    // Poll for agent completion
+    function pollAgentStatus(btn, originalText, agentName) {
+      fetch('/api/admin/run-agent')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.running) {
+            // Still running — poll again in 3s
+            setTimeout(function() { pollAgentStatus(btn, originalText, agentName); }, 3000);
+          } else if (data.lastResult && data.lastResult.status === 'completed') {
+            btn.textContent = 'Done!';
+            btn.classList.remove('animate-pulse', 'bg-green-600', 'hover:bg-green-700');
+            btn.classList.add('bg-green-700');
+            setTimeout(function() { window.location.reload(); }, 1500);
+          } else if (data.lastResult && data.lastResult.status === 'failed') {
+            btn.textContent = 'Failed';
+            btn.classList.remove('animate-pulse', 'bg-green-600', 'hover:bg-green-700');
+            btn.classList.add('bg-red-600');
+            alert(agentName + ' agent failed: ' + (data.lastResult.error || 'Unknown error'));
+            setTimeout(function() {
+              btn.textContent = originalText;
+              btn.classList.remove('bg-red-600', 'running');
+              btn.classList.add('bg-green-600', 'hover:bg-green-700');
+              setAllRunBtnsDisabled(false);
+              allRunBtns.forEach(function(b) { b.classList.remove('opacity-50', 'cursor-not-allowed'); });
+            }, 3000);
+          } else {
+            // No result yet — poll again
+            setTimeout(function() { pollAgentStatus(btn, originalText, agentName); }, 3000);
+          }
+        })
+        .catch(function() {
+          // Network error during poll — try again
+          setTimeout(function() { pollAgentStatus(btn, originalText, agentName); }, 5000);
+        });
+    }
+
     allRunBtns.forEach(function(btn) {
       btn.addEventListener('click', function() {
         var agentId = btn.getAttribute('data-agent-id');
@@ -877,11 +913,8 @@ function trendIcon(trend: string): string {
           .then(function(r) { return r.json(); })
           .then(function(data) {
             if (data.success) {
-              btn.textContent = 'Done!';
-              btn.classList.remove('animate-pulse', 'bg-green-600', 'hover:bg-green-700');
-              btn.classList.add('bg-green-700');
-              // Reload the page after a short delay to show updated report
-              setTimeout(function() { window.location.reload(); }, 1500);
+              // Agent started in background — poll for completion
+              pollAgentStatus(btn, originalText, agentName);
             } else {
               btn.textContent = 'Failed';
               btn.classList.remove('animate-pulse', 'bg-green-600', 'hover:bg-green-700');
