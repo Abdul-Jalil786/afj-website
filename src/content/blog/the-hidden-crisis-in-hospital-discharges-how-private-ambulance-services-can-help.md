@@ -1,5 +1,5 @@
 ---
-title: "The Hidden Crisis in Hospital Discharges: How Private Ambulance Services Can Help"
+title: "Hospital Discharge Crisis: How Private Ambulances Help"
 description: "In the UK, hospital discharge management is often an overlooked yet critical part of healthcare efficiency. When not handled properly, it leads to opera..."
 pubDate: 2025-02-07
 author: "AFJ Limited"

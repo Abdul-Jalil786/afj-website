@@ -1,5 +1,5 @@
 ---
-title: "The Group Travel Game-Changer: Why Private Minibus Hire is a Must"
+title: "Why Private Minibus Hire is a Game-Changer"
 description: "Group travel, whether for a family vacation, a corporate retreat, a school trip, or a fun day out with friends, can be an exciting adventure. However, c..."
 pubDate: 2024-09-04
 author: "AFJ Limited"

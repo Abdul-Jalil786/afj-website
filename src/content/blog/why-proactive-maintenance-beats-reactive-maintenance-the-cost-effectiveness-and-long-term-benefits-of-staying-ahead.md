@@ -1,5 +1,5 @@
 ---
-title: "Why Proactive Maintenance Beats Reactive Maintenance: The Cost-Effectiveness and Long-Term Benefits of Staying Ahead"
+title: "Why Proactive Beats Reactive Maintenance"
 description: "When it comes to vehicle maintenance, many drivers fall into one of two categories: proactive or reactive. While reactive maintenance might seem conveni..."
 pubDate: 2024-11-13
 author: "AFJ Limited"

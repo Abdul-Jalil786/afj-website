@@ -1,5 +1,5 @@
 ---
-title: "Care Home Funding &amp; Grants: How Care Homes Can Access Funding to Purchase Affordable Transport Solutions"
+title: "Care Home Funding & Grants for Transport Solutions"
 description: "Funding is one of the most significant challenges faced by care homes today. With rising operational costs, many care homes are under financial strain, ..."
 pubDate: 2024-09-12
 author: "AFJ Limited"

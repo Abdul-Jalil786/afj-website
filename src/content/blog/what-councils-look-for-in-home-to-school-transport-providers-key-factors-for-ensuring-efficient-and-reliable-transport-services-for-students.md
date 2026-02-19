@@ -1,5 +1,5 @@
 ---
-title: "What Councils Look for in Home to School Transport Providers: Key Factors for Ensuring Efficient and Reliable Transport Services for Students"
+title: "What Councils Look for in School Transport Providers"
 description: "Home to School Transport HTST is more than just a logistical service—it is a critical lifeline that directly influences students' ability to access educ..."
 pubDate: 2024-12-23
 author: "AFJ Limited"

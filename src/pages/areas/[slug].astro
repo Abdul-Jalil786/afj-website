@@ -183,7 +183,8 @@ const jsonLD = {
 };
 
 const pageTitle = `Transport Services ${area.name}`;
-const pageDescription = `AFJ Limited — ${area.servicesAvailable.slice(0, 3).join(', ')} in ${area.name}. ${distanceText}. DBS-checked staff, wheelchair-accessible fleet, CQC rated "Good". Established 2006.`;
+const shortDistance = area.distanceFromBirmingham === 0 ? '' : `${area.distanceFromBirmingham}mi from Birmingham. `;
+const pageDescription = `${area.servicesAvailable.slice(0, 3).join(', ')} in ${area.name}. ${shortDistance}DBS-checked staff, wheelchair-accessible vehicles. Get a free quote today.`;
 ---
 
 <PageLayout

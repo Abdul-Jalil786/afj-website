@@ -1,5 +1,5 @@
 ---
-title: "Finalist at the Prestigious 2024 Midlands Family Business Awards"
+title: "AFJ Finalist at 2024 Midlands Family Business Awards"
 description: "Celebrating Our Success at the 2024 Midlands Family Business Awards"
 pubDate: 2024-10-09
 author: "AFJ Limited"
