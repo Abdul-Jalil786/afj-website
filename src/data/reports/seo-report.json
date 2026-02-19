@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-02-19T06:56:32.864Z",
+  "generatedAt": "2026-02-19T07:25:16.280Z",
   "agent": "seo",
   "grade": "B",
   "counts": {
     "critical": 0,
     "high": 0,
-    "medium": 1,
-    "low": 47
+    "medium": 0,
+    "low": 19
   },
   "sitemapCount": 63,
   "pages": [
@@ -18,7 +18,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 18,
+      "responseTime": 12,
       "issueCount": 1,
       "issues": [
         {
@@ -36,7 +36,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 197,
+      "responseTime": 189,
       "issueCount": 0,
       "issues": []
     },
@@ -48,7 +48,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 197,
+      "responseTime": 187,
       "issueCount": 0,
       "issues": []
     },
@@ -60,15 +60,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 58,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "202 chars"
-        }
-      ]
+      "responseTime": 23,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/bromsgrove/",
@@ -78,15 +72,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 60,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "211 chars"
-        }
-      ]
+      "responseTime": 53,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/cannock/",
@@ -96,15 +84,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "208 chars"
-        }
-      ]
+      "responseTime": 10,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/coventry/",
@@ -114,15 +96,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "209 chars"
-        }
-      ]
+      "responseTime": 12,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/derby/",
@@ -132,15 +108,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 172,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "206 chars"
-        }
-      ]
+      "responseTime": 179,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/dudley/",
@@ -150,15 +120,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 185,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "207 chars"
-        }
-      ]
+      "responseTime": 13,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/kidderminster/",
@@ -168,13 +132,13 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 21,
+      "responseTime": 32,
       "issueCount": 1,
       "issues": [
         {
           "type": "description-too-long",
           "severity": "low",
-          "detail": "214 chars"
+          "detail": "162 chars"
         }
       ]
     },
@@ -186,13 +150,13 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 11,
       "issueCount": 1,
       "issues": [
         {
           "type": "description-too-long",
           "severity": "low",
-          "detail": "215 chars"
+          "detail": "163 chars"
         }
       ]
     },
@@ -204,15 +168,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "210 chars"
-        }
-      ]
+      "responseTime": 13,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/manchester/",
@@ -222,15 +180,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "211 chars"
-        }
-      ]
+      "responseTime": 11,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/nottingham/",
@@ -240,15 +192,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "211 chars"
-        }
-      ]
+      "responseTime": 10,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/nuneaton/",
@@ -258,15 +204,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 20,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "209 chars"
-        }
-      ]
+      "responseTime": 17,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/redditch/",
@@ -276,15 +216,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "209 chars"
-        }
-      ]
+      "responseTime": 13,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/sandwell/",
@@ -295,14 +229,8 @@
       "hasCanonical": true,
       "hasSchema": true,
       "responseTime": 17,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "208 chars"
-        }
-      ]
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/shrewsbury/",
@@ -312,15 +240,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 19,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "211 chars"
-        }
-      ]
+      "responseTime": 10,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/solihull/",
@@ -330,15 +252,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "208 chars"
-        }
-      ]
+      "responseTime": 9,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/stafford/",
@@ -348,15 +264,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 18,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "209 chars"
-        }
-      ]
+      "responseTime": 14,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/stoke-on-trent/",
@@ -366,13 +276,13 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 25,
+      "responseTime": 16,
       "issueCount": 1,
       "issues": [
         {
           "type": "description-too-long",
           "severity": "low",
-          "detail": "215 chars"
+          "detail": "163 chars"
         }
       ]
     },
@@ -384,13 +294,13 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 12,
       "issueCount": 1,
       "issues": [
         {
           "type": "description-too-long",
           "severity": "low",
-          "detail": "216 chars"
+          "detail": "164 chars"
         }
       ]
     },
@@ -402,15 +312,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 23,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "209 chars"
-        }
-      ]
+      "responseTime": 11,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/telford/",
@@ -420,15 +324,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 35,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "208 chars"
-        }
-      ]
+      "responseTime": 16,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/walsall/",
@@ -438,15 +336,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 36,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "208 chars"
-        }
-      ]
+      "responseTime": 15,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/warwick/",
@@ -456,15 +348,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "208 chars"
-        }
-      ]
+      "responseTime": 10,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/west-midlands/",
@@ -474,15 +360,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "205 chars"
-        }
-      ]
+      "responseTime": 11,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/areas/wolverhampton/",
@@ -492,13 +372,13 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
+      "responseTime": 11,
       "issueCount": 1,
       "issues": [
         {
           "type": "description-too-long",
           "severity": "low",
-          "detail": "214 chars"
+          "detail": "162 chars"
         }
       ]
     },
@@ -510,278 +390,44 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 17,
+      "responseTime": 10,
       "issueCount": 0,
       "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/blog/5-keys-to-reliable-home-to-school-transport-in-the-uk/",
       "status": 200,
-      "title": "5 Keys to Reliable Home-to-School Transport in the UK | AFJ Limited News",
+      "title": "5 Keys to Reliable Home-to-School Transport in the UK | AFJ Limited",
       "hasDescription": true,
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 20,
+      "responseTime": 23,
       "issueCount": 1,
       "issues": [
         {
           "type": "title-too-long",
           "severity": "low",
-          "detail": "72 chars"
+          "detail": "67 chars"
         }
       ]
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/blog/businesses-changing-lives-through-csr/",
       "status": 200,
-      "title": "BUSINESSES CHANGING LIVES THROUGH CSR | AFJ Limited News",
+      "title": "Businesses Changing Lives Through CSR | AFJ Limited",
       "hasDescription": true,
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
+      "responseTime": 16,
       "issueCount": 0,
       "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/blog/care-home-funding-grants-how-care-homes-can-access-funding-to-purchase-affordable-transport-solutions/",
       "status": 200,
-      "title": "Care Home Funding &amp;amp; Grants: How Care Homes Can Access Funding to Purchase Affordable Transport Solutions | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 12,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "131 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/failsworth-transport-firm-helps-in-fight-against-loan-sharks/",
-      "status": 200,
-      "title": "Failsworth transport firm helps in fight against loan sharks, The most convenient way to Connect to other businesses | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 11,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "135 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/finalist-at-the-prestigious-2024-midlands-family-business-awards/",
-      "status": 200,
-      "title": "Finalist at the Prestigious 2024 Midlands Family Business Awards | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 20,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "83 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/navigating-the-challenges-of-staff-retention-in-uk-transport-sector-insights-and-strategies/",
-      "status": 200,
-      "title": "Navigating the challenges of staff Retention in UK Transport Sector : Insights and Strategies | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 18,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "112 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/swift-mobilisation-a-critical-factor-in-ensuring-reliable-transport-for-students/",
-      "status": 200,
-      "title": "Swift Mobilisation: A Critical Factor in Ensuring Reliable Transport for Students | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 13,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "100 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-environmental-impact-of-poor-vehicle-maintenance/",
-      "status": 200,
-      "title": "The Environmental Impact of Poor Vehicle Maintenance | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 18,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "71 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-group-travel-game-changer-why-private-minibus-hire-is-a-must/",
-      "status": 200,
-      "title": "The Group Travel Game-Changer: Why Private Minibus Hire is a Must | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 17,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "84 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-hidden-crisis-in-hospital-discharges-how-private-ambulance-services-can-help/",
-      "status": 200,
-      "title": "The Hidden Crisis in Hospital Discharges: How Private Ambulance Services Can Help | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 17,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "100 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-rising-demand-for-wheelchair-accessible-vehicles-wavs-challenges-and-opportunities/",
-      "status": 200,
-      "title": "The Rising Demand for Wheelchair Accessible Vehicles (WAVs): Challenges and Opportunities | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 15,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "108 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-role-of-technology-in-making-transport-safer-for-vulnerable-people/",
-      "status": 200,
-      "title": "The Role of Technology in Making Transport Safer for Vulnerable People | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 13,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "89 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/understanding-nepts-a-guide-to-non-emergency-patient-transport-services-in-the-uk/",
-      "status": 200,
-      "title": "Understanding NEPTS: A Guide to Non-Emergency Patient Transport Services in the UK | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 14,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "101 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/what-councils-look-for-in-home-to-school-transport-providers-key-factors-for-ensuring-efficient-and-reliable-transport-services-for-students/",
-      "status": 200,
-      "title": "What Councils Look for in Home to School Transport Providers: Key Factors for Ensuring Efficient and Reliable Transport Services for Students | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 13,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "160 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/why-driver-and-passenger-assistant-training-is-key-to-exceptional-home-to-school-transport/",
-      "status": 200,
-      "title": "Why Driver and Passenger Assistant Training is Key to Exceptional Home to School Transport | AFJ Limited News",
-      "hasDescription": true,
-      "hasOG": true,
-      "hasCanonical": true,
-      "hasSchema": true,
-      "responseTime": 17,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "title-too-long",
-          "severity": "low",
-          "detail": "109 chars"
-        }
-      ]
-    },
-    {
-      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/why-proactive-maintenance-beats-reactive-maintenance-the-cost-effectiveness-and-long-term-benefits-of-staying-ahead/",
-      "status": 200,
-      "title": "Why Proactive Maintenance Beats Reactive Maintenance: The Cost-Effectiveness and Long-Term Benefits of Staying Ahead | AFJ Limited News",
+      "title": "Care Home Funding &amp; Grants for Transport Solutions | AFJ Limited",
       "hasDescription": true,
       "hasOG": true,
       "hasCanonical": true,
@@ -792,9 +438,213 @@
         {
           "type": "title-too-long",
           "severity": "low",
-          "detail": "135 chars"
+          "detail": "68 chars"
         }
       ]
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/failsworth-transport-firm-helps-in-fight-against-loan-sharks/",
+      "status": 200,
+      "title": "Failsworth transport firm helps in fight against loan sharks | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 13,
+      "issueCount": 1,
+      "issues": [
+        {
+          "type": "title-too-long",
+          "severity": "low",
+          "detail": "74 chars"
+        }
+      ]
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/finalist-at-the-prestigious-2024-midlands-family-business-awards/",
+      "status": 200,
+      "title": "AFJ Finalist at 2024 Midlands Family Business Awards | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 15,
+      "issueCount": 1,
+      "issues": [
+        {
+          "type": "title-too-long",
+          "severity": "low",
+          "detail": "66 chars"
+        }
+      ]
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/navigating-the-challenges-of-staff-retention-in-uk-transport-sector-insights-and-strategies/",
+      "status": 200,
+      "title": "Staff Retention in UK Transport: Insights &amp; Strategies | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 14,
+      "issueCount": 1,
+      "issues": [
+        {
+          "type": "title-too-long",
+          "severity": "low",
+          "detail": "72 chars"
+        }
+      ]
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/swift-mobilisation-a-critical-factor-in-ensuring-reliable-transport-for-students/",
+      "status": 200,
+      "title": "Swift Mobilisation: Reliable Transport for Students | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 10,
+      "issueCount": 0,
+      "issues": []
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-environmental-impact-of-poor-vehicle-maintenance/",
+      "status": 200,
+      "title": "The Environmental Impact of Poor Vehicle Maintenance | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 16,
+      "issueCount": 1,
+      "issues": [
+        {
+          "type": "title-too-long",
+          "severity": "low",
+          "detail": "66 chars"
+        }
+      ]
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-group-travel-game-changer-why-private-minibus-hire-is-a-must/",
+      "status": 200,
+      "title": "Why Private Minibus Hire is a Game-Changer | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 11,
+      "issueCount": 0,
+      "issues": []
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-hidden-crisis-in-hospital-discharges-how-private-ambulance-services-can-help/",
+      "status": 200,
+      "title": "Hospital Discharge Crisis: How Private Ambulances Help | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 9,
+      "issueCount": 1,
+      "issues": [
+        {
+          "type": "title-too-long",
+          "severity": "low",
+          "detail": "68 chars"
+        }
+      ]
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-rising-demand-for-wheelchair-accessible-vehicles-wavs-challenges-and-opportunities/",
+      "status": 200,
+      "title": "Rising Demand for Wheelchair Accessible Vehicles | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 13,
+      "issueCount": 0,
+      "issues": []
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/the-role-of-technology-in-making-transport-safer-for-vulnerable-people/",
+      "status": 200,
+      "title": "Technology Making Transport Safer for Vulnerable People | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 14,
+      "issueCount": 1,
+      "issues": [
+        {
+          "type": "title-too-long",
+          "severity": "low",
+          "detail": "69 chars"
+        }
+      ]
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/understanding-nepts-a-guide-to-non-emergency-patient-transport-services-in-the-uk/",
+      "status": 200,
+      "title": "Understanding NEPTS: UK Patient Transport Guide | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 17,
+      "issueCount": 0,
+      "issues": []
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/what-councils-look-for-in-home-to-school-transport-providers-key-factors-for-ensuring-efficient-and-reliable-transport-services-for-students/",
+      "status": 200,
+      "title": "What Councils Look for in School Transport Providers | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 11,
+      "issueCount": 1,
+      "issues": [
+        {
+          "type": "title-too-long",
+          "severity": "low",
+          "detail": "66 chars"
+        }
+      ]
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/why-driver-and-passenger-assistant-training-is-key-to-exceptional-home-to-school-transport/",
+      "status": 200,
+      "title": "Why Driver &amp; PA Training is Key to School Transport | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 10,
+      "issueCount": 1,
+      "issues": [
+        {
+          "type": "title-too-long",
+          "severity": "low",
+          "detail": "69 chars"
+        }
+      ]
+    },
+    {
+      "url": "https://afj-staging.ascendtechgroup.co.uk/blog/why-proactive-maintenance-beats-reactive-maintenance-the-cost-effectiveness-and-long-term-benefits-of-staying-ahead/",
+      "status": 200,
+      "title": "Why Proactive Beats Reactive Maintenance | AFJ Limited",
+      "hasDescription": true,
+      "hasOG": true,
+      "hasCanonical": true,
+      "hasSchema": true,
+      "responseTime": 13,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/carbon-reduction-plan/",
@@ -804,7 +654,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 14,
+      "responseTime": 10,
       "issueCount": 0,
       "issues": []
     },
@@ -816,7 +666,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 38,
       "issueCount": 0,
       "issues": []
     },
@@ -828,7 +678,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 24,
+      "responseTime": 11,
       "issueCount": 0,
       "issues": []
     },
@@ -840,7 +690,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 17,
+      "responseTime": 10,
       "issueCount": 0,
       "issues": []
     },
@@ -852,7 +702,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 14,
       "issueCount": 0,
       "issues": []
     },
@@ -864,7 +714,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 22,
+      "responseTime": 10,
       "issueCount": 0,
       "issues": []
     },
@@ -876,7 +726,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 15,
+      "responseTime": 16,
       "issueCount": 1,
       "issues": [
         {
@@ -895,14 +745,8 @@
       "hasCanonical": true,
       "hasSchema": true,
       "responseTime": 12,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "163 chars"
-        }
-      ]
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/services/airport-transfers/",
@@ -912,7 +756,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 11,
       "issueCount": 0,
       "issues": []
     },
@@ -924,7 +768,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 18,
+      "responseTime": 13,
       "issueCount": 0,
       "issues": []
     },
@@ -936,7 +780,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 20,
+      "responseTime": 10,
       "issueCount": 0,
       "issues": []
     },
@@ -948,15 +792,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 13,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "161 chars"
-        }
-      ]
+      "responseTime": 11,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/services/patient-transport/",
@@ -966,7 +804,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 21,
+      "responseTime": 16,
       "issueCount": 0,
       "issues": []
     },
@@ -978,7 +816,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 16,
+      "responseTime": 10,
       "issueCount": 0,
       "issues": []
     },
@@ -990,15 +828,9 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 19,
-      "issueCount": 1,
-      "issues": [
-        {
-          "type": "description-too-long",
-          "severity": "low",
-          "detail": "168 chars"
-        }
-      ]
+      "responseTime": 15,
+      "issueCount": 0,
+      "issues": []
     },
     {
       "url": "https://afj-staging.ascendtechgroup.co.uk/services/vehicle-conversions/",
@@ -1008,13 +840,13 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 17,
+      "responseTime": 10,
       "issueCount": 1,
       "issues": [
         {
           "type": "description-too-long",
           "severity": "low",
-          "detail": "169 chars"
+          "detail": "161 chars"
         }
       ]
     },
@@ -1026,7 +858,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 17,
+      "responseTime": 14,
       "issueCount": 1,
       "issues": [
         {
@@ -1044,35 +876,31 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 11,
+      "responseTime": 10,
       "issueCount": 0,
       "issues": []
     }
   ],
   "brokenLinks": {
     "checked": 30,
-    "broken": [
-      {
-        "path": "/favicon.ico",
-        "status": 404
-      }
-    ]
+    "broken": []
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's website demonstrates excellent overall SEO health with no critical or high-severity issues identified across 63 pages. The scan reveals 48 low-severity issues, predominantly consisting of meta descriptions exceeding the recommended 160-character limit (affecting 26 area pages and several service pages) and page titles surpassing 60 characters (impacting 15 blog posts). These formatting issues won't severely impact search rankings but represent optimization opportunities to improve SERP appearance and click-through rates. The site's fast average response time of 29ms is a significant strength for user experience and core web vitals.",
+    "summary": "AFJ Limited's website is in excellent health with no critical or high-severity issues detected across 63 pages. All 19 identified issues are low-severity meta tag optimizations related to title and description lengths exceeding recommended character limits. The site has zero broken links and a healthy average response time of 22ms, indicating strong technical performance and user experience.",
     "recommendations": [
-      "Trim all meta descriptions to 150-160 characters to display fully in search results; prioritize area pages (Birmingham, Bromsgrove, Cannock, etc.) and service pages, ensuring each description remains compelling and includes target keywords",
-      "Reduce blog post titles to 55-60 characters maximum while maintaining keyword relevance; focus on high-traffic posts like 'What Councils Look For' (160 chars) and 'Care Home Funding Grants' (131 chars)",
-      "Implement a favicon (currently returning 404) at `/favicon.ico` to eliminate the broken link error and improve brand consistency in browser tabs",
-      "Create an SEO template/checklist for content teams to prevent meta description and title length violations on future publications",
-      "Conduct a technical SEO audit on area pages to ensure they aren't cannibalizing each other and have proper internal linking structure",
-      "Review blog content for keyword optimization opportunities, particularly around high-intent queries related to transport services in target regions"
+      "Reduce meta description lengths on area pages (Kidderminster, Leamington Spa, Stoke-on-Trent, Sutton Coldfield, Wolverhampton) to 155-160 characters; currently 162-164 chars",
+      "Optimize meta description on homepage to under 155 characters (currently 217 chars) - consider highlighting unique value proposition more concisely",
+      "Review and shorten meta descriptions for /quote/ (181 chars) and /social-impact/ (186 chars) pages to align with Google's display standards",
+      "Trim page titles on all blog posts to under 60 characters; currently ranging from 66-74 characters - prioritize primary keywords within this limit",
+      "Implement a meta tag character limit checklist in your CMS workflow to prevent future issues during content updates",
+      "Monitor search performance metrics for affected pages post-optimization to measure impact on CTR and organic visibility"
     ],
     "quickWins": [
-      "Add favicon.ico file to root directory to resolve the 404 error",
-      "Batch-edit the 26 area page meta descriptions, reducing each by 40-50 characters while preserving location-specific keywords and call-to-action elements",
-      "Shorten the 15 blog post titles by 10-50 characters; for example: 'Care Home Funding Grants' (focus on benefits rather than detailed explanation)",
-      "Update home page meta description (217 chars) to 155-160 chars, emphasizing unique value proposition for transport services"
+      "Edit homepage meta description: remove 62 excess characters while maintaining key benefits messaging",
+      "Batch-edit 5 area page descriptions: trim each by 7-9 characters by removing redundant modifiers or restructuring sentences",
+      "Reduce blog post titles by prioritizing 2-3 primary keywords within 60-character limit across 10 affected articles",
+      "Shorten /quote/ description by 26 characters and /social-impact/ by 31 characters through sentence restructuring",
+      "Audit and update meta descriptions for /services/vehicle-conversions/ (161 chars) to meet standards"
     ]
   }
 }
