@@ -1,10 +1,10 @@
 ---
-title: "Failsworth transport firm helps in fight against loan sharks, The most convenient way to Connect to other businesses"
+title: "Failsworth transport firm helps in fight against loan sharks"
 description: "A locally-based community transport company is getting on board with the fight against loan sharks, helping to raising awareness and displaying flyers o..."
 pubDate: 2024-03-26
 author: "AFJ Limited"
 image: "/images/blog/loan-sharks-awareness.webp"
-imageAlt: "Failsworth transport firm helps in fight against loan sharks, The most convenient way to Connect to other businesses"
+imageAlt: "Failsworth transport firm helps in fight against loan sharks"
 tags: ["News"]
 draft: false
 ---
