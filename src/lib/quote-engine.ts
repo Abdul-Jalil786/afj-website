@@ -384,6 +384,8 @@ export async function estimateQuote(
   let executiveUpgrade = false;
   let distanceMiles: number | undefined;
   let durationMinutes: number | undefined;
+  let coreJourneyMinutes = 0;
+  let coreJourneyMiles = 0;
 
   if (service === 'private-hire') {
     const chargeOutRate = (activeConfig as any).chargeOutRatePerHour ?? 17;
@@ -416,6 +418,10 @@ export async function estimateQuote(
         answers.destinationPostcode || '',
       );
     }
+
+    // Customer-facing journey time/distance (pickup → destination only)
+    coreJourneyMinutes = coreDistance.minutes;
+    coreJourneyMiles = coreDistance.miles;
 
     // Home base = nearest base to pickup (driver starts and returns here)
     const pickupDeadhead = await getDeadheadFromBase(answers.pickupPostcode || '');
@@ -745,6 +751,8 @@ export async function estimateQuote(
     journeyCost,
     journeyMiles: journeyMiles!,
     journeyMinutes: journeyMinutes!,
+    coreJourneyMinutes,
+    coreJourneyMiles,
     returnJourneyCost: returnJourneyCost || undefined,
     returnMiles: returnMilesVal,
     returnMinutes: returnMinutesVal,

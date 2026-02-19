@@ -1885,16 +1885,16 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     var hasArrival = false;
     returnEl.classList.add('hidden');
 
-    if (answers.time && est.journeyMinutes) {
-      var outArr = addMinutesToTime(answers.time, est.journeyMinutes);
+    if (answers.time && est.coreJourneyMinutes) {
+      var outArr = addMinutesToTime(answers.time, est.coreJourneyMinutes);
       if (outArr) {
         outboundTime.textContent = '~' + formatTimeDisplay(outArr.time) + (outArr.nextDay ? ' (next day)' : '');
         hasArrival = true;
       }
     }
 
-    if (answers.returnJourney === 'yes' && answers.returnPickupTime && est.returnMinutes) {
-      var retArr = addMinutesToTime(answers.returnPickupTime, est.returnMinutes);
+    if (answers.returnJourney === 'yes' && answers.returnPickupTime && est.coreJourneyMinutes) {
+      var retArr = addMinutesToTime(answers.returnPickupTime, est.coreJourneyMinutes);
       if (retArr) {
         returnTime.textContent = '~' + formatTimeDisplay(retArr.time) + (retArr.nextDay ? ' (next day)' : '');
         returnEl.classList.remove('hidden');
@@ -2024,9 +2024,11 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     }
     document.getElementById('routeDest').textContent = dest;
     var destInfo = '';
-    if (est.distanceMiles) destInfo = est.distanceMiles + ' miles';
-    if (est.durationMinutes) {
-      var m = est.durationMinutes;
+    var displayMiles = est.coreJourneyMiles || est.distanceMiles;
+    var displayMins = est.coreJourneyMinutes || est.durationMinutes;
+    if (displayMiles) destInfo = displayMiles + ' miles';
+    if (displayMins) {
+      var m = displayMins;
       var h = Math.floor(m / 60);
       var r = m % 60;
       destInfo += (destInfo ? ' \u00B7 ' : '') + (h > 0 ? h + 'h ' + r + 'min' : r + ' min');
@@ -2034,8 +2036,8 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
     document.getElementById('routeDestInfo').textContent = destInfo;
 
     // Outbound arrival time
-    if (answers.time && est.journeyMinutes && destArrival) {
-      var outArr = addMinutesToTime(answers.time, est.journeyMinutes);
+    if (answers.time && est.coreJourneyMinutes && destArrival) {
+      var outArr = addMinutesToTime(answers.time, est.coreJourneyMinutes);
       if (outArr) {
         destArrival.textContent = 'Arrive ~' + formatTimeDisplay(outArr.time) + (outArr.nextDay ? ' (next day)' : '');
       }
@@ -2061,8 +2063,8 @@ const serviceIcons: Record<string, { viewBox: string; d: string; fill?: boolean 
       document.getElementById('routeReturnTime').textContent = retTime;
 
       // Return arrival time
-      if (answers.returnPickupTime && est.returnMinutes && returnArrival) {
-        var retArr = addMinutesToTime(answers.returnPickupTime, est.returnMinutes);
+      if (answers.returnPickupTime && est.coreJourneyMinutes && returnArrival) {
+        var retArr = addMinutesToTime(answers.returnPickupTime, est.coreJourneyMinutes);
         if (retArr) {
           returnArrival.textContent = 'Arrive back ~' + formatTimeDisplay(retArr.time) + (retArr.nextDay ? ' (next day)' : '');
         }
