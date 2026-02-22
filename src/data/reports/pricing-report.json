@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-17T19:07:47.546Z",
+  "generatedAt": "2026-02-22T22:30:10.939Z",
   "status": "pending",
-  "periodFrom": "2026-02-10",
-  "periodTo": "2026-02-17",
+  "periodFrom": "2026-02-15",
+  "periodTo": "2026-02-22",
   "quoteCount": 0,
   "convertedCount": 0,
   "conversionRate": 0,
@@ -21,5 +21,5 @@
       "recommendation": "Collect more quotes before adjusting"
     }
   },
-  "insights": "Only 0 quotes received in the period 2026-02-10 to 2026-02-17. At least 5 quotes are needed for meaningful analysis. Current pricing configuration appears reasonable as a baseline. Recommend focusing on increasing quote volume through marketing before making pricing adjustments."
+  "insights": "Only 0 quotes received in the period 2026-02-15 to 2026-02-22. At least 5 quotes are needed for meaningful analysis. Current pricing configuration appears reasonable as a baseline. Recommend focusing on increasing quote volume through marketing before making pricing adjustments."
 }
