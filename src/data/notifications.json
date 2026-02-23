@@ -415,6 +415,19 @@
       "readAt": null,
       "actedAt": null,
       "emailSent": false
+    },
+    {
+      "id": "n_1771822231_reb",
+      "type": "agent-critical",
+      "title": "Security: 0 critical, 4 high issues",
+      "summary": "Daily security scan found 4 serious issue(s). Review and apply fixes.",
+      "actionUrl": "/admin/monitoring",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-02-23T04:50:31.257Z",
+      "readAt": null,
+      "actedAt": null,
+      "emailSent": true
     }
   ]
 }
