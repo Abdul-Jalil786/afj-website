@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T06:33:47.169Z",
+  "generatedAt": "2026-02-23T06:52:33.380Z",
   "agent": "performance",
   "grade": "A",
   "counts": {
@@ -12,90 +12,90 @@
     "totalPages": 12,
     "pagesUp": 12,
     "pagesDown": 0,
-    "avgResponseTime": 192,
-    "maxResponseTime": 535,
+    "avgResponseTime": 237,
+    "maxResponseTime": 682,
     "details": [
       {
         "path": "/",
         "status": 200,
-        "responseTime": 535,
+        "responseTime": 682,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/about",
         "status": 200,
-        "responseTime": 280,
+        "responseTime": 359,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/contact",
         "status": 200,
-        "responseTime": 180,
+        "responseTime": 305,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/services/send-transport",
         "status": 200,
-        "responseTime": 107,
+        "responseTime": 135,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/services/patient-transport",
         "status": 200,
-        "responseTime": 261,
+        "responseTime": 326,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/services/private-hire",
         "status": 200,
-        "responseTime": 255,
+        "responseTime": 149,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/services/airport-transfers",
         "status": 200,
-        "responseTime": 107,
+        "responseTime": 171,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/quote",
         "status": 200,
-        "responseTime": 161,
+        "responseTime": 159,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/compliance",
         "status": 200,
-        "responseTime": 104,
+        "responseTime": 133,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/blog",
         "status": 200,
-        "responseTime": 103,
+        "responseTime": 149,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/areas",
         "status": 200,
-        "responseTime": 108,
+        "responseTime": 133,
         "ok": true,
         "severity": "ok"
       },
       {
         "path": "/faq",
         "status": 200,
-        "responseTime": 106,
+        "responseTime": 147,
         "ok": true,
         "severity": "ok"
       }
@@ -107,25 +107,25 @@
     "details": [
       {
         "path": "/admin",
-        "status": 403,
+        "status": 302,
         "protected": true,
         "severity": "ok"
       },
       {
         "path": "/admin/content",
-        "status": 403,
+        "status": 302,
         "protected": true,
         "severity": "ok"
       },
       {
         "path": "/admin/pricing",
-        "status": 403,
+        "status": 302,
         "protected": true,
         "severity": "ok"
       },
       {
         "path": "/admin/monitoring",
-        "status": 403,
+        "status": 302,
         "protected": true,
         "severity": "ok"
       }
@@ -139,7 +139,7 @@
         "path": "/api/compliance/status",
         "method": "GET",
         "status": 200,
-        "responseTime": 444,
+        "responseTime": 597,
         "ok": true,
         "severity": "ok"
       }
