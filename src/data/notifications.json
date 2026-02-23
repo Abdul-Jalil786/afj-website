@@ -428,6 +428,32 @@
       "readAt": null,
       "actedAt": null,
       "emailSent": true
+    },
+    {
+      "id": "n_1771826340_0kf",
+      "type": "security-fix",
+      "title": "2 security issues found",
+      "summary": "Claude Code prompts ready for 2 security fixes. Copy and paste to fix.",
+      "actionUrl": "/admin/monitoring?tab=fixes",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-02-23T05:59:00.751Z",
+      "readAt": null,
+      "actedAt": null,
+      "emailSent": true
+    },
+    {
+      "id": "n_1771826340_cea",
+      "type": "seo-fix",
+      "title": "48 SEO issues found",
+      "summary": "Claude Code prompts ready for 48 SEO fixes. Copy and paste to fix.",
+      "actionUrl": "/admin/monitoring?tab=fixes",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-02-23T05:59:00.812Z",
+      "readAt": null,
+      "actedAt": null,
+      "emailSent": false
     }
   ]
 }
