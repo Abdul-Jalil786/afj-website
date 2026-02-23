@@ -342,5 +342,12 @@
       "grade": "A",
       "summary": "8 agents configured. 0 have missed recent runs. 0 scripts missing."
     }
+  ],
+  "marketing": [
+    {
+      "date": "2026-02-23",
+      "grade": "B",
+      "summary": "16 posts, NaNd since last"
+    }
   ]
 }

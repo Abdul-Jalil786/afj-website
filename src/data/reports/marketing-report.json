@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T19:07:57.363Z",
+  "generatedAt": "2026-02-23T07:59:11.839Z",
   "agent": "marketing",
   "grade": "B",
   "blogCount": 16,
@@ -8,207 +8,198 @@
   "areasCount": 25,
   "contentGaps": [
     {
-      "topic": "Safety certifications & compliance standards (CRB, DBS, safeguarding)",
-      "reason": "Critical for SEND transport and vulnerable passengers; builds trust with councils and parents; not addressed in current blog portfolio",
+      "topic": "Case studies & client success stories",
+      "reason": "No documented case studies showing measurable outcomes for Birmingham City Council, Manchester City Council, or NHS trust partnerships. B2B decision-makers need proof of reliability and impact.",
       "priority": "high"
     },
     {
-      "topic": "Cost-benefit analysis: In-house vs outsourced transport for councils",
-      "reason": "Key decision-maker content for Birmingham City Council, Manchester, Sandwell; positions AFJ as strategic partner",
+      "topic": "Compliance & regulatory content (DBS, safeguarding, vehicle standards)",
+      "reason": "Schools and councils require detailed assurance content on DBS clearance processes, safeguarding protocols, and vehicle safety standards. Currently absent from blog.",
       "priority": "high"
     },
     {
-      "topic": "Real case studies with specific metrics (e.g., 'How we reduced school absences by X% for [Council Name]')",
-      "reason": "Current blog lacks hard evidence; councils and schools need ROI data; builds credibility",
+      "topic": "SEND transport specialisation content",
+      "reason": "SEND is a core service with 2,000+ students daily, but only one tangential mention found. Needs dedicated content on neurodiversity awareness, training, equipment, and best practices.",
       "priority": "high"
     },
     {
-      "topic": "Airport transfer service positioning & competitive advantages",
-      "reason": "Service listed but no dedicated content; underutilized revenue stream with high-margin potential",
+      "topic": "Emergency response & service continuity",
+      "reason": "No content addressing business continuity, emergency protocols, or rapid mobilisation capabilities—critical for council procurement teams evaluating risk.",
+      "priority": "high"
+    },
+    {
+      "topic": "Vehicle conversion & accessibility specifications",
+      "reason": "Vehicle conversions is a service offered but unexplored in content. Gap in content explaining wheelchair lifts, mobility aids, accessible design standards.",
       "priority": "medium"
     },
     {
-      "topic": "Vehicle conversion specs, timelines, and customization options",
-      "reason": "Niche service with limited explanation; valuable for private and corporate clients",
+      "topic": "Airport transfer & executive hire positioning",
+      "reason": "Two revenue streams (airport transfers, executive hire) mentioned minimally. No SEO/awareness content for private customer acquisition in these segments.",
       "priority": "medium"
     },
     {
-      "topic": "Driver wellbeing & mental health in transport sector",
-      "reason": "Retention blog exists but lacks depth; increasingly important for recruiting 47+ drivers",
+      "topic": "Driver recruitment & careers content",
+      "reason": "Company operates 47+ drivers but no career-focused content to attract talent in tight labour market. Opportunity to position AFJ as employer of choice.",
       "priority": "medium"
     },
     {
-      "topic": "Seasonal content (school holidays, winter readiness, summer planning)",
-      "reason": "No calendar-driven content; missed opportunity to engage councils on planning cycles",
-      "priority": "low"
-    },
-    {
-      "topic": "Local success stories from 25 service areas",
-      "reason": "Geographic coverage is strength but not leveraged in content; geo-targeted content improves local SEO",
+      "topic": "Regional expansion & service area coverage",
+      "reason": "Operating in 25 areas across 3+ councils but no hyper-local or regional comparison content. Missing long-tail SEO opportunity.",
       "priority": "low"
     }
   ],
   "blogIdeas": [
     {
-      "title": "DBS, CRB & Safeguarding: What Councils Need to Know About AFJ's Compliance Framework",
+      "title": "SEND Transport Excellence: How AFJ Supports Students with Additional Needs",
       "targetKeywords": [
-        "DBS checked drivers UK",
-        "CRB transport compliance",
-        "safeguarding SEND transport",
-        "council transport vetting"
+        "SEND transport UK",
+        "special educational needs transport",
+        "autism-friendly minibus",
+        "neurodiversity transport",
+        "SEND vehicle training"
       ],
-      "angle": "Position AFJ as security-first partner; outline certifications, training, and governance; address council procurement concerns"
+      "angle": "Deep-dive on AFJ's SEND specialism: staff training, vehicle adaptations, safeguarding protocols, and real examples of supporting diverse learners."
     },
     {
-      "title": "From Spreadsheet to Solution: How [Council Name] Saved £500k/Year by Outsourcing School Transport",
+      "title": "DBS, Safeguarding & Compliance: What School Transport Providers Must Have",
       "targetKeywords": [
-        "school transport cost savings",
-        "outsourced SEND transport ROI",
-        "council transport efficiency",
-        "transport procurement"
+        "DBS clearance school transport",
+        "safeguarding school minibus",
+        "school transport compliance UK",
+        "vehicle safety standards SEND"
       ],
-      "angle": "Case study-driven; quantify labour, vehicle, insurance, and admin cost reductions; include council testimonial"
+      "angle": "Reassurance content for head teachers and procurement officers: detailed explanation of AFJ's certifications, training programmes, and compliance audits."
     },
     {
-      "title": "Airport Transfers for Corporate Teams: Reliable, Professional, On-Brand Transportation",
+      "title": "Manchester & Birmingham School Transport: Comparing Council Procurement Standards",
       "targetKeywords": [
-        "airport transfers Birmingham",
-        "corporate airport transport",
-        "executive minibus hire",
-        "group airport transportation UK"
+        "school transport Manchester",
+        "school transport Birmingham",
+        "council transport procurement",
+        "SEND transport tender requirements"
       ],
-      "angle": "Target SMEs and corporate travel managers; emphasize reliability, fleet quality, GPS tracking"
+      "angle": "Regional SEO play: how different councils evaluate providers, what standards differ, and how AFJ meets all major frameworks."
     },
     {
-      "title": "Vehicle Conversion Masterclass: Custom-Built WAVs, Wheelchair-Accessible Coaches & Specialist Conversions",
+      "title": "How Vehicle Conversions Make Transport Safer for Vulnerable Passengers",
       "targetKeywords": [
-        "wheelchair accessible vehicle conversion",
-        "WAV conversion specialist UK",
-        "bespoke vehicle conversions",
-        "accessible transport solutions"
+        "wheelchair accessible minibus",
+        "vehicle conversion wheelchair lift",
+        "accessible transport equipment",
+        "mobility aid vehicle adaptation"
       ],
-      "angle": "Technical deep-dive; showcase conversion types, timelines, regulatory compliance, case studies"
+      "angle": "Showcase AFJ's in-house conversion capability: technical details, compliance with accessibility regulations, and real-world adaptations."
     },
     {
-      "title": "Preventing Driver Burnout in Transport: AFJ's Mental Health & Wellbeing Programme",
+      "title": "Careers in School Transport: Why Drivers Choose AFJ",
       "targetKeywords": [
-        "driver retention UK transport",
-        "transport driver wellbeing",
-        "driver mental health programmes",
-        "staff retention transport sector"
+        "driver jobs UK",
+        "school transport driver career",
+        "HGV driver recruitment",
+        "transport jobs Birmingham"
       ],
-      "angle": "Build on retention blog; share AFJ's specific wellbeing initiatives, training, peer support; attract quality drivers"
+      "angle": "Talent acquisition angle: competitive salary, training investment, team culture, job stability with major council contracts."
     },
     {
-      "title": "Winter Road Safety for SEND Transport: Preparing Vehicles, Drivers & Routes for Adverse Weather",
+      "title": "From Hospital to Home: AFJ's NEPTS Track Record in NHS Discharge Crisis",
       "targetKeywords": [
-        "winter school transport safety",
-        "adverse weather SEND transport",
-        "vehicle winter checks",
-        "winter road safety UK"
-      ],
-      "angle": "Seasonal urgency; practical maintenance checklist; driver training tips; parental reassurance"
-    },
-    {
-      "title": "NHS Discharge Delays: How AFJ's NEPTS Reduces Hospital Waiting Times & Improves Patient Outcomes",
-      "targetKeywords": [
-        "non-emergency patient transport NHS",
+        "NEPTS provider UK",
         "hospital discharge transport",
-        "NEPTS delays",
-        "patient transport solutions UK"
+        "NHS patient transport service",
+        "non-emergency ambulance service"
       ],
-      "angle": "Data-driven; cite NHS backlog challenges; showcase AFJ's response times and NHS trust partnerships"
+      "angle": "Data-driven piece on AFJ's role in reducing discharge delays, backed by NHS partnership case studies."
     },
     {
-      "title": "Choosing a Fleet Maintenance Partner: What Transport Operators Need to Inspect",
+      "title": "Business Continuity in Transport: How AFJ Maintains Service During Crises",
       "targetKeywords": [
-        "fleet maintenance contracts UK",
-        "transport vehicle maintenance",
-        "fleet downtime reduction",
-        "maintenance cost efficiency"
+        "transport business continuity",
+        "supply chain resilience",
+        "fleet backup plans",
+        "emergency driver cover"
       ],
-      "angle": "B2B procurement guide; position AFJ's maintenance standards, certifications, and cost-saving track record"
+      "angle": "B2B procurement reassurance: AFJ's contingency protocols, spare vehicle capacity, and 24/7 coordination systems."
+    },
+    {
+      "title": "Airport Transfers vs. Ride-Sharing: Why Professional Minibus Hire Wins for Groups",
+      "targetKeywords": [
+        "airport minibus hire UK",
+        "group airport transfer",
+        "executive airport transport",
+        "coach hire Birmingham airport"
+      ],
+      "angle": "Competitive positioning for private customers: cost-per-head, reliability, luggage capacity, professionalism vs. app-based services."
     }
   ],
   "socialMediaPosts": [
     {
       "platform": "linkedin",
-      "content": "📊 New Case Study: How outsourcing home-to-school transport saved one Midlands council £500k annually—without compromising quality. Discover the hidden costs councils overlook in in-house transport operations. Read our latest insight: [link]. #TransportManagement #PublicSector #SEND",
-      "cta": "Download our Council Transport ROI Guide"
+      "content": "🚌 2,000 students. 47 drivers. One mission: safe, reliable transport every single day.\n\nAFJ is proud to support young people across Birmingham, Manchester, and Sandwell with our specialist SEND transport service. Our teams are trained, certified, and committed to making school journeys secure for every student.\n\nLooking for a transport partner schools can trust? Let's talk. 📧",
+      "cta": "Contact our school transport team"
     },
     {
       "platform": "linkedin",
-      "content": "🚌 Safety First: All AFJ drivers meet enhanced DBS, CRB, and safeguarding standards—because transporting vulnerable passengers demands excellence. Learn what sets compliant operators apart in school transport procurement: [link]. #SafeTransport #SEND #UK",
-      "cta": "Request our Compliance & Certification Document"
-    },
-    {
-      "platform": "linkedin",
-      "content": "🔧 Fleet Maintenance Myth: 'Reactive repairs save money.' Reality: Proactive maintenance cuts downtime by 40% and extends vehicle lifespan. Our latest blog breaks down the real costs. #FleetManagement #TransportOps #Maintenance",
-      "cta": "Read: Proactive vs. Reactive Maintenance ROI"
+      "content": "The hospital discharge crisis is real. Delays in patient transport are adding pressure to NHS resources.\n\nOur NEPTS team works with NHS trusts across the region to bridge the gap—reliable, timely non-emergency patient transport that frees up beds and supports discharge planning.\n\nNeed patient transport capacity? We can help. 🏥",
+      "cta": "Learn about our NEPTS solutions"
     },
     {
       "platform": "facebook",
-      "content": "🚐 Heading to Birmingham Airport? AFJ's airport transfers are reliable, on-time, and professional. Perfect for families, businesses, and groups. Book today for peace of mind! ✈️ [link to booking page]. #BirminghamTransport #AirportTransfers",
-      "cta": "Book Your Transfer Now"
-    },
-    {
-      "platform": "facebook",
-      "content": "💙 Our drivers are the heart of AFJ. We invest in their wellbeing because happy, supported drivers deliver exceptional service to our students and patients. If you're passionate about transport and looking for a supportive employer, we're hiring! 🙌 [careers link]",
-      "cta": "Explore Driving Careers at AFJ"
+      "content": "Thinking about airport transfers or group travel? 🛫\n\nWhether it's a family holiday, school trip, or corporate event, our minibus hire service offers comfort, reliability, and peace of mind. Professional drivers. Modern, well-maintained vehicles. Competitive rates.\n\nGet a quote today—let AFJ handle the driving! 🚌",
+      "cta": "Request a quote"
     },
     {
       "platform": "linkedin",
-      "content": "♿ Rising Demand for WAVs: 1 in 5 UK households now require wheelchair-accessible transport. AFJ's custom vehicle conversion service delivers bespoke, compliant solutions. See our latest conversion: [link]. #AccessibleTransport #WAV #Innovation",
-      "cta": "View Our Vehicle Conversion Portfolio"
+      "content": "We're hiring! 🚌\n\nAFJ is looking for experienced, committed drivers to join our team across Birmingham and beyond. If you're passionate about safe, professional transport and want to work for a company that invests in your development, we want to hear from you.\n\n✅ Competitive salary\n✅ Comprehensive training\n✅ Job security with major council contracts\n\nInterested? DM us or visit our careers page. 💼",
+      "cta": "View driver job openings"
     },
     {
       "platform": "facebook",
-      "content": "❄️ Winter Ready: Is your school's transport fleet prepared for the season? AFJ's winter safety checklist helps prevent delays and keeps students safe. Share this with your admin team! [link]. #SchoolTransport #WinterSafety",
-      "cta": "Download Our Winter Safety Checklist"
+      "content": "Did you know? Proper vehicle maintenance doesn't just extend fleet life—it keeps passengers safer and reduces emissions. 🌱\n\nOur in-house maintenance team ensures every AFJ vehicle meets the highest safety standards. Regular checks. Proactive repairs. Peace of mind.\n\nBecause your transport shouldn't let you down—or the environment. 🚗",
+      "cta": "Learn about our fleet maintenance services"
     },
     {
       "platform": "linkedin",
-      "content": "🏥 NHS Challenge: Non-emergency patient transport delays impact hospital discharge rates. AFJ's NEPTS service—covering 25+ areas across the Midlands—reduces wait times and improves patient outcomes. Partner with us: [link]. #NEPTS #NHS #HealthcareLogistics",
-      "cta": "Speak to Our NEPTS Specialist"
+      "content": "SEND transport isn't just about getting from A to B. It's about creating inclusive, safe spaces where young people with additional needs feel supported. 💙\n\nOur specialist SEND team has been trained in neurodiversity awareness, sensory support, and safeguarding. Every journey is tailored to individual needs.\n\nSchools trust us. Students benefit. Parents relax.\n\nLet's talk about SEND excellence. 📧",
+      "cta": "Discuss SEND transport with our team"
     }
   ],
   "newsletterTopics": [
     {
-      "subject": "Council Spotlight: How Sandwell Council Improved School Attendance Rates with AFJ SEND Transport",
-      "summary": "Monthly feature highlighting a specific council partnership. Quantify improvements (e.g., attendance +8%, parent satisfaction +95%), include quotes, and showcase AFJ's tailored approach. Position as case study for prospect councils."
+      "subject": "The SEND Transport Specialist's Guide: Everything Schools Need to Know",
+      "summary": "Exclusive deep-dive into AFJ's SEND specialism—staff training certifications, vehicle adaptations, sensory-friendly protocols, and why specialist transport matters for students with additional needs. Includes checklist for procurement teams."
     },
     {
-      "subject": "Driver of the Month: Meet the Team Behind AFJ's Safety Excellence",
-      "summary": "Humanize the brand by celebrating drivers. Share their story, safety achievements, and commitment to students/patients. Builds internal culture and recruitment messaging. Monthly rotation."
+      "subject": "Council Procurement Decoded: What Birmingham & Manchester Councils Want in Transport Partners",
+      "summary": "Insider perspective on council tender requirements, compliance frameworks, and scoring criteria. Helps schools understand what procurement teams prioritize and why AFJ consistently wins major contracts."
     },
     {
-      "subject": "Compliance & Safety Update: New DBS & Safeguarding Requirements for 2026",
-      "summary": "Quarterly legal/regulatory digest. Summarize recent UK transport compliance changes, how AFJ meets them, and what clients should expect. Positions AFJ as thought leader; reassures councils."
+      "subject": "Fleet Maintenance 101: Why Proactive Care Saves Time, Money & Lives",
+      "summary": "Technical overview of AFJ's maintenance-first philosophy. Data on cost savings, safety improvements, and environmental benefits. Includes case study of how preventative maintenance reduced downtime by X%."
     },
     {
-      "subject": "Fleet Watch: February's Vehicle Maintenance Trends & Winter Safety Data",
-      "summary": "Monthly operational insight. Share fleet health metrics, downtime statistics, maintenance ROI, and seasonal safety tips. Build transparency and trust with B2B partners."
+      "subject": "Solving the NHS Discharge Crisis: How NEPTS Providers Partner with Trusts",
+      "summary": "Current state of hospital discharge delays. Role of non-emergency patient transport in easing bottlenecks. AFJ's track record with NHS partners and capacity to support surge demand."
     },
     {
-      "subject": "NEPTS News: NHS Partnership Updates & Patient Transport Insights",
-      "summary": "Quarterly deep-dive for NHS trust clients. Share response time data, patient feedback highlights, new service areas, and sector challenges. Keep healthcare partners engaged and informed."
+      "subject": "Why Accessible Transport Matters: From Vehicle Design to Lived Experience",
+      "summary": "Exploration of wheelchair accessibility standards, AFJ's vehicle conversion capabilities, and testimonials from passengers who rely on accessible minibuses. Links to accessible travel guides."
     },
     {
-      "subject": "Local Heroes: AFJ's Community Initiatives Across Birmingham, Manchester & Beyond",
-      "summary": "Quarterly CSR/community news (leverage existing 'Businesses Changing Lives' theme). Highlight local partnerships, school sponsorships, driver training scholarships. Build goodwill and local brand awareness."
+      "subject": "Career in Transport: What It's Really Like to Drive for AFJ",
+      "summary": "Recruitment-focused newsletter featuring driver testimonials, benefits breakdown, training opportunities, and job openings. Targets passive job-seekers in transport sector."
     },
     {
-      "subject": "Tech Spotlight: How GPS Tracking & Real-Time Alerts Improve Transport Safety",
-      "summary": "Quarterly feature on technology integration. Explain benefits to school admins, parents, and NHS trusts. Demonstrate AFJ's modern, data-driven approach."
+      "subject": "2024 in Review: AFJ's Growth, Awards & Commitment to Excellence",
+      "summary": "Recap of company milestones (2024 Midlands Family Business Awards finalist, contract expansions, new vehicle additions). Builds brand trust and celebrates team."
     },
     {
-      "subject": "Recruitment & Culture: Join 47+ Passionate Drivers Transforming Transport",
-      "summary": "Bi-annual driver recruitment push. Highlight career growth, wellbeing support, training opportunities, and employee testimonials. Address sector-wide retention challenges."
+      "subject": "Airport Transfers & Executive Hire: Premium Transport for Private Clients",
+      "summary": "Positioning AFJ's luxury/private services for B2C audience. Competitive pricing vs. rivals, reliability guarantees, and bespoke itinerary support. Includes case study of successful corporate event."
     }
   ],
   "contentFreshness": {
-    "assessment": "Critical concern: 16 blog posts with unknown publication dates and zero content calendar entries indicate stagnant or undated content. Blog lacks fresh, seasonal, or timely updates. No evidence of regular publishing cadence (weekly, bi-weekly, or monthly). Missing current year context (we're in Feb 2026; no blog dates suggest content may be 1–3+ years old). This significantly impacts SEO performance, audience engagement, and brand credibility.",
-    "recommendation": "Immediately establish and publish a 12-month content calendar with clear publishing dates (recommend 2 posts/month minimum = 24/year). Prioritize 3 high-impact blogs in next 30 days: (1) compliance/DBS content for council procurement, (2) airport transfers positioning, (3) winter safety guide (seasonal relevance). Implement blog dating (publication & last-updated), add author bios, and integrate internal linking. Schedule bi-weekly LinkedIn posts and monthly newsletters to drive consistent traffic and engagement. Conduct content audit: verify which 16 posts are current, update outdated claims, and retire low-performing pieces. Use Google Search Console & analytics to identify high-intent keywords and prioritize content gaps."
+    "assessment": "Content age is unknown (no publication dates recorded), suggesting either outdated blog or poor content management practices. 16 blog posts across 8+ service lines indicates reasonable breadth but no documented publishing cadence. Zero content calendar entries indicate ad-hoc approach rather than strategic planning. No recent content on 2024 awards, current council partnerships, or pressing issues (NHS discharge crisis, cost-of-living impact on families needing transport). Blog appears static rather than active resource.",
+    "recommendation": "Immediately: (1) Audit existing blog publication dates and remove outdated content; (2) create content calendar for next 12 months with minimum 2 posts/month; (3) publish 4–6 priority high-impact pieces (SEND, compliance, case studies, NEPTS) within 60 days. Medium-term: Establish editorial rhythm of 1–2 posts weekly, repurposing into LinkedIn articles, email content, and social snippets. Implement blog update calendar to refresh evergreen pieces quarterly with fresh data, updated links, and current client testimonials."
   },
-  "overallAssessment": "AFJ has built a solid foundation of relevant, service-focused blog content addressing school transport, NEPTS, maintenance, and compliance—critical topics for its B2B and B2C audiences. However, the portfolio suffers from three critical weaknesses: (1) no publication dates and zero content calendar entries suggest neglected or outdated content, damaging SEO and credibility; (2) significant gaps in high-ROI topics like council cost-benefit analysis, real case studies with metrics, and airport transfer positioning; and (3) underutilization of the 25-area geographic footprint and 700+ student/47-driver scale as marketing assets. The blog is broad but shallow, lacking the depth, specificity, and case-study evidence that councils and NHS trusts demand during procurement decisions.\n\nImmediate actions: Implement a documented 12-month content calendar with 2 posts/month; refresh and date all existing blogs; prioritize 3 quick-hit pieces on DBS compliance, cost-saving case studies, and airport transfers; and establish a monthly newsletter cadence. Medium-term: develop 4–5 detailed case studies with quantified outcomes from existing council and NHS clients; create geo-targeted content for high-value service areas; and build thought leadership content around driver retention and transport sector challenges. This will position AFJ as a data-driven, compliant, strategically-minded partner—not just a transport operator."
+  "overallAssessment": "AFJ has created a solid foundation with 16 blog posts spanning its core services, but the content strategy lacks strategic focus, publication discipline, and urgency-driven updates. Critical gaps exist in B2B decision-making content (compliance, case studies, business continuity), SEND specialisation (despite being a flagship service), and talent acquisition. The blog is not fully leveraged to support its three main customer segments: councils (procurement), NHS trusts (NEPTS), and private customers (minibus hire). Without publication dates and a content calendar, it's unclear whether content is actively maintained or attracting organic search traffic."
 }
