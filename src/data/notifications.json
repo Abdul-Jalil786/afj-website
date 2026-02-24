@@ -454,6 +454,19 @@
       "readAt": null,
       "actedAt": null,
       "emailSent": false
+    },
+    {
+      "id": "n_1771908305_yfl",
+      "type": "agent-critical",
+      "title": "Security: 5 critical, 3 high issues",
+      "summary": "Daily security scan found 8 serious issue(s). Review and apply fixes.",
+      "actionUrl": "/admin/monitoring",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-02-24T04:45:05.515Z",
+      "readAt": null,
+      "actedAt": null,
+      "emailSent": true
     }
   ]
 }
