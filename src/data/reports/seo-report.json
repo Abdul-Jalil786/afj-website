@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T05:26:31.893Z",
+  "generatedAt": "2026-02-24T05:21:48.371Z",
   "agent": "seo",
   "grade": "A",
   "counts": {
@@ -18,7 +18,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 113,
+      "responseTime": 179,
       "issueCount": 0,
       "issues": []
     },
@@ -30,7 +30,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 317,
+      "responseTime": 466,
       "issueCount": 0,
       "issues": []
     },
@@ -42,7 +42,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 345,
+      "responseTime": 214,
       "issueCount": 0,
       "issues": []
     },
@@ -54,7 +54,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 313,
+      "responseTime": 464,
       "issueCount": 0,
       "issues": []
     },
@@ -66,7 +66,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 268,
+      "responseTime": 461,
       "issueCount": 0,
       "issues": []
     },
@@ -78,7 +78,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 121,
+      "responseTime": 184,
       "issueCount": 0,
       "issues": []
     },
@@ -90,7 +90,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 320,
+      "responseTime": 184,
       "issueCount": 0,
       "issues": []
     },
@@ -102,7 +102,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 127,
+      "responseTime": 192,
       "issueCount": 0,
       "issues": []
     },
@@ -114,7 +114,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 118,
+      "responseTime": 185,
       "issueCount": 0,
       "issues": []
     },
@@ -126,7 +126,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 262,
+      "responseTime": 328,
       "issueCount": 0,
       "issues": []
     },
@@ -138,7 +138,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 113,
+      "responseTime": 187,
       "issueCount": 0,
       "issues": []
     },
@@ -150,7 +150,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 116,
+      "responseTime": 189,
       "issueCount": 0,
       "issues": []
     },
@@ -162,7 +162,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 117,
+      "responseTime": 186,
       "issueCount": 0,
       "issues": []
     },
@@ -174,7 +174,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 118,
+      "responseTime": 185,
       "issueCount": 0,
       "issues": []
     },
@@ -186,7 +186,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 114,
+      "responseTime": 334,
       "issueCount": 0,
       "issues": []
     },
@@ -198,7 +198,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 116,
+      "responseTime": 183,
       "issueCount": 0,
       "issues": []
     },
@@ -210,7 +210,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 117,
+      "responseTime": 180,
       "issueCount": 0,
       "issues": []
     },
@@ -222,7 +222,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 117,
+      "responseTime": 337,
       "issueCount": 0,
       "issues": []
     },
@@ -234,7 +234,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 122,
+      "responseTime": 178,
       "issueCount": 0,
       "issues": []
     },
@@ -246,7 +246,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 117,
+      "responseTime": 178,
       "issueCount": 0,
       "issues": []
     },
@@ -258,7 +258,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 115,
+      "responseTime": 188,
       "issueCount": 0,
       "issues": []
     },
@@ -270,7 +270,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 117,
+      "responseTime": 185,
       "issueCount": 0,
       "issues": []
     },
@@ -282,7 +282,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 116,
+      "responseTime": 184,
       "issueCount": 0,
       "issues": []
     },
@@ -294,7 +294,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 119,
+      "responseTime": 184,
       "issueCount": 0,
       "issues": []
     },
@@ -306,7 +306,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 114,
+      "responseTime": 181,
       "issueCount": 0,
       "issues": []
     },
@@ -318,7 +318,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 114,
+      "responseTime": 182,
       "issueCount": 0,
       "issues": []
     },
@@ -330,7 +330,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 116,
+      "responseTime": 181,
       "issueCount": 0,
       "issues": []
     },
@@ -342,7 +342,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 262,
+      "responseTime": 185,
       "issueCount": 0,
       "issues": []
     },
@@ -354,7 +354,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 117,
+      "responseTime": 188,
       "issueCount": 0,
       "issues": []
     },
@@ -366,7 +366,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 114,
+      "responseTime": 180,
       "issueCount": 0,
       "issues": []
     },
@@ -378,7 +378,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 113,
+      "responseTime": 191,
       "issueCount": 0,
       "issues": []
     },
@@ -390,7 +390,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 251,
+      "responseTime": 190,
       "issueCount": 0,
       "issues": []
     },
@@ -402,7 +402,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 115,
+      "responseTime": 191,
       "issueCount": 0,
       "issues": []
     },
@@ -414,7 +414,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 115,
+      "responseTime": 194,
       "issueCount": 0,
       "issues": []
     },
@@ -426,7 +426,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 113,
+      "responseTime": 188,
       "issueCount": 0,
       "issues": []
     },
@@ -438,7 +438,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 116,
+      "responseTime": 183,
       "issueCount": 0,
       "issues": []
     },
@@ -450,7 +450,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 117,
+      "responseTime": 185,
       "issueCount": 0,
       "issues": []
     },
@@ -462,7 +462,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 115,
+      "responseTime": 184,
       "issueCount": 0,
       "issues": []
     },
@@ -474,7 +474,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 124,
+      "responseTime": 189,
       "issueCount": 0,
       "issues": []
     },
@@ -486,7 +486,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 114,
+      "responseTime": 184,
       "issueCount": 0,
       "issues": []
     },
@@ -498,7 +498,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 115,
+      "responseTime": 191,
       "issueCount": 0,
       "issues": []
     },
@@ -510,7 +510,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 193,
+      "responseTime": 197,
       "issueCount": 0,
       "issues": []
     },
@@ -522,7 +522,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 114,
+      "responseTime": 191,
       "issueCount": 0,
       "issues": []
     },
@@ -534,7 +534,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 119,
+      "responseTime": 179,
       "issueCount": 0,
       "issues": []
     },
@@ -546,7 +546,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 113,
+      "responseTime": 193,
       "issueCount": 0,
       "issues": []
     },
@@ -558,7 +558,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 113,
+      "responseTime": 198,
       "issueCount": 0,
       "issues": []
     },
@@ -570,7 +570,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 115,
+      "responseTime": 201,
       "issueCount": 0,
       "issues": []
     },
@@ -582,7 +582,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 114,
+      "responseTime": 200,
       "issueCount": 0,
       "issues": []
     },
@@ -594,7 +594,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 117,
+      "responseTime": 197,
       "issueCount": 0,
       "issues": []
     },
@@ -606,7 +606,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 112,
+      "responseTime": 195,
       "issueCount": 0,
       "issues": []
     },
@@ -618,7 +618,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 127,
+      "responseTime": 184,
       "issueCount": 0,
       "issues": []
     },
@@ -630,7 +630,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 128,
+      "responseTime": 190,
       "issueCount": 0,
       "issues": []
     },
@@ -642,7 +642,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 125,
+      "responseTime": 186,
       "issueCount": 0,
       "issues": []
     },
@@ -654,7 +654,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 128,
+      "responseTime": 183,
       "issueCount": 0,
       "issues": []
     },
@@ -666,7 +666,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 123,
+      "responseTime": 187,
       "issueCount": 0,
       "issues": []
     },
@@ -678,7 +678,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 117,
+      "responseTime": 196,
       "issueCount": 0,
       "issues": []
     },
@@ -690,7 +690,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 120,
+      "responseTime": 190,
       "issueCount": 0,
       "issues": []
     },
@@ -702,7 +702,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 252,
+      "responseTime": 206,
       "issueCount": 0,
       "issues": []
     },
@@ -714,7 +714,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 120,
+      "responseTime": 190,
       "issueCount": 0,
       "issues": []
     },
@@ -726,7 +726,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 116,
+      "responseTime": 190,
       "issueCount": 0,
       "issues": []
     },
@@ -738,7 +738,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 113,
+      "responseTime": 188,
       "issueCount": 0,
       "issues": []
     },
@@ -750,7 +750,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 251,
+      "responseTime": 188,
       "issueCount": 0,
       "issues": []
     },
@@ -762,7 +762,7 @@
       "hasOG": true,
       "hasCanonical": true,
       "hasSchema": true,
-      "responseTime": 114,
+      "responseTime": 192,
       "issueCount": 0,
       "issues": []
     }
@@ -772,21 +772,22 @@
     "broken": []
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's website demonstrates excellent technical SEO health with no critical, high, or medium-severity issues detected across all 63 pages. The site has zero broken links and maintains a solid average response time of 145ms, which is well within optimal performance thresholds. This clean audit result indicates a well-maintained website with proper technical foundations for search engine crawlability and indexing.",
+    "summary": "AFJ Limited's website demonstrates excellent SEO health with zero critical, high, medium, or low-severity issues detected across all 63 pages. The site is performing well technically with no broken links identified and a respectable average response time of 208ms. This clean audit result indicates that the website has solid foundational SEO practices in place, including proper link management and server performance optimization.",
     "recommendations": [
-      "Conduct a content audit to identify opportunities for topic clustering and internal linking strategy to improve topic authority and user engagement",
-      "Implement schema markup (particularly LocalBusiness and Organization schema) to enhance rich snippets and local search visibility for a UK transport company",
-      "Analyze competitor backlink profiles and develop a targeted link-building strategy to improve domain authority and organic rankings",
-      "Review and optimize meta descriptions and title tags across key pages to improve click-through rates from SERPs",
-      "Implement Core Web Vitals monitoring tools (Google Search Console, PageSpeed Insights) to maintain current performance levels and stay ahead of algorithm updates",
-      "Create a content calendar focused on transport industry keywords with seasonal demand and local UK search intent"
+      "Conduct a comprehensive content audit to identify opportunities for keyword optimization, topic clustering, and gap analysis within the transport/logistics sector",
+      "Implement structured data markup (Schema.org) for business information, services, and customer reviews to enhance rich snippet visibility",
+      "Develop a strategic internal linking strategy to improve topical authority and distribute page rank across key service pages",
+      "Create a regular content calendar focused on transport industry topics to build topical relevance and improve organic traffic",
+      "Set up enhanced monitoring with tools like Google Search Console and Ahrefs to track keyword rankings and identify growth opportunities",
+      "Optimize meta descriptions and title tags across all pages to improve CTR from search results",
+      "Develop location-based SEO strategy if AFJ serves multiple regions within the UK"
     ],
     "quickWins": [
-      "Verify Google Search Console and Bing Webmaster Tools are properly configured and monitoring the site",
-      "Check that sitemap.xml is submitted to search engines and contains all 63 pages",
-      "Ensure robots.txt is optimized and not blocking important pages or resources",
-      "Review page load performance on mobile devices to ensure consistent experience across all devices",
-      "Audit and optimize images for web (compression, lazy loading) to maintain the current fast response time"
+      "Verify and submit XML sitemaps to Google Search Console to ensure all 63 pages are indexed",
+      "Review and optimize meta descriptions for pages that may be missing them to improve search result appearance",
+      "Ensure all pages have unique, descriptive title tags including relevant keywords",
+      "Check mobile usability and Core Web Vitals performance in Google Search Console",
+      "Add FAQ schema markup to relevant service pages to capture featured snippet opportunities"
     ]
   }
 }
