@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-24T04:44:54.496Z",
+  "generatedAt": "2026-02-25T04:45:14.260Z",
   "agent": "security",
   "grade": "F",
   "counts": {
@@ -151,15 +151,15 @@
     "severity": "ok"
   },
   "aiAnalysis": {
-    "summary": "AFJ Limited's staging environment presents critical security vulnerabilities that require immediate remediation. Five admin API endpoints are completely unprotected and accessible without authentication, exposing sensitive operations including pricing, compliance, and conversion data. Additionally, security headers are missing from most pages, leaving the application vulnerable to XSS, clickjacking, and MIME-type attacks. While SSL/TLS is properly configured and data leakage appears contained, the authentication bypass vulnerabilities pose an existential risk to business operations and regulatory compliance.",
+    "summary": "AFJ Limited's staging environment has critical security vulnerabilities that require immediate remediation. Five admin API endpoints (/api/admin/pricing, /api/admin/compliance, /api/admin/approval, /api/admin/pricing-report, /api/admin/conversions) are completely unprotected and accessible without authentication, exposing sensitive business data including pricing strategies, compliance records, and financial conversions. Additionally, essential security headers are missing from the majority of public-facing pages, leaving the application vulnerable to clickjacking, XSS, and content-type attacks.",
     "recommendations": [
-      "CRITICAL: Implement authentication/authorization checks on all five admin API endpoints (/api/admin/pricing, /api/admin/compliance, /api/admin/approval, /api/admin/pricing-report, /api/admin/conversions) - verify token validation, role-based access control, and session management before deploying to production",
-      "CRITICAL: Conduct an immediate audit to identify if these endpoints are accessible from the internet or only internally; if internet-facing, treat as an active breach and review audit logs for unauthorized access",
-      "Add required security headers (X-Content-Type-Options: nosniff, X-Frame-Options: DENY) to all pages, particularly public-facing routes (/, /services/send-transport, /quote)",
-      "Implement comprehensive security headers across the application: add HSTS with includeSubDomains, establish restrictive CSP policy (remove 'unsafe-inline'), add Referrer-Policy: strict-origin-when-cross-origin, and Permissions-Policy to disable unnecessary APIs",
-      "Review and strengthen the CSP on /admin page - current policy allows unsafe-inline and localhost connections (http://127.0.0.1:*) which should be restricted in production",
-      "Establish automated security header validation in CI/CD pipeline to prevent regression",
-      "Conduct full security code review before production release, focusing on authentication middleware and API endpoint protection"
+      "Immediately implement authentication and authorization checks on all /api/admin/* endpoints using role-based access control (RBAC) and verify credentials before returning sensitive data",
+      "Add required security headers (X-Content-Type-Options: nosniff, X-Frame-Options: DENY) to all pages, especially / , /services/send-transport, and /quote",
+      "Deploy Strict-Transport-Security (HSTS), Content-Security-Policy (CSP), Referrer-Policy, and Permissions-Policy headers site-wide following the security implementation pattern already correctly applied to /admin",
+      "Conduct a comprehensive security audit of all API endpoints to identify and remediate similar unprotected sensitive endpoints",
+      "Implement API rate limiting and IP whitelisting on admin endpoints as additional protective layers",
+      "Remove 'unsafe-inline' from CSP directives and establish a proper external stylesheet/script strategy",
+      "Establish security header policies as a standard requirement in your deployment pipeline to prevent regression"
     ],
     "riskLevel": "critical"
   }
