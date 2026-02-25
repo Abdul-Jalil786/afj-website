@@ -49,6 +49,7 @@ jobs:
         with:
           urls: http://localhost:4321/
           uploadArtifacts: true
+          artifactName: lighthouse-homepage
           temporaryPublicStorage: true
 
       - name: Run Lighthouse — SEND Transport
@@ -57,6 +58,7 @@ jobs:
         with:
           urls: http://localhost:4321/services/send-transport
           uploadArtifacts: true
+          artifactName: lighthouse-send-transport
           temporaryPublicStorage: true
 
       - name: Run Lighthouse — Blog Post
@@ -65,6 +67,7 @@ jobs:
         with:
           urls: http://localhost:4321/blog/5-keys-to-reliable-home-to-school-transport-in-the-uk
           uploadArtifacts: true
+          artifactName: lighthouse-blog-post
           temporaryPublicStorage: true
 
       - name: Run Lighthouse — Quote Page
@@ -73,6 +76,7 @@ jobs:
         with:
           urls: http://localhost:4321/quote
           uploadArtifacts: true
+          artifactName: lighthouse-quote-page
           temporaryPublicStorage: true
 
       - name: Check scores and post comment
