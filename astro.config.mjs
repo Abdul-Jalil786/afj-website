@@ -18,7 +18,7 @@ for (const section of ['pages', 'blog_posts', 'wordpress_patterns', 'misc_artifa
 export default defineConfig({
   site: 'https://www.afjltd.co.uk',
   server: { port: 5001 },
-  output: 'static',
+  output: 'server',
   adapter: node({ mode: 'standalone' }),
   redirects,
   integrations: [
