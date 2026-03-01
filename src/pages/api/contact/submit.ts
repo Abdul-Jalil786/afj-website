@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { escapeHtml } from '../../../lib/utils';
+import { escapeHtml, sanitiseForEmailHeader, isValidEmail } from '../../../lib/utils';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '../../../lib/rate-limit';
 import { validateBodySize } from '../../../lib/validate-body';
 
@@ -19,11 +19,26 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const body = await request.json();
-    const { name, email, phone, message } = body;
+    const { name, email, phone, message, botcheck } = body;
+
+    // Honeypot: silently drop bot submissions
+    if (botcheck) {
+      return new Response(
+        JSON.stringify({ success: true }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
 
     if (!email || !message) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields: email, message' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
+
+    if (!isValidEmail(email)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid email address format' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } },
       );
     }
@@ -85,7 +100,7 @@ export const POST: APIRoute = async ({ request }) => {
         body: JSON.stringify({
           from: 'AFJ Website <noreply@afjltd.co.uk>',
           to: [notificationEmail],
-          subject: `New Enquiry from ${escapeHtml(name || email)}`,
+          subject: `New Enquiry from ${sanitiseForEmailHeader(name || email)}`,
           html: notifyHtml,
         }),
       }).catch((err) => {

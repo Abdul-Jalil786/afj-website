@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { escapeHtml } from '../../../lib/utils';
+import { escapeHtml, sanitiseForEmailHeader, isValidEmail } from '../../../lib/utils';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '../../../lib/rate-limit';
 import { validateBodySize } from '../../../lib/validate-body';
 
@@ -35,6 +35,13 @@ export const POST: APIRoute = async ({ request }) => {
     if (!name || !email) {
       return new Response(
         JSON.stringify({ success: false, error: 'Missing required fields: name, email' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
+
+    if (!isValidEmail(email)) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid email address format' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } },
       );
     }
@@ -111,7 +118,7 @@ export const POST: APIRoute = async ({ request }) => {
         body: JSON.stringify({
           from: 'AFJ Website <noreply@afjltd.co.uk>',
           to: [notificationEmail],
-          subject: `Quote Request from ${escapeHtml(name)}`,
+          subject: `Quote Request from ${sanitiseForEmailHeader(name)}`,
           html: notifyHtml,
         }),
       }).catch((err) => {

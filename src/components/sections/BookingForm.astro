@@ -1,10 +1,9 @@
 ---
 interface Props {
-  formAction?: string;
+  source?: string;
 }
 
-const { formAction } = Astro.props;
-const action = formAction || import.meta.env.FORMSPREE_ENDPOINT || '#';
+const { source = 'Service Page' } = Astro.props;
 
 const services = [
   'Home to School Transport',
@@ -18,7 +17,14 @@ const services = [
 ];
 ---
 
-<form id="booking-form" action={action} method="POST" class="space-y-5" novalidate>
+<form id="booking-form" class="space-y-5" novalidate>
+  <input type="hidden" name="source" value={source} />
+
+  <!-- Honeypot -->
+  <div class="hidden" aria-hidden="true">
+    <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" />
+  </div>
+
   <!-- Service -->
   <div>
     <label for="service" class="block text-sm font-medium text-afj-text mb-1">Service</label>
@@ -108,7 +114,89 @@ const services = [
   </div>
 
   <!-- Submit -->
-  <button type="submit" class="btn-primary w-full sm:w-auto">
+  <button type="submit" id="booking-submit" class="btn-primary w-full sm:w-auto">
     Submit Booking Request
   </button>
+
+  <!-- Status Messages -->
+  <div id="booking-success" class="hidden bg-green-50 border border-green-200 text-green-800 rounded-lg p-4 text-sm">
+    Thank you! Your booking request has been submitted. We will be in touch within 24 hours.
+  </div>
+  <div id="booking-error" class="hidden bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 text-sm">
+    Something went wrong. Please try again or call us on <a href="tel:01216891000" class="underline font-semibold">0121 689 1000</a>.
+  </div>
 </form>
+
+<script is:inline>
+  (function () {
+    var form = document.getElementById('booking-form');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var botField = form.querySelector('[name="botcheck"]');
+      if (botField && botField.checked) return;
+
+      var emailEl = form.querySelector('#booking-email');
+      if (!emailEl || !emailEl.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
+        emailEl.classList.add('border-red-500');
+        emailEl.focus();
+        return;
+      }
+      emailEl.classList.remove('border-red-500');
+
+      var submitBtn = form.querySelector('#booking-submit');
+      var successEl = document.getElementById('booking-success');
+      var errorEl = document.getElementById('booking-error');
+      successEl.classList.add('hidden');
+      errorEl.classList.add('hidden');
+
+      var source = (form.querySelector('[name="source"]') || {}).value || '';
+      var service = (form.querySelector('#service') || {}).value || '';
+      var name = (form.querySelector('#booking-name') || {}).value || '';
+      var email = emailEl.value;
+      var phone = (form.querySelector('#booking-phone') || {}).value || '';
+      var startDate = (form.querySelector('#start-date') || {}).value || '';
+      var endDate = (form.querySelector('#end-date') || {}).value || '';
+      var details = (form.querySelector('#details') || {}).value || '';
+
+      var messageParts = ['BOOKING ENQUIRY'];
+      if (source) messageParts.push('Source: ' + source);
+      if (service) messageParts.push('Service: ' + service);
+      if (startDate) messageParts.push('Start Date: ' + startDate);
+      if (endDate) messageParts.push('End Date: ' + endDate);
+      if (details) messageParts.push('\n' + details);
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      fetch('/api/contact/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          phone: phone,
+          message: messageParts.join('\n'),
+        }),
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.success) {
+            successEl.classList.remove('hidden');
+            form.reset();
+          } else {
+            errorEl.classList.remove('hidden');
+          }
+        })
+        .catch(function () {
+          errorEl.classList.remove('hidden');
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Booking Request';
+        });
+    });
+  })();
+</script>
