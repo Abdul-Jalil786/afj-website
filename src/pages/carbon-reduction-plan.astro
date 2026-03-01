@@ -4,12 +4,21 @@ import Hero from '../components/sections/Hero.astro';
 import SocialSidebar from '../components/ui/SocialSidebar.astro';
 
 const breadcrumbs = [{ label: 'Carbon Reduction Plan' }];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Carbon Reduction Plan',
+  description: 'AFJ Limited carbon reduction plan. Our commitment to environmental sustainability, eco-friendly fleet, and low-carbon emission vehicles in Birmingham.',
+  url: 'https://www.afjltd.co.uk/carbon-reduction-plan',
+};
 ---
 
 <PageLayout
   title="Carbon Reduction Plan"
   description="AFJ Limited carbon reduction plan. Our commitment to environmental sustainability, eco-friendly fleet, and low-carbon emission vehicles in Birmingham."
   breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
 >
   <SocialSidebar />
 

@@ -4,12 +4,21 @@ import Hero from '../components/sections/Hero.astro';
 import SocialSidebar from '../components/ui/SocialSidebar.astro';
 
 const breadcrumbs = [{ label: 'Privacy Policy' }];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Privacy Policy',
+  description: 'AFJ Limited privacy policy. How we collect, use, and protect your personal data under UK GDPR.',
+  url: 'https://www.afjltd.co.uk/privacy-policy',
+};
 ---
 
 <PageLayout
   title="Privacy Policy"
   description="AFJ Limited privacy policy. How we collect, use, and protect your personal data. GDPR compliant. Contact info@afjltd.co.uk for data enquiries."
   breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
 >
   <SocialSidebar />
 
