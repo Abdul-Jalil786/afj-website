@@ -9,7 +9,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Fleet Maintenance", "Vehicle Conversions", "Driver Training", "Private Hire", "Executive Minibus", "Airport Transfers"],
     "intro": "AFJ Limited has been headquartered in Birmingham since 2006. From our base in Nechells, we provide the full spectrum of specialist transport services — from transporting over 2,000 students daily to delivering CQC-rated patient transport across the city.",
     "introSecond": "We are proud to be Birmingham City Council accredited, NHS approved, and the only UK Patient Transport Service provider that builds its own ambulances in-house. Our commitment to Birmingham's communities drives everything we do.",
-    "heroImage": "/images/fleet/afj-vehicles-parked.jpg",
+    "heroImage": "/images/fleet/afj-vehicles-parked.webp",
     "heroImageAlt": "AFJ fleet vehicles at Birmingham headquarters"
   },
   {
@@ -61,7 +61,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Fleet Maintenance", "Vehicle Conversions", "Driver Training", "Private Hire"],
     "intro": "AFJ Limited serves the entire West Midlands region from our Birmingham headquarters. With council accreditations across multiple boroughs and a CQC \"Good\" rating for patient transport, we are a trusted partner for transport services from Wolverhampton to Solihull and everywhere in between.",
     "introSecond": "Our fleet of 50+ vehicles, 47+ qualified drivers, and in-house workshop, training centre, and conversion facility allow us to deliver a comprehensive range of services across the West Midlands.",
-    "heroImage": "/images/fleet/afj-garage-with-vehicles.jpg",
+    "heroImage": "/images/fleet/afj-garage-with-vehicles.webp",
     "heroImageAlt": "AFJ garage and workshop serving the West Midlands"
   },
   {
@@ -74,7 +74,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire", "Airport Transfers"],
     "intro": "AFJ Limited provides specialist transport services across Solihull, just nine miles from our Birmingham base. With its proximity to Birmingham Airport, Solihull is a key area for our airport transfer service alongside SEND school transport and patient transport.",
     "introSecond": "Our council-accredited, DBS-checked team and wheelchair-accessible fleet ensure safe, reliable transport for students, patients, and private hire customers throughout the Solihull borough.",
-    "heroImage": "/images/fleet/afj-vehicles-parked.jpg",
+    "heroImage": "/images/fleet/afj-vehicles-parked.webp",
     "heroImageAlt": "AFJ fleet vehicles serving Solihull"
   },
   {
@@ -100,7 +100,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire"],
     "intro": "AFJ Limited provides specialist transport services in Wolverhampton, approximately 15 miles from our Birmingham base. We hold accreditation from Wolverhampton City Council and deliver SEND transport, patient transport, and private hire across the city.",
     "introSecond": "Our CQC-rated \"Good\" patient transport and council-accredited school transport services ensure the highest standards of safety and reliability for Wolverhampton's communities.",
-    "heroImage": "/images/fleet/patient-transport-crew-2.jpg",
+    "heroImage": "/images/fleet/patient-transport-crew-2.webp",
     "heroImageAlt": "AFJ transport crew serving Wolverhampton"
   },
   {
@@ -126,7 +126,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire"],
     "intro": "AFJ Limited extends its trusted transport services to Stoke-on-Trent, approximately 45 miles from our Birmingham base. We provide SEND school transport, CQC-rated patient transport, and private minibus hire across the Potteries.",
     "introSecond": "Our experienced, DBS-checked team and modern wheelchair-accessible fleet bring the same high standards of service to Stoke-on-Trent that have made us a trusted name across the West Midlands.",
-    "heroImage": "/images/fleet/patient-transport-team-hands-together.jpg",
+    "heroImage": "/images/fleet/patient-transport-team-hands-together.webp",
     "heroImageAlt": "AFJ transport team serving Stoke-on-Trent"
   },
   {
@@ -152,7 +152,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire"],
     "intro": "AFJ Limited serves Nottingham with specialist transport services, extending our reach into the East Midlands from our Birmingham base. We provide SEND school transport, CQC-rated non-emergency patient transport, and private minibus hire.",
     "introSecond": "Our proven track record across the West Midlands and North West, combined with our DBS-checked staff and wheelchair-accessible fleet, ensures Nottingham receives the same exceptional standard of service.",
-    "heroImage": "/images/fleet/afj-vehicles-parked.jpg",
+    "heroImage": "/images/fleet/afj-vehicles-parked.webp",
     "heroImageAlt": "AFJ fleet vehicles serving Nottingham"
   },
   {
@@ -178,7 +178,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire"],
     "intro": "AFJ Limited serves Lichfield with trusted transport services, just 16 miles from our Birmingham base. This historic cathedral city and surrounding district benefit from our SEND school transport, patient transport, and private hire services.",
     "introSecond": "Our DBS-checked drivers, wheelchair-accessible vehicles, and CQC-rated patient transport service ensure safe and compassionate transport for Lichfield's communities.",
-    "heroImage": "/images/fleet/vehicle-in-depot-with-driver-and-guide.jpg",
+    "heroImage": "/images/fleet/vehicle-in-depot-with-driver-and-guide.webp",
     "heroImageAlt": "AFJ driver and guide serving Lichfield"
   },
   {
@@ -191,7 +191,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire", "Airport Transfers"],
     "intro": "AFJ Limited provides specialist transport in Sutton Coldfield, a royal town just eight miles from our Birmingham headquarters. As part of the Birmingham City Council area, Sutton Coldfield benefits from our council-accredited SEND transport and CQC-rated patient services.",
     "introSecond": "With easy access to Birmingham Airport and the M6 Toll, Sutton Coldfield is also well served by our airport transfer and private hire services.",
-    "heroImage": "/images/fleet/afj-vehicles-parked.jpg",
+    "heroImage": "/images/fleet/afj-vehicles-parked.webp",
     "heroImageAlt": "AFJ fleet vehicles serving Sutton Coldfield"
   },
   {
@@ -217,7 +217,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire"],
     "intro": "AFJ Limited provides trusted transport services in Redditch, around 15 miles from our Birmingham headquarters. We serve the town's schools, hospitals, and community groups with SEND transport, patient transport, and private hire.",
     "introSecond": "Our DBS-checked team, wheelchair-accessible fleet, and CQC-rated patient transport ensure safe, reliable service for Redditch residents.",
-    "heroImage": "/images/fleet/patient-transport-crew-2.jpg",
+    "heroImage": "/images/fleet/patient-transport-crew-2.webp",
     "heroImageAlt": "AFJ patient transport crew serving Redditch"
   },
   {
@@ -243,7 +243,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire"],
     "intro": "AFJ Limited provides transport services across the Warwick district, approximately 22 miles from our Birmingham headquarters. We serve Warwick's schools, hospitals, and residents with SEND transport, patient transport, and private hire.",
     "introSecond": "Our experienced, DBS-checked staff and modern wheelchair-accessible fleet ensure the highest standards of care and reliability for Warwick's communities.",
-    "heroImage": "/images/fleet/afj-garage-with-vehicles.jpg",
+    "heroImage": "/images/fleet/afj-garage-with-vehicles.webp",
     "heroImageAlt": "AFJ garage facilities serving Warwick"
   },
   {
@@ -256,7 +256,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire"],
     "intro": "AFJ Limited serves Royal Leamington Spa with specialist transport services, around 24 miles from our Birmingham base. As part of the Warwick district, Leamington Spa benefits from our SEND school transport, CQC-rated patient transport, and private minibus hire.",
     "introSecond": "Our proximity and fleet of wheelchair-accessible vehicles ensure reliable, safe transport for Leamington Spa's students, patients, and community groups.",
-    "heroImage": "/images/fleet/patient-transport-team-hands-together.jpg",
+    "heroImage": "/images/fleet/patient-transport-team-hands-together.webp",
     "heroImageAlt": "AFJ transport team serving Leamington Spa"
   },
   {
@@ -282,7 +282,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire"],
     "intro": "AFJ Limited extends its transport services to Stafford, the county town of Staffordshire, approximately 26 miles from our Birmingham base. We provide SEND school transport, CQC-rated patient transport, and private minibus hire across the borough.",
     "introSecond": "Our experienced team and modern fleet bring the same high standards of safety and reliability to Stafford that have earned us council accreditations across the Midlands.",
-    "heroImage": "/images/fleet/vehicle-in-depot-with-driver-and-guide.jpg",
+    "heroImage": "/images/fleet/vehicle-in-depot-with-driver-and-guide.webp",
     "heroImageAlt": "AFJ driver and guide serving Stafford"
   },
   {
@@ -308,7 +308,7 @@
     "servicesAvailable": ["SEND Transport", "Patient Transport", "Private Hire"],
     "intro": "AFJ Limited provides specialist transport in Telford, approximately 36 miles from our Birmingham base. We serve Telford and the Wrekin area with SEND school transport, CQC-rated patient transport, and private minibus hire.",
     "introSecond": "With 18+ years of experience and a proven track record across the Midlands, our professional, DBS-checked team delivers safe transport for Telford's schools, hospitals, and community groups.",
-    "heroImage": "/images/fleet/afj-vehicles-parked.jpg",
+    "heroImage": "/images/fleet/afj-vehicles-parked.webp",
     "heroImageAlt": "AFJ fleet vehicles serving Telford"
   },
   {
