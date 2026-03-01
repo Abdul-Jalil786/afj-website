@@ -27,6 +27,7 @@ const globalOrgSchema = {
   '@type': 'LocalBusiness',
   '@id': 'https://www.afjltd.co.uk/#organization',
   name: 'AFJ Limited',
+  description: 'Specialist SEND school transport, non-emergency patient transport, fleet maintenance, vehicle conversions, and professional training across Birmingham and Manchester. Established 2006. CQC rated Good.',
   url: 'https://www.afjltd.co.uk',
   logo: 'https://www.afjltd.co.uk/images/logo/afj-logo-final.png',
   telephone: '0121 689 1000',
@@ -43,7 +44,7 @@ const globalOrgSchema = {
     },
     {
       '@type': 'PostalAddress',
-      streetAddress: 'AFJ Manchester Office',
+      streetAddress: 'Dob Lane Chapel, 3 Oldham Road, Failsworth',
       addressLocality: 'Manchester',
       addressRegion: 'Greater Manchester',
       postalCode: 'M35 0BR',
@@ -51,6 +52,12 @@ const globalOrgSchema = {
     },
   ],
   geo: { '@type': 'GeoCoordinates', latitude: 52.493, longitude: -1.878 },
+  areaServed: [
+    { '@type': 'City', name: 'Birmingham' },
+    { '@type': 'City', name: 'Manchester' },
+    { '@type': 'AdministrativeArea', name: 'West Midlands' },
+    { '@type': 'AdministrativeArea', name: 'North West England' },
+  ],
   openingHoursSpecification: {
     '@type': 'OpeningHoursSpecification',
     dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
@@ -58,8 +65,8 @@ const globalOrgSchema = {
     closes: '18:00',
   },
   sameAs: [
-    'https://www.facebook.com/afjtravel',
-    'https://uk.linkedin.com/company/afj-ltd',
+    'https://www.facebook.com/AFJTravel/',
+    'https://www.linkedin.com/company/afj-ltd/',
   ],
 };
 
