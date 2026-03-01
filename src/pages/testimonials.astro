@@ -45,6 +45,24 @@ const jsonLD = {
   name: 'Testimonials',
   description: 'Testimonials from schools, councils, and organisations that use AFJ Limited transport services.',
   url: 'https://www.afjltd.co.uk/testimonials',
+  mainEntity: testimonials.map((t) => ({
+    '@type': 'Review',
+    reviewBody: t.quote,
+    author: {
+      '@type': 'Person',
+      name: t.name,
+      jobTitle: t.role,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: t.organisation,
+    },
+    itemReviewed: {
+      '@type': 'LocalBusiness',
+      '@id': 'https://www.afjltd.co.uk/#organization',
+      name: 'AFJ Limited',
+    },
+  })),
 };
 ---
 

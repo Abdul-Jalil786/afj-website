@@ -182,6 +182,20 @@ const jsonLD = {
   },
 };
 
+// FAQ schema — separate from the LocalBusiness jsonLD above
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+};
+
 const pageTitle = `Transport Services ${area.name}`;
 const shortDistance = area.distanceFromBirmingham === 0 ? '' : `${area.distanceFromBirmingham}mi from Birmingham. `;
 const pageDescription = `${area.servicesAvailable.slice(0, 3).join(', ')} in ${area.name}. ${shortDistance}DBS-checked staff, wheelchair-accessible fleet. Free quotes.`;
@@ -194,6 +208,8 @@ const pageDescription = `${area.servicesAvailable.slice(0, 3).join(', ')} in ${a
   jsonLD={jsonLD}
 >
   <SocialSidebar />
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <Hero title={`Transport Services in ${area.name}`} subtitle={`${distanceText}. Safe, reliable transport solutions since 2006.`} />
 

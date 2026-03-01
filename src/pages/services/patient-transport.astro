@@ -6,7 +6,14 @@ import BookingForm from '../../components/sections/BookingForm.astro';
 import FleetGallery from '../../components/sections/FleetGallery.astro';
 import AccreditationBadges from '../../components/sections/AccreditationBadges.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
+import RelatedServices from '../../components/sections/RelatedServices.astro';
 import SocialSidebar from '../../components/ui/SocialSidebar.astro';
+
+const relatedServices = [
+  { title: 'Home to School Transport', description: 'DBS-checked drivers and passenger assistants transporting 2,000+ students daily across Birmingham and Manchester.', href: '/services/send-transport' },
+  { title: 'Vehicle Conversions', description: 'VOSA-certified wheelchair-accessible and ambulance conversions. The only UK PTS provider building its own ambulances.', href: '/services/vehicle-conversions' },
+  { title: 'Driver, ACA & PA Training', description: 'QualSafe-approved training including Ambulance Care Assistant and Passenger Assistant certification.', href: '/services/driver-training' },
+];
 
 const patientTransportImages = [
   { src: '/images/misc/patient-transport-staff-in-front-of-ambulance.webp', alt: 'AFJ patient transport staff in front of an ambulance' },
@@ -221,6 +228,8 @@ const jsonLD = {
 
   <!-- Accreditations -->
   <AccreditationBadges />
+
+  <RelatedServices services={relatedServices} />
 
   <CTABanner
     heading="Reliable Patient Transport You Can Trust"

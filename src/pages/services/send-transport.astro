@@ -7,7 +7,14 @@ import FleetGallery from '../../components/sections/FleetGallery.astro';
 import AccreditationBadges from '../../components/sections/AccreditationBadges.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
 import StatsCounter from '../../components/sections/StatsCounter.astro';
+import RelatedServices from '../../components/sections/RelatedServices.astro';
 import SocialSidebar from '../../components/ui/SocialSidebar.astro';
+
+const relatedServices = [
+  { title: 'Non-Emergency Patient Transport', description: 'CQC-rated "Good" patient transport with trained Ambulance Care Assistants across Birmingham and Manchester.', href: '/services/patient-transport' },
+  { title: 'Driver, ACA & PA Training', description: 'QualSafe-approved Driver CPC, Ambulance Care Assistant, and Passenger Assistant certification courses.', href: '/services/driver-training' },
+  { title: 'Private Minibus Hire', description: 'Modern 16-seater wheelchair-accessible minibuses for school trips, events, and group travel.', href: '/services/private-hire' },
+];
 
 const sendImages = [
   { src: '/images/misc/send-vehicle-with-wheelchair-ramp.webp', alt: 'AFJ SEND vehicle with wheelchair ramp' },
@@ -213,6 +220,8 @@ const jsonLD = {
 
   <!-- Accreditations -->
   <AccreditationBadges />
+
+  <RelatedServices services={relatedServices} />
 
   <CTABanner
     heading="Safe Transport for Every Student"

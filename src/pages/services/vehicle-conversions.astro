@@ -4,7 +4,14 @@ import Hero from '../../components/sections/Hero.astro';
 import BookingForm from '../../components/sections/BookingForm.astro';
 import FleetGallery from '../../components/sections/FleetGallery.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
+import RelatedServices from '../../components/sections/RelatedServices.astro';
 import SocialSidebar from '../../components/ui/SocialSidebar.astro';
+
+const relatedServices = [
+  { title: 'Fleet Maintenance', description: 'In-house workshop with skilled technicians and state-of-the-art facilities for all fleet servicing needs.', href: '/services/fleet-maintenance' },
+  { title: 'Non-Emergency Patient Transport', description: 'CQC-rated "Good" patient transport using our purpose-built converted ambulances.', href: '/services/patient-transport' },
+  { title: 'Home to School Transport', description: 'SEND school transport with wheelchair-accessible vehicles converted and maintained in-house.', href: '/services/send-transport' },
+];
 
 const conversionImages = [
   { src: '/images/fleet/mbs1afjert.webp', alt: 'AFJ ambulance conversion' },
@@ -189,6 +196,8 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <RelatedServices services={relatedServices} />
 
   <CTABanner
     heading="Transform Your Vehicle Today"

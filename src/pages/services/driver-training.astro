@@ -4,7 +4,14 @@ import Hero from '../../components/sections/Hero.astro';
 import BookingForm from '../../components/sections/BookingForm.astro';
 import FleetGallery from '../../components/sections/FleetGallery.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
+import RelatedServices from '../../components/sections/RelatedServices.astro';
 import SocialSidebar from '../../components/ui/SocialSidebar.astro';
+
+const relatedServices = [
+  { title: 'Home to School Transport', description: 'Put your training to work — join our team transporting 2,000+ students daily across the Midlands and North West.', href: '/services/send-transport' },
+  { title: 'Non-Emergency Patient Transport', description: 'CQC-rated "Good" patient transport with career opportunities for qualified Ambulance Care Assistants.', href: '/services/patient-transport' },
+  { title: 'Fleet Maintenance', description: 'Our in-house workshop keeps the fleet in top condition, supporting safe operations across all services.', href: '/services/fleet-maintenance' },
+];
 
 const trainingImages = [
   { src: '/images/misc/driver-and-pa-inside-minibus.webp', alt: 'Driver and passenger assistant inside an AFJ minibus' },
@@ -184,6 +191,8 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <RelatedServices services={relatedServices} />
 
   <CTABanner
     heading="Invest in Professional Training"

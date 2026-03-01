@@ -3,7 +3,14 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/sections/Hero.astro';
 import BookingForm from '../../components/sections/BookingForm.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
+import RelatedServices from '../../components/sections/RelatedServices.astro';
 import SocialSidebar from '../../components/ui/SocialSidebar.astro';
+
+const relatedServices = [
+  { title: 'Private Minibus Hire', description: 'Modern 16-seater wheelchair-accessible minibuses for group travel and events.', href: '/services/private-hire' },
+  { title: 'Executive Minibus Hire', description: 'Luxury minibus hire with professional driver for corporate travel and premium events.', href: '/services/executive-minibus' },
+  { title: 'Home to School Transport', description: 'DBS-checked drivers transporting 2,000+ students daily across Birmingham and Manchester.', href: '/services/send-transport' },
+];
 
 const breadcrumbs = [
   { label: 'Services', href: '/services' },
@@ -132,6 +139,8 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <RelatedServices services={relatedServices} />
 
   <CTABanner
     heading="Stress-Free Airport Transfers"

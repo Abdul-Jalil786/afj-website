@@ -4,7 +4,14 @@ import Hero from '../../components/sections/Hero.astro';
 import BookingForm from '../../components/sections/BookingForm.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
 import TestimonialSlider from '../../components/sections/TestimonialSlider.astro';
+import RelatedServices from '../../components/sections/RelatedServices.astro';
 import SocialSidebar from '../../components/ui/SocialSidebar.astro';
+
+const relatedServices = [
+  { title: 'Private Minibus Hire', description: 'Affordable 16-seater wheelchair-accessible minibuses for school trips, events, and group travel.', href: '/services/private-hire' },
+  { title: 'Airport Transfers', description: 'Professional airport transfer services with flight tracking to all major UK airports.', href: '/services/airport-transfers' },
+  { title: 'Vehicle Conversions', description: 'Custom luxury and wheelchair-accessible conversions built to your exact specifications.', href: '/services/vehicle-conversions' },
+];
 
 const breadcrumbs = [
   { label: 'Services', href: '/services' },
@@ -135,6 +142,8 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <RelatedServices services={relatedServices} />
 
   <CTABanner
     heading="Travel in Style"

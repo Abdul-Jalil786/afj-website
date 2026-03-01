@@ -1,0 +1,30 @@
+---
+interface ServiceItem {
+  title: string;
+  description: string;
+  href: string;
+}
+
+interface Props {
+  services: ServiceItem[];
+}
+
+const { services } = Astro.props;
+---
+
+<section class="section-padding">
+  <div class="container-wide">
+    <h2 class="text-afj-green text-center mb-8">Related Services</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {services.map((service) => (
+        <a href={service.href} class="bg-white rounded-lg shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow block group">
+          <h3 class="text-afj-green font-bold text-lg mb-2 group-hover:text-afj-accent transition-colors">{service.title}</h3>
+          <p class="text-afj-secondary text-sm leading-relaxed mb-3">{service.description}</p>
+          <span class="text-afj-accent font-semibold text-sm group-hover:text-afj-green transition-colors">
+            Learn more &rarr;
+          </span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

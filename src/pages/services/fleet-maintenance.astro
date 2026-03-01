@@ -4,7 +4,14 @@ import Hero from '../../components/sections/Hero.astro';
 import BookingForm from '../../components/sections/BookingForm.astro';
 import FleetGallery from '../../components/sections/FleetGallery.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
+import RelatedServices from '../../components/sections/RelatedServices.astro';
 import SocialSidebar from '../../components/ui/SocialSidebar.astro';
+
+const relatedServices = [
+  { title: 'Vehicle Conversions', description: 'VOSA-certified wheelchair-accessible, ambulance, and luxury conversions built in-house.', href: '/services/vehicle-conversions' },
+  { title: 'Driver, ACA & PA Training', description: 'QualSafe-approved Driver CPC and professional training programmes for transport operators.', href: '/services/driver-training' },
+  { title: 'Private Minibus Hire', description: 'Modern 16-seater wheelchair-accessible minibuses maintained by our in-house workshop team.', href: '/services/private-hire' },
+];
 
 const workshopImages = [
   { src: '/images/fleet/20231102_130320-scaled.webp', alt: 'AFJ workshop floor with vehicles under maintenance' },
@@ -168,6 +175,8 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <RelatedServices services={relatedServices} />
 
   <CTABanner
     heading="Keep Your Fleet Running Smoothly"

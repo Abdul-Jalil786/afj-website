@@ -5,7 +5,14 @@ import BookingForm from '../../components/sections/BookingForm.astro';
 import FleetGallery from '../../components/sections/FleetGallery.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
 import TestimonialSlider from '../../components/sections/TestimonialSlider.astro';
+import RelatedServices from '../../components/sections/RelatedServices.astro';
 import SocialSidebar from '../../components/ui/SocialSidebar.astro';
+
+const relatedServices = [
+  { title: 'Executive Minibus Hire', description: 'Luxury minibus hire with professional driver for corporate events, race days, and premium travel.', href: '/services/executive-minibus' },
+  { title: 'Airport Transfers', description: 'Reliable group airport transfers to Birmingham Airport and other major UK airports.', href: '/services/airport-transfers' },
+  { title: 'Home to School Transport', description: 'DBS-checked drivers transporting 2,000+ students daily in modern wheelchair-accessible minibuses.', href: '/services/send-transport' },
+];
 
 const privateHireImages = [
   { src: '/images/misc/private-hire-customers-in-front-of-minibuses.webp', alt: 'Customers in front of AFJ private hire minibuses' },
@@ -153,6 +160,8 @@ const jsonLD = {
       </div>
     </div>
   </section>
+
+  <RelatedServices services={relatedServices} />
 
   <CTABanner
     heading="Ready to Book Your Minibus?"
