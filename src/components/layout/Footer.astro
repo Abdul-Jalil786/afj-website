@@ -12,11 +12,16 @@ const services = [
 
 const quickLinks = [
   { name: 'About Us', href: '/about' },
+  { name: 'Our Fleet', href: '/fleet' },
+  { name: 'Testimonials', href: '/testimonials' },
+  { name: 'Book Transport', href: '/book-transport' },
   { name: 'Social Impact Report', href: '/social-impact' },
   { name: 'News', href: '/blog' },
   { name: 'Careers', href: '/careers' },
   { name: 'Contact', href: '/contact' },
   { name: 'FAQ', href: '/faq' },
+  { name: 'Safeguarding Policy', href: '/safeguarding' },
+  { name: 'Terms and Conditions', href: '/terms' },
   { name: 'Privacy Policy', href: '/privacy-policy' },
   { name: 'Carbon Reduction Plan', href: '/carbon-reduction-plan' },
 ];
@@ -135,6 +140,8 @@ const currentYear = new Date().getFullYear();
     <div class="container-wide py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-300">
       <p>&copy; {currentYear} AFJ Limited. All rights reserved.</p>
       <div class="flex gap-4">
+        <a href="/terms" class="hover:text-afj-accent transition-colors">Terms</a>
+        <a href="/safeguarding" class="hover:text-afj-accent transition-colors">Safeguarding</a>
         <a href="/privacy-policy" class="hover:text-afj-accent transition-colors">Privacy Policy</a>
         <a href="/carbon-reduction-plan" class="hover:text-afj-accent transition-colors">Carbon Reduction Plan</a>
       </div>

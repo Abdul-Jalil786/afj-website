@@ -1,0 +1,139 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import SocialSidebar from '../components/ui/SocialSidebar.astro';
+
+const breadcrumbs = [{ label: 'Terms and Conditions' }];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Terms and Conditions',
+  description: 'AFJ Limited terms and conditions for transport services including SEND, NEPTS, private hire, and fleet services.',
+  url: 'https://www.afjltd.co.uk/terms',
+};
+---
+
+<PageLayout
+  title="Terms and Conditions"
+  description="AFJ Limited terms and conditions for transport services. Covers bookings, cancellations, liability, safeguarding, data protection, and complaints."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Terms and Conditions" subtitle="Terms governing our transport services and your use of this website." />
+
+  <section class="section-padding">
+    <div class="container-wide max-w-3xl prose prose-lg">
+      <p class="text-afj-secondary"><strong>Last updated:</strong> March 2026</p>
+
+      <h2 class="text-afj-green">1. Introduction</h2>
+      <p class="text-afj-secondary leading-relaxed">
+        These terms and conditions ("Terms") govern the provision of transport services by AFJ Limited ("we", "us", "our"), a company registered in England and Wales, and your use of our website at www.afjltd.co.uk. By booking our services or using this website, you agree to be bound by these Terms.
+      </p>
+      <p class="text-afj-secondary leading-relaxed">
+        AFJ Limited provides specialist transport services including SEND home-to-school transport, non-emergency patient transport (NEPTS), private minibus hire, fleet maintenance, vehicle conversions, and driver training.
+      </p>
+
+      <h2 class="text-afj-green">2. Bookings and Quotations</h2>
+      <ul class="text-afj-secondary">
+        <li>All quotations are valid for 30 days from the date of issue unless otherwise stated.</li>
+        <li>A booking is confirmed only upon receipt of written confirmation from AFJ Limited.</li>
+        <li>Prices quoted are subject to change if journey details (dates, times, passenger numbers, or accessibility requirements) change after the initial quote.</li>
+        <li>For council contract work, bookings are governed by the terms of the relevant local authority contract.</li>
+        <li>We reserve the right to decline any booking at our discretion.</li>
+      </ul>
+
+      <h2 class="text-afj-green">3. Payment Terms</h2>
+      <ul class="text-afj-secondary">
+        <li>Payment terms are as agreed at the point of booking or as specified in the relevant contract.</li>
+        <li>For private hire bookings, payment is due in full prior to the journey unless credit terms have been agreed in writing.</li>
+        <li>Late payments may incur interest at 8% above the Bank of England base rate, in accordance with the Late Payment of Commercial Debts (Interest) Act 1998.</li>
+        <li>We reserve the right to suspend services in the event of non-payment.</li>
+      </ul>
+
+      <h2 class="text-afj-green">4. Cancellations</h2>
+      <ul class="text-afj-secondary">
+        <li><strong>By the client:</strong> Cancellations must be made in writing (email or letter). Cancellations made more than 48 hours before the scheduled journey will receive a full refund. Cancellations made within 48 hours may be subject to a cancellation charge of up to 100% of the booking value.</li>
+        <li><strong>By AFJ Limited:</strong> In the unlikely event we need to cancel a booking, we will provide as much notice as possible and offer a full refund or alternative arrangements.</li>
+        <li><strong>Force majeure:</strong> Neither party shall be liable for cancellations caused by events beyond reasonable control, including severe weather, road closures, industrial action, or public health emergencies.</li>
+      </ul>
+
+      <h2 class="text-afj-green">5. Passenger Responsibilities</h2>
+      <ul class="text-afj-secondary">
+        <li>Passengers must be ready at the agreed pickup location at the agreed time. We allow a maximum waiting time of 10 minutes for private hire bookings.</li>
+        <li>Seatbelts must be worn at all times where fitted. Passengers travelling in wheelchairs must have appropriate restraints in use.</li>
+        <li>Passengers must not consume alcohol or use illegal substances on board our vehicles.</li>
+        <li>Any damage caused to our vehicles by passengers or their property will be charged to the booking party.</li>
+        <li>For SEND transport, parents/guardians must ensure students are accompanied to and from the vehicle by a responsible adult where required by the local authority.</li>
+      </ul>
+
+      <h2 class="text-afj-green">6. Our Responsibilities</h2>
+      <ul class="text-afj-secondary">
+        <li>We will provide safe, roadworthy vehicles maintained to DVSA standards.</li>
+        <li>All drivers hold the appropriate licences and undergo enhanced DBS checks.</li>
+        <li>Passenger assistants are provided where specified in the booking or required by contract.</li>
+        <li>We will make every reasonable effort to arrive at the scheduled time, though we cannot guarantee exact arrival times due to traffic and road conditions.</li>
+        <li>All vehicles are fully insured for public hire and reward.</li>
+      </ul>
+
+      <h2 class="text-afj-green">7. Safeguarding</h2>
+      <p class="text-afj-secondary leading-relaxed">
+        AFJ Limited takes its safeguarding responsibilities seriously. All staff undergo enhanced DBS checks, receive safeguarding training, and are bound by our safeguarding policy. We have designated safeguarding leads and follow LADO reporting procedures. For full details, please see our <a href="/safeguarding" class="text-afj-sky-blue hover:text-afj-accent">Safeguarding Policy</a>.
+      </p>
+
+      <h2 class="text-afj-green">8. Liability</h2>
+      <ul class="text-afj-secondary">
+        <li>AFJ Limited carries comprehensive public liability insurance and employer's liability insurance.</li>
+        <li>Our liability for loss or damage to passenger property is limited to £500 per incident unless negligence on our part is proven.</li>
+        <li>We shall not be liable for any indirect or consequential losses arising from the use of our services.</li>
+        <li>Nothing in these Terms excludes or limits our liability for death or personal injury caused by our negligence, or for fraud or fraudulent misrepresentation.</li>
+      </ul>
+
+      <h2 class="text-afj-green">9. Accessibility</h2>
+      <p class="text-afj-secondary leading-relaxed">
+        We operate wheelchair accessible vehicles and vehicles fitted with tail lifts. If you have specific accessibility requirements, please inform us at the time of booking so we can allocate an appropriate vehicle. We comply with our obligations under the Equality Act 2010.
+      </p>
+
+      <h2 class="text-afj-green">10. Data Protection</h2>
+      <p class="text-afj-secondary leading-relaxed">
+        We process personal data in accordance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018. For full details on how we collect, use, and protect your personal data, please see our <a href="/privacy-policy" class="text-afj-sky-blue hover:text-afj-accent">Privacy Policy</a>.
+      </p>
+
+      <h2 class="text-afj-green">11. Complaints Procedure</h2>
+      <p class="text-afj-secondary leading-relaxed">
+        We are committed to providing a high standard of service. If you are dissatisfied with any aspect of our service:
+      </p>
+      <ol class="text-afj-secondary">
+        <li><strong>Initial contact:</strong> Please raise your concern with us by email at <a href="mailto:info@afjltd.co.uk" class="text-afj-sky-blue hover:text-afj-accent">info@afjltd.co.uk</a> or by phone on <a href="tel:01216891000" class="text-afj-sky-blue hover:text-afj-accent">0121 689 1000</a>.</li>
+        <li><strong>Acknowledgement:</strong> We will acknowledge your complaint within 2 working days.</li>
+        <li><strong>Investigation:</strong> We will investigate your complaint and aim to provide a full response within 10 working days.</li>
+        <li><strong>Escalation:</strong> If you are not satisfied with our response, you may escalate the matter to a senior manager by writing to our registered address.</li>
+      </ol>
+
+      <h2 class="text-afj-green">12. Website Use</h2>
+      <ul class="text-afj-secondary">
+        <li>The content on this website is provided for general information purposes only and does not constitute professional advice.</li>
+        <li>We make reasonable efforts to keep the information on this website accurate and up to date, but we make no warranties or representations regarding its completeness or accuracy.</li>
+        <li>You may not use this website for any unlawful purpose or in any way that could damage or impair the website.</li>
+        <li>All intellectual property rights in the website content belong to AFJ Limited.</li>
+      </ul>
+
+      <h2 class="text-afj-green">13. Governing Law</h2>
+      <p class="text-afj-secondary leading-relaxed">
+        These Terms are governed by the laws of England and Wales. Any disputes arising from these Terms or our services shall be subject to the exclusive jurisdiction of the courts of England and Wales.
+      </p>
+
+      <h2 class="text-afj-green">14. Contact Us</h2>
+      <p class="text-afj-secondary leading-relaxed">
+        If you have any questions about these Terms, please contact us:
+      </p>
+      <ul class="text-afj-secondary">
+        <li><strong>Email:</strong> <a href="mailto:info@afjltd.co.uk" class="text-afj-sky-blue hover:text-afj-accent">info@afjltd.co.uk</a></li>
+        <li><strong>Phone:</strong> <a href="tel:01216891000" class="text-afj-sky-blue hover:text-afj-accent">0121 689 1000</a></li>
+        <li><strong>Address:</strong> AFJ Business Center, 2-18 Forster Street, Nechells, Birmingham, B7 4JD</li>
+      </ul>
+    </div>
+  </section>
+</PageLayout>

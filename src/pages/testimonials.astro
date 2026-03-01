@@ -1,0 +1,103 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import CTABanner from '../components/ui/CTABanner.astro';
+import SocialSidebar from '../components/ui/SocialSidebar.astro';
+
+const breadcrumbs = [{ label: 'Testimonials' }];
+
+const testimonials = [
+  {
+    quote: 'AFJ Limited have provided SEND home-to-school transport for our students for over three years. Their drivers and passenger assistants are professional, punctual, and genuinely care about the wellbeing of the young people they transport. Communication with their operations team is always prompt and effective.',
+    name: 'Sarah Thompson',
+    role: 'SEND Transport Coordinator',
+    organisation: 'Oakfield Academy, Birmingham',
+  },
+  {
+    quote: 'We commissioned AFJ to handle patient transport across the West Midlands. Their CQC-rated service, combined with wheelchair accessible vehicles and trained ambulance care assistants, gives us confidence that our patients are in safe hands. Their reliability has been outstanding.',
+    name: 'Dr. James Okonkwo',
+    role: 'Non-Emergency Patient Transport Manager',
+    organisation: 'Birmingham Community Healthcare NHS Trust',
+  },
+  {
+    quote: 'As a local authority, compliance and safeguarding are our top priorities when awarding transport contracts. AFJ Limited consistently meets every requirement — DBS checks, vehicle maintenance records, driver training — all documented and available without delay. They are a trusted partner.',
+    name: 'Helen Carter',
+    role: 'Contract Manager, Passenger Transport',
+    organisation: 'West Midlands Local Authority',
+  },
+  {
+    quote: 'We hired AFJ for our annual school trip — 48 students across two minibuses. The vehicles were immaculate, the drivers were friendly and professional, and everything ran like clockwork. Several parents specifically commented on how safe and comfortable the journey was.',
+    name: 'Mark Richardson',
+    role: 'Head of Year 6',
+    organisation: 'Riverside Primary School, Manchester',
+  },
+  {
+    quote: 'AFJ converted two of our fleet vehicles to wheelchair accessible specification. The quality of workmanship was excellent, the turnaround was faster than quoted, and the vehicles passed inspection first time. We have since commissioned three further conversions.',
+    name: 'David Patel',
+    role: 'Fleet Operations Manager',
+    organisation: 'Midlands Community Transport',
+  },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Testimonials',
+  description: 'Testimonials from schools, councils, and organisations that use AFJ Limited transport services.',
+  url: 'https://www.afjltd.co.uk/testimonials',
+};
+---
+
+<PageLayout
+  title="Testimonials"
+  description="Read what schools, councils, and healthcare providers say about AFJ Limited transport services. Trusted by organisations across Birmingham and Manchester."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Testimonials" subtitle="What our clients say about working with AFJ Limited." />
+
+  <!-- Testimonials -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h2 class="text-afj-green mb-4">Trusted by Schools, Councils, and Healthcare Providers</h2>
+        <p class="text-afj-secondary leading-relaxed">
+          We are proud to work with local authorities, special schools, NHS trusts, and community organisations across Birmingham, Manchester, and the wider Midlands region.
+        </p>
+      </div>
+
+      <!-- Note: Example testimonials -->
+      <div class="bg-afj-accent/10 border border-afj-accent/30 rounded-lg p-4 mb-10 max-w-3xl mx-auto">
+        <p class="text-sm text-afj-text text-center">
+          <strong>Note:</strong> The testimonials below are representative examples. They will be replaced with verified client testimonials as they are received.
+        </p>
+      </div>
+
+      <div class="space-y-8 max-w-3xl mx-auto">
+        {testimonials.map((testimonial) => (
+          <div class="bg-white rounded-lg shadow-md border border-gray-100 p-8">
+            <svg class="w-8 h-8 text-afj-accent mb-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+            </svg>
+            <blockquote class="text-afj-secondary leading-relaxed mb-6">
+              {testimonial.quote}
+            </blockquote>
+            <div class="border-t border-gray-100 pt-4">
+              <p class="font-bold text-afj-text">{testimonial.name}</p>
+              <p class="text-afj-secondary text-sm">{testimonial.role}</p>
+              <p class="text-afj-accent text-sm font-medium">{testimonial.organisation}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Ready to Experience the AFJ Difference?"
+    description="Join the organisations that trust AFJ Limited for safe, reliable transport."
+    variant="green"
+  />
+</PageLayout>

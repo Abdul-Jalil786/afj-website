@@ -1,0 +1,220 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import StatsCounter from '../components/sections/StatsCounter.astro';
+import AccreditationBadges from '../components/sections/AccreditationBadges.astro';
+import CTABanner from '../components/ui/CTABanner.astro';
+import SocialSidebar from '../components/ui/SocialSidebar.astro';
+
+const breadcrumbs = [{ label: 'Our Fleet' }];
+
+const stats = [
+  { value: 98, suffix: '%', label: 'MOT Pass Rate' },
+  { value: 100, suffix: '%', label: 'GPS Tracked' },
+  { value: 100, suffix: '%', label: 'DVSA Compliant' },
+  { value: 24, suffix: '/7', label: 'Breakdown Cover' },
+];
+
+const vehicleTypes = [
+  {
+    name: 'SEND Minibuses',
+    capacity: '8–16 passengers',
+    description: 'Purpose-built minibuses designed for home-to-school transport. Fitted with seatbelts on every seat, CCTV, and GPS tracking as standard. Many feature tinted rear windows for student privacy and comfort.',
+    features: ['Full seatbelt compliance', 'Onboard CCTV', 'GPS tracking', 'Tinted rear windows', 'Air conditioning'],
+  },
+  {
+    name: 'Wheelchair Accessible Vehicles',
+    capacity: '1–8 passengers + wheelchairs',
+    description: 'Specialist vehicles with integrated wheelchair ramps or lifts, floor-mounted wheelchair restraint systems, and lowered floors for easy access. Suitable for both SEND transport and NEPTS services.',
+    features: ['Integrated ramps or tail lifts', 'Floor-mounted restraints', 'Lowered floor access', 'Multiple wheelchair positions', 'Emergency evacuation equipment'],
+  },
+  {
+    name: 'Tail Lift Vehicles',
+    capacity: '1–16 passengers',
+    description: 'Vehicles fitted with hydraulic tail lifts for passengers who require step-free access but do not use a wheelchair full-time. Ideal for students and patients with limited mobility.',
+    features: ['Hydraulic tail lift', 'Handrails and grab handles', 'Non-slip flooring', 'Wide doorways', 'Low step height'],
+  },
+  {
+    name: 'Patient Transport Vehicles',
+    capacity: '1–4 passengers',
+    description: 'CQC-compliant vehicles used for non-emergency patient transport services. Fitted with stretcher capability, medical equipment storage, and climate control for patient comfort.',
+    features: ['Stretcher compatible', 'Medical equipment storage', 'Climate control', 'Privacy screens', 'Easy-clean interiors'],
+  },
+  {
+    name: 'Executive Minibuses',
+    capacity: '9–33 passengers',
+    description: 'Higher-specification vehicles for private hire, corporate events, airport transfers, and group travel. Featuring comfortable seating, USB charging points, and luggage storage.',
+    features: ['Comfortable reclining seats', 'USB charging points', 'Luggage compartment', 'Air conditioning', 'PA system'],
+  },
+  {
+    name: 'Large Capacity Coaches',
+    capacity: '34–48 passengers',
+    description: 'Full-size coaches for larger group bookings, school trips, and events. Professionally maintained to DVSA standards with experienced, DBS-checked drivers.',
+    features: ['High-capacity seating', 'Overhead storage', 'Climate control', 'Onboard entertainment', 'Seatbelts throughout'],
+  },
+];
+
+const jsonLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Our Fleet',
+  description: 'AFJ Limited fleet of SEND minibuses, wheelchair accessible vehicles, tail lift vehicles, and patient transport. DVSA maintained, GPS tracked.',
+  url: 'https://www.afjltd.co.uk/fleet',
+};
+---
+
+<PageLayout
+  title="Our Fleet"
+  description="AFJ Limited fleet of SEND minibuses, wheelchair accessible vehicles, tail lift vehicles, and patient transport. DVSA maintained, GPS tracked."
+  breadcrumbs={breadcrumbs}
+  jsonLD={jsonLD}
+>
+  <SocialSidebar />
+
+  <Hero title="Our Fleet" subtitle="Safe, maintained, and purpose-built vehicles for every transport need." />
+
+  <!-- Fleet Overview -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h2 class="text-afj-green mb-4">Purpose-Built for Passenger Safety</h2>
+        <p class="text-afj-secondary leading-relaxed">
+          Our fleet is maintained in-house at our own DVSA-approved workshop, ensuring every vehicle meets the highest standards of safety and reliability. From wheelchair accessible minibuses to executive coaches, every vehicle is GPS tracked, fitted with CCTV, and inspected to a rigorous preventive maintenance schedule.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <StatsCounter stats={stats} variant="navy" />
+
+  <!-- Vehicle Types -->
+  <section class="section-padding">
+    <div class="container-wide">
+      <h2 class="text-afj-green text-center mb-10">Vehicle Types</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {vehicleTypes.map((vehicle) => (
+          <div class="bg-white rounded-lg shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow">
+            <h3 class="font-bold text-afj-text text-lg mb-1">{vehicle.name}</h3>
+            <p class="text-afj-accent text-sm font-medium mb-3">{vehicle.capacity}</p>
+            <p class="text-afj-secondary text-sm leading-relaxed mb-4">{vehicle.description}</p>
+            <ul class="space-y-1.5">
+              {vehicle.features.map((feature) => (
+                <li class="flex items-center gap-2 text-sm text-afj-secondary">
+                  <svg class="w-4 h-4 text-afj-green flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Safety & Maintenance -->
+  <section class="section-padding bg-afj-light-white">
+    <div class="container-wide">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-afj-green mb-6">Safety and Maintenance Standards</h2>
+          <p class="text-afj-secondary leading-relaxed mb-4">
+            Every vehicle in our fleet undergoes a rigorous preventive maintenance programme managed through our in-house DVSA-approved workshop. We do not wait for issues to arise — our maintenance schedule exceeds legal requirements to ensure maximum uptime and passenger safety.
+          </p>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <div>
+                <p class="font-medium text-afj-text">DVSA-Approved Workshop</p>
+                <p class="text-afj-secondary text-sm">All servicing, MOT preparation, and repairs carried out in-house by qualified technicians.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <div>
+                <p class="font-medium text-afj-text">Daily Vehicle Checks</p>
+                <p class="text-afj-secondary text-sm">Drivers complete documented pre-journey checks covering tyres, lights, brakes, fluid levels, and accessibility equipment.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <div>
+                <p class="font-medium text-afj-text">GPS Tracking and CCTV</p>
+                <p class="text-afj-secondary text-sm">Every vehicle is fitted with real-time GPS tracking and onboard CCTV for passenger safety and route monitoring.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <div>
+                <p class="font-medium text-afj-text">Preventive Maintenance Schedule</p>
+                <p class="text-afj-secondary text-sm">Six-weekly safety inspections, annual MOT preparation, and immediate defect rectification — exceeding legal minimums.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="text-afj-green mb-6">Accessibility Features</h2>
+          <p class="text-afj-secondary leading-relaxed mb-4">
+            Accessibility is central to our fleet design. We operate a range of vehicles adapted for passengers with physical disabilities, mobility impairments, and complex needs.
+          </p>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="text-afj-secondary text-sm">Wheelchair ramps and hydraulic tail lifts</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="text-afj-secondary text-sm">Floor-mounted wheelchair restraint systems (4-point tie-down)</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="text-afj-secondary text-sm">Lowered floors and wide doorways for step-free access</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="text-afj-secondary text-sm">Harness and specialist seating options for students with complex needs</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="text-afj-secondary text-sm">Non-slip flooring and high-visibility handrails</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-afj-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="text-afj-secondary text-sm">In-house vehicle conversion service for bespoke adaptations</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <AccreditationBadges />
+
+  <CTABanner
+    heading="Need Accessible Transport?"
+    description="Contact us to discuss your fleet requirements or request a free quote."
+    variant="green"
+  />
+</PageLayout>
