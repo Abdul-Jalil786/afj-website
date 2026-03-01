@@ -27,6 +27,8 @@ const { members, heading = 'Our Team' } = Astro.props;
                 src={member.image}
                 alt={`Photo of ${member.name}`}
                 class="w-full h-full object-cover"
+                width="400"
+                height="400"
                 loading="lazy"
               />
             ) : (

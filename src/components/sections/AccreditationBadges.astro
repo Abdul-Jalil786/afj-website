@@ -33,7 +33,7 @@ const badges = Astro.props.badges || defaultBadges;
       {badges.map((badge) => (
         <div class="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
           {badge.src ? (
-            <img src={badge.src} alt={badge.alt} class="h-16 w-auto object-contain mb-2" loading="lazy" />
+            <img src={badge.src} alt={badge.alt} class="h-16 w-auto object-contain mb-2" width="64" height="64" loading="lazy" />
           ) : (
             <div class="w-16 h-16 bg-afj-accent/10 rounded-full flex items-center justify-center mb-2">
               <svg class="w-8 h-8 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">

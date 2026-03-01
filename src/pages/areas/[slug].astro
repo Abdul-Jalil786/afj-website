@@ -227,7 +227,7 @@ const pageDescription = `${area.servicesAvailable.slice(0, 3).join(', ')} in ${a
           </div>
         </div>
         <div class="flex items-center justify-center">
-          <img src={area.heroImage} alt={area.heroImageAlt} class="rounded-lg w-full h-auto" loading="lazy" />
+          <img src={area.heroImage} alt={area.heroImageAlt} class="rounded-lg w-full h-auto" width="800" height="600" loading="lazy" />
         </div>
       </div>
     </div>
@@ -408,7 +408,7 @@ const pageDescription = `${area.servicesAvailable.slice(0, 3).join(', ')} in ${a
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         {galleryImages.map((img) => (
           <div class="rounded-lg overflow-hidden shadow-md">
-            <img src={img.src} alt={img.alt} class="w-full h-48 object-cover" loading="lazy" />
+            <img src={img.src} alt={img.alt} class="w-full h-48 object-cover" width="400" height="192" loading="lazy" />
           </div>
         ))}
       </div>

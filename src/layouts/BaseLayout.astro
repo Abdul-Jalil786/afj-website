@@ -1,4 +1,12 @@
 ---
+/**
+ * Performance Budget
+ * ------------------
+ * FCP  < 1.5s   (First Contentful Paint)
+ * LCP  < 2.5s   (Largest Contentful Paint)
+ * CLS  < 0.1    (Cumulative Layout Shift)
+ * Page < 500KB  (total weight excluding images)
+ */
 import '../styles/global.css';
 import ChatWidget from '../components/ui/ChatWidget.astro';
 
@@ -17,13 +25,20 @@ const ga4Id = import.meta.env.GA4_MEASUREMENT_ID;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#0B1E3D" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="AFJ Limited" />
     <link rel="icon" type="image/png" href="/images/logo/afj-logo-final.png" />
+    <link rel="apple-touch-icon" href="/images/logo/afj-logo-final.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link rel="preload" as="image" href="/images/hero/homeToSchool.webp" type="image/webp" />
     {import.meta.env.PROD && ga4Id && (
       <script async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}></script>
       <script is:inline define:vars={{ ga4Id }}>

@@ -14,7 +14,7 @@ const { icon, image, title, description, href } = Astro.props;
   <!-- Service Image -->
   {image && (
     <div class="aspect-video overflow-hidden rounded-lg -mx-6 -mt-6 mb-4">
-      <img src={image} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+      <img src={image} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" width="640" height="360" loading="lazy" />
     </div>
   )}
 
@@ -22,7 +22,7 @@ const { icon, image, title, description, href } = Astro.props;
   {!image && (
     <div class="w-14 h-14 bg-afj-accent/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-afj-accent/20 transition-colors">
       {icon ? (
-        <img src={icon} alt="" class="w-8 h-8" aria-hidden="true" />
+        <img src={icon} alt="" class="w-8 h-8" width="32" height="32" aria-hidden="true" />
       ) : (
         <svg class="w-8 h-8 text-afj-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
