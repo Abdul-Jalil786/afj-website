@@ -1,6 +1,7 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/sections/Hero.astro';
+import FAQ from '../../components/sections/FAQ.astro';
 import BookingForm from '../../components/sections/BookingForm.astro';
 import FleetGallery from '../../components/sections/FleetGallery.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
@@ -55,6 +56,43 @@ const services = [
     description: 'Tailored fleet maintenance schedules and management programmes to optimise your fleet\'s performance and reduce costs.',
   },
 ];
+
+const faqItems = [
+  {
+    question: 'Do you service vehicles for external customers or just your own fleet?',
+    answer: 'We service both our own fleet and external customers. Whether you run a fleet of commercial vehicles or need a one-off repair for your personal car, our workshop is open to all.',
+  },
+  {
+    question: 'What types of vehicles can your workshop handle?',
+    answer: 'Our technicians work on a wide range of vehicles including minibuses, vans, cars, and light commercial vehicles. We have experience with Mercedes Sprinter, Ford Transit, Volkswagen Crafter, and many other makes and models.',
+  },
+  {
+    question: 'How quickly can you turn around a service or repair?',
+    answer: 'Turnaround depends on the work required. Routine servicing is typically same-day, while more complex repairs may take 2-3 days. We prioritise minimising downtime and will always give you an honest estimate upfront.',
+  },
+  {
+    question: 'Can you help prepare my vehicle for its MOT?',
+    answer: 'Yes, we offer comprehensive pre-MOT inspections and will carry out any necessary repairs to help your vehicle pass first time. This reduces the risk of unexpected failures and costly re-tests.',
+  },
+  {
+    question: 'Do you offer ongoing fleet maintenance contracts?',
+    answer: 'Absolutely. We provide tailored fleet maintenance plans with scheduled servicing, priority repairs, and transparent pricing. This is ideal for businesses that want to reduce costs and keep their vehicles on the road.',
+  },
+  {
+    question: 'Where is your workshop located?',
+    answer: 'Our fully equipped workshop is based at our Birmingham headquarters in Nechells. We are easily accessible from across the West Midlands.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
 
 const jsonLD = {
   '@context': 'https://schema.org',
@@ -164,6 +202,11 @@ const jsonLD = {
 
   <!-- Workshop Gallery -->
   <FleetGallery images={workshopImages} heading="Our Workshop & Facilities" />
+
+  <!-- FAQ -->
+  <FAQ items={faqItems} heading="Fleet Maintenance - Frequently Asked Questions" />
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <!-- Booking Form -->
   <section class="section-padding bg-afj-light-white">

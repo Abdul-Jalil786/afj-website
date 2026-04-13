@@ -1,6 +1,7 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/sections/Hero.astro';
+import FAQ from '../../components/sections/FAQ.astro';
 import BookingForm from '../../components/sections/BookingForm.astro';
 import FleetGallery from '../../components/sections/FleetGallery.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
@@ -56,6 +57,43 @@ const courses = [
     duration: '1-day course',
   },
 ];
+
+const faqItems = [
+  {
+    question: 'What training courses does AFJ offer?',
+    answer: 'We offer Driver CPC training, Ambulance Care Assistant (ACA) certification, Passenger Assistant (PA) certification, first aid training, safeguarding awareness, and manual handling courses. All courses are QualSafe approved.',
+  },
+  {
+    question: 'Is AFJ an accredited training provider?',
+    answer: 'Yes, AFJ is a QualSafe-approved training centre. Our qualifications are industry-recognised and accepted by councils, healthcare providers, and transport operators across the UK.',
+  },
+  {
+    question: 'Can you train my existing team at our location?',
+    answer: 'We primarily deliver training at our in-house facilities in Birmingham, which include dedicated training rooms and practical training areas. However, please contact us to discuss on-site delivery for larger groups.',
+  },
+  {
+    question: 'How long does the Ambulance Care Assistant course take?',
+    answer: 'The ACA certification is a full programme covering patient handling, basic life support, infection control, and safe manual handling. Duration varies depending on prior experience, so contact us for details specific to your team.',
+  },
+  {
+    question: 'Do I need any qualifications to enrol on a course?',
+    answer: 'Entry requirements vary by course. Driver CPC requires a valid driving licence. ACA and PA courses are open to new entrants. We will advise on specific requirements when you enquire.',
+  },
+  {
+    question: 'Can training be scheduled around my business operations?',
+    answer: 'Absolutely. We offer flexible scheduling and will work with you to arrange course dates that minimise disruption to your operations. We can also split training across multiple days if needed.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
 
 const jsonLD = {
   '@context': 'https://schema.org',
@@ -180,6 +218,11 @@ const jsonLD = {
 
   <!-- Training Gallery -->
   <FleetGallery images={trainingImages} heading="Our Training Environment" />
+
+  <!-- FAQ -->
+  <FAQ items={faqItems} heading="Driver Training - Frequently Asked Questions" />
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <!-- Booking Form -->
   <section class="section-padding bg-afj-light-white">

@@ -1,6 +1,7 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/sections/Hero.astro';
+import FAQ from '../../components/sections/FAQ.astro';
 import BookingForm from '../../components/sections/BookingForm.astro';
 import FleetGallery from '../../components/sections/FleetGallery.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
@@ -58,6 +59,43 @@ const compatibleVehicles = [
   'LDV Maxus',
   'Toyota Hi Ace',
 ];
+
+const faqItems = [
+  {
+    question: 'What types of vehicle conversions does AFJ offer?',
+    answer: 'We specialise in three main types: wheelchair-accessible conversions with ramps and lifts, ambulance conversions with full CQC-compliant fit-outs, and luxury minibus conversions with premium interiors including leather seats and entertainment systems.',
+  },
+  {
+    question: 'Are your conversions VOSA certified?',
+    answer: 'Yes, all our conversions are VOSA certified and meet full compliance standards. We handle all testing and certification as part of the conversion process so your vehicle is road-ready when delivered.',
+  },
+  {
+    question: 'What vehicles can you convert?',
+    answer: 'We convert a wide range of vehicles including Mercedes-Benz Sprinter, Volkswagen Crafter, Ford Transit, Renault Master, LDV Maxus, and Toyota Hi Ace. If your vehicle is not listed, contact us to discuss your requirements.',
+  },
+  {
+    question: 'How long does a typical conversion take?',
+    answer: 'Timescales vary depending on the complexity of the conversion. A standard wheelchair-accessible conversion typically takes 4-6 weeks, while a full ambulance conversion may take longer. We provide a clear timeline at the quoting stage.',
+  },
+  {
+    question: 'Can you convert a vehicle I already own?',
+    answer: 'Yes, we can convert your existing vehicle. We will assess its suitability for the conversion you need and advise on any limitations. We also source base vehicles if you prefer a complete package.',
+  },
+  {
+    question: 'Do you build ambulances for other transport companies?',
+    answer: 'Yes, we are the only UK Patient Transport Service provider that builds its own ambulances, and we also build for external clients. Our ambulance conversions feature wipe-clean surfaces, infection control measures, and full CQC compliance.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
 
 const jsonLD = {
   '@context': 'https://schema.org',
@@ -185,6 +223,11 @@ const jsonLD = {
 
   <!-- Conversion Gallery -->
   <FleetGallery images={conversionImages} heading="Our Conversion Work" />
+
+  <!-- FAQ -->
+  <FAQ items={faqItems} heading="Vehicle Conversions - Frequently Asked Questions" />
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <!-- Booking Form -->
   <section class="section-padding bg-afj-light-white">

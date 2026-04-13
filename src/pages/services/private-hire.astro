@@ -1,6 +1,7 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import Hero from '../../components/sections/Hero.astro';
+import FAQ from '../../components/sections/FAQ.astro';
 import BookingForm from '../../components/sections/BookingForm.astro';
 import FleetGallery from '../../components/sections/FleetGallery.astro';
 import CTABanner from '../../components/ui/CTABanner.astro';
@@ -34,6 +35,43 @@ const uses = [
   { title: 'Stag & Hen Parties', description: 'Reliable transport for your celebrations. Our drivers ensure a safe journey.' },
   { title: 'Race Days', description: 'Travel in comfort to Cheltenham, Royal Ascot, Warwick, and other race meetings.' },
 ];
+
+const faqItems = [
+  {
+    question: 'How many passengers can your minibuses carry?',
+    answer: 'Our standard minibuses seat up to 16 passengers plus the driver. For larger groups, we can arrange multiple vehicles. We also offer vehicles for smaller groups of 1-8 passengers.',
+  },
+  {
+    question: 'Are your minibuses wheelchair accessible?',
+    answer: 'Yes, we have wheelchair-accessible minibuses available with ramps and secure wheelchair restraints. Let us know your accessibility requirements when booking and we will ensure the right vehicle is provided.',
+  },
+  {
+    question: 'How far in advance do I need to book?',
+    answer: 'We recommend booking at least 48 hours in advance to guarantee availability, though we can often accommodate shorter notice requests. For peak periods like weekends and bank holidays, booking a week or more ahead is advisable.',
+  },
+  {
+    question: 'Does the hire include a driver?',
+    answer: 'Yes, all our private minibus hire comes with an experienced, professional driver. We do not offer self-drive hire. Your driver will handle all the driving so your group can relax and enjoy the journey.',
+  },
+  {
+    question: 'What areas do you cover for private hire?',
+    answer: 'We are based in Birmingham and Manchester and cover both cities plus a 20-mile radius. For longer journeys such as airport transfers or day trips further afield, please contact us for a quote.',
+  },
+  {
+    question: 'How is private hire pricing calculated?',
+    answer: 'Pricing is based on distance, duration, and the size of vehicle required. We provide transparent, all-inclusive quotes with no hidden charges. Weekend and bank holiday surcharges may apply. Contact us for a free, no-obligation quote.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
 
 const jsonLD = {
   '@context': 'https://schema.org',
@@ -149,6 +187,11 @@ const jsonLD = {
 
   <!-- Testimonials -->
   <TestimonialSlider />
+
+  <!-- FAQ -->
+  <FAQ items={faqItems} heading="Private Minibus Hire - Frequently Asked Questions" />
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <!-- Booking Form -->
   <section class="section-padding bg-afj-light-white">
