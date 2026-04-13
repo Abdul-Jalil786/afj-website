@@ -11,6 +11,8 @@ import hospitalsData from '../../data/area-data/hospitals.json';
 
 type AreaEntry = (typeof areas)[number];
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return areas.map((area: AreaEntry) => ({
     params: { slug: area.slug },
@@ -28,7 +30,7 @@ const breadcrumbs = [
 ];
 
 const stats = [
-  { value: 700, suffix: '+', label: 'Students Daily' },
+  { value: 2000, suffix: '+', label: 'Students Daily' },
   { value: 18, suffix: '+', label: 'Years Experience' },
 ];
 
